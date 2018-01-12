@@ -1,0 +1,10 @@
+*.pyc
+*.log
+*.sql
+*.bak
+*.tmp
+*~
+settings_local.py
+/node_modules
+/media
+.idea

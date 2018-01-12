@@ -1,0 +1,22 @@
+{
+    "admin": {
+        "internal": "http://localhost:9500",
+        "external": "http://localhost:9500",
+        "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "discovery": {
+        "internal": "http://localhost:9502",
+        "external": "http://localhost:9502",
+        "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "dlc": {
+        "internal": "http://localhost:9505",
+        "external": "http://localhost:9505",
+        "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "event": {
+        "internal": "http://localhost:9506",
+        "external": "http://localhost:9506",
+        "broker": "amqp://guest:guest@localhost:5672"
+    }
+}
