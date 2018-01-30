@@ -1,5 +1,5 @@
-from anthill_platform.services import BaseService
+from anthill_platform.services import AdminService
 
 
-class Service(BaseService):
+class Service(AdminService):
     pass

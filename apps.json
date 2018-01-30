@@ -1,0 +1,8 @@
+{
+    "managed_apps": [
+        "admin",
+        "discovery",
+        "dlc",
+        "event"
+    ]
+}

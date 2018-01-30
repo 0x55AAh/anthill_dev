@@ -1,5 +1,10 @@
+import os
+
+# Build paths inside the application like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1234'
+SECRET_KEY = 'ADMIN_SERVICE_SECRET_KEY'
 
 DEBUG = False
 
@@ -13,6 +18,7 @@ DATABASES = {
 ROUTES_CONF = 'admin.routes'
 
 LOCATION = 'http://localhost:9500'
+BROKER = 'amqp://guest:guest@localhost:5672'
 
 APPLICATION_CLASS = 'admin.apps.AnthillApplication'
 APPLICATION_NAME = 'admin'

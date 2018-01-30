@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import os
 
+
+SERVICE_SETTINGS_MODULE = "discovery.settings"
+
 if __name__ == "__main__":
-    os.environ.setdefault("SERVICE_SETTINGS_MODULE", "discovery.settings")
+    os.environ["SERVICE_SETTINGS_MODULE"] = SERVICE_SETTINGS_MODULE
     try:
         import microservices_framework
         microservices_framework.setup()

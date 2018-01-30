@@ -16,6 +16,7 @@ class Application:
         self.routes_conf = getattr(settings, 'ROUTES_CONF', '%s.routes' % self.name)
         self.service_class = getattr(settings, 'SERVICE_CLASS', '%s.services.Service' % self.name)
         self.protocol, self.socket = self._parse_location()
+        self.registry_entry = self._build_registry_entry()
         self.commands = {}
         setattr(self, '__ident_func__', get_ident)
 
@@ -25,6 +26,14 @@ class Application:
     def _parse_location(self):
         location = urlparse(getattr(self.settings, 'LOCATION'))
         return location.scheme, (location.hostname, location.port or 80)
+
+    def _build_registry_entry(self):
+        entry = {
+            network: self.settings.LOCATION
+            for network in self.settings.NETWORKS
+        }
+        entry.update(broker=settings.BROKER)
+        return entry
 
     def run(self):
         service_class = import_string(self.service_class)

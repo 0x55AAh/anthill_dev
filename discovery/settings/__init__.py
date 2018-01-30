@@ -1,5 +1,10 @@
+import os
+
+# Build paths inside the application like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1234'
+SECRET_KEY = 'DISCOVERY_SERVICE_SECRET_KEY'
 
 DEBUG = False
 
@@ -26,6 +31,8 @@ REGISTERED_SERVICES = {
     },
 }
 
+REGISTERED_SERVICES_EXTERNAL = os.path.join(BASE_DIR, 'registry.json')
+
 DATABASES = {
     'default': {
         'url': 'postgres://user:pass@localhost/ah_discovery',
@@ -34,6 +41,7 @@ DATABASES = {
 }
 
 LOCATION = 'http://localhost:9502'
+BROKER = 'amqp://guest:guest@localhost:5672'
 
 ROUTES_CONF = 'discovery.routes'
 

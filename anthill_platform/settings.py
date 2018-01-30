@@ -1,4 +1,4 @@
-NETWORKS = ['internal', 'external', 'broker']
+NETWORKS = ['internal', 'external']
 
 RESOLVERS = [
     {
@@ -7,3 +7,5 @@ RESOLVERS = [
         'broker': 'amqp://guest:guest@localhost:5672'
     },
 ]
+
+DISCOVERY_SECRET_KEY = 'DISCOVERY_SERVICE_SECRET_KEY'

@@ -1,5 +1,10 @@
+import os
+
+# Build paths inside the application like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1234'
+SECRET_KEY = 'EVENT_SERVICE_SECRET_KEY'
 
 DEBUG = False
 
@@ -11,6 +16,7 @@ DATABASES = {
 }
 
 LOCATION = 'http://localhost:9506'
+BROKER = 'amqp://guest:guest@localhost:5672'
 
 ROUTES_CONF = 'event.routes'
 
