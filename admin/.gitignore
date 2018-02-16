@@ -4,6 +4,5 @@
 *.bak
 *.tmp
 *~
-settings/local.py
 /node_modules
 .idea
