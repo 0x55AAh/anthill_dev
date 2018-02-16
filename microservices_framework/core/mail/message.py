@@ -1,8 +1,6 @@
 import mimetypes
 import os
-from email import (
-    charset as Charset, encoders as Encoders, generator, message_from_string,
-)
+from email import charset as Charset, encoders as Encoders, generator, message_from_string
 from email.errors import InvalidHeaderDefect, NonASCIILocalPartDefect
 from email.header import Header
 from email.headerregistry import Address

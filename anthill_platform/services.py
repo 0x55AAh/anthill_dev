@@ -1,6 +1,6 @@
 import logging
 from tornado.gen import coroutine
-from microservices_framework.core.service import BaseService as _BaseService
+from microservices_framework.core.servers import BaseService as _BaseService
 from microservices_framework.apps.builder import app
 
 logger = logging.getLogger('app.server')

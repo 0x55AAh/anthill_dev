@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import code
-import warnings
-import string
 import inspect
 
 import argparse
-from .cli import prompt, prompt_pass, prompt_bool, prompt_choices
 
 
 class InvalidCommand(Exception):
@@ -37,8 +33,7 @@ class Group:
 
     :param options: A list of Option classes to add to this group
     :param title: A string to use as the title of the argument group
-    :param description: A string to use as the description of the argument
-                        group
+    :param description: A string to use as the description of the argument group
     :param exclusive: A boolean indicating if this is an argument group or a
                       mutually exclusive group
     :param required: A boolean indicating if this mutually exclusive group
@@ -106,6 +101,9 @@ class Command:
     help_args = None
 
     def __init__(self, func=None):
+        self.parser = None
+        self.parent = None
+
         if func is None:
             if not self.option_list:
                 self.option_list = []
@@ -182,14 +180,9 @@ class Command:
         for option in self.get_options():
             if isinstance(option, Group):
                 if option.exclusive:
-                    group = parser.add_mutually_exclusive_group(
-                        required=option.required,
-                    )
+                    group = parser.add_mutually_exclusive_group(required=option.required)
                 else:
-                    group = parser.add_argument_group(
-                        title=option.title,
-                        description=option.description,
-                    )
+                    group = parser.add_argument_group(title=option.title, description=option.description)
                 for opt in option.get_options():
                     group.add_argument(*opt.args, **opt.kwargs)
             else:
@@ -209,7 +202,7 @@ class Command:
         """
         return self.run(*args, **kwargs)
 
-    def run(self):
+    def run(self, *args, **kwargs):
         """
         Runs a command. This must be implemented by the subclass. Should take
         arguments as configured by the Command options.
@@ -219,7 +212,7 @@ class Command:
 
 class Shell(Command):
     """
-    Runs a Python shell inside Flask application context.
+    Runs a Python shell inside application context.
 
     :param banner: banner appearing at top of shell when started
     :param make_context: a callable returning a dict of variables
@@ -241,7 +234,7 @@ class Shell(Command):
 
     banner = ''
 
-    help = description = 'Runs a Python shell inside Flask application context.'
+    help = description = 'Runs a Python shell inside application context.'
 
     def __init__(self, banner=None, make_context=None, use_ipython=True,
                  use_bpython=True, use_ptipython=True, use_ptpython=True):
@@ -252,21 +245,25 @@ class Shell(Command):
         self.use_ptipython = use_ptipython
         self.use_ptpython = use_ptpython
 
+        from microservices_framework.apps.builder import app
+
         if make_context is None:
-            from microservices_framework.apps.builder import app
             make_context = lambda: dict(app=app)
 
         self.make_context = make_context
 
+        if not self.banner:
+            self.banner = 'Application %s_v%s' % (app.label, app.version)
+
     def get_options(self):
         return (
-            Option('--no-ipython', action="store_true", dest='no_ipython', default=not(self.use_ipython),
+            Option('--no-ipython', action="store_true", dest='no_ipython', default=(not self.use_ipython),
                    help="Do not use the IPython shell"),
-            Option('--no-bpython', action="store_true", dest='no_bpython', default=not(self.use_bpython),
+            Option('--no-bpython', action="store_true", dest='no_bpython', default=(not self.use_bpython),
                    help="Do not use the BPython shell"),
-            Option('--no-ptipython', action="store_true", dest='no_ptipython', default=not(self.use_ptipython),
+            Option('--no-ptipython', action="store_true", dest='no_ptipython', default=(not self.use_ptipython),
                    help="Do not use the PtIPython shell"),
-            Option('--no-ptpython', action="store_true", dest='no_ptpython', default=not(self.use_ptpython),
+            Option('--no-ptpython', action="store_true", dest='no_ptpython', default=(not self.use_ptpython),
                    help="Do not use the PtPython shell"),
         )
 
@@ -331,139 +328,43 @@ class Shell(Command):
 
 class Server(Command):
     """
-    Runs the Flask development server i.e. app.run()
+    Runs the server i.e. app.run()
 
     :param host: server host
     :param port: server port
-    :param use_debugger: Flag whether to default to using the Werkzeug debugger.
-                         This can be overriden in the command line
-                         by passing the **-d** or **-D** flag.
-                         Defaults to False, for security.
-
-    :param use_reloader: Flag whether to use the auto-reloader.
-                         Default to True when debugging.
-                         This can be overriden in the command line by
-                         passing the **-r**/**-R** flag.
-    :param threaded: should the process handle each request in a separate
-                     thread?
-    :param processes: number of processes to spawn
-    :param passthrough_errors: disable the error catching.
-                               This means that the server will die on errors
-                               but it can be useful to hook debuggers in (pdb etc.)
-    :param ssl_crt: path to ssl certificate file
-    :param ssl_key: path to ssl key file
-    :param options: :func:`werkzeug.run_simple` options.
     """
 
-    help = description = 'Runs the server i.e. app.run()'
+    help = description = 'Runs the server i.e. app.run().'
 
-    def __init__(self, host='127.0.0.1', port=5000, use_debugger=None,
-                 use_reloader=None, threaded=False, processes=1,
-                 passthrough_errors=False, ssl_crt=None, ssl_key=None, **options):
-
+    def __init__(self, host=None, port=None):
         self.port = port
         self.host = host
-        self.use_debugger = use_debugger
-        self.use_reloader = use_reloader if use_reloader is not None else use_debugger
-        self.server_options = options
-        self.threaded = threaded
-        self.processes = processes
-        self.passthrough_errors = passthrough_errors
-        self.ssl_crt = ssl_crt
-        self.ssl_key = ssl_key
 
     def get_options(self):
         options = (
             Option('-h', '--host',
                    dest='host',
                    default=self.host),
-
             Option('-p', '--port',
                    dest='port',
                    type=int,
-                   default=self.port),
-
-            Option('--threaded',
-                   dest='threaded',
-                   action='store_true',
-                   default=self.threaded),
-
-            Option('--processes',
-                   dest='processes',
-                   type=int,
-                   default=self.processes),
-
-            Option('--passthrough-errors',
-                   action='store_true',
-                   dest='passthrough_errors',
-                   default=self.passthrough_errors),
-
-            Option('-d', '--debug',
-                   action='store_true',
-                   dest='use_debugger',
-                   help='enable the Werkzeug debugger (DO NOT use in production code)',
-                   default=self.use_debugger),
-            Option('-D', '--no-debug',
-                   action='store_false',
-                   dest='use_debugger',
-                   help='disable the Werkzeug debugger',
-                   default=self.use_debugger),
-
-            Option('-r', '--reload',
-                   action='store_true',
-                   dest='use_reloader',
-                   help='monitor Python files for changes (not 100%% safe for production use)',
-                   default=self.use_reloader),
-            Option('-R', '--no-reload',
-                   action='store_false',
-                   dest='use_reloader',
-                   help='do not monitor Python files for changes',
-                   default=self.use_reloader),
-            Option('--ssl-crt',
-                   dest='ssl_crt',
-                   type=str,
-                   help='Path to ssl certificate',
-                   default=self.ssl_crt),
-            Option('--ssl-key',
-                   dest='ssl_key',
-                   type=str,
-                   help='Path to ssl key',
-                   default=self.ssl_key),
+                   default=self.port)
         )
 
         return options
 
-    def __call__(self, app, host, port, use_debugger, use_reloader,
-                 threaded, processes, passthrough_errors, ssl_crt, ssl_key):
-        if use_debugger is None:
-            use_debugger = app.debug
-            if use_debugger is None:
-                use_debugger = True
-                if sys.stderr.isatty():
-                    print("Debugging is on. DANGER: Do not allow random users to connect to this server.", file=sys.stderr)
-        if use_reloader is None:
-            use_reloader = use_debugger
+    def __call__(self, app, host, port):
+        host = host or app.host
+        port = port or app.port
 
-        if None in [ssl_crt, ssl_key]:
-            ssl_context = None
-        else:
-            ssl_context = (ssl_crt, ssl_key)
-
-        # app.run(host=host,
-        #         port=port,
-        #         debug=use_debugger,
-        #         use_debugger=use_debugger,
-        #         use_reloader=use_reloader,
-        #         threaded=threaded,
-        #         processes=processes,
-        #         passthrough_errors=passthrough_errors,
-        #         ssl_context=ssl_context,
-        #         **self.server_options)
-        app.run()
+        app.run(host=host, port=port)
 
 
 class Clean(Command):
-    """Remove *.pyc and *.pyo files recursively starting at current directory"""
+    """
+    Remove *.pyc and *.pyo files recursively starting at current directory
+    """
+
     def run(self):
         for dirpath, dirnames, filenames in os.walk('.'):
             for filename in filenames:
@@ -471,3 +372,13 @@ class Clean(Command):
                     full_pathname = os.path.join(dirpath, filename)
                     print('Removing %s' % full_pathname)
                     os.remove(full_pathname)
+
+
+class Version(Command):
+    """
+    Show app version and exit.
+    """
+    help = description = 'Show app version and exit.'
+
+    def __call__(self, app):
+        print('Application %s v%s' % (app.label, app.version))

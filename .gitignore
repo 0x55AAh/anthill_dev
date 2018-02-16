@@ -1,4 +1,5 @@
 *.log
+*.pyc
 *.sql
 *.bak
 *.tmp

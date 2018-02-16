@@ -8,12 +8,7 @@ SECRET_KEY = 'DLC_SERVICE_SECRET_KEY'
 
 DEBUG = False
 
-DATABASES = {
-    'default': {
-        'url': 'postgres://user:pass@localhost/ah_dlc',
-        'encoding': 'utf-8'
-    }
-}
+SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_dlc'
 
 LOCATION = 'http://localhost:9505'
 BROKER = 'amqp://guest:guest@localhost:5672'

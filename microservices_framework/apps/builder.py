@@ -22,8 +22,9 @@ class AppBuilder:
     def build(self):
         application_class = self.get_class()
         instance = application_class()
-        logger.info('Application \'%s\' loaded' % instance.name)
+        logger.info('Application \'%s\' loaded.' % instance.name)
         return instance
 
 
 app = AppBuilder().build()
+app.setup()

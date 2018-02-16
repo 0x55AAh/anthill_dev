@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-
-SERVICE_SETTINGS_MODULE = "event.settings"
+SERVICE_SETTINGS_MODULE = os.getenv("SERVICE_SETTINGS_MODULE", "event.settings")
 
 if __name__ == "__main__":
     os.environ["SERVICE_SETTINGS_MODULE"] = SERVICE_SETTINGS_MODULE
@@ -16,7 +15,6 @@ if __name__ == "__main__":
             "forget to activate a virtual environment?"
         )
     from microservices_framework.apps.builder import app
-    from microservices_framework.core.management import Manager
+    from microservices_framework.core.management import build_manager
 
-    manager = Manager(app)
-    manager.run()
+    build_manager(app).run()

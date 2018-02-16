@@ -8,12 +8,7 @@ SECRET_KEY = 'EVENT_SERVICE_SECRET_KEY'
 
 DEBUG = False
 
-DATABASES = {
-    'default': {
-        'url': 'postgres://user:pass@localhost/ah_event',
-        'encoding': 'utf-8'
-    }
-}
+SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_event'
 
 LOCATION = 'http://localhost:9506'
 BROKER = 'amqp://guest:guest@localhost:5672'

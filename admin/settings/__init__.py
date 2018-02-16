@@ -8,12 +8,7 @@ SECRET_KEY = 'ADMIN_SERVICE_SECRET_KEY'
 
 DEBUG = False
 
-DATABASES = {
-    'default': {
-        'url': 'postgres://user:pass@localhost/ah_admin',
-        'encoding': 'utf-8'
-    }
-}
+SQLALCHEMY_DATABASE_URI = 'postgres://ah_admin@/ah_admin'
 
 ROUTES_CONF = 'admin.routes'
 

@@ -3,17 +3,16 @@ import re
 import sys
 import types
 import warnings
-from gettext import gettext as _
 from collections import OrderedDict
 
 import argparse
 
-from microservices_framework.apps.cls import Application
-from .commands import Group, Option, Command, Server, Shell
-from .cli import prompt, prompt_pass, prompt_bool, prompt_choices
+from .commands import Group, Option, Command, Server, Shell, Version
 
-__all__ = ["Command", "Shell", "Server", "Manager", "Group", "Option",
-           "prompt", "prompt_pass", "prompt_bool", "prompt_choices"]
+__all__ = [
+    "Command", "Shell", "Server", "Manager", "Group", "Option", "Version",
+    "build_manager", "add_help"
+]
 
 safe_actions = (
     argparse._StoreAction,
@@ -35,14 +34,14 @@ except ImportError:
     ARGCOMPLETE_IMPORTED = False
 
 
-def add_help(parser, help_args): 
+def add_help(parser, help_args):
     if not help_args:
         return
-    parser.add_argument(
-        *help_args, action='help', default=argparse.SUPPRESS, help=_('show this help message and exit'))
+    parser.add_argument(*help_args, action='help', default=argparse.SUPPRESS,
+                        help='show this help message and exit')
 
 
-class Manager(object):
+class Manager:
     """
     Controller class for handling a set of commands.
 
@@ -51,9 +50,7 @@ class Manager(object):
         class Print(Command):
 
             def run(self):
-                print "hello"
-
-        app = Flask(__name__)
+                print("hello")
 
         manager = Manager(app)
         manager.add_command("print", Print())
@@ -66,9 +63,8 @@ class Manager(object):
         python manage.py print
         > hello
 
-    :param app: Flask instance, or callable returning a Flask instance.
-    :param with_default_commands: load commands **runserver** and **shell**
-                                  by default.
+    :param app: Application instance.
+    :param with_default_commands: load commands **runserver** and **shell** by default.
     :param disable_argcomplete: disable automatic loading of argcomplete.
 
     """
@@ -102,6 +98,8 @@ class Manager(object):
             self.add_command("shell", Shell())
         if "runserver" not in self._commands:
             self.add_command("runserver", Server())
+        if "version" not in self._commands:
+            self.add_command("version", Version())
         if self.app and self.app.commands is not None:
             self._commands.update(self.app.commands)
 
@@ -143,13 +141,15 @@ class Manager(object):
 
     def __call__(self, app=None, **kwargs):
         """
-        This procedure is called with the App instance (if this is a sub-Manager) and any options.
+        This procedure is called with the Application instance (if this is a sub-Manager) and any options.
         If your sub-Manager does not override this, any values for options will get lost.
         """
         if app is None:
             app = self.app
             if app is None:
                 raise Exception("There is no app here. This is unlikely to work.")
+
+        from microservices_framework.apps.cls import Application
 
         if isinstance(app, Application):
             if kwargs:
@@ -418,3 +418,12 @@ class Manager(object):
             result = e.code
 
         sys.exit(result or 0)
+
+
+def build_manager(app):
+    from microservices_framework.db.management import MigrateCommand
+
+    manager = Manager(app)
+    manager.add_command('db', MigrateCommand)
+
+    return manager

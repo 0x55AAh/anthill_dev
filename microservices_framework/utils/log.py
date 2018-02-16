@@ -6,7 +6,7 @@ from microservices_framework.conf import settings
 from microservices_framework.core import mail
 from microservices_framework.core.mail import get_connection
 from microservices_framework.core.management.color import color_style
-from microservices_framework.utils.module_loading import import_string
+from .module_loading import import_string
 
 # Default logging. This sends an email to the site admins on every
 # HTTP 500 error. Depending on DEBUG, all other log records are either sent to

@@ -4,8 +4,8 @@ import locale
 from decimal import Decimal
 from urllib.parse import quote
 
-from microservices_framework.utils import six
-from microservices_framework.utils.functional import Promise
+import six
+from .functional import Promise
 
 
 class DjangoUnicodeDecodeError(UnicodeDecodeError):

@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-    flask_sqlalchemy
+    sqlalchemy
     ~~~~~~~~~~~~~~~~
 
     Adds basic SQLAlchemy support to your application.
@@ -8,7 +7,6 @@
     :copyright: (c) 2014 by Armin Ronacher, Daniel Neuhäuser.
     :license: BSD, see LICENSE for more details.
 """
-from __future__ import absolute_import
 
 import functools
 import os
@@ -27,7 +25,7 @@ from sqlalchemy.orm.exc import UnmappedClassError
 from sqlalchemy.orm.session import Session as SessionBase
 from tornado.web import HTTPError
 
-from microservices_framework.apps import app
+from microservices_framework.apps.builder import app
 from microservices_framework.core.signals import Namespace
 
 from .model import Model
@@ -135,8 +133,8 @@ def _calling_context(app_path):
 
 
 class SignallingSession(SessionBase):
-    """The signalling session is the default session that Flask-SQLAlchemy
-    uses.  It extends the default session system with bind selection and
+    """The signalling session is the default session that SQLAlchemy
+    uses. It extends the default session system with bind selection and
     modification tracking.
 
     If you want to use a different session you can override the
@@ -152,7 +150,7 @@ class SignallingSession(SessionBase):
     def __init__(self, db, autocommit=False, autoflush=True, **options):
         #: The application that this session belongs to.
         self.app = app = db.get_app()
-        track_modifications = app.config['SQLALCHEMY_TRACK_MODIFICATIONS']
+        track_modifications = getattr(app.config, 'SQLALCHEMY_TRACK_MODIFICATIONS')
         bind = options.pop('bind', None) or db.engine
         binds = options.pop('binds', db.get_binds(app))
 
@@ -175,7 +173,7 @@ class SignallingSession(SessionBase):
         return SessionBase.get_bind(self, mapper, clause)
 
 
-class _SessionSignalEvents(object):
+class _SessionSignalEvents:
     @classmethod
     def register(cls, session):
         if not hasattr(session, '_model_changes'):
@@ -242,7 +240,7 @@ class _SessionSignalEvents(object):
         d.clear()
 
 
-class Pagination(object):
+class Pagination:
     """Internal helper class returned by :meth:`BaseQuery.paginate`.  You
     can also construct it from any other SQLAlchemy query object if you are
     working with other libraries.  Additionally it is possible to pass `None`
@@ -460,14 +458,13 @@ class _QueryProperty(object):
 def _record_queries(app):
     if app.debug:
         return True
-    rq = app.config['SQLALCHEMY_RECORD_QUERIES']
+    rq = getattr(app.config, 'SQLALCHEMY_RECORD_QUERIES', None)
     if rq is not None:
         return rq
-    return bool(app.config.get('TESTING'))
+    return bool(getattr(app.config, 'TESTING', False))
 
 
 class _EngineConnector(object):
-
     def __init__(self, sa, app, bind=None):
         self._sa = sa
         self._app = app
@@ -478,17 +475,17 @@ class _EngineConnector(object):
 
     def get_uri(self):
         if self._bind is None:
-            return self._app.config['SQLALCHEMY_DATABASE_URI']
-        binds = self._app.config.get('SQLALCHEMY_BINDS') or ()
+            return getattr(self._app.config, 'SQLALCHEMY_DATABASE_URI', None)
+        binds = getattr(self._app.config, 'SQLALCHEMY_BINDS', None) or ()
         assert self._bind in binds, \
-            'Bind %r is not specified.  Set it in the SQLALCHEMY_BINDS ' \
+            'Bind %r is not specified. Set it in the SQLALCHEMY_BINDS ' \
             'configuration variable' % self._bind
         return binds[self._bind]
 
     def get_engine(self):
         with self._lock:
             uri = self.get_uri()
-            echo = self._app.config['SQLALCHEMY_ECHO']
+            echo = getattr(self._app.config, 'SQLALCHEMY_ECHO', False)
             if (uri, echo) == self._connected_for:
                 return self._engine
             info = make_url(uri)
@@ -700,45 +697,29 @@ class SQLAlchemy(object):
 
     def init_app(self, app):
         """This callback can be used to initialize an application for the
-        use with this database setup.  Never use a database in the context
-        of an application not initialized that way or connections will
-        leak.
+        use with this database setup. Never use a database in the context
+        of an application not initialized that way or connections will leak.
         """
         if (
-            'SQLALCHEMY_DATABASE_URI' not in app.config and
-            'SQLALCHEMY_BINDS' not in app.config
+            not getattr(app.config, 'SQLALCHEMY_DATABASE_URI', None) and
+            not getattr(app.config, 'SQLALCHEMY_BINDS', None)
         ):
             warnings.warn(
                 'Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. '
                 'Defaulting SQLALCHEMY_DATABASE_URI to "sqlite:///:memory:".'
             )
 
-        app.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
-        app.config.setdefault('SQLALCHEMY_BINDS', None)
-        app.config.setdefault('SQLALCHEMY_NATIVE_UNICODE', None)
-        app.config.setdefault('SQLALCHEMY_ECHO', False)
-        app.config.setdefault('SQLALCHEMY_RECORD_QUERIES', None)
-        app.config.setdefault('SQLALCHEMY_POOL_SIZE', None)
-        app.config.setdefault('SQLALCHEMY_POOL_TIMEOUT', None)
-        app.config.setdefault('SQLALCHEMY_POOL_RECYCLE', None)
-        app.config.setdefault('SQLALCHEMY_MAX_OVERFLOW', None)
-        app.config.setdefault('SQLALCHEMY_COMMIT_ON_TEARDOWN', False)
-        track_modifications = app.config.setdefault(
-            'SQLALCHEMY_TRACK_MODIFICATIONS', None
-        )
-
-        if track_modifications is None:
-            warnings.warn(FSADeprecationWarning(
+        if getattr(app.config, 'SQLALCHEMY_TRACK_MODIFICATIONS') is None:
+            warnings.warn(
                 'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '
-                'will be disabled by default in the future.  Set it to True '
+                'will be disabled by default in the future. Set it to True '
                 'or False to suppress this warning.'
-            ))
+            )
 
         app.extensions['sqlalchemy'] = _SQLAlchemyState(self)
 
-        @app.teardown_appcontext
         def shutdown_session(response_or_exc):
-            if app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']:
+            if getattr(app.config, 'SQLALCHEMY_COMMIT_ON_TEARDOWN', None):
                 if response_or_exc is None:
                     self.session.commit()
 
@@ -747,7 +728,7 @@ class SQLAlchemy(object):
 
     def apply_pool_defaults(self, app, options):
         def _setdefault(optionkey, configkey):
-            value = app.config[configkey]
+            value = getattr(app.config, configkey, None)
             if value is not None:
                 options[optionkey] = value
         _setdefault('pool_size', 'SQLALCHEMY_POOL_SIZE')
@@ -798,7 +779,7 @@ class SQLAlchemy(object):
             if not detected_in_memory:
                 info.database = os.path.join(app.root_path, info.database)
 
-        unu = app.config['SQLALCHEMY_NATIVE_UNICODE']
+        unu = getattr(app.config, 'SQLALCHEMY_NATIVE_UNICODE', None)
         if unu is None:
             unu = self.use_native_unicode
         if not unu:
@@ -863,7 +844,7 @@ class SQLAlchemy(object):
         This is suitable for use of sessionmaker(binds=db.get_binds(app)).
         """
         app = self.get_app(app)
-        binds = [None] + list(app.config.get('SQLALCHEMY_BINDS') or ())
+        binds = [None] + list(getattr(app.config, 'SQLALCHEMY_BINDS', ()))
         retval = {}
         for bind in binds:
             engine = self.get_engine(app, bind)
@@ -875,7 +856,7 @@ class SQLAlchemy(object):
         app = self.get_app(app)
 
         if bind == '__all__':
-            binds = [None] + list(app.config.get('SQLALCHEMY_BINDS') or ())
+            binds = [None] + list(getattr(app.config, 'SQLALCHEMY_BINDS', ()))
         elif isinstance(bind, string_types) or bind is None:
             binds = [bind]
         else:
@@ -918,19 +899,3 @@ class SQLAlchemy(object):
             self.__class__.__name__,
             self.engine.url if self.app or app else None
         )
-
-
-class _BoundDeclarativeMeta(DefaultMeta):
-    def __init__(cls, name, bases, d):
-        warnings.warn(FSADeprecationWarning(
-            '"_BoundDeclarativeMeta" has been renamed to "DefaultMeta". The'
-            ' old name will be removed in 3.0.'
-        ), stacklevel=3)
-        super(_BoundDeclarativeMeta, cls).__init__(name, bases, d)
-
-
-class FSADeprecationWarning(DeprecationWarning):
-    pass
-
-
-warnings.simplefilter('always', FSADeprecationWarning)

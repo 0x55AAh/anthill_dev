@@ -33,12 +33,7 @@ REGISTERED_SERVICES = {
 
 REGISTERED_SERVICES_EXTERNAL = os.path.join(BASE_DIR, 'registry.json')
 
-DATABASES = {
-    'default': {
-        'url': 'postgres://user:pass@localhost/ah_discovery',
-        'encoding': 'utf-8'
-    }
-}
+SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_discovery'
 
 LOCATION = 'http://localhost:9502'
 BROKER = 'amqp://guest:guest@localhost:5672'
