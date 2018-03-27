@@ -23,3 +23,10 @@ APPLICATION_DESCRIPTION = None
 APPLICATION_ICON_CLASS = None
 
 SERVICE_CLASS = 'admin.services.Service'
+
+STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
+STATIC_URL = '/static/'
+
+UI_MODULE = 'admin.ui'

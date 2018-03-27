@@ -133,7 +133,7 @@ class BindMetaMixin(object):
 
 
 class DefaultMeta(NameMetaMixin, BindMetaMixin, DeclarativeMeta):
-    pass
+    ...
 
 
 class Model(object):

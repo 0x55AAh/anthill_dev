@@ -1,10 +1,10 @@
-import ujson
+from microservices_framework.utils.json import json
 from .base import BaseSerializer
 
 
 class JSONSerializer(BaseSerializer):
     def dumps(self, value):
-        return ujson.dumps(value).encode()
+        return json.dumps(value).encode()
 
     def loads(self, value):
-        return ujson.loads(value.decode())
+        return json.loads(value.decode())

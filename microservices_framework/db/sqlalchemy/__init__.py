@@ -496,7 +496,7 @@ class _EngineConnector(object):
                 options['echo'] = echo
             self._engine = rv = sqlalchemy.create_engine(info, **options)
             if _record_queries(self._app):
-                pass
+                ...
             self._connected_for = (uri, echo)
             return rv
 

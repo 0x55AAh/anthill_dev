@@ -8,11 +8,11 @@ from microservices_framework.utils.module_loading import import_string
 
 
 class InvalidCacheBackendError(ImproperlyConfigured):
-    pass
+    ...
 
 
 class CacheKeyWarning(RuntimeWarning):
-    pass
+    ...
 
 
 # Stub class to ensure not passing in a `timeout` argument results in
@@ -274,4 +274,4 @@ class BaseCache:
 
     def close(self, **kwargs):
         """Close the cache connection"""
-        pass
+        ...

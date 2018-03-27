@@ -1,24 +1,27 @@
 import logging
 from tornado.gen import coroutine
+
+from microservices_framework.core.celery.worker import start_worker
 from microservices_framework.core.servers import BaseService as _BaseService
 from microservices_framework.apps.builder import app
+from .utils.celery import celery
 
 logger = logging.getLogger('app.server')
 
 
 class BaseService(_BaseService):
     def get_server_kwargs(self):
-        return {
-            'xheaders': True
-        }
+        return dict(xheaders=True)
 
     @coroutine
     def __on_internal_receive__(self, context, method, *args, **kwargs):
-        pass
+        ...
 
     @coroutine
     def on_start(self):
         logger.info('Service \'%s\' started.' % self.name)
+        with start_worker(app=celery):
+            ...
 
     @coroutine
     def on_stop(self):
@@ -34,7 +37,7 @@ class PlainService(BaseService):
 
     @coroutine
     def discover(self, names=None, network=None):
-        pass
+        ...
 
     @coroutine
     def on_start(self):
@@ -43,11 +46,11 @@ class PlainService(BaseService):
 
 
 class AdminService(PlainService):
-    pass
+    ...
 
 
 class RegisterNotAllowed(Exception):
-    pass
+    ...
 
 
 class DiscoveryService(BaseService):

@@ -3,9 +3,9 @@ Default service settings. Override these with settings in the module pointed to
 by the SERVICE_SETTINGS_MODULE environment variable.
 """
 
-####################
-# CORE             #
-####################
+########
+# CORE #
+########
 
 SECRET_KEY = None
 
@@ -16,8 +16,9 @@ DATABASES = None
 RESOLVERS = None
 
 TIME_ZONE = 'UTC'
+USE_TZ = False
 
-LOCATION = 'http://127.0.0.1:9500'
+LOCATION = 'http://localhost:9500'
 
 ROUTES_CONF = None
 MODELS_CONF = None
@@ -132,9 +133,12 @@ ADMINS = []
 # notifications and other various emails.
 MANAGERS = ADMINS
 
+##############
+# SQLALCHEMY #
+##############
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-SQLALCHEMY_BINDS = None
+SQLALCHEMY_BINDS = []
 SQLALCHEMY_NATIVE_UNICODE = None
 SQLALCHEMY_ECHO = False
 SQLALCHEMY_RECORD_QUERIES = False
@@ -146,3 +150,62 @@ SQLALCHEMY_MAX_OVERFLOW = None
 
 SQLALCHEMY_COMMIT_ON_TEARDOWN = False
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+###########
+# SIGNING #
+###########
+
+SIGNING_BACKEND = 'microservices_framework.core.signing.TimestampSigner'
+
+
+##################
+# AUTHENTICATION #
+##################
+
+AUTH_USER_MODEL = 'User'
+
+# The first hasher in this list is the preferred algorithm.
+# Any password using different algorithms will be converted automatically
+# upon login
+PASSWORD_HASHERS = [
+    'microservices_framework.auth.hashers.PBKDF2PasswordHasher',
+    'microservices_framework.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'microservices_framework.auth.hashers.Argon2PasswordHasher',
+    'microservices_framework.auth.hashers.BCryptSHA256PasswordHasher',
+    'microservices_framework.auth.hashers.BCryptPasswordHasher',
+]
+
+AUTH_PASSWORD_VALIDATORS = []
+
+
+##########
+# CELERY #
+##########
+
+CELERY_LOG_LEVEL = 'error'
+
+# All celery configuration options:
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
+CELERY_SETTINGS = {
+    'broker_url': 'amqp://guest:guest@localhost:5672',
+    'result_backend': 'redis://'
+}
+
+CELERY_APP_NAME = 'tasks'
+
+
+##########
+# SERVER #
+##########
+
+STATIC_PATH = None
+STATIC_URL = '/static/'
+
+TEMPLATE_PATH = None
+
+COMPRESS_RESPONSE = False
+
+LOGIN_URL = None
+
+UI_MODULE = None

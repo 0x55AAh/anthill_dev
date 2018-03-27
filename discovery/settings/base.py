@@ -48,3 +48,10 @@ APPLICATION_DESCRIPTION = 'Map each service location dynamically'
 APPLICATION_ICON_CLASS = None
 
 SERVICE_CLASS = 'discovery.services.Service'
+
+STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
+STATIC_URL = '/static/'
+
+UI_MODULE = 'discovery.ui'

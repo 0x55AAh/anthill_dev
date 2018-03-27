@@ -23,3 +23,10 @@ APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
 APPLICATION_ICON_CLASS = None
 
 SERVICE_CLASS = 'dlc.services.Service'
+
+STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
+STATIC_URL = '/static/'
+
+UI_MODULE = 'dlc.ui'

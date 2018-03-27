@@ -2,11 +2,11 @@ import random
 import re
 import socket
 from collections import OrderedDict
+import six
 
 from microservices_framework.conf import settings
 from microservices_framework.core.cache.backends.base import DEFAULT_TIMEOUT, get_key_func
 from microservices_framework.core.exceptions import ImproperlyConfigured
-from microservices_framework.utils import six
 from microservices_framework.utils.encoding import smart_text
 from redis.exceptions import ConnectionError, ResponseError, TimeoutError
 
@@ -311,7 +311,7 @@ class DefaultClient:
                 value = self._compressor.decompress(value)
             except CompressorError:
                 # Handle little values, chosen to be not compressed
-                pass
+                ...
             value = self._serializer.loads(value)
         return value
 

@@ -23,3 +23,10 @@ APPLICATION_DESCRIPTION = 'Compete players with time-limited events'
 APPLICATION_ICON_CLASS = None
 
 SERVICE_CLASS = 'event.services.Service'
+
+STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
+STATIC_URL = '/static/'
+
+UI_MODULE = 'event.ui'

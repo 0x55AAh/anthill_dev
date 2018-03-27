@@ -12,7 +12,7 @@ class BaseEmailBackend:
 
        with backend as connection:
            # do something with connection
-           pass
+           ...
     """
     def __init__(self, fail_silently=False, **kwargs):
         self.fail_silently = fail_silently
@@ -34,11 +34,11 @@ class BaseEmailBackend:
 
         The default implementation does nothing.
         """
-        pass
+        ...
 
     def close(self):
         """Close a network connection."""
-        pass
+        ...
 
     def __enter__(self):
         try:

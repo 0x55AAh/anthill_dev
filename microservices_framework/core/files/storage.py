@@ -1,9 +1,7 @@
 import os
 from datetime import datetime
 from urllib.parse import urljoin
-
-import pytz
-
+from microservices_framework.utils import timezone
 from microservices_framework.conf import settings
 from microservices_framework.core.exceptions import SuspiciousFileOperation
 from microservices_framework.core.files import File, locks
@@ -235,7 +233,7 @@ class FileSystemStorage(Storage):
                 # There's a race between os.path.exists() and os.makedirs().
                 # If os.makedirs() fails with FileNotFoundError, the directory
                 # was created concurrently.
-                pass
+                ...
         if not os.path.isdir(directory):
             raise IOError("%s exists and is not a directory." % directory)
 
@@ -299,7 +297,7 @@ class FileSystemStorage(Storage):
         except FileNotFoundError:
             # FileNotFoundError is raised if the file or directory was removed
             # concurrently.
-            pass
+            ...
 
     def exists(self, name):
         return os.path.exists(self.path(name))
@@ -335,7 +333,7 @@ class FileSystemStorage(Storage):
         """
         if settings.USE_TZ:
             # Safe to use .replace() because UTC doesn't have DST
-            return datetime.utcfromtimestamp(ts).replace(tzinfo=pytz.utc)
+            return datetime.utcfromtimestamp(ts).replace(tzinfo=timezone.utc)
         else:
             return datetime.fromtimestamp(ts)
 

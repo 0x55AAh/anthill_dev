@@ -17,7 +17,7 @@ class InvalidCommand(Exception):
         This way, we maintain interoperability if some other plug-in code
         supplies Flask-Script hooks.
         """
-    pass
+    ...
 
 
 class Group:
@@ -292,7 +292,7 @@ class Shell(Command):
                 embed(banner1=self.banner, user_ns=context, history_filename=history_filename)
                 return
             except ImportError:
-                pass
+                ...
 
         if not no_ptpython:
             # Try PtPython
@@ -302,7 +302,7 @@ class Shell(Command):
                 embed(globals=context, history_filename=history_filename)
                 return
             except ImportError:
-                pass
+                ...
 
         if not no_bpython:
             # Try BPython
@@ -311,7 +311,7 @@ class Shell(Command):
                 embed(banner=self.banner, locals_=context)
                 return
             except ImportError:
-                pass
+                ...
 
         if not no_ipython:
             # Try IPython
@@ -320,7 +320,7 @@ class Shell(Command):
                 embed(banner1=self.banner, user_ns=context)
                 return
             except ImportError:
-                pass
+                ...
 
         # Use basic python shell
         code.interact(self.banner, local=context)

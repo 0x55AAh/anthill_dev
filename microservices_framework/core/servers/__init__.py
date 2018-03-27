@@ -1,8 +1,8 @@
 from tornado.gen import coroutine
-from tornado.web import Application
+from tornado.web import Application as TornadoWebApplication
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
-from microservices_framework.apps.builder import app
+from microservices_framework.apps import app
 import signal
 import logging
 
@@ -10,60 +10,79 @@ import logging
 logger = logging.getLogger('app.server')
 
 
-class BaseService(Application):
-    name = None
-    config = None
+class BaseService(TornadoWebApplication):
     server_class = HTTPServer
 
-    def __init__(self, default_host=None, transforms=None, **kwargs):
-        self.__class__.config = app.settings
-        super(BaseService, self).__init__(self.get_handlers(), default_host, transforms, **kwargs)
-        self._server = None
-        self._socket = None
+    def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
+        kwargs.update(debug=app.debug)
+        kwargs.update(compress_response=app.settings.COMPRESS_RESPONSE)
+        kwargs.update(static_path=app.settings.STATIC_PATH)
+        kwargs.update(static_url_prefix=app.settings.STATIC_URL)
+
+        super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
+
+        self.config = app.settings
+        self.name = app.name
         self.setup()
+
+    def setup(self):
+        """Setup server variables"""
+        self.add_handlers(r'^(.*)$', app.routes)
+
+        self.settings.update(template_path=app.settings.TEMPLATE_PATH)
+        self.settings.update(login_url=app.settings.LOGIN_URL)
+
+        self._load_ui_modules(app.ui_modules)
+        self._load_ui_methods(app.ui_modules)
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.name)
-
-    def setup(self):
-        self.__class__.name = app.name
-        self._server = self.get_server()
 
     def __sig_handler__(self, sig, frame):
         IOLoop.instance().add_callback(self.on_stop)
 
     def __sigpipe_handler__(self, sig, frame):
-        pass
+        ...
 
-    def get_server(self):
-        kwargs = self.get_server_kwargs() or {}
-        return self.server_class(self, **kwargs)
+    @property
+    def server(self):
+        """Returns an instance of server class ``self.server_class``"""
+        return self.server_class(self, **self.server_kwargs)
 
-    def get_server_kwargs(self):
-        pass
-
-    def get_handlers(self):
-        return getattr(app.routes(), 'route_patterns', [])
+    @property
+    def server_kwargs(self):
+        """
+        HTTPS supporting:
+        ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_ctx.load_cert_chain(os.path.join(data_dir, "mydomain.crt"),
+                           os.path.join(data_dir, "mydomain.key"))
+        if app.protocol == 'https':
+            kwargs.update(ssl_options=ssl_ctx)
+        """
+        kwargs = {}
+        return kwargs
 
     def setup_server(self, **kwargs):
         host = kwargs.pop('host')
         port = kwargs.pop('port')
 
-        self._server.listen(port, host)
+        self.server.listen(port, host)
 
         signal.signal(signal.SIGPIPE, self.__sigpipe_handler__)
         signal.signal(signal.SIGTERM, self.__sig_handler__)
         signal.signal(signal.SIGINT, self.__sig_handler__)
 
     def start(self, **kwargs):
+        """Start server"""
         self.setup_server(**kwargs)
         IOLoop.instance().add_callback(self.on_start)
         IOLoop.instance().start()
 
     def stop(self):
-        if self._server:
+        """Stop server"""
+        if self.server:
             IOLoop.instance().add_callback(self.on_stop)
-            self._server.stop()
+            self.server.stop()
 
     @coroutine
     def on_start(self):

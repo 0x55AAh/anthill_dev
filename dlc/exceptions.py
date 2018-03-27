@@ -1,2 +1,2 @@
 class DLCError(Exception):
-    pass
+    ...

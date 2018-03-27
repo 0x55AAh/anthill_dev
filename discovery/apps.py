@@ -1,7 +1,7 @@
 import logging
 from anthill_platform.apps import BaseAnthillApplication
 from microservices_framework.conf import settings
-import ujson
+from microservices_framework.utils.json import json
 
 from microservices_framework.utils.encoding import force_text
 
@@ -15,6 +15,6 @@ class AnthillApplication(BaseAnthillApplication):
         try:
             if getattr(settings, 'REGISTERED_SERVICES_EXTERNAL', None):
                 with open(settings.REGISTERED_SERVICES_EXTERNAL) as f:
-                    self.registered_services = ujson.load(f)
+                    self.registered_services = json.load(f)
         except Exception as e:
             logging.warning(force_text(e))

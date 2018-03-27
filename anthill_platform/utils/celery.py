@@ -1,7 +1,8 @@
 from celery import Celery
 from microservices_framework.conf import settings
 
-CELERY_SETTINGS = getattr(settings, 'CELERY', {})
+SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
+APP_NAME = getattr(settings, 'CELERY_APP_NAME', 'tasks')
 
-celery = Celery('anthill')
-celery.conf.update(CELERY_SETTINGS)
+celery = Celery(APP_NAME)
+celery.conf.update(SETTINGS)

@@ -100,6 +100,9 @@ class Manager:
             self.add_command("runserver", Server())
         if "version" not in self._commands:
             self.add_command("version", Version())
+        if "db" not in self._commands:
+            from microservices_framework.db.management import MigrateCommand
+            self.add_command("db", MigrateCommand)
         if self.app and self.app.commands is not None:
             self._commands.update(self.app.commands)
 
@@ -418,12 +421,3 @@ class Manager:
             result = e.code
 
         sys.exit(result or 0)
-
-
-def build_manager(app):
-    from microservices_framework.db.management import MigrateCommand
-
-    manager = Manager(app)
-    manager.add_command('db', MigrateCommand)
-
-    return manager

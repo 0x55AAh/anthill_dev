@@ -55,7 +55,7 @@ class LocMemCache(BaseCache):
                 del self._cache[key]
                 del self._expire_info[key]
             except KeyError:
-                pass
+                ...
             return default
 
     def _set(self, key, value, timeout=DEFAULT_TIMEOUT):
@@ -94,7 +94,7 @@ class LocMemCache(BaseCache):
                 del self._cache[key]
                 del self._expire_info[key]
             except KeyError:
-                pass
+                ...
             return False
 
     def _has_expired(self, key):
@@ -113,11 +113,11 @@ class LocMemCache(BaseCache):
         try:
             del self._cache[key]
         except KeyError:
-            pass
+            ...
         try:
             del self._expire_info[key]
         except KeyError:
-            pass
+            ...
 
     def delete(self, key, version=None):
         key = self.make_key(key, version=version)

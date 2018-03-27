@@ -35,7 +35,7 @@ class FileBasedCache(BaseCache):
                 if not self._is_expired(f):
                     return pickle.loads(zlib.decompress(f.read()))
         except FileNotFoundError:
-            pass
+            ...
         return default
 
     def set(self, key, value, timeout=DEFAULT_TIMEOUT, version=None):
@@ -65,7 +65,7 @@ class FileBasedCache(BaseCache):
             os.remove(fname)
         except FileNotFoundError:
             # The file may have been removed by another process.
-            pass
+            ...
 
     def has_key(self, key, version=None):
         fname = self._key_to_file(key, version)
@@ -97,7 +97,7 @@ class FileBasedCache(BaseCache):
             try:
                 os.makedirs(self._dir, 0o700)
             except FileExistsError:
-                pass
+                ...
 
     def _key_to_file(self, key, version=None):
         """

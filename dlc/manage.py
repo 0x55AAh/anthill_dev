@@ -15,6 +15,7 @@ if __name__ == "__main__":
             "forget to activate a virtual environment?"
         )
     from microservices_framework.apps.builder import app
-    from microservices_framework.core.management import build_manager
+    from microservices_framework.core.management import Manager
 
-    build_manager(app).run()
+    manager = Manager(app)
+    manager.run()

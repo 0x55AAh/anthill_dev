@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from microservices_framework.conf import settings
 from microservices_framework.utils.encoding import smart_text
-from microservices_framework.utils.six import text_type
+from six import text_type
 from redis.exceptions import ConnectionError
 
 from ..exceptions import ConnectionInterrupted

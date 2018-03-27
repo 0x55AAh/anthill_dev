@@ -1,6 +1,6 @@
 class BaseSerializer(object):
     def __init__(self, options):
-        pass
+        ...
 
     def dumps(self, value):
         raise NotImplementedError

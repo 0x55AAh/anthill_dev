@@ -61,14 +61,14 @@ def get_image_dimensions(file_or_path, close=False):
                 # ignore zlib complaining on truncated stream, just feed more
                 # data to parser (ticket #19457).
                 if e.args[0].startswith("Error -5"):
-                    pass
+                    ...
                 else:
                     raise
             except struct.error:
                 # Ignore PIL failing on a too short buffer when reads return
                 # less bytes than expected. Skip and feed more data to the
                 # parser (ticket #24544).
-                pass
+                ...
             if p.image:
                 return p.image.size
             chunk_size *= 2

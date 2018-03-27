@@ -19,7 +19,7 @@ class UploadFileException(Exception):
     """
     Any error having to do with uploading files.
     """
-    pass
+    ...
 
 
 class StopUpload(UploadFileException):
@@ -45,7 +45,7 @@ class SkipFile(UploadFileException):
     """
     This exception is raised by an upload handler that wants to skip a given file.
     """
-    pass
+    ...
 
 
 class StopFutureHandlers(UploadFileException):
@@ -53,7 +53,7 @@ class StopFutureHandlers(UploadFileException):
     Upload handers that have handled a file and do not want future handlers to
     run should raise this exception instead of returning None.
     """
-    pass
+    ...
 
 
 class FileUploadHandler:
@@ -86,7 +86,7 @@ class FileUploadHandler:
             :boundary: The boundary from the Content-Type header. Be sure to
                 prepend two '--'.
         """
-        pass
+        ...
 
     def new_file(self, field_name, file_name, content_type, content_length, charset=None, content_type_extra=None):
         """
@@ -123,7 +123,7 @@ class FileUploadHandler:
         Signal that the upload is complete. Subclasses should perform cleanup
         that is necessary for this handler.
         """
-        pass
+        ...
 
 
 class TemporaryFileUploadHandler(FileUploadHandler):

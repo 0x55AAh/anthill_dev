@@ -31,7 +31,7 @@ RFC5322_EMAIL_LINE_LENGTH_LIMIT = 998
 
 
 class BadHeaderError(ValueError):
-    pass
+    ...
 
 
 # Header names that contain structured address data (RFC #5322)

@@ -6,19 +6,19 @@ from microservices_framework.utils.functional import cached_property
 
 
 class UnorderedObjectListWarning(RuntimeWarning):
-    pass
+    ...
 
 
 class InvalidPage(Exception):
-    pass
+    ...
 
 
 class PageNotAnInteger(InvalidPage):
-    pass
+    ...
 
 
 class EmptyPage(InvalidPage):
-    pass
+    ...
 
 
 class Paginator:
@@ -40,7 +40,7 @@ class Paginator:
             raise EmptyPage('That page number is less than 1')
         if number > self.num_pages:
             if number == 1 and self.allow_empty_first_page:
-                pass
+                ...
             else:
                 raise EmptyPage('That page contains no results')
         return number

@@ -31,4 +31,4 @@ class DummyCache(BaseCache):
         return False
 
     def clear(self):
-        pass
+        ...

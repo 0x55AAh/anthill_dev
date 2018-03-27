@@ -51,11 +51,11 @@ if os.name == 'nt':
                 try:
                     self.file.close()
                 except (OSError, IOError):
-                    pass
+                    ...
                 try:
                     self.unlink(self.name)
                 except OSError:
-                    pass
+                    ...
 
         def __del__(self):
             self.close()

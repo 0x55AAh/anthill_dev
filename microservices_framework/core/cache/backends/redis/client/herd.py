@@ -13,11 +13,8 @@ _main_exceptions = (ConnectionError, ResponseError, TimeoutError, socket.timeout
 
 
 class Marker:
-    """
-    Dummy class for use as
-    marker for herded keys.
-    """
-    pass
+    """Dummy class for use as marker for herded keys."""
+    ...
 
 
 CACHE_HERD_TIMEOUT = getattr(settings, 'CACHE_HERD_TIMEOUT', 60)

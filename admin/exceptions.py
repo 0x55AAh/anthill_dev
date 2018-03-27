@@ -1,2 +1,2 @@
 class AdminError(Exception):
-    pass
+    ...
