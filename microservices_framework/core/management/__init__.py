@@ -10,8 +10,7 @@ import argparse
 from .commands import Group, Option, Command, Server, Shell, Version
 
 __all__ = [
-    "Command", "Shell", "Server", "Manager", "Group", "Option", "Version",
-    "build_manager", "add_help"
+    "Command", "Shell", "Server", "Manager", "Group", "Option", "Version", "add_help"
 ]
 
 safe_actions = (
