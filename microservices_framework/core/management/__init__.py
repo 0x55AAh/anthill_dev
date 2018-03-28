@@ -7,10 +7,13 @@ from collections import OrderedDict
 
 import argparse
 
-from .commands import Group, Option, Command, Server, Shell, Version
+from .commands import (
+    Group, Option, Command, Server, Shell, Version, StartApplication
+)
 
 __all__ = [
-    "Command", "Shell", "Server", "Manager", "Group", "Option", "Version", "add_help"
+    "Command", "Shell", "Server", "Group", "Option", "Version", "add_help",
+    "Manager", "EmptyManager"
 ]
 
 safe_actions = (
@@ -40,7 +43,7 @@ def add_help(parser, help_args):
                         help='show this help message and exit')
 
 
-class Manager:
+class BaseManager:
     """
     Controller class for handling a set of commands.
 
@@ -87,24 +90,6 @@ class Manager:
 
         self.parent = None
 
-    def add_default_commands(self):
-        """
-        Adds the shell and runserver default commands. To override these,
-        simply add your own equivalents using add_command or decorators.
-        """
-
-        if "shell" not in self._commands:
-            self.add_command("shell", Shell())
-        if "runserver" not in self._commands:
-            self.add_command("runserver", Server())
-        if "version" not in self._commands:
-            self.add_command("version", Version())
-        if "db" not in self._commands:
-            from microservices_framework.db.management import MigrateCommand
-            self.add_command("db", MigrateCommand)
-        if self.app and self.app.commands is not None:
-            self._commands.update(self.app.commands)
-
     def add_option(self, *args, **kwargs):
         """
         Adds a global option. This is useful if you want to set variables
@@ -141,26 +126,20 @@ class Manager:
 
         self._options.append(Option(*args, **kwargs))
 
+    def add_default_commands(self):
+        """
+        To add your own commands use add_command or decorators.
+        """
+        raise NotImplemented
+
     def __call__(self, app=None, **kwargs):
         """
-        This procedure is called with the Application instance (if this is a sub-Manager) and any options.
-        If your sub-Manager does not override this, any values for options will get lost.
+        This procedure is called with the Application instance
+        (if this is a sub-Manager) and any options.
+        If your sub-Manager does not override this, any values
+        for options will get lost.
         """
-        if app is None:
-            app = self.app
-            if app is None:
-                raise Exception("There is no app here. This is unlikely to work.")
-
-        from microservices_framework.apps.cls import Application
-
-        if isinstance(app, Application):
-            if kwargs:
-                warnings.warn("Options will be ignored.")
-            return app
-
-        app = app(**kwargs)
-        self.app = app
-        return app
+        raise NotImplemented
 
     def create_parser(self, prog, func_stack=(), parent=None):
         """
@@ -420,3 +399,52 @@ class Manager:
             result = e.code
 
         sys.exit(result or 0)
+
+
+class Manager(BaseManager):
+    """Application context manager"""
+
+    def add_default_commands(self):
+        if "shell" not in self._commands:
+            self.add_command("shell", Shell())
+        if "runserver" not in self._commands:
+            self.add_command("runserver", Server())
+        if "version" not in self._commands:
+            self.add_command("version", Version())
+        if "db" not in self._commands:
+            from microservices_framework.db.management import MigrateCommand
+            self.add_command("db", MigrateCommand)
+        if self.app.commands is not None:
+            self._commands.update(self.app.commands)
+
+    def __call__(self, app=None, **kwargs):
+        if app is None:
+            app = self.app
+            if app is None:
+                raise Exception("There is no app here. This is unlikely to work.")
+
+        from microservices_framework.apps.cls import Application
+
+        if isinstance(app, Application):
+            if kwargs:
+                warnings.warn("Options will be ignored.")
+            return app
+
+        app = app(**kwargs)
+        self.app = app
+        return app
+
+
+class EmptyManager(BaseManager):
+    """Manager with no application context"""
+
+    def __init__(self, base_dir, **kwargs):
+        self.base_dir = base_dir
+        super(EmptyManager, self).__init__(**kwargs)
+
+    def add_default_commands(self):
+        if "startapp" not in self._commands:
+            self.add_command("startapp", StartApplication(base_dir=self.base_dir))
+
+    def __call__(self, app=None, **kwargs):
+        ...

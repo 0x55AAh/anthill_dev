@@ -7,17 +7,16 @@ import argparse
 
 
 class InvalidCommand(Exception):
-    """\
-        This is a generic error for "bad" commands.
-        It is not used in Flask-Script itself, but you should throw
-        this error (or one derived from it) in your command handlers,
-        and your main code should display this error's message without
-        a stack trace.
+    """
+    This is a generic error for "bad" commands.
+    It is not used in Flask-Script itself, but you should throw
+    this error (or one derived from it) in your command handlers,
+    and your main code should display this error's message without
+    a stack trace.
 
-        This way, we maintain interoperability if some other plug-in code
-        supplies Flask-Script hooks.
-        """
-    ...
+    This way, we maintain interoperability if some other plug-in code
+    supplies Flask-Script hooks.
+    """
 
 
 class Group:
@@ -342,16 +341,14 @@ class Server(Command):
 
     def get_options(self):
         options = (
-            Option('-h', '--host',
-                   dest='host',
-                   default=self.host),
-            Option('-p', '--port',
-                   dest='port',
-                   type=int,
-                   default=self.port)
+            Option('-h', '--host', dest='host', default=self.host),
+            Option('-p', '--port', dest='port', type=int, default=self.port)
         )
 
         return options
+
+    def run(self, *args, **kwargs):
+        ...
 
     def __call__(self, app, host, port):
         host = host or app.host
@@ -375,10 +372,110 @@ class Clean(Command):
 
 
 class Version(Command):
-    """
-    Show app version and exit.
-    """
+    """Show app version and exit"""
+
     help = description = 'Show app version and exit.'
 
     def __call__(self, app):
         print('Application %s v%s' % (app.label, app.version))
+
+    def run(self, *args, **kwargs):
+        ...
+
+
+class StartApplication(Command):
+    """Start new application"""
+
+    help = description = 'Start new application.'
+
+    # Rewrite the following suffixes when determining the target filename.
+    rewrite_template_suffixes = (
+        # Allow shipping invalid .py files without byte-compilation.
+        ('.py-tpl', '.py'),
+    )
+
+    def __init__(self, base_dir):
+        self.base_dir = base_dir
+
+    def get_options(self):
+        options = (
+            Option('-n', '--name', dest='name', help='Name of the application.'),
+            Option('-e', '--extension', dest='extensions', default=['py'], action='append',
+                   help='The file extension(s) to render (default: "py"). '
+                        'Separate multiple extensions with commas, or use '
+                        '-e multiple times.'),
+        )
+        return options
+
+    def run(self, name, extensions):
+        import shutil
+        from microservices_framework import conf
+        from tornado.template import Template
+
+        app_dir = os.path.join(self.base_dir, name)
+        template_dir = os.path.join(conf.__path__[0], 'app_template')
+
+        try:
+            os.mkdir(app_dir)
+        except FileExistsError:
+            raise InvalidCommand("'%s' already exists" % app_dir)
+        except OSError as e:
+            raise InvalidCommand(e)
+
+        base_name = 'app_name'
+        base_subdir = 'app_template'
+        base_directory = 'app_directory'
+        camel_case_name = 'camel_case_app_name'
+        camel_case_value = ''.join(x for x in name.title() if x != '_')
+
+        context = {
+            base_name: name,
+            base_directory: app_dir,
+            camel_case_name: camel_case_value,
+        }
+
+        prefix_length = len(template_dir) + 1
+
+        for root, dirs, files in os.walk(template_dir):
+            path_rest = root[prefix_length:]
+            relative_dir = path_rest.replace(base_name, name)
+
+            if relative_dir:
+                target_dir = os.path.join(app_dir, relative_dir)
+                if not os.path.exists(target_dir):
+                    os.mkdir(target_dir)
+
+            for dirname in dirs[:]:
+                if dirname.startswith('.') or dirname == '__pycache__':
+                    dirs.remove(dirname)
+
+            for filename in files:
+                if filename.endswith(('.pyo', '.pyc', '.py.class')):
+                    # Ignore some files as they cause various breakages.
+                    continue
+                old_path = os.path.join(root, filename)
+                new_path = os.path.join(app_dir, relative_dir,
+                                        filename.replace(base_name, name))
+                for old_suffix, new_suffix in self.rewrite_template_suffixes:
+                    if new_path.endswith(old_suffix):
+                        new_path = new_path[:-len(old_suffix)] + new_suffix
+                        break  # Only rewrite once
+
+                if os.path.exists(new_path):
+                    raise InvalidCommand("%s already exists, overlaying a "
+                                         "project or app into an existing "
+                                         "directory won't replace conflicting "
+                                         "files" % new_path)
+
+                # Only render the Python files, as we don't want to
+                # accidentally render templates files
+                if new_path.endswith(tuple(extensions)):
+                    with open(old_path, 'r', encoding='utf-8') as template_file:
+                        content = template_file.read()
+                    template = Template(content)
+                    content = template.generate(**context)
+                    content = content.decode(encoding='utf-8')
+                    with open(new_path, 'w', encoding='utf-8') as new_file:
+                        new_file.write(content)
+                else:
+                    shutil.copyfile(old_path, new_path)
