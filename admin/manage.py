@@ -14,7 +14,7 @@ if __name__ == "__main__":
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         )
-    from microservices_framework.apps.builder import app
+    from microservices_framework.apps import app
     from microservices_framework.core.management import Manager
 
     manager = Manager(app)

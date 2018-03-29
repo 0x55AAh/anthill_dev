@@ -479,3 +479,18 @@ class StartApplication(Command):
                         new_file.write(content)
                 else:
                     shutil.copyfile(old_path, new_path)
+
+
+class ApplicationChooser(Command):
+    """Application chooser"""
+
+    help = description = 'Choose application to admin.'
+
+    def get_options(self):
+        options = (
+            Option('-n', '--name', dest='name', required=True, help='Name of the application.'),
+        )
+        return options
+
+    def run(self, *args, **kwargs):
+        pass

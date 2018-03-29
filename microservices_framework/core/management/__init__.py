@@ -8,7 +8,7 @@ from collections import OrderedDict
 import argparse
 
 from .commands import (
-    Group, Option, Command, Server, Shell, Version, StartApplication
+    Group, Option, Command, Server, Shell, Version, StartApplication, ApplicationChooser
 )
 
 __all__ = [
@@ -445,6 +445,8 @@ class EmptyManager(BaseManager):
     def add_default_commands(self):
         if "startapp" not in self._commands:
             self.add_command("startapp", StartApplication(base_dir=self.base_dir))
+        if "app" not in self._commands:
+            self.add_command("app", ApplicationChooser())
 
     def __call__(self, app=None, **kwargs):
         ...
