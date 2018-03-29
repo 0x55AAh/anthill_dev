@@ -4,8 +4,8 @@ Tools for sending email.
 from microservices_framework.conf import settings
 # Imported for backwards compatibility and for the sake
 # of a cleaner namespace. These symbols used to be in
-# django/core/mail.py before the introduction of email
-# backends and the subsequent reorganization (See #10355)
+# microservices_framework/core/mail.py before the introduction of email
+# backends and the subsequent reorganization
 from microservices_framework.core.mail.message import (
     DEFAULT_ATTACHMENT_MIME_TYPE, BadHeaderError, EmailMessage,
     EmailMultiAlternatives, SafeMIMEMultipart, SafeMIMEText,

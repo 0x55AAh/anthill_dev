@@ -129,12 +129,9 @@ def identify_hasher(encoded):
     get_hasher() to return hasher. Raise ValueError if
     algorithm cannot be identified, or if hasher is not loaded.
     """
-    # Ancient versions of Django created plain MD5 passwords and accepted
-    # MD5 passwords with an empty salt.
     if ((len(encoded) == 32 and '$' not in encoded) or
             (len(encoded) == 37 and encoded.startswith('md5$$'))):
         algorithm = 'unsalted_md5'
-    # Ancient versions of Django accepted SHA1 passwords with an empty salt.
     elif len(encoded) == 46 and encoded.startswith('sha1$$'):
         algorithm = 'unsalted_sha1'
     else:
@@ -456,8 +453,6 @@ class BCryptPasswordHasher(BCryptSHA256PasswordHasher):
     This hasher does not first hash the password which means it is subject to
     the 72 character bcrypt password truncation, most use cases should prefer
     the BCryptSHA256PasswordHasher.
-
-    See: https://code.djangoproject.com/ticket/20138
     """
     algorithm = "bcrypt"
     digest = None
@@ -529,10 +524,6 @@ class UnsaltedSHA1PasswordHasher(BasePasswordHasher):
     """
     Very insecure algorithm that you should *never* use; store SHA1 hashes
     with an empty salt.
-
-    This class is implemented because Django used to accept such password
-    hashes. Some older Django installs still have these values lingering
-    around so we need to handle and upgrade them properly.
     """
     algorithm = "unsalted_sha1"
 
@@ -565,11 +556,6 @@ class UnsaltedMD5PasswordHasher(BasePasswordHasher):
     Incredibly insecure algorithm that you should *never* use; stores unsalted
     MD5 hashes without the algorithm prefix, also accepts MD5 hashes with an
     empty salt.
-
-    This class is implemented because Django used to store passwords this way
-    and to accept such password hashes. Some older Django installs still have
-    these values lingering around so we need to handle and upgrade them
-    properly.
     """
     algorithm = "unsalted_md5"
 
@@ -613,7 +599,7 @@ class CryptPasswordHasher(BasePasswordHasher):
         assert len(salt) == 2
         data = crypt.crypt(password, salt)
         assert data is not None  # A platform like OpenBSD with a dummy crypt module.
-        # we don't need to store the salt, but Django used to do this
+        # we don't need to store the salt, but framework used to do this
         return "%s$%s$%s" % (self.algorithm, '', data)
 
     def verify(self, password, encoded):

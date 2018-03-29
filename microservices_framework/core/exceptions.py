@@ -33,7 +33,7 @@ class PermissionDenied(Exception):
 
 
 class ImproperlyConfigured(Exception):
-    """Django is somehow improperly configured"""
+    """Framework is somehow improperly configured"""
 
 
 NON_FIELD_ERRORS = '__all__'

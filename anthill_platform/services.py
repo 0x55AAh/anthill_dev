@@ -3,7 +3,7 @@ from tornado.gen import coroutine
 
 from microservices_framework.core.celery.worker import start_worker
 from microservices_framework.core.servers import BaseService as _BaseService
-from microservices_framework.apps.builder import app
+from microservices_framework.apps import app
 from .utils.celery import celery
 
 logger = logging.getLogger('app.server')

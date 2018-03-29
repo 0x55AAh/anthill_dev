@@ -27,8 +27,8 @@ def downgrade(engine_name):
     globals()["downgrade_%s" % engine_name]()
 
 <%
-    from flask import current_app
-    db_names = [''] + list(current_app.config.get("SQLALCHEMY_BINDS").keys())
+    from microservices_framework.conf import settings
+    db_names = [''] + list(getattr(settings, "SQLALCHEMY_BINDS", {}).keys())
 %>
 
 ## generate an "upgrade_<xyz>() / downgrade_<xyz>()" function

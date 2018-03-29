@@ -32,7 +32,7 @@ def make_style(config_string=''):
     """
     Create a Style object from the given config_string.
 
-    If config_string is empty django.utils.termcolors.DEFAULT_PALETTE is used.
+    If config_string is empty microservices_framework.utils.termcolors.DEFAULT_PALETTE is used.
     """
 
     style = Style()
@@ -68,8 +68,8 @@ def no_style():
 
 def color_style():
     """
-    Return a Style object from the Django color scheme.
+    Return a Style object from the framework color scheme.
     """
     if not supports_color():
         return no_style()
-    return make_style(os.environ.get('DJANGO_COLORS', ''))
+    return make_style(os.environ.get('TORNADO_COLORS', ''))

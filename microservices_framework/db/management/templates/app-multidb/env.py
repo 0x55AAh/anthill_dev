@@ -2,7 +2,7 @@ from __future__ import with_statement
 from alembic import context
 from sqlalchemy import engine_from_config, pool, MetaData
 from logging.config import fileConfig
-from microservices_framework.apps.builder import app
+from microservices_framework.apps import app
 import logging
 
 USE_TWOPHASE = False

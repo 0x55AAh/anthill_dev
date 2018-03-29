@@ -79,7 +79,7 @@ class CommonPasswordValidator:
     Validate whether the password is a common password.
 
     The password is rejected if it occurs in a provided list, which may be gzipped.
-    The list Django ships with contains 1000 common passwords, created by Mark Burnett:
+    The list ships with contains 1000 common passwords, created by Mark Burnett:
     https://xato.net/passwords/more-top-worst-passwords/
     """
     DEFAULT_PASSWORD_LIST_PATH = os.path.join(

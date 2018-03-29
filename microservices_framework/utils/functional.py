@@ -332,16 +332,15 @@ class SimpleLazyObject(LazyObject):
     A lazy object initialized from any function.
 
     Designed for compound objects of unknown type. For builtins or objects of
-    known type, use django.utils.functional.lazy.
+    known type, use microservices_framework.utils.functional.lazy.
     """
     def __init__(self, func):
         """
         Pass in a callable that returns the object to be wrapped.
 
         If copies are made of the resulting SimpleLazyObject, which can happen
-        in various circumstances within Django, then you must ensure that the
-        callable can be safely run more than once and will return the same
-        value.
+        in various circumstances within framework, then you must ensure that the
+        callable can be safely run more than once and will return the same value.
         """
         self.__dict__['_setupfunc'] = func
         super().__init__()

@@ -11,8 +11,8 @@ from microservices_framework.core.files import File
 
 class ImageFile(File):
     """
-    A mixin for use alongside django.core.files.base.File, which provides
-    additional features for dealing with images.
+    A mixin for use alongside microservices_framework.core.files.base.File,
+    which provides additional features for dealing with images.
     """
     @property
     def width(self):
@@ -32,7 +32,7 @@ class ImageFile(File):
 
 def get_image_dimensions(file_or_path, close=False):
     """
-    Return the (width, height) of an image, given an open file or a path.  Set
+    Return the (width, height) of an image, given an open file or a path. Set
     'close' to True to close the file at the end if it is initially in an open
     state.
     """

@@ -66,8 +66,9 @@ EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
 EMAIL_TIMEOUT = None
 
-# Subject-line prefix for email messages send with django.core.mail.mail_admins
-# or ...mail_managers.  Make sure to include the trailing space.
+# Subject-line prefix for email messages send with
+# microservices_framework.core.mail.mail_admins or ...mail_managers.
+# Make sure to include the trailing space.
 EMAIL_SUBJECT_PREFIX = ''
 
 # Default email address to use for various automated correspondence from
@@ -99,7 +100,7 @@ FILE_UPLOAD_HANDLERS = [
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440  # i.e. 2.5 MB
 
 # Directory in which upload streamed files will be temporarily saved. A value of
-# `None` will make Django use the operating system's default temporary directory
+# `None` will make framework use the operating system's default temporary directory
 # (i.e. "/tmp" on *nix systems).
 FILE_UPLOAD_TEMP_DIR = None
 

@@ -3,22 +3,16 @@ import datetime
 import locale
 from decimal import Decimal
 from urllib.parse import quote
-
-import six
 from .functional import Promise
 
 
-class DjangoUnicodeDecodeError(UnicodeDecodeError):
+class TornadoUnicodeDecodeError(UnicodeDecodeError):
     def __init__(self, obj, *args):
         self.obj = obj
         super().__init__(*args)
 
     def __str__(self):
         return '%s. You passed in %r (%s)' % (super().__str__(), self.obj, type(self.obj))
-
-
-# For backwards compatibility. (originally in Django, then added to six 1.9)
-python_2_unicode_compatible = six.python_2_unicode_compatible
 
 
 def smart_text(s, encoding='utf-8', strings_only=False, errors='strict'):
@@ -66,7 +60,7 @@ def force_text(s, encoding='utf-8', strings_only=False, errors='strict'):
         else:
             s = str(s)
     except UnicodeDecodeError as e:
-        raise DjangoUnicodeDecodeError(s, *e.args)
+        raise TornadoUnicodeDecodeError(s, *e.args)
     return s
 
 
@@ -128,9 +122,9 @@ def iri_to_uri(iri):
     since the input is assumed to be a string rather than an arbitrary byte
     stream.
 
-    Take an IRI (string or UTF-8 bytes, e.g. '/I ♥ Django/' or
-    b'/I \xe2\x99\xa5 Django/') and return a string containing the encoded
-    result with ASCII chars only (e.g. '/I%20%E2%99%A5%20Django/').
+    Take an IRI (string or UTF-8 bytes, e.g. '/I ♥ Tornado/' or
+    b'/I \xe2\x99\xa5 Tornado/') and return a string containing the encoded
+    result with ASCII chars only (e.g. '/I%20%E2%99%A5%20Tornado/').
     """
     # The list of safe characters here is constructed from the "reserved" and
     # "unreserved" characters specified in sections 2.2 and 2.3 of RFC 3986:
@@ -176,8 +170,8 @@ def uri_to_iri(uri):
 
     This is the algorithm from section 3.2 of RFC 3987, excluding step 4.
 
-    Take an URI in ASCII bytes (e.g. '/I%20%E2%99%A5%20Django/') and return
-    a string containing the encoded result (e.g. '/I%20♥%20Django/').
+    Take an URI in ASCII bytes (e.g. '/I%20%E2%99%A5%20Tornado/') and return
+    a string containing the encoded result (e.g. '/I%20♥%20Tornado/').
     """
     if uri is None:
         return uri

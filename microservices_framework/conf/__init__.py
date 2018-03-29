@@ -1,9 +1,9 @@
 """
-Settings and configuration for Django.
+Settings and configuration.
 
 Read values from the module specified by the SERVICE_SETTINGS_MODULE environment
-variable, and then from django.conf.global_settings; see the global_settings.py
-for a list of all possible variables.
+variable, and then from microservices_framework.conf.global_settings;
+see the global_settings.py for a list of all possible variables.
 """
 
 import importlib
@@ -20,9 +20,9 @@ ENVIRONMENT_VARIABLE = "SERVICE_SETTINGS_MODULE"
 
 class LazySettings(LazyObject):
     """
-    A lazy proxy for either global Django settings or a custom settings object.
+    A lazy proxy for either global settings or a custom settings object.
     The user can manually configure settings prior to using them. Otherwise,
-    Django uses the settings module pointed to by SERVICE_SETTINGS_MODULE.
+    framework uses the settings module pointed to by SERVICE_SETTINGS_MODULE.
     """
     def _setup(self, name=None):
         """

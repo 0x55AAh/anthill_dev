@@ -244,7 +244,7 @@ class Shell(Command):
         self.use_ptipython = use_ptipython
         self.use_ptpython = use_ptpython
 
-        from microservices_framework.apps.builder import app
+        from microservices_framework.apps import app
 
         if make_context is None:
             make_context = lambda: dict(app=app)
@@ -409,6 +409,7 @@ class StartApplication(Command):
 
     def run(self, name, extensions):
         import shutil
+        from tornado.escape import to_unicode
         from microservices_framework import conf
         from tornado.template import Template
 
@@ -423,7 +424,6 @@ class StartApplication(Command):
             raise InvalidCommand(e)
 
         base_name = 'app_name'
-        base_subdir = 'app_template'
         base_directory = 'app_directory'
         camel_case_name = 'camel_case_app_name'
         camel_case_value = ''.join(x for x in name.title() if x != '_')
@@ -474,9 +474,8 @@ class StartApplication(Command):
                         content = template_file.read()
                     template = Template(content)
                     content = template.generate(**context)
-                    content = content.decode(encoding='utf-8')
                     with open(new_path, 'w', encoding='utf-8') as new_file:
-                        new_file.write(content)
+                        new_file.write(to_unicode(content))
                 else:
                     shutil.copyfile(old_path, new_path)
 

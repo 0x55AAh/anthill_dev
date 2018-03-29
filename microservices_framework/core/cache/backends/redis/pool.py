@@ -1,6 +1,5 @@
 from microservices_framework.conf import settings
 from redis.connection import DefaultParser
-
 from . import util
 
 
@@ -9,7 +8,7 @@ class ConnectionFactory(object):
     # Store connection pool by cache backend options.
     #
     # _pools is a process-global, as otherwise _pools is cleared every time
-    # ConnectionFactory is instiated, as Django creates new cache client
+    # ConnectionFactory is instiated, as framework creates new cache client
     # (DefaultClient) instance for every request.
 
     _pools = {}
