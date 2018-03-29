@@ -33,8 +33,8 @@ if __name__ == '__main__':
         del sys.argv[1:4]
 
     if app is None:
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        manager = management.EmptyManager(base_dir=BASE_DIR)
+        manager = management.EmptyManager(
+            base_dir=os.path.dirname(os.path.abspath(__file__)))
     else:
         manager = management.Manager(app=app)
 
