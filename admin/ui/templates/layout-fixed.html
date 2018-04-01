@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+
+	<!-- Global stylesheets -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	<link href="{{ static_url('css/icons/icomoon/styles.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ static_url('css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ static_url('css/core.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ static_url('css/components.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ static_url('css/colors.css') }}" rel="stylesheet" type="text/css">
+	<!-- /global stylesheets -->
+
+	<!-- Core JS files -->
+	<script type="text/javascript" src="{{ static_url('js/core/libraries/jquery.min.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
+	<!-- /core JS files -->
+
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="{{ static_url('js/plugins/ui/nicescroll.min.js') }}"></script>
+
+	<script type="text/javascript" src="{{ static_url('js/core/app.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/pages/layout_fixed_custom.js') }}"></script>
+	<!-- /theme JS files -->
+
+</head>
+
+<body class="navbar-top">
+
+<!-- Main navbar -->
+<div class="navbar navbar-default navbar-fixed-top header-highlight">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html"><img src="{{ static_url('images/logo_light.png') }}" alt=""></a>
+
+		<ul class="nav navbar-nav pull-right visible-xs-block">
+			<li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
+			<li><a class="sidebar-mobile-main-toggle"><i class="icon-paragraph-justify3"></i></a></li>
+		</ul>
+	</div>
+
+	<div class="navbar-collapse collapse" id="navbar-mobile">
+		<ul class="nav navbar-nav">
+			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+		</ul>
+
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#">Text link</a></li>
+
+			<li>
+				<a href="#">
+					<i class="icon-cog3"></i>
+					<span class="visible-xs-inline-block position-right">Icon link</span>
+				</a>
+			</li>
+
+			<li class="dropdown dropdown-user">
+				<a class="dropdown-toggle" data-toggle="dropdown">
+					<img src="{{ static_url('images/image.png') }}" alt="">
+					<span>Victoria</span>
+					<i class="caret"></i>
+				</a>
+
+				<ul class="dropdown-menu dropdown-menu-right">
+					<li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
+					<li><a href="#"><i class="icon-coins"></i> My balance</a></li>
+					<li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
+					<li class="divider"></li>
+					<li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+					<li><a href="#"><i class="icon-switch2"></i> Logout</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>
+<!-- /main navbar -->
+
+
+<!-- Page container -->
+<div class="page-container">
+
+	<!-- Page content -->
+	<div class="page-content">
+
+		<!-- Main sidebar -->
+		<div class="sidebar sidebar-main sidebar-fixed">
+			<div class="sidebar-content">
+
+				<!-- User menu -->
+				<div class="sidebar-user">
+					<div class="category-content">
+						<div class="media">
+							<a href="#" class="media-left"><img src="{{ static_url('images/image.png') }}" class="img-circle img-sm" alt=""></a>
+							<div class="media-body">
+								<span class="media-heading text-semibold">Victoria Baker</span>
+								<div class="text-size-mini text-muted">
+									<i class="icon-pin text-size-small"></i> &nbsp;Santa Ana, CA
+								</div>
+							</div>
+
+							<div class="media-right media-middle">
+								<ul class="icons-list">
+									<li>
+										<a href="#"><i class="icon-cog3"></i></a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /user menu -->
+
+
+				<!-- Main navigation -->
+				<div class="sidebar-category sidebar-category-visible">
+					<div class="category-content no-padding">
+						<ul class="navigation navigation-main navigation-accordion">
+
+							<!-- Main -->
+							<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
+							<li><a href="../index.html"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+							<li>
+								<a href="#"><i class="icon-stack"></i> <span>Starter kit</span></a>
+								<ul>
+									<li><a href="horizontal_nav.html">Horizontal navigation</a></li>
+									<li><a href="1_col.html">1 column</a></li>
+									<li><a href="2_col.html">2 columns</a></li>
+									<li>
+										<a href="#">3 columns</a>
+										<ul>
+											<li><a href="3_col_dual.html">Dual sidebars</a></li>
+											<li><a href="3_col_double.html">Double sidebars</a></li>
+										</ul>
+									</li>
+									<li><a href="4_col.html">4 columns</a></li>
+									<li>
+										<a href="#">Detached layout</a>
+										<ul>
+											<li><a href="detached_left.html">Left sidebar</a></li>
+											<li><a href="detached_right.html">Right sidebar</a></li>
+											<li><a href="detached_sticky.html">Sticky sidebar</a></li>
+										</ul>
+									</li>
+									<li><a href="layout_boxed.html">Boxed layout</a></li>
+									<li class="navigation-divider"></li>
+									<li><a href="layout_navbar_fixed_main.html">Fixed top navbar</a></li>
+									<li><a href="layout_navbar_fixed_secondary.html">Fixed secondary navbar</a></li>
+									<li><a href="layout_navbar_fixed_both.html">Both navbars fixed</a></li>
+									<li class="active"><a href="layout_fixed.html">Fixed layout</a></li>
+								</ul>
+							</li>
+							<li><a href="../changelog.html"><i class="icon-list-unordered"></i> <span>Changelog</span></a></li>
+							<!-- /main -->
+
+						</ul>
+					</div>
+				</div>
+				<!-- /main navigation -->
+
+			</div>
+		</div>
+		<!-- /main sidebar -->
+
+
+		<!-- Main content -->
+		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<div class="page-header">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Starters</span> - Fixed Layout</h4>
+					</div>
+				</div>
+
+				<!--{% module BreadCrumbs(breadcrumbs) %}-->
+			</div>
+			<!-- /page header -->
+
+
+			<!-- Content area -->
+			<div class="content">
+
+				<!-- Grid -->
+				<div class="row">
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-gear"></i></div>
+								<h5 class="text-semibold">Configuration</h5>
+								<p class="mb-15">Configure your application dynamically</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-hammer"></i></div>
+								<h5 class="text-semibold">Craft</h5>
+								<p class="mb-15">Craft</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-direction"></i></div>
+								<h5 class="text-semibold">Discovery</h5>
+								<p class="mb-15">Map each service location dynamically</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-cloud-download"></i></div>
+								<h5 class="text-semibold">DLC</h5>
+								<p class="mb-15">Deliver downloadable content to the user</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-cube"></i></div>
+								<h5 class="text-semibold">Environment</h5>
+								<p class="mb-15">Sandbox Test environment from Live</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-calendar"></i></div>
+								<h5 class="text-semibold">Events</h5>
+								<p class="mb-15">Compete the players with time-limited events</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-circle-code"></i></div>
+								<h5 class="text-semibold">Exec</h5>
+								<p class="mb-15">Execute custom javascript code server-side</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-steam"></i></div>
+								<h5 class="text-semibold">Game</h5>
+								<p class="mb-15">Manage game server instances</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-sort-numeric-asc"></i></div>
+								<h5 class="text-semibold">Leader board</h5>
+								<p class="mb-15">See and edit player ranking</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-key"></i></div>
+								<h5 class="text-semibold">Login</h5>
+								<p class="mb-15">Manage user accounts, credentials and access tokens</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-basket"></i></div>
+								<h5 class="text-semibold">Market</h5>
+								<p class="mb-15">Market</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-envelope"></i></div>
+								<h5 class="text-semibold">Messages</h5>
+								<p class="mb-15">Deliver messages from the user, to the user</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-user"></i></div>
+								<h5 class="text-semibold">Profiles</h5>
+								<p class="mb-15">Manage the profiles of the users</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-gift"></i></div>
+								<h5 class="text-semibold">Promo</h5>
+								<p class="mb-15">Reward users with promo-codes</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-flag3"></i></div>
+								<h5 class="text-semibold">Report</h5>
+								<p class="mb-15">User-submitted reports service</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-share3"></i></div>
+								<h5 class="text-semibold">Social</h5>
+								<p class="mb-15">Manage social networks, groups and friend connections</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3">
+						<div class="panel">
+							<div class="panel-body text-center">
+								<div class="icon-object border-success text-success"><i class="icon-cart"></i></div>
+								<h5 class="text-semibold">Store</h5>
+								<p class="mb-15">In-App Purchasing, with server validation</p>
+								<a href="#" class="btn bg-success-400">View</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /grid -->
+
+				<!-- Footer -->
+				<div class="footer text-muted">
+					{% set today_year = datetime.datetime.now().year %}
+					&copy; 2018{% if today_year > 2018 %}-{{ today_year }}{% end %}. <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+					<div class="footer-version">Version {{ app_version }}</div>
+				</div>
+				<!-- /footer -->
+
+			</div>
+			<!-- /content area -->
+
+		</div>
+		<!-- /main content -->
+
+	</div>
+	<!-- /page content -->
+
+</div>
+<!-- /page container -->
+
+</body>
+</html>

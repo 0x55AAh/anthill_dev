@@ -1,8 +1,9 @@
-from anthill_platform.handlers import BaseRequestHandler
-from microservices_framework.utils.urls import reverse, resolve
+from microservices_framework.handlers import TemplateHandler
 
 
-class TestHandler(BaseRequestHandler):
-    def get(self, *args, **kwargs):
-        resolve('/test/25')
-        return self.write(reverse('test', *args))
+class HomeHandler(TemplateHandler):
+    template_name = 'index.html'
+
+    def get_context_data(self):
+        context = super(HomeHandler, self).get_context_data()
+        return context

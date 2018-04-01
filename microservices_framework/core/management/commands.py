@@ -2,8 +2,10 @@ import os
 import sys
 import code
 import inspect
-
 import argparse
+import shutil
+from tornado.escape import to_unicode
+from tornado.template import Template
 
 
 class InvalidCommand(Exception):
@@ -408,13 +410,12 @@ class StartApplication(Command):
         return options
 
     def run(self, name, extensions):
-        import shutil
-        from tornado.escape import to_unicode
+        # Use conf.__path__[0] because
+        # the microservices_framework install directory isn't known.
         from microservices_framework import conf
-        from tornado.template import Template
+        template_dir = os.path.join(conf.__path__[0], 'app_template')
 
         app_dir = os.path.join(self.base_dir, name)
-        template_dir = os.path.join(conf.__path__[0], 'app_template')
 
         try:
             os.mkdir(app_dir)

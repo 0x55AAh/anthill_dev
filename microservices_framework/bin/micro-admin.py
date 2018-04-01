@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
-from microservices_framework.core import management
+from microservices_framework.core.management import EmptyManager
 
 if __name__ == '__main__':
-    manager = management.EmptyManager(
+    manager = EmptyManager(
         base_dir=os.path.dirname(os.path.abspath(__file__)))
     manager.run()

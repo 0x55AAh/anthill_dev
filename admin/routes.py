@@ -3,7 +3,7 @@
 from tornado.web import url
 from . import handlers
 
+
 route_patterns = [
-    url(r'/test/(\d+)', handlers.TestHandler, kwargs=None, name='test'),
-    # (r'/test/(\d+)', handlers.TestHandler, None, 'test'),
+    url(r'^/?$', handlers.HomeHandler, kwargs=None, name='admin'),
 ]

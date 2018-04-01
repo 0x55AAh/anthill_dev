@@ -2,7 +2,8 @@
 import os
 import sys
 import importlib
-from microservices_framework.core import exceptions, management
+from microservices_framework.core.exceptions import ImproperlyConfigured
+from microservices_framework.core.management import Manager, EmptyManager
 
 
 def get_settings_module(default=''):
@@ -26,16 +27,16 @@ if __name__ == '__main__':
     try:
         import microservices_framework
         microservices_framework.setup()
-    except (ImportError, exceptions.ImproperlyConfigured):
+    except (ImportError, ImproperlyConfigured):
         app = None
     else:
         from microservices_framework.apps import app
         del sys.argv[1:4]
 
     if app is None:
-        manager = management.EmptyManager(
+        manager = EmptyManager(
             base_dir=os.path.dirname(os.path.abspath(__file__)))
     else:
-        manager = management.Manager(app=app)
+        manager = Manager(app=app)
 
     manager.run()

@@ -9,5 +9,5 @@ class UIModule(BaseUIModule):
     template_name = None
 
     def render(self, *args, **kwargs):
-        assert not self.template_name, 'template_name cannot be empty'
+        assert self.template_name is not None, 'template_name cannot be empty'
         return self.render_string(self.template_name, **kwargs)

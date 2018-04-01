@@ -14,12 +14,18 @@
 from microservices_framework.ui import UIModule
 
 
-class TestUIModule(UIModule):
-    template_name = None
+class BreadCrumbs(UIModule):
+    template_name = 'modules/breadcrumbs.html'
 
-    def render(self, *args, **kwargs):
-        return super(TestUIModule, self).render(*args, **kwargs)
+    def render(self, entries):
+        return super(BreadCrumbs, self).render(entries=entries)
 
 
-def test(handler, *args, **kwargs):
-    ...
+class BreadCrumbsEntry:
+    def __init__(self, title='', icon_class='', url=''):
+        self.title = title
+        self.icon_class = icon_class
+        self.url = url
+
+    def __repr__(self):
+        return '%s(title="%s")' % (self.__class__.__name__, self.title)
