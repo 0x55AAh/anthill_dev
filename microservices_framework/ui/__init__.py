@@ -5,9 +5,27 @@ from tornado.web import UIModule as BaseUIModule
 __all__ = ['UIModule']
 
 
-class UIModule(BaseUIModule):
+class TemplateUIModuleMixin:
+    """A mixin that can be used to render a module template."""
     template_name = None
 
-    def render(self, *args, **kwargs):
-        assert self.template_name is not None, 'template_name cannot be empty'
-        return self.render_string(self.template_name, **kwargs)
+    def render(self, **kwargs):
+        template_name = self.get_template_name()
+        return super(TemplateUIModuleMixin, self).render_string(template_name, **kwargs)
+
+    def get_template_name(self):
+        """
+        Return a template name to be used for the request.
+        """
+        if self.template_name is None:
+            raise ImproperlyConfigured(
+                "TemplateUIModuleMixin requires either a definition of "
+                "'template_name' or an implementation of 'get_template_name()'")
+        else:
+            return self.template_name
+
+
+class UIModule(TemplateUIModuleMixin, BaseUIModule):
+    """
+    Render a module template.
+    """
