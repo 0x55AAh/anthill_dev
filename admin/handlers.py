@@ -7,3 +7,19 @@ class HomeHandler(TemplateHandler):
     def get_context_data(self):
         context = super(HomeHandler, self).get_context_data()
         return context
+
+
+class LoginHandler(TemplateHandler):
+    template_name = 'login.html'
+
+    def get_context_data(self):
+        context = super(LoginHandler, self).get_context_data()
+        return context
+
+
+class LogoutHandler(TemplateHandler):
+    template_name = 'login.html'
+
+    def get_context_data(self):
+        context = super(LogoutHandler, self).get_context_data()
+        return context

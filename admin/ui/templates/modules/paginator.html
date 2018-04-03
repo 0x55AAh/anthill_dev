@@ -1,9 +1,37 @@
 <ul class="pagination pagination-flat pagination-rounded">
-    <li><a href="#">‹</a></li>
-    <li class="active"><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li class="disabled"><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li><a href="#">›</a></li>
+    {% if page.has_previous %}
+        <li><a href="?page={{ page.previous_page_number }}{{ query_string }}">‹</a></li>
+    {% else %}
+        <li class="disabled"><a href="javascript:void(0);">‹</a></li>
+    {% end %}
+
+    {% for page_number in begin %}
+        <li class="{% if page.number == page_number %}active{% end %}">
+            <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
+        </li>
+    {% end %}
+
+    {% if middle %}
+        <!--<li class="ellipsis">&hellip;</li>-->
+        {% for page_number in middle %}
+        <li class="{% if page.number == page_number %}active{% end %}">
+            <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
+        </li>
+        {% end %}
+    {% end %}
+
+    {% if end %}
+        <!--<li class="ellipsis">&hellip;</li>-->
+        {% for page_number in end %}
+        <li class="{% if page.number == page_number %}active{% end %}">
+            <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
+        </li>
+        {% end %}
+    {% end %}
+
+    {% if page.has_next %}
+        <li><a href="?page={{ page.next_page_number }}{{ query_string }}">›</a></li>
+    {% else %}
+        <li class="disabled"><a href="javascript:void(0);">›</a></li>
+    {% end %}
 </ul>
