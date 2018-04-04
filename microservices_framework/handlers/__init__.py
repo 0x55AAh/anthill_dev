@@ -22,6 +22,10 @@ class TemplateResponseMixin:
     """A mixin that can be used to render a template."""
     template_name = None
 
+    def initialize(self, template_name=None):
+        if template_name is not None:
+            self.template_name = template_name
+
     def render(self, **kwargs):
         template_name = self.get_template_name()
         return super(TemplateResponseMixin, self).render(template_name, **kwargs)

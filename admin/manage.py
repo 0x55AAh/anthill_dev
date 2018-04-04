@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import os
 
-SERVICE_SETTINGS_MODULE = os.getenv("SERVICE_SETTINGS_MODULE", "admin.settings")
+SERVICE_SETTINGS_MODULE = "admin.settings"
 
 if __name__ == "__main__":
-    os.environ["SERVICE_SETTINGS_MODULE"] = SERVICE_SETTINGS_MODULE
+    if "SERVICE_SETTINGS_MODULE" not in os.environ:
+        os.environ["SERVICE_SETTINGS_MODULE"] = SERVICE_SETTINGS_MODULE
     try:
         import microservices_framework
         microservices_framework.setup()

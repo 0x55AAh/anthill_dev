@@ -45,7 +45,7 @@ APPLICATION_CLASS = 'discovery.apps.AnthillApplication'
 APPLICATION_NAME = 'discovery'
 APPLICATION_VERBOSE_NAME = 'Discovery'
 APPLICATION_DESCRIPTION = 'Map each service location dynamically'
-APPLICATION_ICON_CLASS = None
+APPLICATION_ICON_CLASS = 'icon-direction'
 
 SERVICE_CLASS = 'discovery.services.Service'
 

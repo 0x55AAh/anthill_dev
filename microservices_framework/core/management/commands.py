@@ -335,11 +335,11 @@ class Server(Command):
 
     help = description = 'Runs the server i.e. app.run().'
 
-    def run(self, *args, **kwargs):
-        ...
-
     def __call__(self, app=None, *args, **kwargs):
         app.run(**kwargs)
+
+    def run(self, *args, **kwargs):
+        ...
 
 
 class Clean(Command):

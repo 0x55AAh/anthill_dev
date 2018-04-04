@@ -1,9 +1,9 @@
-import functools
-import gzip
-import os
 from microservices_framework.conf import settings
 from microservices_framework.core.exceptions import ImproperlyConfigured, ValidationError
 from microservices_framework.utils.module_loading import import_string
+import functools
+import gzip
+import os
 
 
 @functools.lru_cache(maxsize=None)
@@ -41,6 +41,18 @@ def validate_password(password, user=None, password_validators=None):
             errors.append(error)
     if errors:
         raise ValidationError(errors)
+
+
+def password_changed(password, user=None, password_validators=None):
+    """
+    Inform all validators that have implemented a password_changed() method
+    that the password has been changed.
+    """
+    if password_validators is None:
+        password_validators = get_default_password_validators()
+    for validator in password_validators:
+        password_changed = getattr(validator, 'password_changed', lambda *a: None)
+        password_changed(password, user)
 
 
 def password_validators_help_texts(password_validators=None):

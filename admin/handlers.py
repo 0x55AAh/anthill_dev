@@ -12,6 +12,9 @@ class HomeHandler(TemplateHandler):
 class LoginHandler(TemplateHandler):
     template_name = 'login.html'
 
+    def post(self, *args, **kwargs):
+        pass
+
     def get_context_data(self):
         context = super(LoginHandler, self).get_context_data()
         return context
@@ -22,4 +25,12 @@ class LogoutHandler(TemplateHandler):
 
     def get_context_data(self):
         context = super(LogoutHandler, self).get_context_data()
+        return context
+
+
+class DebugHandler(TemplateHandler):
+    template_name = 'debug.html'
+
+    def get_context_data(self):
+        context = super(DebugHandler, self).get_context_data()
         return context

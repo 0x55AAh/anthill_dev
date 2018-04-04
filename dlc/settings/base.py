@@ -20,7 +20,7 @@ APPLICATION_CLASS = 'dlc.apps.AnthillApplication'
 APPLICATION_NAME = 'dlc'
 APPLICATION_VERBOSE_NAME = 'DLC'
 APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
-APPLICATION_ICON_CLASS = None
+APPLICATION_ICON_CLASS = 'icon-cloud-download2'
 
 SERVICE_CLASS = 'dlc.services.Service'
 

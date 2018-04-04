@@ -51,15 +51,10 @@
 	<div class="navbar-collapse collapse" id="navbar-mobile">
 		<ul class="nav navbar-nav">
 			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+			<li><a><i class="icon-terminal"></i> <span class="visible-xs-inline-block position-right">Terminal</span></a></li>
 		</ul>
 
 		<ul class="nav navbar-nav navbar-right">
-			<li>
-				<a href="#">
-					<i class="icon-terminal"></i>
-					<span class="visible-xs-inline-block position-right">Terminal</span>
-				</a>
-			</li>
 			<li class="dropdown dropdown-user">
 				<a class="dropdown-toggle" data-toggle="dropdown">
 					<img src="{{ static_url('images/image.png') }}" alt="">
@@ -105,7 +100,7 @@
 
 				<!-- Footer -->
 				{% block footer %}
-				<div class="footer text-muted {% block footer-class%}{% end %}" style="bottom: 19px;">
+				<div class="footer text-muted{% block footer-class%}{% end %}" style="bottom: 19px;">
 					{% set today_year = datetime.datetime.now().year %}
 					&copy; 2018{% if today_year > 2018 %}-{{ today_year }}{% end %}.
 					<a href="#">Anthill Platform Admin Tool</a> by <a href="#" target="_blank">Lysenko Vladimir</a>

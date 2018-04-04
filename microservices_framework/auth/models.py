@@ -1,6 +1,7 @@
 from microservices_framework.auth.hashers import make_password, check_password
 from microservices_framework.db import db
 from microservices_framework.utils import timezone
+from . import password_validation
 
 
 class AbstractUser(db.Model):
@@ -53,8 +54,10 @@ class AbstractUser(db.Model):
         return check_password(raw_password, self.password, setter=setter)
 
     def save(self):
-        # Some checks before saving
         super(AbstractUser, self).save()
+        if self._password is not None:
+            password_validation.password_changed(self._password, self)
+            self._password = None
 
 
 class User(AbstractUser):

@@ -5,7 +5,8 @@ from . import handlers
 
 
 route_patterns = [
-    url(r'^/?$', handlers.HomeHandler, kwargs=None, name='admin'),
-    url(r'^/login/?$', handlers.LoginHandler, kwargs=None, name='login'),
-    url(r'^/logout/?$', handlers.LogoutHandler, kwargs=None, name='logout'),
+    url(r'^/?$', handlers.HomeHandler, name='admin'),
+    url(r'^/login/?$', handlers.LoginHandler, name='login'),
+    url(r'^/logout/?$', handlers.LogoutHandler, name='logout'),
+    url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
 ]

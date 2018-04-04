@@ -5,11 +5,10 @@ Global exception and warning classes.
 
 class ObjectDoesNotExist(Exception):
     """The requested object does not exist"""
-    silent_variable_failure = True
 
 
 class MultipleObjectsReturned(Exception):
-    """The query returned multiple objects when only one was expected."""
+    """The query returned multiple objects when only one was expected"""
 
 
 class SuspiciousOperation(Exception):
@@ -34,6 +33,10 @@ class PermissionDenied(Exception):
 
 class ImproperlyConfigured(Exception):
     """Framework is somehow improperly configured"""
+
+
+class EmptyResultSet(Exception):
+    """A database query predicate is impossible"""
 
 
 NON_FIELD_ERRORS = '__all__'

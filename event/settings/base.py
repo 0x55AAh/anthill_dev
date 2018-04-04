@@ -20,7 +20,7 @@ APPLICATION_CLASS = 'event.apps.AnthillApplication'
 APPLICATION_NAME = 'event'
 APPLICATION_VERBOSE_NAME = 'Event'
 APPLICATION_DESCRIPTION = 'Compete players with time-limited events'
-APPLICATION_ICON_CLASS = None
+APPLICATION_ICON_CLASS = 'icon-calendar'
 
 SERVICE_CLASS = 'event.services.Service'
 
