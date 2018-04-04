@@ -41,7 +41,8 @@ class Paginator(UIModule):
     """
     template_name = 'modules/paginator.html'
 
-    def render(self, page, begin_pages=1, end_pages=1, before_pages=2, after_pages=2):
+    def render(self, page, begin_pages=1, end_pages=1,
+               before_pages=2, after_pages=2, style=None):
         query_string = ''
         for key, value in self.request.arguments.items():
             if key != 'page':
@@ -79,4 +80,6 @@ class Paginator(UIModule):
             middle, end = [], []
 
         return super(Paginator, self).render(
-            page=page, begin=begin, middle=middle, end=end, query_string=query_string)
+            page=page, begin=begin, middle=middle, end=end,
+            query_string=query_string, style=style
+        )

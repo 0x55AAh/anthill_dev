@@ -1,6 +1,7 @@
 # For more details about ui modules, see
 # http://www.tornadoweb.org/en/stable/guide/templates.html#ui-modules
 from tornado.web import UIModule as BaseUIModule
+from microservices_framework.core.exceptions import ImproperlyConfigured
 
 __all__ = ['UIModule']
 

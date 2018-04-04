@@ -6,6 +6,7 @@ import argparse
 import shutil
 from tornado.escape import to_unicode
 from tornado.template import Template
+from microservices_framework.core.management.utils import get_random_secret_key
 
 
 class InvalidCommand(Exception):
@@ -401,7 +402,7 @@ class StartApplication(Command):
 
     def get_options(self):
         options = (
-            Option('-n', '--name', dest='name', help='Name of the application.'),
+            Option('-n', '--name', dest='name', required=True, help='Name of the application.'),
             Option('-e', '--extension', dest='extensions', default=['py'], action='append',
                    help='The file extension(s) to render (default: "py"). '
                         'Separate multiple extensions with commas, or use '
@@ -424,6 +425,10 @@ class StartApplication(Command):
         except OSError as e:
             raise InvalidCommand(e)
 
+        # Create a random SECRET_KEY to put it in the main settings.
+        secret_key = get_random_secret_key()
+
+        secret_key_name = 'secret_key'
         base_name = 'app_name'
         base_directory = 'app_directory'
         camel_case_name = 'camel_case_app_name'
@@ -433,6 +438,7 @@ class StartApplication(Command):
             base_name: name,
             base_directory: app_dir,
             camel_case_name: camel_case_value,
+            secret_key_name: secret_key
         }
 
         prefix_length = len(template_dir) + 1

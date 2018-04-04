@@ -1,4 +1,4 @@
-<ul class="pagination pagination-flat pagination-rounded">
+<ul class="pagination pagination-flat{% if not style %} pagination-rounded{% else %}{{ style }}{% end %}">
     {% if page.has_previous %}
         <li><a href="?page={{ page.previous_page_number }}{{ query_string }}">‹</a></li>
     {% else %}
@@ -12,7 +12,7 @@
     {% end %}
 
     {% if middle %}
-        <!--<li class="ellipsis">&hellip;</li>-->
+        <li class="disabled"><a href="javascript:void(0);">&hellip;</a></li>
         {% for page_number in middle %}
         <li class="{% if page.number == page_number %}active{% end %}">
             <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
@@ -21,7 +21,7 @@
     {% end %}
 
     {% if end %}
-        <!--<li class="ellipsis">&hellip;</li>-->
+        <li class="disabled"><a href="javascript:void(0);">&hellip;</a></li>
         {% for page_number in end %}
         <li class="{% if page.number == page_number %}active{% end %}">
             <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
