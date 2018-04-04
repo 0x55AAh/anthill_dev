@@ -51,8 +51,8 @@ def password_changed(password, user=None, password_validators=None):
     if password_validators is None:
         password_validators = get_default_password_validators()
     for validator in password_validators:
-        password_changed = getattr(validator, 'password_changed', lambda *a: None)
-        password_changed(password, user)
+        password_changed_method = getattr(validator, 'password_changed', lambda *a: None)
+        password_changed_method(password, user)
 
 
 def password_validators_help_texts(password_validators=None):
