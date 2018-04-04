@@ -5,7 +5,7 @@ from anthill_platform.settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'EVENT_SERVICE_SECRET_KEY'
+SECRET_KEY = 'fch5vqo6but)i4e_9i^pj!#axji3##x*s(tfl2j52vt$km=hma'
 
 DEBUG = False
 
