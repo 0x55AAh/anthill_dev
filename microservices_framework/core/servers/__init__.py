@@ -63,10 +63,7 @@ class BaseService(TornadoWebApplication):
         return kwargs
 
     def setup_server(self, **kwargs):
-        host = kwargs.pop('host')
-        port = kwargs.pop('port')
-
-        self.server.listen(port, host)
+        self.server.listen(app.port, app.host)
 
         signal.signal(signal.SIGPIPE, self.__sigpipe_handler__)
         signal.signal(signal.SIGTERM, self.__sig_handler__)

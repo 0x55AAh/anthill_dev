@@ -331,33 +331,15 @@ class Shell(Command):
 class Server(Command):
     """
     Runs the server i.e. app.run()
-
-    :param host: server host
-    :param port: server port
     """
 
     help = description = 'Runs the server i.e. app.run().'
 
-    def __init__(self, host=None, port=None):
-        self.port = port
-        self.host = host
-
-    def get_options(self):
-        options = (
-            Option('-h', '--host', dest='host', default=self.host),
-            Option('-p', '--port', dest='port', type=int, default=self.port)
-        )
-
-        return options
-
     def run(self, *args, **kwargs):
         ...
 
-    def __call__(self, app, host, port):
-        host = host or app.host
-        port = port or app.port
-
-        app.run(host=host, port=port)
+    def __call__(self, app=None, *args, **kwargs):
+        app.run(**kwargs)
 
 
 class Clean(Command):
