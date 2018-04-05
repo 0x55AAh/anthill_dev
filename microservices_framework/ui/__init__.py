@@ -30,3 +30,4 @@ class UIModule(TemplateUIModuleMixin, BaseUIModule):
     """
     Render a module template.
     """
+    Entry = None

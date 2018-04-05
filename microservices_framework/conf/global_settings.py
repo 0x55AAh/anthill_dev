@@ -32,6 +32,8 @@ APPLICATION_ICON_CLASS = None
 
 SERVICE_CLASS = None
 
+CONTEXT_PROCESSORS = []
+
 ###########
 # LOGGING #
 ###########

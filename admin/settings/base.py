@@ -30,3 +30,5 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 STATIC_URL = '/static/'
 
 UI_MODULE = 'admin.ui'
+
+CONTEXT_PROCESSORS = ['admin.context_processors.main_sidebar']

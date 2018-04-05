@@ -20,18 +20,17 @@ class BreadCrumbs(UIModule):
     """
     template_name = 'modules/breadcrumbs.html'
 
+    class Entry:
+        def __init__(self, title='', icon_class='', url=''):
+            self.title = title
+            self.icon_class = icon_class
+            self.url = url
+
+        def __repr__(self):
+            return '%s(title="%s")' % (self.__class__.__name__, self.title)
+
     def render(self, entries):
         return super(BreadCrumbs, self).render(entries=entries)
-
-
-class BreadCrumbsEntry:
-    def __init__(self, title='', icon_class='', url=''):
-        self.title = title
-        self.icon_class = icon_class
-        self.url = url
-
-    def __repr__(self):
-        return '%s(title="%s")' % (self.__class__.__name__, self.title)
 
 
 class Paginator(UIModule):
@@ -83,3 +82,42 @@ class Paginator(UIModule):
             page=page, begin=begin, middle=middle, end=end,
             query_string=query_string, style=style
         )
+
+
+class MainSidebar(UIModule):
+    """
+    Build a main sidebar for the application.
+    """
+    template_name = 'modules/main-sidebar.html'
+
+    class Entry:
+        def __init__(self, title='', icon_class=''):
+            self.title = title
+            self.icon_class = icon_class
+
+        def __repr__(self):
+            return '%s(title="%s")' % (self.__class__.__name__, self.title)
+
+    def render(self, entries, current=None):
+        return super(MainSidebar, self).render(entries=entries, current=current)
+
+
+class ServiceCard(UIModule):
+    """
+    Build a service card on index page services registry.
+    """
+    template_name = 'modules/service-card.html'
+
+    class Entry:
+        def __init__(self, title='', description='', icon_class='', color=''):
+            self.title = title
+            self.description = description
+            self.icon_class = icon_class
+            self.color = color
+
+        def __repr__(self):
+            return '%s(title="%s", description="%s")' % (
+                self.__class__.__name__, self.title, self.description)
+
+    def render(self, entry):
+        return super(ServiceCard, self).render(entry=entry)

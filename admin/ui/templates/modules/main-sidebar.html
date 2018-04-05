@@ -1,0 +1,15 @@
+<div class="sidebar sidebar-main sidebar-fixed">
+    <div class="sidebar-content">
+        <div class="sidebar-category sidebar-category-visible">
+            <div class="category-content no-padding">
+                <ul class="navigation navigation-main navigation-accordion">
+                    {% for entry in entries%}
+                    <li class="{% if current == entry.title %}active{% end %}">
+                        <a href="#"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
+                    </li>
+                    {% end %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
