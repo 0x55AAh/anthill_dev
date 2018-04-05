@@ -3,7 +3,8 @@ from microservices_framework.apps import app
 
 def reverse(name, *args, **kwargs):
     """Returns a URL path for handler named ``name``"""
-    return app.reverse_url(name, *args, **kwargs)
+    url = app.reverse_url(name, *args, **kwargs)
+    return url[:-1] if url.endswith('?') else url
 
 
 def resolve(path):

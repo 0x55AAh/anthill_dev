@@ -1,6 +1,7 @@
 from microservices_framework.auth import get_user_model
 from microservices_framework.core.exceptions import ObjectDoesNotExist
 
+
 UserModel = get_user_model()
 
 
@@ -29,38 +30,38 @@ class ModelBackend:
         is_active = getattr(user, 'is_active', None)
         return is_active or is_active is None
 
-    def _get_user_permissions(self, user_obj):
+    def _get_user_permissions(self, user):
         pass
 
-    def _get_group_permissions(self, user_obj):
+    def _get_group_permissions(self, user):
         pass
 
-    def _get_permissions(self, user_obj, obj, from_name):
+    def _get_permissions(self, user, obj, from_name):
         """
-        Return the permissions of `user_obj` from `from_name`. `from_name` can
+        Return the permissions of `user` from `from_name`. `from_name` can
         be either "group" or "user" to return permissions from
         `_get_group_permissions` or `_get_user_permissions` respectively.
         """
 
-    def get_user_permissions(self, user_obj, obj=None):
+    def get_user_permissions(self, user, obj=None):
         """
-        Return a set of permission strings the user `user_obj` has from their
+        Return a set of permission strings the user `user` has from their
         `user_permissions`.
         """
-        return self._get_permissions(user_obj, obj, 'user')
+        return self._get_permissions(user, obj, 'user')
 
-    def get_group_permissions(self, user_obj, obj=None):
+    def get_group_permissions(self, user, obj=None):
         """
-        Return a set of permission strings the user `user_obj` has from the
+        Return a set of permission strings the user `user` has from the
         groups they belong.
         """
-        return self._get_permissions(user_obj, obj, 'group')
+        return self._get_permissions(user, obj, 'group')
 
-    def get_all_permissions(self, user_obj, obj=None):
+    def get_all_permissions(self, user, obj=None):
         pass
 
-    def has_perm(self, user_obj, perm, obj=None):
-        return user_obj.is_active and perm in self.get_all_permissions(user_obj, obj)
+    def has_perm(self, user, perm, obj=None):
+        return user.is_active and perm in self.get_all_permissions(user, obj)
 
     def get_user(self, user_id):
         user = UserModel.query.get(user_id)

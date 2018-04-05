@@ -166,6 +166,10 @@ SIGNING_BACKEND = 'microservices_framework.core.signing.TimestampSigner'
 
 AUTH_USER_MODEL = 'User'
 
+AUTHENTICATION_BACKENDS = [
+    'microservices_framework.auth.backends.ModelBackend'
+]
+
 # The first hasher in this list is the preferred algorithm.
 # Any password using different algorithms will be converted automatically
 # upon login

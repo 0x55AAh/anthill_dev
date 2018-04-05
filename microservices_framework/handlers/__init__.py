@@ -1,6 +1,7 @@
 from tornado.web import RequestHandler
 from microservices_framework.core.exceptions import ImproperlyConfigured
 from microservices_framework.apps import app
+from microservices_framework.utils.urls import reverse as reverse_url
 
 
 class ContextMixin:
@@ -11,7 +12,7 @@ class ContextMixin:
     extra_context = None
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault('handler', self)
+        kwargs.setdefault('reverse_url', reverse_url)
         kwargs.setdefault('app_version', app.version)
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
