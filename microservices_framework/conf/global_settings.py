@@ -11,10 +11,6 @@ SECRET_KEY = None
 
 DEBUG = False
 
-DATABASES = None
-
-RESOLVERS = None
-
 TIME_ZONE = 'UTC'
 USE_TZ = False
 

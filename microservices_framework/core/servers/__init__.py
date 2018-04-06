@@ -1,4 +1,3 @@
-from tornado.gen import coroutine
 from tornado.web import Application as TornadoWebApplication
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
@@ -81,10 +80,8 @@ class BaseService(TornadoWebApplication):
             IOLoop.instance().add_callback(self.on_stop)
             self.server.stop()
 
-    @coroutine
-    def on_start(self):
+    async def on_start(self):
         raise NotImplemented
 
-    @coroutine
-    def on_stop(self):
+    async def on_stop(self):
         raise NotImplemented

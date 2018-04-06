@@ -27,6 +27,14 @@ class RedirectMixin:
     pattern_name = None
     url = None
 
+    def initialize(self, query_string=None, pattern_name=None, url=None):
+        if query_string is not None:
+            self.query_string = query_string
+        if pattern_name is not None:
+            self.pattern_name = pattern_name
+        if url is not None:
+            self.url = url
+
     def get_redirect_url(self, *args, **kwargs):
         """
         Return the URL redirect to. Keyword arguments from the URL pattern
@@ -94,7 +102,7 @@ class RedirectHandler(RedirectMixin, RequestHandler):
         if url:
             self.redirect(url, permanent=self.permanent)
         else:
-            raise HttpGoneError('Got empty url')
+            raise HttpGoneError
 
     def head(self, *args, **kwargs):
         return self.get(*args, **kwargs)

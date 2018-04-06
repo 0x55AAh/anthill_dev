@@ -15,12 +15,16 @@ class HttpBadRequestError(HTTPError):
     status_code = 400
 
 
-class HttpNotFoundError(HTTPError):
-    status_code = 404
+class HttpUnauthorizedError(HTTPError):
+    status_code = 401
 
 
 class HttpForbiddenError(HTTPError):
     status_code = 403
+
+
+class HttpNotFoundError(HTTPError):
+    status_code = 404
 
 
 class HttpNotAllowedError(HTTPError):
