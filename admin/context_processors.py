@@ -1,7 +1,5 @@
-from .ui.modules import MainSidebar
-
-
 def main_sidebar(handler):
+    from .ui.modules import MainSidebar
     return {
         'main_sidebar_entries': [
             MainSidebar.Entry(title='Configuration', icon_class='icon-gear'),
@@ -23,3 +21,8 @@ def main_sidebar(handler):
             MainSidebar.Entry(title='Store', icon_class='icon-cart'),
         ]
     }
+
+
+def datetime(handler):
+    from microservices_framework.utils import timezone
+    return {'now': timezone.now()}

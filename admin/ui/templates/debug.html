@@ -1,5 +1,5 @@
 {% extends 'layouts/fixed.html' %}
 
 {% block main-sidebar %}
-{% module MainSidebar(main_sidebar_entries) %}
+{% module MainSidebar(entries=main_sidebar_entries, current=None) %}
 {% end %}

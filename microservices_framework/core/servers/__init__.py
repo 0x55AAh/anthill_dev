@@ -28,6 +28,8 @@ class BaseService(TornadoWebApplication):
         """Setup server variables"""
         self.add_handlers(r'^(.*)$', app.routes)
 
+        self.settings.update(cookie_secret=app.settings.SECRET_KEY)
+        self.settings.update(xsrf_cookies=app.settings.CSRF_COOKIES)
         self.settings.update(template_path=app.settings.TEMPLATE_PATH)
         self.settings.update(login_url=app.settings.LOGIN_URL)
 
@@ -81,7 +83,7 @@ class BaseService(TornadoWebApplication):
             self.server.stop()
 
     async def on_start(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     async def on_stop(self):
-        raise NotImplemented
+        raise NotImplementedError

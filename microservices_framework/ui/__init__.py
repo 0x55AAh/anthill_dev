@@ -1,33 +1,14 @@
 # For more details about ui modules, see
 # http://www.tornadoweb.org/en/stable/guide/templates.html#ui-modules
-from tornado.web import UIModule as BaseUIModule
-from microservices_framework.core.exceptions import ImproperlyConfigured
+from tornado.web import TemplateModule as BaseTemplateModule
 
-__all__ = ['UIModule']
+__all__ = ['TemplateModule']
 
 
-class TemplateUIModuleMixin:
-    """A mixin that can be used to render a module template."""
+class TemplateModule(BaseTemplateModule):
     template_name = None
-
-    def render(self, **kwargs):
-        template_name = self.get_template_name()
-        return super(TemplateUIModuleMixin, self).render_string(template_name, **kwargs)
-
-    def get_template_name(self):
-        """
-        Return a template name to be used for the request.
-        """
-        if self.template_name is None:
-            raise ImproperlyConfigured(
-                "TemplateUIModuleMixin requires either a definition of "
-                "'template_name' or an implementation of 'get_template_name()'")
-        else:
-            return self.template_name
-
-
-class UIModule(TemplateUIModuleMixin, BaseUIModule):
-    """
-    Render a module template.
-    """
     Entry = None
+
+    def render(self, template_name=None, **kwargs):
+        template_name = template_name or self.template_name
+        return super(TemplateModule, self).render(template_name, **kwargs)

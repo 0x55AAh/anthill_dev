@@ -38,7 +38,7 @@
 
 <!-- Main navbar -->
 {% block main-navbar %}
-{% include '../includes/main-navbar.html' %}
+{% module Template('modules/main-navbar.html') %}
 {% end %}
 <!-- /main navbar -->
 
@@ -66,12 +66,7 @@
 
 				<!-- Footer -->
 				{% block footer %}
-				<div class="footer text-muted{% block footer-class%}{% end %}" style="bottom: 19px;">
-					{% set today_year = datetime.datetime.now().year %}
-					&copy; 2018{% if today_year > 2018 %}-{{ today_year }}{% end %}.
-					<a href="#">Anthill Platform Admin Tool</a> by <a href="#" target="_blank">Lysenko Vladimir</a>
-					<div class="footer-version">Version {{ app_version }}</div>
-				</div>
+				{% module Template('modules/footer.html', centered=False) %}
 				{% end %}
 				<!-- /footer -->
 				<!-- /content area -->

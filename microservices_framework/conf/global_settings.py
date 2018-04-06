@@ -212,3 +212,10 @@ COMPRESS_RESPONSE = False
 LOGIN_URL = None
 
 UI_MODULE = None
+
+
+###########
+# COOKIES #
+###########
+
+CSRF_COOKIES = False

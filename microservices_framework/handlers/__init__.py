@@ -1,9 +1,17 @@
-from tornado.web import RequestHandler, HTTPError
+from tornado.web import RequestHandler as BaseRequestHandler, HTTPError
 from microservices_framework.core.exceptions import ImproperlyConfigured
-from microservices_framework.apps import app
 from microservices_framework.utils.urls import reverse as reverse_url
-from .context_processors import build_context_from_context_processors
 from microservices_framework.http import HttpGoneError
+from microservices_framework.apps import app
+
+
+class RequestHandler(BaseRequestHandler):
+    def reverse_url(self, name, *args):
+        url = super(RequestHandler, self).reverse_url(name, *args)
+        return url[:-1] if url.endswith('?') else url
+
+    def data_received(self, chunk):
+        pass
 
 
 class ContextMixin:
@@ -14,12 +22,20 @@ class ContextMixin:
     extra_context = None
 
     def get_context_data(self, **kwargs):
-        kwargs.setdefault('reverse_url', reverse_url)
-        kwargs.setdefault('app_version', app.version)
+        """Local context. Not used for modules"""
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
-        kwargs.update(build_context_from_context_processors(self))
         return kwargs
+
+    def get_template_namespace(self):
+        """Global context. Used for modules"""
+        from .context_processors import build_context_from_context_processors
+
+        namespace = super(ContextMixin, self).get_template_namespace()
+        namespace.setdefault('app_version', app.version)
+        namespace.update(build_context_from_context_processors(self))
+        # namespace.update(self.get_context_data())
+        return namespace
 
 
 class RedirectMixin:
@@ -42,7 +58,7 @@ class RedirectMixin:
         method.
         """
         if self.url:
-            url = self.url % kwargs
+            url = self.url.format(*args)
         elif self.pattern_name:
             try:
                 url = reverse_url(self.pattern_name, *args, **kwargs)
@@ -57,7 +73,7 @@ class RedirectMixin:
         return url
 
 
-class TemplateResponseMixin:
+class TemplateMixin:
     """A mixin that can be used to render a template."""
     template_name = None
 
@@ -67,7 +83,7 @@ class TemplateResponseMixin:
 
     def render(self, **kwargs):
         template_name = self.get_template_name()
-        return super(TemplateResponseMixin, self).render(template_name, **kwargs)
+        return super(TemplateMixin, self).render(template_name, **kwargs)
 
     def get_template_name(self):
         """
@@ -75,13 +91,13 @@ class TemplateResponseMixin:
         """
         if self.template_name is None:
             raise ImproperlyConfigured(
-                "TemplateResponseMixin requires either a definition of "
+                "TemplateMixin requires either a definition of "
                 "'template_name' or an implementation of 'get_template_name()'")
         else:
             return self.template_name
 
 
-class TemplateHandler(TemplateResponseMixin, ContextMixin, RequestHandler):
+class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     """
     Render a template. Pass keyword arguments to the context.
     """

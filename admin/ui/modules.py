@@ -11,10 +11,10 @@
 # def test(handler, *args, **kwargs):
 #     ...
 #
-from microservices_framework.ui import UIModule
+from microservices_framework.ui import TemplateModule
 
 
-class BreadCrumbs(UIModule):
+class BreadCrumbs(TemplateModule):
     """
     Build a breadcrumb for the application.
     """
@@ -33,7 +33,7 @@ class BreadCrumbs(UIModule):
         return super(BreadCrumbs, self).render(entries=entries)
 
 
-class Paginator(UIModule):
+class Paginator(TemplateModule):
     """
     Build a Digg-like pagination,
     by splitting long list of page into 3 blocks of pages.
@@ -41,7 +41,7 @@ class Paginator(UIModule):
     template_name = 'modules/paginator.html'
 
     def render(self, page, begin_pages=1, end_pages=1,
-               before_pages=2, after_pages=2, style=None):
+               before_pages=2, after_pages=2, style=''):
         query_string = ''
         for key, value in self.request.arguments.items():
             if key != 'page':
@@ -84,7 +84,7 @@ class Paginator(UIModule):
         )
 
 
-class MainSidebar(UIModule):
+class MainSidebar(TemplateModule):
     """
     Build a main sidebar for the application.
     """
@@ -102,7 +102,7 @@ class MainSidebar(UIModule):
         return super(MainSidebar, self).render(entries=entries, current=current)
 
 
-class ServiceCard(UIModule):
+class ServiceCard(TemplateModule):
     """
     Build a service card on index page services registry.
     """

@@ -1,7 +1,7 @@
 from microservices_framework.conf import settings
 from microservices_framework.utils.module_loading import import_string
 from microservices_framework.core.exceptions import ImproperlyConfigured
-from tornado.web import RequestHandler
+from microservices_framework.handlers import RequestHandler
 import logging
 
 logger = logging.getLogger('app.handlers')
@@ -18,7 +18,7 @@ def build_context_from_context_processors(handler: RequestHandler) -> dict:
         if not isinstance(handler, RequestHandler):
             raise ImproperlyConfigured(
                 'Context processor `%s` got `%s` object, '
-                'but need `tornado.web.RequestHandler`' % (f.__name__, handler.__class__.__name__)
+                'but need `RequestHandler`' % (f.__name__, handler.__class__.__name__)
             )
         if not isinstance(result, dict):
             raise ImproperlyConfigured('Context processor `%s` must return dict object' % f.__name__)
