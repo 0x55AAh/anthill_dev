@@ -53,8 +53,8 @@ class HomeHandler(TemplateHandler):
         ]
     }
 
-    def get_context_data(self):
-        context = super(HomeHandler, self).get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super(HomeHandler, self).get_context_data(**kwargs)
         return context
 
 
@@ -64,8 +64,8 @@ class LoginHandler(TemplateHandler):
     def post(self, *args, **kwargs):
         pass
 
-    def get_context_data(self):
-        context = super(LoginHandler, self).get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super(LoginHandler, self).get_context_data(**kwargs)
         return context
 
 
@@ -80,6 +80,6 @@ class LogoutHandler(AuthenticatedHandlerMixin, RedirectHandler):
 class DebugHandler(TemplateHandler):
     template_name = 'debug.html'
 
-    def get_context_data(self):
-        context = super(DebugHandler, self).get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super(DebugHandler, self).get_context_data(**kwargs)
         return context

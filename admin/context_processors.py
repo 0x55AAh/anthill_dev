@@ -21,8 +21,3 @@ def main_sidebar(handler):
             MainSidebar.Entry(title='Store', icon_class='icon-cart'),
         ]
     }
-
-
-def datetime(handler):
-    from microservices_framework.utils import timezone
-    return {'now': timezone.now()}

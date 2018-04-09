@@ -1,5 +1,7 @@
 NETWORKS = ['internal', 'external']
 
+EMAIL_SUBJECT_PREFIX = '[Anthill] '
+
 RESOLVERS = {
     "default": {
         'internal': 'http://localhost:9502',
@@ -42,3 +44,5 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'microservices_framework.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CSRF_COOKIES = True

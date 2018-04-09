@@ -30,9 +30,8 @@ class ContextMixin:
         from .context_processors import build_context_from_context_processors
 
         namespace = super(ContextMixin, self).get_template_namespace()
-        namespace.setdefault('app_version', app.version)
         namespace.update(build_context_from_context_processors(self))
-        namespace.update(self.get_context_data())
+        namespace.update(self.get_context_data(app_version=app.version))
         return namespace
 
 

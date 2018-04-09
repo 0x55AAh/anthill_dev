@@ -26,3 +26,10 @@ def build_context_from_context_processors(handler: RequestHandler) -> dict:
             logging.warning('Empty result for context processor `%s`' % f.__name__)
         ctx.update(result)
     return ctx
+
+
+def datetime(handler: RequestHandler) -> dict:
+    from microservices_framework.utils import timezone
+    return {
+        'now': timezone.now()
+    }
