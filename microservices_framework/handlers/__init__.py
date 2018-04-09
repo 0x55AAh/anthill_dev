@@ -1,4 +1,4 @@
-from tornado.web import RequestHandler as BaseRequestHandler, HTTPError
+from tornado.web import RequestHandler as BaseRequestHandler
 from microservices_framework.core.exceptions import ImproperlyConfigured
 from microservices_framework.utils.urls import reverse as reverse_url
 from microservices_framework.http import HttpGoneError
@@ -22,19 +22,17 @@ class ContextMixin:
     extra_context = None
 
     def get_context_data(self, **kwargs):
-        """Local context. Not used for modules"""
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
         return kwargs
 
     def get_template_namespace(self):
-        """Global context. Used for modules"""
         from .context_processors import build_context_from_context_processors
 
         namespace = super(ContextMixin, self).get_template_namespace()
         namespace.setdefault('app_version', app.version)
         namespace.update(build_context_from_context_processors(self))
-        # namespace.update(self.get_context_data())
+        namespace.update(self.get_context_data())
         return namespace
 
 
@@ -105,9 +103,6 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
         context = self.get_context_data(**kwargs)
         return self.render(**context)
 
-    def data_received(self, chunk):
-        pass
-
 
 class RedirectHandler(RedirectMixin, RequestHandler):
     """Provide a redirect on any GET request."""
@@ -137,6 +132,3 @@ class RedirectHandler(RedirectMixin, RequestHandler):
 
     def patch(self, *args, **kwargs):
         return self.get(*args, **kwargs)
-
-    def data_received(self, chunk):
-        pass
