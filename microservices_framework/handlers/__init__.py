@@ -37,14 +37,14 @@ class ContextMixin:
 
 class RedirectMixin:
     query_string = False
-    pattern_name = None
+    handler_name = None
     url = None
 
-    def initialize(self, query_string=None, pattern_name=None, url=None):
+    def initialize(self, query_string=None, handler_name=None, url=None):
         if query_string is not None:
             self.query_string = query_string
-        if pattern_name is not None:
-            self.pattern_name = pattern_name
+        if handler_name is not None:
+            self.handler_name = handler_name
         if url is not None:
             self.url = url
 
@@ -56,9 +56,9 @@ class RedirectMixin:
         """
         if self.url:
             url = self.url.format(*args)
-        elif self.pattern_name:
+        elif self.handler_name:
             try:
-                url = reverse_url(self.pattern_name, *args, **kwargs)
+                url = reverse_url(self.handler_name, *args, **kwargs)
             except KeyError:
                 return None
         else:

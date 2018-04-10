@@ -34,8 +34,13 @@ if __name__ == '__main__':
         del sys.argv[1:4]
 
     if app is None:
-        manager = EmptyManager(
-            base_dir=os.path.dirname(os.path.abspath(__file__)))
+        kwargs = dict(base_dir=os.path.dirname(os.path.abspath(__file__)))
+        try:
+            config = importlib.import_module('config')
+            kwargs.update(config_mod=getattr(config, 'CONFIG_MODULE', None))
+        except ImportError:
+            pass
+        manager = EmptyManager(**kwargs)
     else:
         manager = Manager(app=app)
 

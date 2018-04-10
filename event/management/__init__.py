@@ -1,4 +1,5 @@
 from microservices_framework.core.management import Command, Option, Manager
+from microservices_framework.db import db
 
 
 class EventCommand(Command):

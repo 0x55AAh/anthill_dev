@@ -379,8 +379,9 @@ class StartApplication(Command):
         ('.py-tpl', '.py'),
     )
 
-    def __init__(self, base_dir):
+    def __init__(self, base_dir, config_mod=None):
         self.base_dir = base_dir
+        self.config_mod = config_mod
 
     def get_options(self):
         options = (
@@ -393,10 +394,14 @@ class StartApplication(Command):
         return options
 
     def run(self, name, extensions):
-        # Use conf.__path__[0] because
-        # the microservices_framework install directory isn't known.
-        from microservices_framework import conf
-        template_dir = os.path.join(conf.__path__[0], 'app_template')
+        try:
+            from importlib import import_module
+            _conf = import_module(self.config_mod)
+        except (ImportError, AttributeError):
+            from microservices_framework import conf
+            _conf = conf
+
+        template_dir = os.path.join(_conf.__path__[0], 'app_template')
 
         app_dir = os.path.join(self.base_dir, name)
 

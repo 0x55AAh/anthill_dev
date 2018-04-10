@@ -438,15 +438,19 @@ class Manager(BaseManager):
 class EmptyManager(BaseManager):
     """Manager with no application context"""
 
-    def __init__(self, base_dir, **kwargs):
+    def __init__(self, base_dir, config_mod=None, **kwargs):
         self.base_dir = base_dir
+        self.config_mod = config_mod
         super(EmptyManager, self).__init__(**kwargs)
 
     def add_default_commands(self):
         if "startapp" not in self._commands:
-            self.add_command("startapp", StartApplication(base_dir=self.base_dir))
+            self.add_command(
+                "startapp", StartApplication(
+                    base_dir=self.base_dir, config_mod=self.config_mod)
+            )
         if "app" not in self._commands:
             self.add_command("app", ApplicationChooser())
 
     def __call__(self, app=None, **kwargs):
-        ...
+        pass

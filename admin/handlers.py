@@ -1,5 +1,4 @@
 from microservices_framework.handlers import TemplateHandler, RedirectHandler
-from microservices_framework.utils.urls import reverse_lazy
 from .ui.modules import ServiceCard
 
 
@@ -70,7 +69,7 @@ class LoginHandler(TemplateHandler):
 
 
 class LogoutHandler(AuthenticatedHandlerMixin, RedirectHandler):
-    pattern_name = 'login'
+    handler_name = 'login'
 
     def get(self, *args, **kwargs):
         self.logout()

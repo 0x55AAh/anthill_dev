@@ -1,5 +1,5 @@
 import logging
-from anthill_platform.apps import BaseAnthillApplication
+from anthill_common.apps import BaseAnthillApplication
 from microservices_framework.conf import settings
 from microservices_framework.utils.json import json
 
@@ -9,6 +9,8 @@ logger = logging.getLogger('app')
 
 
 class AnthillApplication(BaseAnthillApplication):
+    """Anthill application"""
+    
     def __init__(self):
         super(AnthillApplication, self).__init__()
         self.registered_services = getattr(settings, 'REGISTERED_SERVICES', {})
