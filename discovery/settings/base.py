@@ -1,5 +1,5 @@
 import os
-from anthill_common.conf.settings import *
+from anthill.common.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -1,9 +1,9 @@
 import logging
-from anthill_common.apps import BaseAnthillApplication
-from microservices_framework.conf import settings
-from microservices_framework.utils.json import json
+from anthill.common.apps import BaseAnthillApplication
+from anthill.framework.conf import settings
+from anthill.framework.utils.json import json
 
-from microservices_framework.utils.encoding import force_text
+from anthill.framework.utils.encoding import force_text
 
 logger = logging.getLogger('app')
 

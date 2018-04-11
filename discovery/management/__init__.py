@@ -1,5 +1,5 @@
-from microservices_framework.core.management import Command, Option, Manager
-from microservices_framework.db import db
+from anthill.framework.core.management import Command, Option, Manager
+from anthill.framework.db import db
 
 
 class DiscoveryCommand(Command):

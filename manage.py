@@ -2,8 +2,8 @@
 import os
 import sys
 import importlib
-from microservices_framework.core.exceptions import ImproperlyConfigured
-from microservices_framework.core.management import Manager, EmptyManager
+from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.framework.core.management import Manager, EmptyManager
 
 
 def get_settings_module(default=''):
@@ -25,12 +25,12 @@ if __name__ == '__main__':
     os.environ['SERVICE_SETTINGS_MODULE'] = get_settings_module()
 
     try:
-        import microservices_framework
-        microservices_framework.setup()
+        import anthill.framework
+        anthill.framework.setup()
     except (ImportError, ImproperlyConfigured):
         app = None
     else:
-        from microservices_framework.apps import app
+        from anthill.framework.apps import app
         del sys.argv[1:4]
 
     if app is None:

@@ -11,7 +11,7 @@
 # def test(handler, *args, **kwargs):
 #     ...
 #
-from microservices_framework.ui import TemplateModule
+from anthill.framework.ui import TemplateModule
 
 
 class BreadCrumbs(TemplateModule):

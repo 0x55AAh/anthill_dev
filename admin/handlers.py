@@ -1,4 +1,4 @@
-from microservices_framework.handlers import TemplateHandler, RedirectHandler
+from anthill.framework.handlers import TemplateHandler, RedirectHandler
 from .ui.modules import ServiceCard
 
 
