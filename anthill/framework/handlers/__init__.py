@@ -1,8 +1,6 @@
 from tornado.web import RequestHandler as BaseRequestHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.utils.urls import reverse as reverse_url
 from anthill.framework.http import HttpGoneError
-from anthill.framework.apps import app
 
 
 class RequestHandler(BaseRequestHandler):
@@ -27,6 +25,7 @@ class ContextMixin:
         return kwargs
 
     def get_template_namespace(self):
+        from anthill.framework.apps import app
         from .context_processors import build_context_from_context_processors
 
         namespace = super(ContextMixin, self).get_template_namespace()
@@ -58,6 +57,7 @@ class RedirectMixin:
             url = self.url.format(*args)
         elif self.handler_name:
             try:
+                from anthill.framework.utils.urls import reverse as reverse_url
                 url = reverse_url(self.handler_name, *args, **kwargs)
             except KeyError:
                 return None

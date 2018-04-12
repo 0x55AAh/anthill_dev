@@ -11,6 +11,15 @@ SECRET_KEY = None
 
 DEBUG = False
 
+INTERNAL_IPS = [
+    '127.0.0.0/24',
+    '192.168.0.0/16',
+    '10.0.0.0/8',
+    '172.16.0.0/12',
+    'fd00::/8',
+    '::1/128'
+]
+
 TIME_ZONE = 'UTC'
 USE_TZ = False
 

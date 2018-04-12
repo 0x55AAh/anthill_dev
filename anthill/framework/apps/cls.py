@@ -9,7 +9,7 @@ import importlib
 
 
 class CommandNamesDuplicatedError(Exception):
-    ...
+    pass
 
 
 class ApplicationExtensionNotRegistered(Exception):
@@ -79,7 +79,7 @@ class Application:
                 table_names.append(clazz.__tablename__)
                 classes.append(clazz)
             except Exception:
-                ...
+                pass
         for table in ext.db.metadata.tables.items():
             if table[0] in table_names:
                 models.append(classes[table_names.index(table[0])])

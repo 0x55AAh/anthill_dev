@@ -43,7 +43,7 @@ class BaseService(TornadoWebApplication):
         IOLoop.instance().add_callback(self.on_stop)
 
     def __sigpipe_handler__(self, sig, frame):
-        ...
+        pass
 
     @property
     def server(self):

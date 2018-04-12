@@ -12,12 +12,12 @@ class BaseService(_BaseService):
         return dict(xheaders=True)
 
     async def __on_internal_receive__(self, context, method, *args, **kwargs):
-        ...
+        pass
 
     async def on_start(self):
         logger.info('Service \'%s\' started.' % self.name)
         with start_worker(app=celery):
-            ...
+            pass
 
     async def on_stop(self):
         logger.info('Service \'%s\' stopped.' % self.name)
@@ -30,7 +30,7 @@ class PlainService(BaseService):
         key = 'DISCOVERY_SERVICE_SECRET_KEY'
 
     async def discover(self, names=None, network=None):
-        ...
+        pass
 
     async def on_start(self):
         await self.register_on_discovery()
@@ -38,11 +38,11 @@ class PlainService(BaseService):
 
 
 class AdminService(PlainService):
-    ...
+    pass
 
 
 class RegisterNotAllowed(Exception):
-    ...
+    pass
 
 
 class DiscoveryService(BaseService):
