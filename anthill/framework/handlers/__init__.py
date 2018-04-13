@@ -19,18 +19,17 @@ class ContextMixin:
     """
     extra_context = None
 
-    def get_context_data(self, **kwargs):
+    async def get_context_data(self, **kwargs):
+        from .context_processors import build_context_from_context_processors
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
+        kwargs.update(await build_context_from_context_processors(self.request))
         return kwargs
 
     def get_template_namespace(self):
         from anthill.framework.apps import app
-        from .context_processors import build_context_from_context_processors
-
         namespace = super(ContextMixin, self).get_template_namespace()
-        namespace.update(build_context_from_context_processors(self))
-        namespace.update(self.get_context_data(app_version=app.version))
+        namespace.update(app_version=app.version)
         return namespace
 
 
@@ -98,8 +97,8 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     """
     Render a template. Pass keyword arguments to the context.
     """
-    def get(self, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
+    async def get(self, *args, **kwargs):
+        context = await self.get_context_data(**kwargs)
         return self.render(**context)
 
 
@@ -107,27 +106,27 @@ class RedirectHandler(RedirectMixin, RequestHandler):
     """Provide a redirect on any GET request."""
     permanent = False
 
-    def get(self, *args, **kwargs):
+    async def get(self, *args, **kwargs):
         url = self.get_redirect_url(*args, **kwargs)
         if url:
             self.redirect(url, permanent=self.permanent)
         else:
             raise HttpGoneError
 
-    def head(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
+    async def head(self, *args, **kwargs):
+        await self.get(*args, **kwargs)
 
-    def post(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
+    async def post(self, *args, **kwargs):
+        await self.get(*args, **kwargs)
 
-    def options(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
+    async def options(self, *args, **kwargs):
+        await self.get(*args, **kwargs)
 
-    def delete(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
+    async def delete(self, *args, **kwargs):
+        await self.get(*args, **kwargs)
 
-    def put(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
+    async def put(self, *args, **kwargs):
+        await self.get(*args, **kwargs)
 
-    def patch(self, *args, **kwargs):
-        return self.get(*args, **kwargs)
+    async def patch(self, *args, **kwargs):
+        await self.get(*args, **kwargs)

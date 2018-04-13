@@ -1,4 +1,4 @@
-def main_sidebar(handler):
+def main_sidebar(request):
     from .ui.modules import MainSidebar
     return {
         'main_sidebar_entries': [

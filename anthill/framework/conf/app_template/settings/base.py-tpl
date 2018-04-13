@@ -12,3 +12,7 @@ STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 STATIC_URL = '/static/'
+
+CONTEXT_PROCESSORS = [
+    'anthill.framework.handlers.context_processors.datetime',
+]

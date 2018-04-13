@@ -5,7 +5,7 @@ from .ui.modules import ServiceCard
 class AuthenticatedHandlerMixin:
     access_token_key = 'access_token'
 
-    def logout(self):
+    async def logout(self):
         self.clear_cookie(self.access_token_key)
 
     def get_current_user(self):
@@ -52,33 +52,33 @@ class HomeHandler(TemplateHandler):
         ]
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(HomeHandler, self).get_context_data(**kwargs)
+    async def get_context_data(self, **kwargs):
+        context = await super(HomeHandler, self).get_context_data(**kwargs)
         return context
 
 
 class LoginHandler(TemplateHandler):
     template_name = 'login.html'
 
-    def post(self, *args, **kwargs):
+    async def post(self, *args, **kwargs):
         pass
 
-    def get_context_data(self, **kwargs):
-        context = super(LoginHandler, self).get_context_data(**kwargs)
+    async def get_context_data(self, **kwargs):
+        context = await super(LoginHandler, self).get_context_data(**kwargs)
         return context
 
 
 class LogoutHandler(AuthenticatedHandlerMixin, RedirectHandler):
     handler_name = 'login'
 
-    def get(self, *args, **kwargs):
-        self.logout()
-        return super(LogoutHandler, self).get(*args, **kwargs)
+    async def get(self, *args, **kwargs):
+        await self.logout()
+        await super(LogoutHandler, self).get(*args, **kwargs)
 
 
 class DebugHandler(TemplateHandler):
     template_name = 'debug.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(DebugHandler, self).get_context_data(**kwargs)
+    async def get_context_data(self, **kwargs):
+        context = await super(DebugHandler, self).get_context_data(**kwargs)
         return context
