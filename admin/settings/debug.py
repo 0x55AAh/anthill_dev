@@ -1,4 +1,4 @@
 from .base import *
 
 DEBUG = True
-MEMORY_CONTROL = True
+HEALTH_CONTROL = True

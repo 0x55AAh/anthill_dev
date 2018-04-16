@@ -26,12 +26,6 @@ class ContextMixin:
         kwargs.update(await build_context_from_context_processors(self.request))
         return kwargs
 
-    def get_template_namespace(self):
-        from anthill.framework.apps import app
-        namespace = super(ContextMixin, self).get_template_namespace()
-        namespace.update(app_version=app.version)
-        return namespace
-
 
 class RedirectMixin:
     query_string = False
@@ -80,6 +74,13 @@ class TemplateMixin:
     def render(self, **kwargs):
         template_name = self.get_template_name()
         return super(TemplateMixin, self).render(template_name, **kwargs)
+
+    def get_template_namespace(self):
+        from anthill.framework.apps import app
+        namespace = super(TemplateMixin, self).get_template_namespace()
+        namespace.update(app_version=app.version)
+        namespace.update(debug=app.debug)
+        return namespace
 
     def get_template_name(self):
         """
