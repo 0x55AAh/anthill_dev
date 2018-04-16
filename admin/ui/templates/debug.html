@@ -4,9 +4,16 @@
 <script src="{{ static_url('js/plugins/terminals/jquery.terminal/jquery.terminal.min.js') }}"></script>
 <script src="{{ static_url('js/pages/debug.js') }}"></script>
 {% end %}
+
 {% block css %}
 <link href="{{ static_url('css/terminal/jquery.terminal.min.css') }}" rel="stylesheet"/>
 {% end %}
+
+<!-- Main navbar -->
+{% block main-navbar %}
+{% module Template('modules/main-navbar.html', health_control=health_control, current='debug') %}
+{% end %}
+<!-- /main navbar -->
 
 {% block main-sidebar %}
 {% module MainSidebar(entries=main_sidebar_entries, current=None) %}

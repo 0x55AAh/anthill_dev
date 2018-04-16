@@ -12,10 +12,18 @@
 		<ul class="nav navbar-nav">
 			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
 			<li><a href="{{ reverse_url('debug') }}"><i class="icon-terminal"></i> <span class="visible-xs-inline-block position-right">Terminal</span></a></li>
+			{% if health_control %}
 		    <li><a href="{{ reverse_url('health') }}"><i class="icon-pulse2"></i> <span class="visible-xs-inline-block position-right">Health</span></a></li>
+			{% end %}
 		</ul>
 
+
 		<ul class="nav navbar-nav navbar-right">
+			<li>
+				<p class="navbar-text">
+			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">Debug</span>
+		        </p>
+			</li>
 			<li class="dropdown dropdown-user">
 				<a class="dropdown-toggle" data-toggle="dropdown">
 					<img src="{{ static_url('images/image.png') }}" alt="">
@@ -24,10 +32,10 @@
 				</a>
 
 				<ul class="dropdown-menu dropdown-menu-right">
-					<li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
-					<li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
+					<li><a href="#"><i class="icon-user"></i> Profile</a></li>
+					<li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment"></i> Messages</a></li>
 					<li class="divider"></li>
-					<li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+					<li><a href="#"><i class="icon-cog5"></i> Settings</a></li>
 					<li><a href="{{ reverse_url('logout') }}"><i class="icon-switch2"></i> Logout</a></li>
 				</ul>
 			</li>

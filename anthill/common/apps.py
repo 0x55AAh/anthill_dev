@@ -21,5 +21,7 @@ class BaseAnthillApplication(Application):
     def routes(self):
         r = super(BaseAnthillApplication, self).routes
         if getattr(self.settings, 'HEALTH_CONTROL', False):
-            r += [url(r'^/health/?$', self.get_health_control_handler(), name='health')]
+            r += [
+                url(r'^/health/?$', self.get_health_control_handler(), name='health')
+            ]
         return r

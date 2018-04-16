@@ -11,6 +11,8 @@ SECRET_KEY = None
 
 DEBUG = False
 
+ROLE = None
+
 INTERNAL_IPS = [
     '127.0.0.0/24',
     '192.168.0.0/16',
@@ -22,6 +24,8 @@ INTERNAL_IPS = [
 
 TIME_ZONE = 'UTC'
 USE_TZ = False
+
+LANGUAGE_CODE = 'en_US'
 
 LOCATION = 'http://localhost:9500'
 

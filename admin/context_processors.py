@@ -21,3 +21,10 @@ def main_sidebar(request):
             MainSidebar.Entry(title='Store', icon_class='icon-cart'),
         ]
     }
+
+
+def health_control(request):
+    from anthill.framework.conf import settings
+    return {
+        'health_control': getattr(settings, 'HEALTH_CONTROL', False)
+    }
