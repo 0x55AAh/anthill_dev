@@ -18,6 +18,9 @@ class HealthControlHandler(BaseHealthControlHandler):
     def get_health_data(self):
         from pympler import tracker
         summary_tracker = tracker.SummaryTracker()
-        summary = sorted(summary_tracker.create_summary(), key=lambda x: -x[2])[:50]
-        print(summary)
-        return dict(memory_summary=summary)
+        summary = sorted(
+            summary_tracker.create_summary(), key=lambda x: -x[2])
+        return dict(
+            memory_summary=summary[:50],
+            memory_total_bytes=sum(map(lambda x: x[2], summary))
+        )

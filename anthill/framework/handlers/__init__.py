@@ -77,9 +77,11 @@ class TemplateMixin:
 
     def get_template_namespace(self):
         from anthill.framework.apps import app
+        from anthill.framework.utils.format import bytes2human
         namespace = super(TemplateMixin, self).get_template_namespace()
         namespace.update(app_version=app.version)
         namespace.update(debug=app.debug)
+        namespace.update(bytes2human=bytes2human)
         return namespace
 
     def get_template_name(self):

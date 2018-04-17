@@ -1,17 +1,14 @@
 $(function() {
-
-
     // Table setup
     // ------------------------------
 
     // Setting datatable defaults
-    $.extend( $.fn.dataTable.defaults, {
-        autoWidth: false,
-        columnDefs: [{
-            orderable: false,
-            width: '100px',
-            targets: [ 1 ]
-        }],
+    $.extend($.fn.dataTable.defaults, {
+        autoWidth: true,
+        ordering: false,
+        columnDefs: [
+            { targets: '_all', orderable: false }
+        ],
         dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
         language: {
             search: '<span>Filter:</span> _INPUT_',
@@ -19,18 +16,16 @@ $(function() {
             lengthMenu: '<span>Show:</span> _MENU_',
             paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
         },
-        // drawCallback: function () {
-        //     $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').addClass('dropup');
-        // },
-        // preDrawCallback: function() {
-        //     $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').removeClass('dropup');
-        // }
-    });
+        drawCallback: function () {
 
+        },
+        preDrawCallback: function() {
+
+        }
+    });
 
     // Basic datatable
     $('.datatable-basic').DataTable();
-
 
     // Alternative pagination
     $('.datatable-pagination').DataTable({
@@ -40,19 +35,16 @@ $(function() {
         }
     });
 
-
     // Datatable with saving state
     $('.datatable-save-state').DataTable({
         stateSave: true
     });
-
 
     // Scrollable datatable
     $('.datatable-scroll-y').DataTable({
         autoWidth: true,
         scrollY: 300
     });
-
 
     // External table additions
     // ------------------------------
@@ -62,5 +54,4 @@ $(function() {
         minimumResultsForSearch: Infinity,
         width: 'auto'
     });
-
 });
