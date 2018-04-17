@@ -4,6 +4,11 @@ from anthill.framework.http import HttpGoneError
 
 
 class RequestHandler(BaseRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super(RequestHandler, self).__init__(*args, **kwargs)
+        self.args = []
+        self.kwargs = {}
+
     def reverse_url(self, name, *args):
         url = super(RequestHandler, self).reverse_url(name, *args)
         return url[:-1] if url.endswith('?') else url
@@ -101,6 +106,8 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     Render a template. Pass keyword arguments to the context.
     """
     async def get(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
         context = await self.get_context_data(**kwargs)
         return self.render(**context)
 

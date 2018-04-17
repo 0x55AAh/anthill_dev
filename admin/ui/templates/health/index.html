@@ -1,4 +1,4 @@
-{% extends 'layouts/fixed.html' %}
+{% extends '../layouts/fixed.html' %}
 
 {% block js %}
 <script type="text/javascript" src="{{ static_url('js/plugins/loaders/pace.min.js') }}"></script>
@@ -21,7 +21,7 @@
 {% block content %}
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h5 class="panel-title"><i class="icon-chip position-left"></i>Memory ({{ bytes2human(memory_total_bytes) }})</h5>
+        <h5 class="panel-title"><i class="icon-chip position-left"></i>Memory <span class="badge badge-primary">{{ bytes2human(memory_total_bytes) }}</span></h5>
         <div class="heading-elements">
             <ul class="icons-list">
                 <li><a data-action="collapse"></a></li>
@@ -39,11 +39,11 @@
         </tr>
         </thead>
         <tbody>
-        {% for types, objects, total_size in memory_summary %}
+        {% for obj_type, objects, bytes in memory_summary %}
         <tr>
-            <td>{{ types }}</td>
+            <td><a href="{{ reverse_url('health:memory:data-types-detail', obj_type) }}">{{ obj_type }}</a></td>
             <td>{{ objects }}</td>
-            <td>{{ bytes2human(total_size) }}</td>
+            <td>{{ bytes2human(bytes) }}</td>
         </tr>
         {% end %}
         </tbody>
