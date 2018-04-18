@@ -11,8 +11,6 @@ SECRET_KEY = None
 
 DEBUG = False
 
-ROLE = None
-
 INTERNAL_IPS = [
     '127.0.0.0/24',
     '192.168.0.0/16',

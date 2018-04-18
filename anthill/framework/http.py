@@ -41,11 +41,3 @@ class HttpServerError(HTTPError):
 
 class Http404(HttpNotFoundError):
     pass
-
-
-class JsonHandlerMixin:
-    def set_default_headers(self):
-        self.set_header('Content-Type', 'application/json')
-
-    def dumps(self, data):
-        return json.dumps(data, escape_forward_slashes=False)

@@ -32,7 +32,7 @@ STATIC_URL = '/static/'
 UI_MODULE = 'admin.ui'
 
 CONTEXT_PROCESSORS = [
-    'anthill.framework.handlers.context_processors.datetime',
+    'anthill.framework.context_processors.datetime',
     'admin.context_processors.main_sidebar',
     'admin.context_processors.health_control'
 ]

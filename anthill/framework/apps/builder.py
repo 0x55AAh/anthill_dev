@@ -14,7 +14,8 @@ class AppBuilder:
         if settings.APPLICATION_CLASS is not None:
             try:
                 application_class = import_string(settings.APPLICATION_CLASS)
-            except ImportError:
+            except ImportError as e:
+                logger.warning(str(e))
                 logger.warning(
                     'Cannot import application class: %s. Default used.' % settings.APPLICATION_CLASS)
         return application_class
