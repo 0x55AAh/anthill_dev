@@ -1,14 +1,10 @@
 from tornado.web import RequestHandler as BaseRequestHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
+from anthill.framework.utils.format import bytes2human
 
 
 class RequestHandler(BaseRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super(RequestHandler, self).__init__(*args, **kwargs)
-        self.args = []
-        self.kwargs = {}
-
     def reverse_url(self, name, *args):
         url = super(RequestHandler, self).reverse_url(name, *args)
         return url[:-1] if url.endswith('?') else url
@@ -82,7 +78,6 @@ class TemplateMixin:
 
     def get_template_namespace(self):
         from anthill.framework.apps import app
-        from anthill.framework.utils.format import bytes2human
         namespace = super(TemplateMixin, self).get_template_namespace()
         namespace.update(app_version=app.version)
         namespace.update(debug=app.debug)
@@ -106,8 +101,6 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     Render a template. Pass keyword arguments to the context.
     """
     async def get(self, *args, **kwargs):
-        self.args = args
-        self.kwargs = kwargs
         context = await self.get_context_data(**kwargs)
         return self.render(**context)
 
