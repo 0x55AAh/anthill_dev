@@ -240,6 +240,7 @@ class Shell(Command):
 
     def __init__(self, banner=None, make_context=None, use_ipython=True,
                  use_bpython=True, use_ptipython=True, use_ptpython=True):
+        super().__init__()
 
         self.banner = banner or self.banner
         self.use_ipython = use_ipython
@@ -380,6 +381,7 @@ class StartApplication(Command):
     )
 
     def __init__(self, base_dir, config_mod=None):
+        super().__init__()
         self.base_dir = base_dir
         self.config_mod = config_mod
 

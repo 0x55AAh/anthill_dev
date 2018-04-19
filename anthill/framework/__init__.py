@@ -6,6 +6,10 @@ __version__ = get_version(VERSION)
 
 
 def setup():
+    """
+    Configure the settings (this happens as a side effect of accessing the
+    first setting) and configure logging.
+    """
     from anthill.framework.conf import settings
     from anthill.framework.utils.log import configure_logging
 

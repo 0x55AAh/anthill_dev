@@ -1,1 +1,3 @@
-import ujson as json
+import ujson
+
+json = ujson

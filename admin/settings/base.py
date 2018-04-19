@@ -9,6 +9,8 @@ SECRET_KEY = 'dsuy#yg2#h+0msm)lja9sz(xtb)*a81215z#uyj3$im0^d1m$t'
 
 DEBUG = False
 
+ADMINS = ['wofkin@gmail.com']
+
 SQLALCHEMY_DATABASE_URI = 'postgres://ah_admin@/ah_admin'
 
 ROUTES_CONF = 'admin.routes'
