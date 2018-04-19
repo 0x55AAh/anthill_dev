@@ -8,6 +8,6 @@ from anthill.framework.handlers.jsonrpc import (
 
 __all__ = [
     'RequestHandler', 'WebSocketHandler', 'TemplateHandler', 'RedirectHandler',
-    'JSONRPCHandler', 'CORSIgnoreJSONRPCHandler', 'WithCredentialsJSONRPCHandler'
+    'JSONRPCHandler', 'CORSIgnoreJSONRPCHandler', 'WithCredentialsJSONRPCHandler',
     'JSONHandler'
 ]

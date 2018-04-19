@@ -25,11 +25,18 @@ class WebSocketHandler(BaseWebSocketHandler):
 
 
 class JSONHandlerMixin:
-    def set_default_headers(self):
-        self.set_header('Content-Type', 'application/json')
+    extra_context = None
 
     def dumps(self, data):
         return json.dumps(data, escape_forward_slashes=False)
+
+    async def get_context_data(self, **kwargs):
+        if self.extra_context is not None:
+            kwargs.update(self.extra_context)
+        return kwargs
+
+    def set_default_headers(self):
+        self.set_header('Content-Type', 'application/json')
 
 
 class ContextMixin:
@@ -154,12 +161,5 @@ class RedirectHandler(RedirectMixin, RequestHandler):
 
 
 class JSONHandler(JSONHandlerMixin, RequestHandler):
-    extra_context = None
-
     async def get(self, *args, **kwargs):
         self.write(self.dumps(await self.get_context_data(**kwargs)))
-
-    async def get_context_data(self, **kwargs):
-        if self.extra_context is not None:
-            kwargs.update(self.extra_context)
-        return kwargs
