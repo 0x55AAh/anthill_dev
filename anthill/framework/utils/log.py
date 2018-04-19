@@ -24,7 +24,7 @@ DEFAULT_LOGGING = {
         },
     },
     'formatters': {
-        'app.server': {
+        'anthill.server': {
             '()': 'anthill.framework.utils.log.ServerFormatter',
             'format': '[{server_time}] - {levelname} - {message}',
             'datefmt': '%Y-%m-%d %H:%M:%S',
@@ -37,10 +37,10 @@ DEFAULT_LOGGING = {
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
         },
-        'app.server': {
+        'anthill.server': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'app.server',
+            'formatter': 'anthill.server',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -49,12 +49,12 @@ DEFAULT_LOGGING = {
         }
     },
     'loggers': {
-        'app': {
+        'anthill': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
         },
-        'app.server': {
-            'handlers': ['app.server'],
+        'anthill.server': {
+            'handlers': ['anthill.server'],
             'level': 'INFO',
             'propagate': False,
         },
@@ -138,6 +138,7 @@ class CallbackFilter(logging.Filter):
     log a record.
     """
     def __init__(self, callback):
+        super().__init__()
         self.callback = callback
 
     def filter(self, record):

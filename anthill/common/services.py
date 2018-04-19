@@ -4,7 +4,7 @@ from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.apps import app
 from .utils.celery import celery
 
-logger = logging.getLogger('app.server')
+logger = logging.getLogger('anthill.server')
 
 
 class BaseService(_BaseService):

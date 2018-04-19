@@ -6,7 +6,7 @@ import signal
 import logging
 
 
-logger = logging.getLogger('app.server')
+logger = logging.getLogger('anthill.server')
 
 
 class BaseService(TornadoWebApplication):

@@ -24,6 +24,10 @@ CACHES = {
         }
     }
 }
+REDIS_IGNORE_EXCEPTIONS = False
+REDIS_LOG_IGNORED_EXCEPTIONS = False
+REDIS_LOGGER = False
+REDIS_SCAN_ITERSIZE = 10
 
 # All celery configuration options:
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration

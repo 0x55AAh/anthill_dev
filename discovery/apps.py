@@ -5,7 +5,7 @@ from anthill.framework.utils.json import json
 
 from anthill.framework.utils.encoding import force_text
 
-logger = logging.getLogger('app')
+logger = logging.getLogger('anthill')
 
 
 class AnthillApplication(BaseAnthillApplication):

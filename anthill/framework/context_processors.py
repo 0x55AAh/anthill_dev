@@ -5,7 +5,7 @@ from tornado.httputil import HTTPServerRequest
 import logging
 import inspect
 
-logger = logging.getLogger('app.handlers')
+logger = logging.getLogger('anthill.handlers')
 
 CONTEXT_PROCESSORS = getattr(settings, 'CONTEXT_PROCESSORS', [])
 
