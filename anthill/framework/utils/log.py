@@ -7,6 +7,11 @@ from anthill.framework.core import mail
 from anthill.framework.core.mail import get_connection
 from anthill.framework.core.management.color import color_style
 from .module_loading import import_string
+from tornado.log import LogFormatter
+import os
+
+LOG_LEVEL = ('debug' if settings.DEBUG
+             else os.environ.get('ANTHILL_LOG_LEVEL', 'info')).upper()
 
 # Default logging. This sends an email to the site admins on every
 # HTTP 500 error. Depending on DEBUG, all other log records are either sent to
@@ -26,9 +31,9 @@ DEFAULT_LOGGING = {
     'formatters': {
         'anthill.server': {
             '()': 'anthill.framework.utils.log.ServerFormatter',
-            'format': '[{server_time}] - {levelname} - {message}',
+            'fmt': '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S',
-            'style': '{',
+            'style': '%',
         }
     },
     'handlers': {
@@ -36,6 +41,12 @@ DEFAULT_LOGGING = {
             'level': 'INFO',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
+            'formatter': 'anthill.server',
+        },
+        'anthill': {
+            'level': LOG_LEVEL,
+            'class': 'logging.StreamHandler',
+            'formatter': 'anthill.server',
         },
         'anthill.server': {
             'level': 'INFO',
@@ -49,15 +60,35 @@ DEFAULT_LOGGING = {
         }
     },
     'loggers': {
-        'anthill': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-        },
-        'anthill.server': {
-            'handlers': ['anthill.server'],
-            'level': 'INFO',
+        '': {
+            'handlers': ['anthill'],
+            'level': LOG_LEVEL,
             'propagate': False,
         },
+        # 'anthill': {
+        #     'handlers': ['console', 'mail_admins'],
+        #     'level': 'INFO',
+        # },
+        # 'anthill.server': {
+        #     'handlers': ['anthill.server'],
+        #     'level': 'INFO',
+        #     'propagate': False,
+        # },
+        # 'tornado.access': {
+        #     'handlers': ['anthill.server'],
+        #     'level': 'INFO',
+        #     'propagate': False,
+        # },
+        # 'tornado.application': {
+        #     'handlers': ['anthill.server'],
+        #     'level': 'INFO',
+        #     'propagate': False,
+        # },
+        # 'tornado.general': {
+        #     'handlers': ['anthill.server'],
+        #     'level': 'INFO',
+        #     'propagate': False,
+        # },
     }
 }
 
@@ -157,38 +188,5 @@ class RequireDebugTrue(logging.Filter):
         return settings.DEBUG
 
 
-class ServerFormatter(logging.Formatter):
-    def __init__(self, *args, **kwargs):
-        self.style = color_style()
-        super().__init__(*args, **kwargs)
-
-    def format(self, record):
-        msg = record.msg
-        status_code = getattr(record, 'status_code', None)
-
-        if status_code:
-            if 200 <= status_code < 300:
-                # Put 2XX first, since it should be the common case
-                msg = self.style.HTTP_SUCCESS(msg)
-            elif 100 <= status_code < 200:
-                msg = self.style.HTTP_INFO(msg)
-            elif status_code == 304:
-                msg = self.style.HTTP_NOT_MODIFIED(msg)
-            elif 300 <= status_code < 400:
-                msg = self.style.HTTP_REDIRECT(msg)
-            elif status_code == 404:
-                msg = self.style.HTTP_NOT_FOUND(msg)
-            elif 400 <= status_code < 500:
-                msg = self.style.HTTP_BAD_REQUEST(msg)
-            else:
-                # Any 5XX, or any other status code
-                msg = self.style.HTTP_SERVER_ERROR(msg)
-
-        if self.uses_server_time() and not hasattr(record, 'server_time'):
-            record.server_time = self.formatTime(record, self.datefmt)
-
-        record.msg = msg
-        return super().format(record)
-
-    def uses_server_time(self):
-        return self._fmt.find('{server_time}') >= 0
+class ServerFormatter(LogFormatter):
+    pass
