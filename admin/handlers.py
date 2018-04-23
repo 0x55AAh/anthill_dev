@@ -54,6 +54,7 @@ class HomeHandler(TemplateHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super(HomeHandler, self).get_context_data(**kwargs)
+        raise ValueError
         return context
 
 

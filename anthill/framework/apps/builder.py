@@ -3,7 +3,7 @@ from anthill.framework.conf import settings
 from .cls import Application
 import logging
 
-logger = logging.getLogger('anthill')
+logger = logging.getLogger('anthill.application')
 
 
 class AppBuilder:

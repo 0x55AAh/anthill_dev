@@ -16,8 +16,9 @@ class BaseService(_BaseService):
 
     async def on_start(self):
         logger.info('Service \'%s\' started.' % self.name)
-        with start_worker(app=celery):
-            pass
+        if getattr(app.settings, 'USE_CELERY', False):
+            with start_worker(app=celery):
+                pass
 
     async def on_stop(self):
         logger.info('Service \'%s\' stopped.' % self.name)

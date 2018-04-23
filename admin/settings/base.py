@@ -38,3 +38,105 @@ CONTEXT_PROCESSORS = [
     'admin.context_processors.main_sidebar',
     'admin.context_processors.health_control'
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'anthill.framework.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'anthill.framework.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'anthill.server': {
+            '()': 'anthill.framework.utils.log.ServerFormatter',
+            'fmt': '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+            'color': False,
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'anthill.server'
+        },
+        'anthill': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '../admin.log',
+            'formatter': 'anthill.server',
+            'maxBytes': 100 * 1000 * 1000,
+            'backupCount': 10
+        },
+        'anthill.server': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '../admin.log',
+            'formatter': 'anthill.server',
+            'maxBytes': 100 * 1000 * 1000,
+            'backupCount': 10
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'anthill.framework.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'anthill': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'anthill.application': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'anthill.server': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'tornado.access': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'tornado.application': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'tornado.general': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'celery': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'celery.worker': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'celery.task': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'celery.redirected': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
+    }
+}

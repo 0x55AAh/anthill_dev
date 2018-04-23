@@ -72,4 +72,4 @@ def color_style():
     """
     if not supports_color():
         return no_style()
-    return make_style(os.environ.get('TORNADO_COLORS', ''))
+    return make_style(os.environ.get('ANTHILL_COLORS', ''))

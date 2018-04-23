@@ -5,13 +5,15 @@ from copy import copy
 from anthill.framework.conf import settings
 from anthill.framework.core import mail
 from anthill.framework.core.mail import get_connection
-from anthill.framework.core.management.color import color_style
 from .module_loading import import_string
 from tornado.log import LogFormatter
 import os
 
-LOG_LEVEL = ('debug' if settings.DEBUG
-             else os.environ.get('ANTHILL_LOG_LEVEL', 'info')).upper()
+
+def current_log_level():
+    return ('debug' if settings.DEBUG
+            else os.environ.get('ANTHILL_LOG_LEVEL', 'info')).upper()
+
 
 # Default logging. This sends an email to the site admins on every
 # HTTP 500 error. Depending on DEBUG, all other log records are either sent to
@@ -32,63 +34,64 @@ DEFAULT_LOGGING = {
         'anthill.server': {
             '()': 'anthill.framework.utils.log.ServerFormatter',
             'fmt': '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S',
-            'style': '%',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
         }
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
         'anthill': {
-            'level': LOG_LEVEL,
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
         'anthill.server': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'anthill.framework.utils.log.AdminEmailHandler'
+            'class': 'anthill.framework.utils.log.AdminEmailHandler',
+            'email_backend': settings.EMAIL_BACKEND
         }
     },
     'loggers': {
-        '': {
-            'handlers': ['anthill'],
-            'level': LOG_LEVEL,
-            'propagate': False,
+        'anthill': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False
         },
-        # 'anthill': {
-        #     'handlers': ['console', 'mail_admins'],
-        #     'level': 'INFO',
-        # },
-        # 'anthill.server': {
-        #     'handlers': ['anthill.server'],
-        #     'level': 'INFO',
-        #     'propagate': False,
-        # },
-        # 'tornado.access': {
-        #     'handlers': ['anthill.server'],
-        #     'level': 'INFO',
-        #     'propagate': False,
-        # },
-        # 'tornado.application': {
-        #     'handlers': ['anthill.server'],
-        #     'level': 'INFO',
-        #     'propagate': False,
-        # },
-        # 'tornado.general': {
-        #     'handlers': ['anthill.server'],
-        #     'level': 'INFO',
-        #     'propagate': False,
-        # },
+        'anthill.application': {
+            'handlers': ['anthill.server'],
+            'level': current_log_level(),
+            'propagate': False
+        },
+        'anthill.server': {
+            'handlers': ['anthill.server'],
+            'level': current_log_level(),
+            'propagate': False
+        },
+        'tornado.access': {
+            'handlers': ['anthill.server'],
+            'level': current_log_level(),
+            'propagate': False
+        },
+        'tornado.application': {
+            'handlers': ['anthill.server'],
+            'level': current_log_level(),
+            'propagate': False
+        },
+        'tornado.general': {
+            'handlers': ['anthill.server'],
+            'level': current_log_level(),
+            'propagate': False
+        }
     }
 }
 
