@@ -17,13 +17,12 @@ from anthill.framework.utils.module_loading import import_string
 __all__ = [
     'CachedDnsName', 'DNS_NAME', 'EmailMessage', 'EmailMultiAlternatives',
     'SafeMIMEText', 'SafeMIMEMultipart', 'DEFAULT_ATTACHMENT_MIME_TYPE',
-    'make_msgid', 'BadHeaderError', 'forbid_multi_line_headers',
-    'get_connection', 'send_mail', 'send_mass_mail', 'mail_admins',
-    'mail_managers',
+    'make_msgid', 'BadHeaderError', 'forbid_multi_line_headers', 'get_connection',
+    'send_mail', 'send_mass_mail', 'mail_admins', 'mail_managers',
 ]
 
 
-def get_connection(backend=None, fail_silently=False, **kwds):
+def get_connection(backend=None, fail_silently=False, **kwargs):
     """Load an email backend and return an instance of it.
 
     If backend is None (default), use settings.EMAIL_BACKEND.
@@ -31,8 +30,8 @@ def get_connection(backend=None, fail_silently=False, **kwds):
     Both fail_silently and other keyword arguments are used in the
     constructor of the backend.
     """
-    klass = import_string(backend or settings.EMAIL_BACKEND)
-    return klass(fail_silently=fail_silently, **kwds)
+    cls = import_string(backend or settings.EMAIL_BACKEND)
+    return cls(fail_silently=fail_silently, **kwargs)
 
 
 def send_mail(subject, message, from_email, recipient_list,

@@ -8,7 +8,8 @@ from collections import OrderedDict
 import argparse
 
 from .commands import (
-    Group, Option, Command, Server, Shell, Version, StartApplication, ApplicationChooser
+    Group, Option, Command, Server, Shell, Version,
+    StartApplication, ApplicationChooser, SendTestEmail
 )
 
 __all__ = [
@@ -130,7 +131,8 @@ class BaseManager:
         """
         To add your own commands use add_command or decorators.
         """
-        raise NotImplemented
+        if "send-test-email" not in self._commands:
+            self.add_command("send-test-email", SendTestEmail)
 
     def __call__(self, app=None, **kwargs):
         """
@@ -414,6 +416,7 @@ class Manager(BaseManager):
         if "db" not in self._commands:
             from anthill.framework.db.management import MigrateCommand
             self.add_command("db", MigrateCommand)
+        super(Manager, self).add_default_commands()
         if self.app.commands is not None:
             self._commands.update(self.app.commands)
 
@@ -451,6 +454,7 @@ class EmptyManager(BaseManager):
             )
         if "app" not in self._commands:
             self.add_command("app", ApplicationChooser())
+        super(EmptyManager, self).add_default_commands()
 
     def __call__(self, app=None, **kwargs):
         pass

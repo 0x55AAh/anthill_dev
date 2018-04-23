@@ -68,7 +68,7 @@ class CacheHandler:
         except AttributeError:
             self._caches.caches = {}
         except KeyError:
-            ...
+            pass
 
         if alias not in settings.CACHES:
             raise InvalidCacheBackendError(

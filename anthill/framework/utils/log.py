@@ -57,8 +57,7 @@ DEFAULT_LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'anthill.framework.utils.log.AdminEmailHandler',
-            'email_backend': settings.EMAIL_BACKEND
+            'class': 'anthill.framework.utils.log.AdminEmailHandler'
         }
     },
     'loggers': {

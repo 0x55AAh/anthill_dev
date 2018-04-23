@@ -9,6 +9,10 @@ SECRET_KEY = 'fch5vqo6but)i4e_9i^pj!#axji3##x*s(tfl2j52vt$km=hma'
 
 DEBUG = False
 
+ADMINS = (
+    ('Lysenko Vladimir', 'wofkin@gmail.com'),
+)
+
 SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_event'
 
 LOCATION = 'http://localhost:9506'

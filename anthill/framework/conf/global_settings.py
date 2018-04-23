@@ -143,6 +143,8 @@ ADMINS = []
 # notifications and other various emails.
 MANAGERS = ADMINS
 
+DEFAULT_CHARSET = 'utf-8'
+
 ##############
 # SQLALCHEMY #
 ##############

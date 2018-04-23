@@ -9,6 +9,10 @@ SECRET_KEY = '09m0q%d0d1l*1y@4awc&y@z&3*5#v!=-yvmx^+eoa2so33t_55'
 
 DEBUG = False
 
+ADMINS = (
+    ('Lysenko Vladimir', 'wofkin@gmail.com'),
+)
+
 REGISTERED_SERVICES = {
     'admin': {
         'internal': 'http://localhost:9500',
