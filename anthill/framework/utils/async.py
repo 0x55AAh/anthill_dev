@@ -1,17 +1,21 @@
 from concurrent.futures import ThreadPoolExecutor
-from tornado.platform.asyncio import to_tornado_future
+from anthill.framework.utils.tornado import *
 from functools import wraps
 import os
+
+if TOR50:
+    from tornado.ioloop import IOLoop
+    from tornado.concurrent import Future, chain_future
+elif TOR43:
+    from tornado.platform.asyncio import to_tornado_future
 
 
 class ThreadPoolExecution:
     """Tiny wrapper around ThreadPoolExecutor"""
 
-    def __init__(self, max_workers=None, thread_name_prefix=''):
+    def __init__(self, max_workers=None):
         self._max_workers = max_workers or (os.cpu_count() or 1) * 5
-        self._thread_name_prefix = thread_name_prefix
-        self._pool = ThreadPoolExecutor(
-            max_workers=self._max_workers, thread_name_prefix=self._thread_name_prefix)
+        self._pool = ThreadPoolExecutor(max_workers=self._max_workers)
 
     def set_max_workers(self, count):
         if self._pool:
@@ -20,8 +24,13 @@ class ThreadPoolExecution:
         self._pool = ThreadPoolExecutor(max_workers=self._max_workers)
 
     def _as_future(self, blocking_func, *args, **kwargs):
-        future = self._pool.submit(blocking_func, *args, **kwargs)
-        return to_tornado_future(future)
+        c_future = self._pool.submit(blocking_func, *args, **kwargs)
+        if TOR50:
+            t_future = Future()
+            IOLoop.current().add_future(c_future, lambda f: chain_future(f, t_future))
+            return t_future
+        elif TOR43:
+            return to_tornado_future(c_future)
 
     def __call__(self, blocking_func, *args, **kwargs):
         return self._as_future(blocking_func, *args, **kwargs)
@@ -33,5 +42,4 @@ class ThreadPoolExecution:
         return wrapper
 
 
-thread_pool_exec = ThreadPoolExecution(
-    thread_name_prefix='AnthillThreadPoolExecutor')
+thread_pool_exec = ThreadPoolExecution()
