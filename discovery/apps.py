@@ -1,5 +1,5 @@
 import logging
-from anthill.common.apps import BaseAnthillApplication
+from anthill.platform.apps import BaseAnthillApplication
 from anthill.framework.conf import settings
 from anthill.framework.utils.json import json
 

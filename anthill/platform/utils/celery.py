@@ -1,6 +1,6 @@
 from celery import Celery
 from anthill.framework.conf import settings
-from anthill.common.core.celery.worker import start_worker
+from anthill.platform.core.celery.worker import start_worker
 import logging
 
 logger = logging.getLogger('celery')

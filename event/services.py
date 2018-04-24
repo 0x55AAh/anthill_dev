@@ -1,4 +1,4 @@
-from anthill.common.services import PlainService
+from anthill.platform.services import PlainService
 
 
 class Service(PlainService):

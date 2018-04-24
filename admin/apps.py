@@ -1,4 +1,4 @@
-from anthill.common.apps import BaseAnthillApplication
+from anthill.platform.apps import BaseAnthillApplication
 import logging
 
 logger = logging.getLogger('anthill.application')

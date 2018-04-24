@@ -1,1 +1,1 @@
-CONFIG_MODULE = 'anthill.common.conf'
+CONFIG_MODULE = 'anthill.platform.conf'

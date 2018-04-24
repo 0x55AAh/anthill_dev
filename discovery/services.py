@@ -1,4 +1,4 @@
-from anthill.common.services import DiscoveryService
+from anthill.platform.services import DiscoveryService
 
 
 class Service(DiscoveryService):

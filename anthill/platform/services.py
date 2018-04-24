@@ -1,7 +1,7 @@
 import logging
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.apps import app
-from anthill.common.utils.celery import CeleryMixin
+from anthill.platform.utils.celery import CeleryMixin
 
 logger = logging.getLogger('anthill.server')
 

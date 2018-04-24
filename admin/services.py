@@ -1,4 +1,4 @@
-from anthill.common.services import AdminService
+from anthill.platform.services import AdminService
 
 
 class Service(AdminService):
