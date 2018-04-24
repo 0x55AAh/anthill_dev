@@ -196,22 +196,6 @@ AUTH_PASSWORD_VALIDATORS = []
 
 
 ##########
-# CELERY #
-##########
-
-CELERY_LOG_LEVEL = 'error'
-
-# All celery configuration options:
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
-CELERY_SETTINGS = {
-    'broker_url': 'amqp://guest:guest@localhost:5672',
-    'result_backend': 'redis://'
-}
-
-CELERY_APP_NAME = 'tasks'
-
-
-##########
 # SERVER #
 ##########
 

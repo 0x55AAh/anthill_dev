@@ -1,6 +1,7 @@
 """
 Async tools for sending email.
 """
+from anthill.framework.utils.asynchronous import thread_pool_exec
 from . import (
     send_mail as _send_mail,
     send_mass_mail as _send_mass_mail,
@@ -8,7 +9,6 @@ from . import (
     mail_managers as _mail_managers,
     get_connection as _get_connection
 )
-from anthill.framework.utils.async import thread_pool_exec
 
 __all__ = [
     'send_mail', 'send_mass_mail', 'mail_admins',

@@ -68,7 +68,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': '../event.log',
             'formatter': 'anthill.server',
-            'maxBytes': 100 * 1000 * 1000,
+            'maxBytes': 100 * 1024 * 1024,
             'backupCount': 10
         },
         'anthill.server': {
@@ -76,7 +76,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': '../event.log',
             'formatter': 'anthill.server',
-            'maxBytes': 100 * 1000 * 1000,
+            'maxBytes': 100 * 1024 * 1024,
             'backupCount': 10
         },
         'mail_admins': {

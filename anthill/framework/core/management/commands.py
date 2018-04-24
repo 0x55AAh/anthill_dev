@@ -295,7 +295,7 @@ class Shell(Command):
                 embed(banner1=self.banner, user_ns=context, history_filename=history_filename)
                 return
             except ImportError:
-                ...
+                pass
 
         if not no_ptpython:
             # Try PtPython
@@ -305,7 +305,7 @@ class Shell(Command):
                 embed(globals=context, history_filename=history_filename)
                 return
             except ImportError:
-                ...
+                pass
 
         if not no_bpython:
             # Try BPython
@@ -314,7 +314,7 @@ class Shell(Command):
                 embed(banner=self.banner, locals_=context)
                 return
             except ImportError:
-                ...
+                pass
 
         if not no_ipython:
             # Try IPython
@@ -323,7 +323,7 @@ class Shell(Command):
                 embed(banner1=self.banner, user_ns=context)
                 return
             except ImportError:
-                ...
+                pass
 
         # Use basic python shell
         code.interact(self.banner, local=context)
@@ -340,7 +340,7 @@ class Server(Command):
         app.run(**kwargs)
 
     def run(self, *args, **kwargs):
-        ...
+        pass
 
 
 class Clean(Command):
@@ -364,7 +364,7 @@ class Version(Command):
         print('Application %s v%s' % (app.label, app.version))
 
     def run(self, *args, **kwargs):
-        ...
+        pass
 
 
 class StartApplication(Command):

@@ -9,8 +9,6 @@ from celery.worker.consumer import Consumer
 from typing import Iterable, Any, Union
 from anthill.framework.conf import settings
 
-WORKER_LOG_LEVEL = getattr(settings, 'CELERY_LOG_LEVEL', 'error')
-
 worker_starting = Signal(
     name='worker_starting',
     providing_args={},
@@ -57,7 +55,7 @@ def ping() -> str:
 def start_worker(app: Celery,
                  concurrency: int=1,
                  pool: str='solo',
-                 loglevel: Union[str, int]=WORKER_LOG_LEVEL,
+                 loglevel: Union[str, int]='info',
                  logfile: str=None,
                  perform_ping_check: bool=True,
                  ping_task_timeout: float=10.0,
@@ -87,7 +85,7 @@ def start_worker(app: Celery,
 def _start_worker_thread(app: Celery,
                          concurrency: int=1,
                          pool: str='solo',
-                         loglevel: Union[str, int]=WORKER_LOG_LEVEL,
+                         loglevel: Union[str, int]='info',
                          logfile: str=None,
                          WorkController: Any=WorkController,
                          **kwargs: Any) -> Iterable:
@@ -134,7 +132,7 @@ def _start_worker_thread(app: Celery,
 def _start_worker_process(app: Celery,
                           concurrency: int=1,
                           pool: str='solo',
-                          loglevel: Union[int, str]=WORKER_LOG_LEVEL,
+                          loglevel: Union[int, str]='info',
                           logfile: str=None,
                           **kwargs: Any) -> Iterable:
     """Start worker in separate process.

@@ -29,12 +29,21 @@ REDIS_LOG_IGNORED_EXCEPTIONS = False
 REDIS_LOGGER = False
 REDIS_SCAN_ITERSIZE = 10
 
+
+##########
+# CELERY #
+##########
+
+CELERY_LOG_LEVEL = 'info'
+
 # All celery configuration options:
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
-CELERY = {
+CELERY_SETTINGS = {
     'broker_url': 'amqp://guest:guest@localhost:5672',
     'result_backend': 'redis://'
 }
+
+CELERY_APP_NAME = 'tasks'
 
 USE_CELERY = False
 

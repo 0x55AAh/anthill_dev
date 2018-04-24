@@ -1,13 +1,12 @@
 import logging
-from anthill.framework.core.celery.worker import start_worker
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.apps import app
-from .utils.celery import celery
+from anthill.common.utils.celery import CeleryMixin
 
 logger = logging.getLogger('anthill.server')
 
 
-class BaseService(_BaseService):
+class BaseService(CeleryMixin, _BaseService):
     def get_server_kwargs(self):
         return dict(xheaders=True)
 
@@ -16,9 +15,7 @@ class BaseService(_BaseService):
 
     async def on_start(self):
         logger.info('Service \'%s\' started.' % self.name)
-        if getattr(app.settings, 'USE_CELERY', False):
-            with start_worker(app=celery):
-                pass
+        self.start_celery()
 
     async def on_stop(self):
         logger.info('Service \'%s\' stopped.' % self.name)
