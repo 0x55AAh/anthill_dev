@@ -2,7 +2,7 @@ import logging
 
 
 class RateLimitExceeded(Exception):
-    ...
+    pass
 
 
 def key_func(action, key, level):
@@ -15,7 +15,7 @@ class RateLimitLock:
         self.action = action
 
     async def rollback(self):
-        ...
+        pass
 
 
 class RateLimit:

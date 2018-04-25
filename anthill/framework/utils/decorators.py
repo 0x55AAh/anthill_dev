@@ -1,4 +1,7 @@
 from functools import update_wrapper
+from tornado.web import (
+    url, RedirectHandler, RequestHandler, authenticated
+)
 
 
 class classonlymethod(classmethod):
@@ -82,3 +85,117 @@ def method_decorator(decorator, name=''):
     else:
         _dec.__name__ = 'method_decorator(%s)' % decorator.__class__.__name__
     return _dec
+
+
+class Route:
+    """
+    Decorates RequestHandlers and builds up a list of routables handlers
+    Tech Notes (or "What the *@# is really happening here?")
+    --------------------------------------------------------
+    Everytime @route('...') is called, we instantiate a new route object which
+    saves off the passed in URI. Then, since it's a decorator, the function is
+    passed to the route.__call__ method as an argument. We save a reference to
+    that handler with our uri in our class level routes list then return that
+    class to be instantiated as normal.
+    Later, we can call the classmethod route.get_routes to return that list of
+    tuples which can be handed directly to the tornado.web.Application
+    instantiation.
+
+    Example:
+
+    @route('/some/path')
+    class SomeRequestHandler(RequestHandler):
+        def get(self):
+            goto = self.reverse_url('other')
+            self.redirect(goto)
+
+    # so you can do myapp.reverse_url('other')
+
+    @route('/some/other/path', name='other')
+    class SomeOtherRequestHandler(RequestHandler):
+        def get(self):
+            goto = self.reverse_url('SomeRequestHandler')
+            self.redirect(goto)
+
+    # for passing uri parameters
+
+    @route(r'/some/(?P<parameterized>\w+)/path')
+    class SomeParameterizedRequestHandler(RequestHandler):
+        def get(self, parameterized):
+            goto = self.reverse_url(parameterized)
+            self.redirect(goto)
+
+    my_routes = route.get_routes()
+    """
+    _routes = []
+
+    def __init__(self, uri, name=None):
+        self._uri = uri
+        self.name = name
+
+    def __call__(self, _handler):
+        """Gets called when we class decorate"""
+        name = self.name or _handler.__name__
+        self._routes.append(url(self._uri, _handler, name=name))
+        return _handler
+
+    @classmethod
+    def get_routes(cls):
+        return cls._routes
+
+
+route = Route
+
+
+def route_redirect(from_, to, name=None):
+    """
+    route_redirect provided by Peter Bengtsson via the Tornado mailing list
+    and then improved by Ben Darnell.
+    Use it as follows to redirect other paths into your decorated handler.
+
+    Example:
+
+    from anthill.framework.utils.decorators import route, route_redirect
+
+    route_redirect('/smartphone$', '/smartphone/')
+    route_redirect('/iphone/$', '/smartphone/iphone/', name='iphone_shortcut')
+    @route('/smartphone/$')
+    class SmartphoneHandler(RequestHandler):
+       def get(self):
+           ...
+    """
+    route.get_routes().append(
+        url(from_, RedirectHandler, dict(url=to), name=name))
+
+
+def generic_route(uri, template, handler=None):
+    """Maps a template to a route."""
+    h_ = handler or RequestHandler
+
+    @route(uri, name=uri)
+    class GenericHandler(h_):
+        _template = template
+
+        def get(self):
+            return self.render(self._template)
+
+    return GenericHandler
+
+
+def auth_generic_route(uri, template, handler):
+    """
+    Provides authenticated mapping of template render to route.
+    :param: uri: the route path
+    :param: template: the template path to render
+    :param: handler: a subclass of tornado.web.RequestHandler that provides all
+            the necessary methods for resolving current_user
+    """
+    @route(uri, name=uri)
+    class AuthHandler(handler):
+        _template = template
+
+        @authenticated
+        def get(self):
+            return self.render(self._template)
+
+    return AuthHandler
