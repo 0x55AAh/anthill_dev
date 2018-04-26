@@ -117,9 +117,27 @@ LOGGING = {
 RATE_LIMIT_ENABLE = False
 RATE_LIMIT_CACHE_PREFIX = 'rl:'
 
-RATE_LIMIT_CONFIG = {
-    'resource1': {'rate': '15/s'},
-    'resource2': {'rate': '8/m'},
-    'resource3': {'rate': '152/h'},
-    'resource4': {'rate': '512/d'},
-}
+# Maps resource names and its rate limit parameters.
+# Rate limiter has blocking and non-blocking mode.
+# In blocking mode (default) rate limiter raise an exception.
+# In non-blocking mode rate limiter works silently.
+# Also we can set additional `callback` parameter, that
+# runs in non-blocking and ignored in blocking mode.
+#
+# Example:
+#
+# RATE_LIMIT_CONFIG = {
+#     'user': {
+#         'rate': '15/s', 'block': True, 'callback': None
+#     },
+#     'ip': {
+#         'rate': '8/3m', 'block': True, 'callback': None
+#     },
+#     'create_room': {
+#         'rate': '152/24h', 'block': False, 'callback': 'game.security.rate_limit.cr'
+#     },
+#     'send_message': {
+#         'rate': '512/d', 'block': True, 'callback': None
+#     }
+# }
+RATE_LIMIT_CONFIG = {}
