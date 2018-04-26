@@ -45,7 +45,7 @@ CELERY_SETTINGS = {
 
 CELERY_APP_NAME = 'tasks'
 
-USE_CELERY = False
+CELERY_ENABLE = False
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -107,4 +107,19 @@ LOGGING = {
             'propagate': False
         },
     }
+}
+
+
+##############
+# RATE LIMIT #
+##############
+
+RATE_LIMIT_ENABLE = False
+RATE_LIMIT_CACHE_PREFIX = 'rl:'
+
+RATE_LIMIT_CONFIG = {
+    'resource1': {'rate': '15/s'},
+    'resource2': {'rate': '8/m'},
+    'resource3': {'rate': '152/h'},
+    'resource4': {'rate': '512/d'},
 }

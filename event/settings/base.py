@@ -35,7 +35,7 @@ STATIC_URL = '/static/'
 
 UI_MODULE = 'event.ui'
 
-USE_CELERY = True
+CELERY_ENABLE = True
 
 LOGGING = {
     'version': 1,

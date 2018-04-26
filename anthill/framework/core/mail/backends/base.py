@@ -34,11 +34,9 @@ class BaseEmailBackend:
 
         The default implementation does nothing.
         """
-        ...
 
     def close(self):
         """Close a network connection."""
-        ...
 
     def __enter__(self):
         try:
@@ -56,4 +54,5 @@ class BaseEmailBackend:
         Send one or more EmailMessage objects and return the number of email
         messages sent.
         """
-        raise NotImplementedError('subclasses of BaseEmailBackend must override send_messages() method')
+        raise NotImplementedError(
+            'subclasses of BaseEmailBackend must override send_messages() method')

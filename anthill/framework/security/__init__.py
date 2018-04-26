@@ -16,7 +16,7 @@ def internal(method):
     def wrapper(self, *args, **kwargs):
         ip = get_ip(self.request)
         if not is_internal(ip):
-            # attacker shouldn't even know this page exists
+            # Attacker shouldn't even know this page exists
             raise Http404
         return method(self, *args, **kwargs)
     return wrapper
