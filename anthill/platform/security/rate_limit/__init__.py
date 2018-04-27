@@ -144,8 +144,7 @@ class RateLimit:
         return decorator
 
     def build_storage_key(self, resource_name, resource_key):
-        return '{0}:{1}:{2}'.format(
-            RATE_LIMIT_CACHE_PREFIX, resource_name, resource_key)
+        return ':'.join([RATE_LIMIT_CACHE_PREFIX, resource_name, resource_key])
 
 
 default_rate_limit = RateLimit(storage=cache)
