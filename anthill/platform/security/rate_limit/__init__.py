@@ -1,9 +1,30 @@
+"""
+Usage:
+    from anthill.platform.security.rate_limit import default_rate_limit
+
+    @default_rate_limit('ip', ip_address)
+    def function_name():
+        # function code
+        ...
+
+
+    def exceeded_callback(*args, **kwargs):
+        # function code
+        ...
+
+    @default_rate_limit('create_room', account_id,
+                        exceeded_callback=exceeded_callback, *args, **kwargs)
+    def function_name():
+        # function code
+        ...
+"""
 from anthill.platform.security.rate_limit.exceptions import RateLimitException
 from anthill.framework.core.cache import cache
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from functools import wraps, partial
+import threading
 import logging
 
 
@@ -11,7 +32,7 @@ logger = logging.getLogger('anthill.rate_limit')
 
 
 RATE_LIMIT_ENABLE = getattr(settings, 'RATE_LIMIT_ENABLE', False)
-RATE_LIMIT_CACHE_PREFIX = getattr(settings, 'RATE_LIMIT_CACHE_PREFIX', 'rl:')
+RATE_LIMIT_CACHE_PREFIX = getattr(settings, 'RATE_LIMIT_CACHE_PREFIX', 'rl')
 RATE_LIMIT_CONFIG = getattr(settings, 'RATE_LIMIT_CONFIG', {})
 
 
@@ -61,33 +82,16 @@ class RateLimitConfig(dict):
 
 
 class RateLimit:
-    """
-    Example:
-        from anthill.platform.security.rate_limit import default_rate_limit
-
-        @default_rate_limit('ip', ip_address)
-        def function_name():
-            # function code
-            ...
-
-
-        def exceeded_callback(*args, **kwargs):
-            # function code
-            ...
-
-        @default_rate_limit('create_room', account_id,
-                            exceeded_callback=exceeded_callback, *args, **kwargs)
-        def function_name():
-            # function code
-            ...
-    """
     config_factory = RateLimitConfig(RATE_LIMIT_CONFIG)
 
     def __init__(self, storage):
         self.storage = storage
         self.config = self.config_factory()
 
-    def apply(self, resource_name, resource_value, exceeded_callback=None, *args, **kwargs):
+        # Add thread safety.
+        self.lock = threading.RLock()
+
+    def __call__(self, resource_name, resource_key, exceeded_callback=None, *args, **kwargs):
         def default_exceeded_callback():
             logger.warning('Resource \'%s\' exceeded.' % resource_name)
 
@@ -101,7 +105,9 @@ class RateLimit:
         def decorator(func):
             @wraps(func)
             def wrapper(*f_args, **f_kwargs):
-                if not RATE_LIMIT_ENABLE:
+                if not RATE_LIMIT_ENABLE or not RATE_LIMIT_CONFIG:
+                    if not RATE_LIMIT_CONFIG:
+                        logger.warning('Rate limit is not configured.')
                     return func(*f_args, **f_kwargs)
                 if resource_name not in self.config:
                     logger.error('Resource %s is not configured.' % resource_name)
@@ -111,39 +117,35 @@ class RateLimit:
                 block = self.config[resource_name]['block']
                 callback = self.config[resource_name]['callback']
 
-                storage_key = self.build_storage_key(resource_name, resource_value)
-                rate_requests = self.storage.get(storage_key)
+                storage_key = self.build_storage_key(resource_name, resource_key)
 
-                if rate_requests is None:
-                    self.storage.set(storage_key, 1, timeout=rate_duration_max)
-                elif rate_requests <= rate_requests_max:
-                    self.storage.incr(storage_key)
-                else:
-                    exceeded_callback()
-                    if block:
-                        return
-                    elif callback is not None:
-                        callback()
-                try:
-                    return func(*f_args, **f_kwargs)
-                except Exception:
-                    self.fallback(storage_key)
-                    raise
+                with self.lock:
+                    rate_requests = self.storage.get(storage_key)
+
+                    if rate_requests is None:
+                        self.storage.set(storage_key, 1, timeout=rate_duration_max)
+                    elif rate_requests <= rate_requests_max:
+                        self.storage.incr(storage_key)
+                    else:
+                        exceeded_callback()
+                        if block:
+                            return
+                        elif callback is not None:
+                            callback()
+                    try:
+                        return func(*f_args, **f_kwargs)
+                    except Exception:
+                        # Fallback first then re-raise exception
+                        if rate_requests and rate_requests > 0:
+                            self.storage.decr(storage_key)
+                        raise
 
             return wrapper
         return decorator
 
-    def build_storage_key(self, resource_name, resource_value):
+    def build_storage_key(self, resource_name, resource_key):
         return '{0}:{1}:{2}'.format(
-            RATE_LIMIT_CACHE_PREFIX, resource_name, resource_value)
-
-    def fallback(self, storage_key):
-        rate_requests = self.storage.get(storage_key)
-        if rate_requests and rate_requests > 0:
-            self.storage.decr(storage_key)
-
-    def __call__(self, resource_name, resource_value, exceeded_callback=None, *args, **kwargs):
-        return self.apply(resource_name, resource_value, exceeded_callback, *args, **kwargs)
+            RATE_LIMIT_CACHE_PREFIX, resource_name, resource_key)
 
 
 default_rate_limit = RateLimit(storage=cache)

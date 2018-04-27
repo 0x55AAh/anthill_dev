@@ -1,7 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from anthill.framework.utils.tornado import *
 from functools import wraps
-import os
+import multiprocessing
 
 if TOR50:
     from tornado.ioloop import IOLoop
@@ -14,13 +14,13 @@ class ThreadPoolExecution:
     """Tiny wrapper around ThreadPoolExecutor"""
 
     def __init__(self, max_workers=None):
-        self._max_workers = max_workers or (os.cpu_count() or 1) * 5
+        self._max_workers = max_workers or (multiprocessing.cpu_count() or 1) * 5
         self._pool = ThreadPoolExecutor(max_workers=self._max_workers)
 
     def set_max_workers(self, count):
         if self._pool:
             self._pool.shutdown(wait=True)
-        self._max_workers = count or (os.cpu_count() or 1) * 5
+        self._max_workers = count or (multiprocessing.cpu_count() or 1) * 5
         self._pool = ThreadPoolExecutor(max_workers=self._max_workers)
 
     def _as_future(self, blocking_func, *args, **kwargs):
