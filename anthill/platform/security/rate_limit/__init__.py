@@ -66,16 +66,19 @@ class RateLimit:
         from anthill.platform.security.rate_limit import default_rate_limit
 
         @default_rate_limit('ip', ip_address)
-        def test_function():
+        def function_name():
+            # function code
             ...
 
 
         def exceeded_callback(*args, **kwargs):
+            # function code
             ...
 
         @default_rate_limit('create_room', account_id,
                             exceeded_callback=exceeded_callback, *args, **kwargs)
-        def test_function():
+        def function_name():
+            # function code
             ...
     """
     config_factory = RateLimitConfig(RATE_LIMIT_CONFIG)
@@ -86,7 +89,7 @@ class RateLimit:
 
     def apply(self, resource_name, resource_value, exceeded_callback=None, *args, **kwargs):
         def default_exceeded_callback():
-            logger.warning('Resource %s exceeded.' % resource_name)
+            logger.warning('Resource \'%s\' exceeded.' % resource_name)
 
         if exceeded_callback is None:
             exceeded_callback = default_exceeded_callback
@@ -110,7 +113,8 @@ class RateLimit:
 
                 storage_key = self.build_storage_key(resource_name, resource_value)
                 rate_requests = self.storage.get(storage_key)
-                if not rate_requests:
+
+                if rate_requests is None:
                     self.storage.set(storage_key, 1, timeout=rate_duration_max)
                 elif rate_requests <= rate_requests_max:
                     self.storage.incr(storage_key)
@@ -139,7 +143,7 @@ class RateLimit:
             self.storage.decr(storage_key)
 
     def __call__(self, resource_name, resource_value, exceeded_callback=None, *args, **kwargs):
-        self.apply(resource_name, resource_value, exceeded_callback, *args, **kwargs)
+        return self.apply(resource_name, resource_value, exceeded_callback, *args, **kwargs)
 
 
 default_rate_limit = RateLimit(storage=cache)

@@ -115,7 +115,7 @@ LOGGING = {
 ##############
 
 RATE_LIMIT_ENABLE = False
-RATE_LIMIT_CACHE_PREFIX = 'rl:'
+RATE_LIMIT_CACHE_PREFIX = 'rl'
 
 # Maps resource names and its rate limit parameters.
 # Rate limiter has blocking and non-blocking mode.
