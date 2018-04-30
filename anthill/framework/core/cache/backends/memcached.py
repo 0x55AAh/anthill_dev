@@ -149,7 +149,7 @@ class BaseMemcachedCache(BaseCache):
 
 
 class MemcachedCache(BaseMemcachedCache):
-    "An implementation of a cache binding using python-memcached"
+    """An implementation of a cache binding using python-memcached"""
     def __init__(self, server, params):
         import memcache
         super().__init__(server, params, library=memcache, value_not_found_exception=ValueError)
@@ -164,7 +164,7 @@ class MemcachedCache(BaseMemcachedCache):
 
 
 class PyLibMCCache(BaseMemcachedCache):
-    "An implementation of a cache binding using pylibmc"
+    """An implementation of a cache binding using pylibmc"""
     def __init__(self, server, params):
         import pylibmc
         super().__init__(server, params, library=pylibmc, value_not_found_exception=pylibmc.NotFound)
@@ -176,4 +176,4 @@ class PyLibMCCache(BaseMemcachedCache):
     def close(self, **kwargs):
         # libmemcached manages its own connections. Don't call disconnect_all()
         # as it resets the failover state and creates unnecessary reconnects.
-        ...
+        pass

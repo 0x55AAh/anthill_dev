@@ -15,8 +15,9 @@ DISCOVERY_SECRET_KEY = 'DISCOVERY_SERVICE_SECRET_KEY'
 CACHES = {
     "default": {
         "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": "localhost:6379",
         "OPTIONS": {
+            "DB": 1,
             "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 500

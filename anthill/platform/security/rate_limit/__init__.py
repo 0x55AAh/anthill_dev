@@ -146,6 +146,13 @@ class RateLimit:
             return wrapper
         return decorator
 
+    def reset(self, storage_key):
+        """
+        Reset limits by storage key
+        """
+        with self.lock:
+            return self.storage.delete(storage_key)
+
     def build_storage_key(self, resource_name, resource_key):
         return ':'.join([RATE_LIMIT_CACHE_PREFIX, resource_name, resource_key])
 
