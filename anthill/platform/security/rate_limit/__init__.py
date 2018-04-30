@@ -1,4 +1,5 @@
 """
+Rate limit use general caching system.
 Usage:
     from anthill.platform.security.rate_limit import default_rate_limit
 
@@ -23,7 +24,7 @@ from anthill.framework.core.cache import cache
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from functools import wraps, partial
+from functools import wraps
 import threading
 import logging
 
@@ -45,6 +46,7 @@ class RateLimitConfig(dict):
         'm': 60,
         'h': 60 * 60,
         'd': 24 * 60 * 60,
+        'w': 7 * 24 * 60 * 60
     }
 
     def _parse_callback(self, entry):
@@ -67,7 +69,7 @@ class RateLimitConfig(dict):
         duration_unit = raw_duration[-1]
         return requests_num, duration_num * self._PERIODS[duration_unit]
 
-    def parse(self):
+    def __call__(self):
         config = {}
         for k, v in self.items():
             config[k] = dict(
@@ -76,9 +78,6 @@ class RateLimitConfig(dict):
                 rate=self._parse_rate(v)
             )
         return config
-
-    def __call__(self):
-        return self.parse()
 
 
 class RateLimit:
@@ -92,15 +91,8 @@ class RateLimit:
         self.lock = threading.RLock()
 
     def __call__(self, resource_name, resource_key, exceeded_callback=None, *args, **kwargs):
-        def default_exceeded_callback():
-            logger.warning('Resource \'%s\' exceeded.' % resource_name)
-
-        if exceeded_callback is None:
-            exceeded_callback = default_exceeded_callback
-        else:
-            if not callable(exceeded_callback):
-                raise ImproperlyConfigured('Exceeded callback is not callable')
-            exceeded_callback = partial(exceeded_callback, *args, **kwargs)
+        if exceeded_callback is not None and not callable(exceeded_callback):
+            raise ImproperlyConfigured('Exceeded callback is not callable')
 
         def decorator(func):
             @wraps(func)
@@ -114,29 +106,38 @@ class RateLimit:
                     return
 
                 rate_requests_max, rate_duration_max = self.config[resource_name]['rate']
-                block = self.config[resource_name]['block']
-                callback = self.config[resource_name]['callback']
 
                 storage_key = self.build_storage_key(resource_name, resource_key)
 
                 with self.lock:
                     rate_requests = self.storage.get(storage_key)
-
                     if rate_requests is None:
                         self.storage.set(storage_key, 1, timeout=rate_duration_max)
-                    elif rate_requests <= rate_requests_max:
+                    elif rate_requests < rate_requests_max:
                         self.storage.incr(storage_key)
                     else:
-                        exceeded_callback()
+                        block = self.config[resource_name]['block']
+                        callback = self.config[resource_name]['callback']
+                        callback_kwargs = dict(
+                            storage_key=storage_key,
+                            rate_requests_max=rate_requests_max,
+                            rate_duration=rate_duration_max,
+                            rate_requests=rate_requests,
+                        )
                         if block:
-                            return
+                            if exceeded_callback is None:
+                                raise RateLimitException
+                            else:
+                                kwargs.update(callback_kwargs)
+                                exceeded_callback(*args, **kwargs)
+                                return
                         elif callback is not None:
-                            callback()
+                            callback(**callback_kwargs)
                     try:
                         return func(*f_args, **f_kwargs)
                     except Exception:
                         # Fallback first then re-raise exception
-                        if rate_requests and rate_requests > 0:
+                        if rate_requests is not None and rate_requests > 0:
                             self.storage.decr(storage_key)
                         raise
 
