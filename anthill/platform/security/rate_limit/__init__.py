@@ -37,7 +37,7 @@ RATE_LIMIT_CACHE_PREFIX = getattr(settings, 'RATE_LIMIT_CACHE_PREFIX', 'rl')
 RATE_LIMIT_CONFIG = getattr(settings, 'RATE_LIMIT_CONFIG', {})
 
 
-__all__ = ['RateLimit', 'default_rate_limit']
+__all__ = ['RateLimit', 'RateLimitException', 'default_rate_limit']
 
 
 class RateLimitConfig(dict):
@@ -98,11 +98,11 @@ class RateLimit:
             @wraps(func)
             def wrapper(*f_args, **f_kwargs):
                 if not RATE_LIMIT_ENABLE or not RATE_LIMIT_CONFIG:
-                    if not RATE_LIMIT_CONFIG:
+                    if not RATE_LIMIT_ENABLE and not RATE_LIMIT_CONFIG:
                         logger.warning('Rate limit is not configured.')
                     return func(*f_args, **f_kwargs)
                 if resource_name not in self.config:
-                    logger.error('Resource %s is not configured.' % resource_name)
+                    logger.error('Resource `%s` is not configured.' % resource_name)
                     return
 
                 rate_requests_max, rate_duration_max = self.config[resource_name]['rate']
@@ -118,21 +118,23 @@ class RateLimit:
                     else:
                         block = self.config[resource_name]['block']
                         callback = self.config[resource_name]['callback']
-                        callback_kwargs = dict(
-                            storage_key=storage_key,
+                        state = dict(
+                            rate_storage_key=storage_key,
                             rate_requests_max=rate_requests_max,
                             rate_duration=rate_duration_max,
                             rate_requests=rate_requests,
+                            rate_resource_name=resource_name,
+                            rate_resource_key=resource_key
                         )
                         if block:
                             if exceeded_callback is None:
-                                raise RateLimitException
+                                raise RateLimitException(state)
                             else:
-                                kwargs.update(callback_kwargs)
+                                kwargs.update(state)
                                 exceeded_callback(*args, **kwargs)
                                 return
                         elif callback is not None:
-                            callback(**callback_kwargs)
+                            callback(**state)
                     try:
                         return func(*f_args, **f_kwargs)
                     except Exception:

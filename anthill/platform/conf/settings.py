@@ -118,11 +118,12 @@ RATE_LIMIT_ENABLE = False
 RATE_LIMIT_CACHE_PREFIX = 'rl'
 
 # Maps resource names and its rate limit parameters.
-# Rate limiter has blocking and non-blocking mode.
-# In blocking mode (default) rate limiter prevents function execution.
-# In non-blocking mode rate limiter works silently.
+# Rate limit has blocking and non-blocking mode.
+# In blocking mode (default) rate limit prevents function execution
+# either by raising RateLimitException error or executing exceeded_callback.
+# In non-blocking mode rate limit do not stops function executing.
 # Also we can set additional `callback` parameter, that
-# runs in non-blocking and ignored in blocking mode.
+# runs when exceeded in non-blocking and ignored in blocking mode.
 #
 # Example:
 #
