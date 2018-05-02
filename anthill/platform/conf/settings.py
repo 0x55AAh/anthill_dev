@@ -115,6 +115,20 @@ LOGGING = {
 # RATE LIMIT #
 ##############
 
+CACHES.update(
+    rate_limit={
+        "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
+        "LOCATION": "localhost:6379",
+        "OPTIONS": {
+            "DB": 2,
+            "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 500
+            }
+        }
+    }
+)
+
 RATE_LIMIT_ENABLE = False
 RATE_LIMIT_CACHE_PREFIX = 'rl'
 

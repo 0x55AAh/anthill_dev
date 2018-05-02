@@ -20,7 +20,8 @@ Usage:
         ...
 """
 from anthill.platform.security.rate_limit.exceptions import RateLimitException
-from anthill.framework.core.cache import cache
+# from anthill.framework.core.cache import cache  # Default cache
+from anthill.framework.core.cache import caches
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.core.exceptions import ImproperlyConfigured
@@ -30,6 +31,7 @@ import logging
 
 
 logger = logging.getLogger('anthill.rate_limit')
+cache = caches['rate_limit']
 
 
 RATE_LIMIT_ENABLE = getattr(settings, 'RATE_LIMIT_ENABLE', False)
