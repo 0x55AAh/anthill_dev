@@ -157,3 +157,17 @@ RATE_LIMIT_CACHE_PREFIX = 'rl'
 #     }
 # }
 RATE_LIMIT_CONFIG = {}
+
+
+##############
+# WEBSOCKETS #
+##############
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "anthill.framework.core.channels.layers.backends.redis.ChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}

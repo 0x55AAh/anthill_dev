@@ -216,3 +216,14 @@ UI_MODULE = None
 ###########
 
 CSRF_COOKIES = False
+
+
+##############
+# WEBSOCKETS #
+##############
+
+WEBSOCKET_PING_INTERVAL = None
+WEBSOCKET_PING_TIMEOUT = None
+WEBSOCKET_MAX_MESSAGE_SIZE = None
+
+CHANNEL_LAYERS = {}

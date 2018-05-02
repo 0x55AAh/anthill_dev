@@ -5,6 +5,7 @@ from anthill.framework.http import HttpGoneError
 from anthill.framework.utils.format import bytes2human
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.utils.json import json
+from anthill.framework.conf import settings
 
 
 class RequestHandler(BaseRequestHandler):
@@ -17,11 +18,33 @@ class RequestHandler(BaseRequestHandler):
 
 
 class WebSocketHandler(BaseWebSocketHandler):
-    def data_received(self, chunk):
-        pass
+    def __init__(self, application, request, **kwargs):
+        super(WebSocketHandler, self).__init__(application, request, **kwargs)
+        self.settings.update(websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL)
+        self.settings.update(websocket_ping_timeout=settings.WEBSOCKET_PING_TIMEOUT)
+        self.settings.update(websocket_max_message_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE)
 
     def on_message(self, message):
-        pass
+        """Handle incoming messages on the WebSocket."""
+        raise NotImplementedError
+
+    def data_received(self, chunk):
+        """Implement this method to handle streamed request data."""
+
+    def open(self, *args, **kwargs):
+        """Invoked when a new WebSocket is opened."""
+
+    def on_close(self):
+        """Invoked when the WebSocket is closed."""
+
+    def on_ping(self, data):
+        """Invoked when the a ping frame is received."""
+
+    def on_pong(self, data):
+        """Invoked when the response to a ping frame is received."""
+
+    def get_compression_options(self):
+        return None
 
 
 class JSONHandlerMixin:
