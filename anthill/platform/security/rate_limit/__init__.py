@@ -98,7 +98,7 @@ class RateLimit:
             @wraps(func)
             def wrapper(*f_args, **f_kwargs):
                 if not RATE_LIMIT_ENABLE or not RATE_LIMIT_CONFIG:
-                    if not RATE_LIMIT_ENABLE and not RATE_LIMIT_CONFIG:
+                    if RATE_LIMIT_ENABLE and not RATE_LIMIT_CONFIG:
                         logger.warning('Rate limit is not configured.')
                     return func(*f_args, **f_kwargs)
                 if resource_name not in self.config:
