@@ -47,6 +47,15 @@ class WebSocketHandler(BaseWebSocketHandler):
         return None
 
 
+class JsonWebSocketHandler(BaseWebSocketHandler):
+    def data_received(self, chunk):
+        """Implement this method to handle streamed request data."""
+
+    def on_message(self, message):
+        """Handle incoming messages on the WebSocket."""
+        raise NotImplementedError
+
+
 class JSONHandlerMixin:
     extra_context = None
 

@@ -1,6 +1,9 @@
 from anthill.framework.core.channels.layers.backends.base import BaseChannelLayer
 from anthill.framework.core.channels.exceptions import ChannelFull
 
+from tornado import queues
+from tornado import ioloop
+
 import asyncio
 import base64
 import binascii
@@ -65,6 +68,7 @@ class ChannelLayer(BaseChannelLayer):
         self.receive_loop_task = None
         # Buffered messages by process-local channel name
         self.receive_buffer = collections.defaultdict(asyncio.Queue)
+        # self.receive_buffer = collections.defaultdict(queues.Queue)
 
     def decode_hosts(self, hosts):
         """

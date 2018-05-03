@@ -1,5 +1,9 @@
-from anthill.framework.handlers import TemplateHandler, RedirectHandler
+from anthill.framework.handlers import TemplateHandler, RedirectHandler, WebSocketHandler
 from .ui.modules import ServiceCard
+from anthill.framework.core.channels.layers import get_channel_layer
+from anthill.framework.core.channels.exceptions import InvalidChannelLayerError
+import functools
+import json
 
 
 class AuthenticatedHandlerMixin:
@@ -82,3 +86,87 @@ class DebugHandler(TemplateHandler):
     async def get_context_data(self, **kwargs):
         context = await super(DebugHandler, self).get_context_data(**kwargs)
         return context
+
+
+class TestWSHandler(WebSocketHandler):
+    groups = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.channel_layer = None
+        self.channel_name = None
+        self.channel_receive = None
+
+        if self.groups is None:
+            self.groups = []
+
+    async def open(self, *args, **kwargs):
+        """Invoked when a new WebSocket is opened."""
+        # Initialize channel layer
+        self.channel_layer = get_channel_layer()
+        if self.channel_layer is not None:
+            self.channel_name = await self.channel_layer.new_channel()
+            self.channel_receive = functools.partial(self.channel_layer.receive, self.channel_name)
+        # Add channel groups
+        try:
+            for group in self.groups:
+                await self.channel_layer.group_add(group, self.channel_name)
+        except AttributeError:
+            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
+
+    async def send(self, message, binary=False, close=None):
+        self.write_message(message, binary=binary)
+        # await self.channel_layer.send(self.channel_name, message)
+        if close:
+            await self.close(close)
+
+    async def receive(self, message):
+        print(message)
+
+    async def on_message(self, message):
+        # message = await self.channel_receive()
+        await self.receive(message)
+
+    async def on_connection_close(self):
+        # Remove channel groups
+        try:
+            for group in self.groups:
+                await self.channel_layer.group_discard(group, self.channel_name)
+        except AttributeError:
+            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
+        super().on_connection_close()
+
+    def on_close(self):
+        """Invoked when the WebSocket is closed."""
+
+
+class TestJWSHandler(TestWSHandler):
+    async def send_json(self, message, close=None):
+        """
+        Encode the given message as JSON and send it to the client.
+        """
+        await super().send(
+            message=await self.encode_json(message),
+            close=close
+        )
+
+    async def receive(self, message):
+        """
+        Decode JSON message to dict and pass it to receive_json method.
+        """
+        if message:
+            await self.receive_json(await self.decode_json(text_data))
+        else:
+            raise ValueError("No text section for incoming WebSocket frame!")
+
+    async def receive_json(self, message):
+        pass
+
+    @classmethod
+    async def decode_json(cls, text_data):
+        return json.loads(text_data)
+
+    @classmethod
+    async def encode_json(cls, content):
+        return json.dumps(content)
