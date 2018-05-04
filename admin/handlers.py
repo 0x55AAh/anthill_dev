@@ -99,7 +99,10 @@ class TestWSHandler(WebSocketHandler):
         self.channel_receive = None
 
         if self.groups is None:
-            self.groups = []
+            self.groups = self.get_groups() or []
+
+    def get_groups(self):
+        pass
 
     async def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
@@ -156,7 +159,7 @@ class TestJWSHandler(TestWSHandler):
         Decode JSON message to dict and pass it to receive_json method.
         """
         if message:
-            await self.receive_json(await self.decode_json(text_data))
+            await self.receive_json(await self.decode_json(message))
         else:
             raise ValueError("No text section for incoming WebSocket frame!")
 
@@ -164,9 +167,9 @@ class TestJWSHandler(TestWSHandler):
         pass
 
     @classmethod
-    async def decode_json(cls, text_data):
-        return json.loads(text_data)
+    async def decode_json(cls, message):
+        return json.loads(message)
 
     @classmethod
-    async def encode_json(cls, content):
-        return json.dumps(content)
+    async def encode_json(cls, message):
+        return json.dumps(message)

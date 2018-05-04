@@ -340,11 +340,11 @@ class ChannelLayer(BaseChannelLayer):
     def _map_channel_to_connection(self, channel_names, message):
         """
         For a list of channel names, bucket each one to a dict keyed by the
-        connection index
+        connection index.
         Also for each channel create a message specific to that channel, adding
-        the __asgi_channel__ key to the message
+        the __asgi_channel__ key to the message.
         We also return a mapping from channel names to their corresponding Redis
-        keys, and a mapping of channels to their capacity
+        keys, and a mapping of channels to their capacity.
         """
         connection_to_channels = collections.defaultdict(list)
         channel_to_message = dict()
