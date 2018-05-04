@@ -327,12 +327,16 @@ class ChannelLayer(BaseChannelLayer):
             """ % self.expiry
 
             # We need to filter the messages to keep those related to the connection
-            args = [channel_to_message[channel_name] for channel_name in channel_names
-                    if channel_to_key[channel_name] in channel_redis_keys]
+            args = [
+                channel_to_message[channel_name] for channel_name in channel_names
+                if channel_to_key[channel_name] in channel_redis_keys
+            ]
 
             # We need to send the capacity for each channel
-            args += [channel_to_capacity[channel_name] for channel_name in channel_names
-                    if channel_to_key[channel_name] in channel_redis_keys]
+            args += [
+                channel_to_capacity[channel_name] for channel_name in channel_names
+                if channel_to_key[channel_name] in channel_redis_keys
+            ]
 
             async with self.connection(connection_index) as connection:
                 await connection.eval(group_send_lua, keys=channel_redis_keys, args=args)

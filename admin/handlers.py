@@ -1,8 +1,8 @@
-from anthill.framework.handlers import TemplateHandler, RedirectHandler, WebSocketHandler
+from anthill.framework.handlers import TemplateHandler, RedirectHandler
+from anthill.framework.core.channels.handlers.websocket import (
+    WebSocketChannelHandler, JsonWebSocketChannelHandler
+)
 from .ui.modules import ServiceCard
-from anthill.framework.core.channels.layers import get_channel_layer
-from anthill.framework.core.channels.exceptions import InvalidChannelLayerError
-import functools
 import json
 
 
@@ -58,6 +58,24 @@ class HomeHandler(TemplateHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super(HomeHandler, self).get_context_data(**kwargs)
+
+        async def test_send_receive():
+            from tornado.gen import sleep
+            layer = get_channel_layer()
+            message = {"type": "test.message"}
+            await layer.send("specific.yPlPzPtO", message)
+            # await sleep(1)
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+        await test_send_receive()
+
         return context
 
 
@@ -88,88 +106,17 @@ class DebugHandler(TemplateHandler):
         return context
 
 
-class TestWSHandler(WebSocketHandler):
-    groups = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.channel_layer = None
-        self.channel_name = None
-        self.channel_receive = None
-
-        if self.groups is None:
-            self.groups = self.get_groups() or []
-
-    def get_groups(self):
-        pass
-
-    async def open(self, *args, **kwargs):
-        """Invoked when a new WebSocket is opened."""
-        # Initialize channel layer
-        self.channel_layer = get_channel_layer()
-        if self.channel_layer is not None:
-            self.channel_name = await self.channel_layer.new_channel()
-            self.channel_receive = functools.partial(self.channel_layer.receive, self.channel_name)
-        # Add channel groups
-        try:
-            for group in self.groups:
-                await self.channel_layer.group_add(group, self.channel_name)
-        except AttributeError:
-            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
-
-    async def send(self, message, binary=False, close=None):
-        self.write_message(message, binary=binary)
-        # await self.channel_layer.send(self.channel_name, message)
-        if close:
-            await self.close(close)
+class TestWSHandler(WebSocketChannelHandler):
+    groups = ['test', 'test1', 'test2']
 
     async def receive(self, message):
+        """Receives message from current channel"""
         print(message)
 
-    async def on_message(self, message):
-        # message = await self.channel_receive()
-        await self.receive(message)
 
-    async def on_connection_close(self):
-        # Remove channel groups
-        try:
-            for group in self.groups:
-                await self.channel_layer.group_discard(group, self.channel_name)
-        except AttributeError:
-            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
-        super().on_connection_close()
-
-    def on_close(self):
-        """Invoked when the WebSocket is closed."""
-
-
-class TestJWSHandler(TestWSHandler):
-    async def send_json(self, message, close=None):
-        """
-        Encode the given message as JSON and send it to the client.
-        """
-        await super().send(
-            message=await self.encode_json(message),
-            close=close
-        )
-
-    async def receive(self, message):
-        """
-        Decode JSON message to dict and pass it to receive_json method.
-        """
-        if message:
-            await self.receive_json(await self.decode_json(message))
-        else:
-            raise ValueError("No text section for incoming WebSocket frame!")
+class TestJWSHandler(JsonWebSocketChannelHandler):
+    groups = ['test', 'test1', 'test2']
 
     async def receive_json(self, message):
-        pass
-
-    @classmethod
-    async def decode_json(cls, message):
-        return json.loads(message)
-
-    @classmethod
-    async def encode_json(cls, message):
-        return json.dumps(message)
+        """Receives message from current channel"""
+        print(message)
