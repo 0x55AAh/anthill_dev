@@ -1,7 +1,7 @@
-from anthill.framework.core.channels.exceptions import ChannelFull
-from anthill.framework.core.channels.layers.backends.base import BaseChannelLayer
+from anthill.platform.core.messenger.channels.exceptions import ChannelFull
+from anthill.platform.core.messenger.channels.layers.backends.base import BaseChannelLayer
 from copy import deepcopy
-import asyncio
+from tornado import queues
 import random
 import string
 import time
@@ -33,7 +33,7 @@ class ChannelLayer(BaseChannelLayer):
         # If it's a process-local channel, strip off local part and stick full name in message
         assert "__asgi_channel__" not in message
 
-        queue = self.channels.setdefault(channel, asyncio.Queue())
+        queue = self.channels.setdefault(channel, queues.Queue())
         # Are we full
         if queue.qsize() >= self.capacity:
             raise ChannelFull(channel)
@@ -53,7 +53,7 @@ class ChannelLayer(BaseChannelLayer):
         assert self.valid_channel_name(channel)
         self._clean_expired()
 
-        queue = self.channels.setdefault(channel, asyncio.Queue())
+        queue = self.channels.setdefault(channel, queues.Queue())
 
         # Do a plain direct receive
         _, message = await queue.get()

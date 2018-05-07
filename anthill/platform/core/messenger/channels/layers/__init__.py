@@ -1,7 +1,7 @@
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
-from anthill.framework.core.channels.exceptions import ChannelFull, InvalidChannelLayerError
-from anthill.framework.core.channels import DEFAULT_CHANNEL_LAYER
+from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
+from anthill.platform.core.messenger.channels import DEFAULT_CHANNEL_LAYER
 
 
 class ChannelLayerManager:

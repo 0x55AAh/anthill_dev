@@ -165,7 +165,7 @@ RATE_LIMIT_CONFIG = {}
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "anthill.framework.core.channels.layers.backends.redis.ChannelLayer",
+        "BACKEND": "anthill.platform.core.messenger.channels.layers.backends.redis.ChannelLayer",
         "CONFIG": {
             "hosts": [("localhost", 6379)],
         },

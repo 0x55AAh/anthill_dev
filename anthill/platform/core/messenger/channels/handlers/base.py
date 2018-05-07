@@ -1,4 +1,4 @@
-from anthill.framework.core.channels.exceptions import InvalidChannelLayerError
+from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
 
 
 class ChannelHandlerMixin:
@@ -12,24 +12,24 @@ class ChannelHandlerMixin:
         if self.channel_receive:
             while True:
                 message = await self.channel_receive()
-                await self.receive(message)
+                await self.on_channel_message(message)
 
-    async def receive(self, message):
+    async def on_channel_message(self, message):
         """Receives message from current channel."""
-        pass
+
+    async def on_message(self, message):
+        """Receives message from client."""
 
     async def send_to_channel(self, channel, message):
         """Sends the given message to the given channel."""
         try:
             await self.channel_layer.send(channel, message)
         except AttributeError:
-            raise InvalidChannelLayerError(
-                "BACKEND is not configured or doesn't support groups")
+            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
 
     async def send_to_group(self, group, message):
         """Sends the given message to the given group."""
         try:
             await self.channel_layer.group_send(group, message)
         except AttributeError:
-            raise InvalidChannelLayerError(
-                "BACKEND is not configured or doesn't support groups")
+            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")

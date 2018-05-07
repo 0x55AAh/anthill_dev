@@ -1,7 +1,7 @@
 from anthill.framework.handlers import WebSocketHandler
-from anthill.framework.core.channels.handlers.base import ChannelHandlerMixin
-from anthill.framework.core.channels.exceptions import InvalidChannelLayerError
-from anthill.framework.core.channels.layers import get_channel_layer
+from anthill.platform.core.messenger.channels.handlers.base import ChannelHandlerMixin
+from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
+from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from tornado.ioloop import IOLoop
 import functools
 
@@ -24,7 +24,7 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
             self.channel_name = await self.channel_layer.new_channel()
             self.channel_receive = functools.partial(self.channel_layer.receive, self.channel_name)
         # Add channel groups
-        groups = await self.get_groups()
+        groups = await self.get_groups() or []
         try:
             for group in groups:
                 await self.channel_layer.group_add(group, self.channel_name)
@@ -39,17 +39,6 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
         if close is not None:
             await self.close(close, reason)
 
-    async def receive(self, message):
-        """Receives message from current channel"""
-        pass
-
-    async def on_message(self, message):
-        """
-        Standard WebSockets message source method.
-        Use `self.receive` instead.
-        """
-        pass
-
     async def on_connection_close(self):
         # Remove channel groups
         try:
@@ -61,36 +50,3 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
-
-
-class JsonWebSocketChannelHandler(WebSocketChannelHandler):
-    async def send_json(self, message, close=None, reason=None):
-        """
-        Encode the given message as JSON and send it to the client.
-        """
-        await super().send(
-            message=await self.encode_json(message),
-            close=close,
-            reason=reason
-        )
-
-    async def receive(self, message):
-        """
-        Decode JSON message to dict and pass it to receive_json method.
-        """
-        if message:
-            await self.receive_json(await self.decode_json(message))
-        else:
-            raise ValueError("No text section for incoming WebSocket frame!")
-
-    async def receive_json(self, message):
-        """Receives message from current channel"""
-        pass
-
-    @classmethod
-    async def decode_json(cls, message):
-        return json.loads(message)
-
-    @classmethod
-    async def encode_json(cls, message):
-        return json.dumps(message)

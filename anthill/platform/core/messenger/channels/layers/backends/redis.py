@@ -1,8 +1,5 @@
-from anthill.framework.core.channels.layers.backends.base import BaseChannelLayer
-from anthill.framework.core.channels.exceptions import ChannelFull
-
-from tornado import queues
-from tornado import ioloop
+from anthill.platform.core.messenger.channels.layers.backends.base import BaseChannelLayer
+from anthill.platform.core.messenger.channels.exceptions import ChannelFull
 
 import asyncio
 import base64

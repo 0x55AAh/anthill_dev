@@ -9,6 +9,5 @@ route_patterns = [
     url(r'^/login/?$', handlers.LoginHandler, name='login'),
     url(r'^/logout/?$', handlers.LogoutHandler, name='logout'),
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
-    url(r'^/ws/?$', handlers.TestWSHandler, name='ws'),
-    url(r'^/jws/?$', handlers.TestJWSHandler, name='jws'),
+    url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat'),
 ]

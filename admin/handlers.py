@@ -1,9 +1,7 @@
 from anthill.framework.handlers import TemplateHandler, RedirectHandler
-from anthill.framework.core.channels.handlers.websocket import (
-    WebSocketChannelHandler, JsonWebSocketChannelHandler
-)
+from anthill.platform.core.messenger import MessengerHandler
+from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from .ui.modules import ServiceCard
-import json
 
 
 class AuthenticatedHandlerMixin:
@@ -58,24 +56,6 @@ class HomeHandler(TemplateHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super(HomeHandler, self).get_context_data(**kwargs)
-
-        async def test_send_receive():
-            from tornado.gen import sleep
-            layer = get_channel_layer()
-            message = {"type": "test.message"}
-            await layer.send("specific.yPlPzPtO", message)
-            # await sleep(1)
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-        await test_send_receive()
-
         return context
 
 
@@ -106,17 +86,5 @@ class DebugHandler(TemplateHandler):
         return context
 
 
-class TestWSHandler(WebSocketChannelHandler):
-    groups = ['test', 'test1', 'test2']
-
-    async def receive(self, message):
-        """Receives message from current channel"""
-        print(message)
-
-
-class TestJWSHandler(JsonWebSocketChannelHandler):
-    groups = ['test', 'test1', 'test2']
-
-    async def receive_json(self, message):
-        """Receives message from current channel"""
-        print(message)
+class TestMessengerHandler(MessengerHandler):
+    groups = ['test']
