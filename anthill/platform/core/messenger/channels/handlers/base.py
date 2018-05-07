@@ -33,3 +33,8 @@ class ChannelHandlerMixin:
             await self.channel_layer.group_send(group, message)
         except AttributeError:
             raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
+
+    async def send_to_global_groups(self, message):
+        global_groups = self.groups or []
+        for group in global_groups:
+            await self.send_to_group(group, message)

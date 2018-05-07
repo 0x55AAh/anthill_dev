@@ -1,6 +1,5 @@
 from anthill.framework.handlers import TemplateHandler, RedirectHandler
 from anthill.platform.core.messenger import MessengerHandler
-from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from .ui.modules import ServiceCard
 
 
@@ -87,4 +86,4 @@ class DebugHandler(TemplateHandler):
 
 
 class TestMessengerHandler(MessengerHandler):
-    groups = ['test']
+    pass
