@@ -173,7 +173,7 @@ class MessengerHandler(WebSocketChannelHandler):
         """Invoked when a new connection is opened."""
         await super(MessengerHandler, self).open(*args, **kwargs)
         await self.client.authenticate()
-        if notification_on_join:
+        if self.notification_on_join:
             friends = await self.client.get_friends() or []
             message = {
                 'type': '',
@@ -325,6 +325,16 @@ class MessengerHandler(WebSocketChannelHandler):
         }
         await self.send(reply)
 
+    @action(name='ping')
+    async def ping_group(self, group, message):
+        reply = {
+            'action': 'ping',
+            'type': '',
+            'data': {'text': 'pong'},
+            'user_id': self.client.get_user_id(),
+        }
+        await self.send_to_group(group, reply)
+
     # System actions
 
     @action()
@@ -341,6 +351,30 @@ class MessengerHandler(WebSocketChannelHandler):
 
     @action()
     async def typing_finish(self, group, message):
+        """
+        Message format:
+        {
+            "action": action_name,
+            "type": message_type,
+            "user_id": user_id,
+        }
+        """
+        await self.send_to_group(group, message)
+
+    @action()
+    async def sending_file_start(self, group, message):
+        """
+        Message format:
+        {
+            "action": action_name,
+            "type": message_type,
+            "user_id": user_id,
+        }
+        """
+        await self.send_to_group(group, message)
+
+    @action()
+    async def sending_file_finish(self, group, message):
         """
         Message format:
         {
