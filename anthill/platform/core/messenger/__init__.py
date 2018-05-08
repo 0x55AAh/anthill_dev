@@ -33,7 +33,7 @@ def action(**kwargs):
 
 class BaseClient:
     user_id_key = 'id'
-    personal_group_prefix = '__user'
+    personal_group_prefix = '__user'  # Must starts with `__` for security reason
 
     def __init__(self):
         self.user = AnonymousUser()
@@ -46,8 +46,9 @@ class BaseClient:
         if user is not None:
             self.user = user
 
-    def get_personal_group(self):
-        return ':'.join([self.personal_group_prefix, self.get_user_id()])
+    def get_personal_group(self, user_id=None):
+        user_id = user_id if user_id is not None else self.get_user_id()
+        return ':'.join([self.personal_group_prefix, user_id])
 
     def get_user_id(self):
         return getattr(self.client.user, self.client.user_id_key)
@@ -55,7 +56,7 @@ class BaseClient:
     def get_user_serialized(self):
         return
 
-    async def get_friends(self):
+    async def get_friends(self, id_only=False):
         raise NotImplementedError
 
     async def get_groups(self):
@@ -64,37 +65,88 @@ class BaseClient:
     async def online(self):
         raise NotImplementedError
 
-    async def create_message(self, group, message):
-        """Save message on database"""
+    async def create_group(self, data: dict) -> str:
         raise NotImplementedError
 
-    async def enumerate_group(self, group, new=None):
+    async def create_message(self, group: str, message: dict) -> int:
+        """
+        Save message on database.
+        :param group: Group identifier
+        :param message: Message data
+        :return: Message identifier
+        """
         raise NotImplementedError
 
-    async def get_messages(self, group, message_ids):
+    async def enumerate_group(self, group: str, new=None) -> list:
+        """
+        List messages received from group.
+        :param group: Group identifier
+        :param new: Shows what messages deeded.
+                    Get all messages if `None`,
+                        new (not read) messages if `True`,
+                        old (read) messages if `False`.
+        :return: Serialized messages list
+        """
         raise NotImplementedError
 
-    async def delete_messages(self, group, message_ids):
+    async def get_messages(self, group: str, message_ids: list) -> list:
+        """
+        Get messages list by id
+        :param group: Group identifier
+        :param message_ids: message id list
+        :return: Serialized messages list
+        """
         raise NotImplementedError
 
-    async def update_messages(self, group, message_ids):
+    async def delete_messages(self, group: str, message_ids: list):
+        """
+
+        :param group:
+        :param message_ids:
+        :return:
+        """
         raise NotImplementedError
 
-    async def read_messages(self, group, message_ids):
+    async def update_messages(self, group: str, messages_data: dict):
+        """
+
+        :param group:
+        :param messages_data:
+        :return:
+        """
         raise NotImplementedError
 
-    async def forward_messages(self, group, message_ids, group_to):
+    async def read_messages(self, group: str, message_ids: list):
+        """
+
+        :param group:
+        :param message_ids:
+        :return:
+        """
+        raise NotImplementedError
+
+    async def forward_messages(self, group: str, message_ids: list, group_to: str):
+        """
+
+        :param group:
+        :param message_ids:
+        :param group_to:
+        :return:
+        """
         raise NotImplementedError
 
 
 class Client(BaseClient):
-    async def get_friends(self):
+    async def get_friends(self, id_only=False):
         pass
 
     async def get_groups(self):
         pass
 
     async def online(self):
+        pass
+
+    async def create_group(self, data):
         pass
 
     async def create_message(self, group, message):
@@ -109,7 +161,7 @@ class Client(BaseClient):
     async def delete_messages(self, group, message_ids):
         pass
 
-    async def update_messages(self, group, message_ids):
+    async def update_messages(self, group, messages_data):
         pass
 
     async def read_messages(self, group, message_ids):
@@ -138,9 +190,12 @@ class MessengerHandlerMeta(type):
 
 @six.add_metaclass(MessengerHandlerMeta)
 class MessengerHandler(WebSocketChannelHandler):
-    groups = ['__messenger__']  # Global groups
+    groups = ['__messenger__']  # Global groups. Must starts with `__` for security reason
     client_class = Client
-    notification_on_join = True
+    notification_on_net_status_changed = True
+    direct_group_prefix = '__direct'  # Must starts with `__`
+    secure_direct = True
+    secure_groups = True
     # TODO: force wss
 
     def __init__(self, *args, **kwargs):
@@ -157,32 +212,64 @@ class MessengerHandler(WebSocketChannelHandler):
         group = self.client.get_personal_group()
         await self.send_to_group(group, message)
 
+    async def send_net_status(self, status):
+        if status not in ('online', 'offline'):
+            raise ValueError('Status can be `online` or `offline`')
+        friends = await self.client.get_friends() or []
+        message = {
+            'type': '',
+            'action': status,
+            'user_id': self.client.get_user_id()
+        }
+        for friend in friends:
+            group = self.client.get_personal_group(friend.id)
+            await self.send_to_group(group, message)
+
+    async def is_friend(self, user_id):
+        friends = await self.client.get_friends(id_only=True) or []
+        return user_id in friends
+
     async def get_groups(self):
-        """Get list group names to subscribe from database."""
+        """
+        Get list group names to subscribe from database.
+        Groups may be personal, global, general or direct.
+        Personal and global groups must be system for security reason,
+        for example: __messenger__, __user:12, etc.
+        Direct is a system group shared for 2 persons, for example: __direct:12:512, etc.
+        General group is plain group shared for 1 or more persons.
+        """
         groups = await super(MessengerHandler, self).get_groups()
         groups += await self.client.get_groups()
 
-        # Subscribe on personal group
+        # Personal group
         personal_group = self.client.get_personal_group()
         if personal_group not in groups:
             groups.append(personal_group)
 
+        # Direct groups
+        friends = await self.client.get_friends() or []
+        for friend in friends:
+            _gg = self.build_direct_group_with(friend.id, reverse=True)
+            if _gg not in groups:
+                groups.append(_gg)
+
         return groups
+
+    @classmethod
+    def is_group_system(cls, group: str) -> bool:
+        return group.startswith('__')
+
+    def build_direct_group_with(self, user_id, reverse=False):
+        if reverse:
+            return ':'.join([self.direct_group_prefix, user_id, self.client.get_user_id()])
+        return ':'.join([self.direct_group_prefix, self.client.get_user_id(), user_id])
 
     async def open(self, *args, **kwargs):
         """Invoked when a new connection is opened."""
         await super(MessengerHandler, self).open(*args, **kwargs)
         await self.client.authenticate()
-        if self.notification_on_join:
-            friends = await self.client.get_friends() or []
-            message = {
-                'type': '',
-                'action': '',
-                'user_id': self.client.get_user_id()
-            }
-            for friend in friends:
-                group = ':'.join([self.client.personal_group_prefix, friend.id])
-                await self.send_to_group(group, message)
+        if self.notification_on_net_status_changed:
+            self.send_net_status('online')
 
     @auth_required
     async def on_channel_message(self, message):
@@ -194,14 +281,19 @@ class MessengerHandler(WebSocketChannelHandler):
         """Receives message from client."""
         await self.message_handler(message)
 
+    async def on_connection_close(self):
+        super(MessengerHandler, self).on_connection_close()
+        if self.notification_on_net_status_changed:
+            self.send_net_status('offline')
+
     async def message_handler(self, message):
         message = json.loads(message)
 
         group_name = message.get('group')
         if group_name is None:
             raise ValueError('Message must provide a destination group')
-        if group_name.startswith('__'):
-            raise ValueError('Not valid group name')
+        if self.is_group_system(group_name):  # Message group name cannot be system
+            raise ValueError('Not valid group name: %s' % group_name)
 
         action_name = message.get('action')
         if action_name is None:
@@ -230,30 +322,64 @@ class MessengerHandler(WebSocketChannelHandler):
     # Client actions
 
     @action()
-    async def create_message(self, group, message):
+    async def create_group(self, _: None, message: dict) -> None:
         """
         Message format:
         {
             "request_id": request_id,
-            "action": action_name,
-            "type": message_type,
-            "group": group,
+            "action": "create_group",
+            "type": "",
+            "data": {"name": name, "direct": False}, # Destination user_id if group is direct
+            "user_id": user_id, # Added automatically
+        }
+        """
+        group_data = message['data']
+        direct = group_data.get('direct', False)
+        group_name = await self.client.create_group(group_data)  # Save group on database
+        if direct:
+            user_id = group_data['name']  # user_id if group is direct
+            group_name = self.build_direct_group_with(user_id)
+        await self.channel_layer.group_add(group_name, self.channel_name)  # Subscribe on the created group
+        reply = {
+            'request_id': self.request_id,
+            'action': self.action_name,
+            'type': self.message_type,
+            'data': {'name': group_name, 'direct': direct}
+        }
+        await self.send(reply)
+
+    @action()
+    async def create_message(self, group: str, message: dict) -> None:
+        """
+        Message format:
+        {
+            "request_id": request_id,
+            "action": "create_message",
+            "type": "",
+            "group": group, # Destination user_id if message is direct
             "data": {"content": content, "binary": False, "draft": False},
             "user_id": user_id, # Added automatically
+            "direct": True
         }
         """
         if not message.get('data', {}).get('content'):
             raise ValueError('Message must provide content data')
         message_id = await self.client.create_message(group, message)  # Save message on database
         message.update(id=message_id)
+
         draft = message.get('data', {}).get('draft')
+
         if draft:
             await self.send_personal(message)
         else:
+            direct = message.get('direct', False)
+            if direct:
+                # Group is destination user_id
+                group = self.build_direct_group_with(group)
             await self.send_to_group(group, message)
 
     @action()
-    async def enumerate_group(self, group, message):
+    async def enumerate_group(self, group: str, message: dict) -> None:
         messages = await self.client.enumerate_group(group, new=message.get('new'))
         reply = {
             'request_id': self.request_id,
@@ -265,7 +391,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send(reply)
 
     @action()
-    async def get_messages(self, group, message):
+    async def get_messages(self, group: str, message: dict) -> None:
         message_ids = message.get('ids', [])
         messages = await self.client.get_messages(group, message_ids=message_ids)
         reply = {
@@ -278,7 +404,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send(reply)
 
     @action()
-    async def delete_messages(self, group, message):
+    async def delete_messages(self, group: str, message: dict) -> None:
         message_ids = message.get('ids', [])
         await self.client.delete_messages(group, message_ids=message_ids)
         payload = {
@@ -290,9 +416,18 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send_to_group(group, payload)
 
     @action()
-    async def update_messages(self, group, message):
-        message_ids = message.get('ids', [])
-        messages = await self.client.update_messages(group, message_ids=message_ids)
+    async def update_messages(self, group: str, message: dict) -> None:
+        """
+        Data format:
+        {
+            "data": {
+                "user_id": {"content": content, "binary": False, "draft": False},
+                ...
+            }
+        }
+        """
+        messages_data = message.get('data', {})
+        messages = await self.client.update_messages(group, messages_data=messages_data)
         payload = {
             'request_id': self.request_id,
             'action': self.action_name,
@@ -303,7 +438,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send_to_group(group, payload)
 
     @action()
-    async def read_messages(self, group, message):
+    async def read_messages(self, group: str, message: dict) -> None:
         message_ids = message.get('ids', [])
         await self.client.read_messages(group, message_ids=message_ids)
         payload = {
@@ -315,7 +450,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send_to_group(group, payload)
 
     @action()
-    async def forward_messages(self, group, message):
+    async def forward_messages(self, group: str, message: dict) -> None:
         message_ids = message.get('ids', [])
         group_to = message.get('group_to')
         await self.client.forward_messages(group, message_ids=message_ids, group_to=group_to)
@@ -328,9 +463,19 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send(reply)
 
     @action(name='ping')
-    async def ping_group(self, group, message):
+    async def ping_group(self, group: str, message: dict) -> None:
         reply = {
             'action': 'ping',
+            'type': '',
+            'data': {'text': 'ping'},
+            'user_id': self.client.get_user_id(),
+        }
+        await self.send_to_group(group, reply)
+
+    @action(name='pong')
+    async def pong_group(self, group: str, message: dict) -> None:
+        reply = {
+            'action': 'pong',
             'type': '',
             'data': {'text': 'pong'},
             'user_id': self.client.get_user_id(),
@@ -340,48 +485,78 @@ class MessengerHandler(WebSocketChannelHandler):
     # System actions
 
     @action()
-    async def typing_start(self, group, message):
+    async def typing_start(self, group: str, message: dict) -> None:
         """
+        Typing text message started.
         Message format:
         {
-            "action": action_name,
-            "type": message_type,
+            "action": "typing_start",
+            "type": "",
             "user_id": user_id,
         }
         """
         await self.send_to_group(group, message)
 
     @action()
-    async def typing_finish(self, group, message):
+    async def typing_finish(self, group: str, message: dict) -> None:
         """
+        Typing text message finished.
         Message format:
         {
-            "action": action_name,
-            "type": message_type,
+            "action": "typing_finish",
+            "type": "",
             "user_id": user_id,
         }
         """
         await self.send_to_group(group, message)
 
     @action()
-    async def sending_file_start(self, group, message):
+    async def sending_file_start(self, group: str, message: dict) -> None:
         """
+        Sending file uploading started.
         Message format:
         {
-            "action": action_name,
-            "type": message_type,
+            "action": "sending_file_start",
+            "type": "",
             "user_id": user_id,
         }
         """
         await self.send_to_group(group, message)
 
     @action()
-    async def sending_file_finish(self, group, message):
+    async def sending_file_finish(self, group: str, message: dict) -> None:
         """
+        Sending file uploading finished.
         Message format:
         {
-            "action": action_name,
-            "type": message_type,
+            "action": "sending_file_finish",
+            "type": "",
+            "user_id": user_id,
+        }
+        """
+        await self.send_to_group(group, message)
+
+    @action()
+    async def online(self, group: str, message: dict) -> None:
+        """
+        User went online.
+        Message format:
+        {
+            "action": "online",
+            "type": "",
+            "user_id": user_id,
+        }
+        """
+        await self.send_to_group(group, message)
+
+    @action()
+    async def offline(self, group: str, message: dict) -> None:
+        """
+        User went offline.
+        Message format:
+        {
+            "action": "offline",
+            "type": "",
             "user_id": user_id,
         }
         """
