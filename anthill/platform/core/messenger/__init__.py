@@ -200,6 +200,8 @@ class MessengerHandler(WebSocketChannelHandler):
         group_name = message.get('group')
         if group_name is None:
             raise ValueError('Message must provide a destination group')
+        if group_name.startswith('__'):
+            raise ValueError('Not valid group name')
 
         action_name = message.get('action')
         if action_name is None:
