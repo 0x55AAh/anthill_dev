@@ -349,6 +349,14 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send(reply)
 
     @action()
+    async def delete_group(self, _: None, message: dict) -> None:
+        pass
+
+    @action()
+    async def update_group(self, _: None, message: dict) -> None:
+        pass
+
+    @action()
     async def create_message(self, group: str, message: dict) -> None:
         """
         Message format:
