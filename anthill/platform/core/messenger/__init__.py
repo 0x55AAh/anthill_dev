@@ -56,9 +56,6 @@ class BaseClient:
     def get_user_serialized(self):
         return
 
-    async def online(self):
-        raise NotImplementedError
-
     async def get_friends(self, id_only=False):
         raise NotImplementedError
 
@@ -80,7 +77,7 @@ class BaseClient:
     async def leave_group(self, group_name: str) -> None:
         raise NotImplementedError
 
-    async def create_message(self, group: str, message: dict) -> int:
+    async def create_message(self, group: str, message: dict) -> str:
         """
         Save message on database.
         :param group: Group identifier
@@ -150,9 +147,6 @@ class BaseClient:
 
 class Client(BaseClient):
     async def get_friends(self, id_only=False):
-        pass
-
-    async def online(self):
         pass
 
     async def get_groups(self):
@@ -232,8 +226,8 @@ class MessengerHandler(WebSocketChannelHandler):
     def get_client(self):
         return self.client_class()
 
-    async def send_personal(self, message):
-        group = self.client.get_personal_group()
+    async def send_personal(self, message, user_id=None):
+        group = self.client.get_personal_group(user_id=user_id)
         await self.send_to_group(group, message)
 
     async def send_net_status(self, status):
@@ -319,6 +313,16 @@ class MessengerHandler(WebSocketChannelHandler):
                     await self.channel_layer.group_discard(old_group_name, self.channel_name)
                     await self.channel_layer.group_add(new_group_name, self.channel_name)
                     await self.send(message)  # Send the message only if subscribed on the group
+        elif message['action'] == 'ping':
+            # We can send message to client to answer with `pong`.
+            # Also we can answer with `pong` right here (hidden ping).
+            # Hidden ping can be used to get network status (online or offline).
+            hidden = message['data'].get('hidden', False)
+            if hidden:
+                message['data'].update(text='pong')
+                await self.send_personal(message, user_id=message['user_id'])
+            else:
+                await self.send(message)
         else:
             await self.send(message)
 
@@ -558,10 +562,12 @@ class MessengerHandler(WebSocketChannelHandler):
 
     @action(name='ping')
     async def ping_group(self, group: str, message: dict) -> None:
+        # Hidden ping can be used to get network status (online or offline).
+        hidden = message['data'].get('hidden', False)
         reply = {
             'action': 'ping',
             'type': '',
-            'data': {'text': 'ping'},
+            'data': {'text': 'ping', 'hidden': hidden},
             'user_id': self.client.get_user_id(),
         }
         await self.send_to_group(group, reply)
