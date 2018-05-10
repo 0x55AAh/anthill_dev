@@ -77,15 +77,6 @@ class BaseClient:
     async def leave_group(self, group_name: str) -> None:
         raise NotImplementedError
 
-    async def create_message(self, group: str, message: dict) -> str:
-        """
-        Save message on database.
-        :param group: Group identifier
-        :param message: Message data
-        :return: Message identifier
-        """
-        raise NotImplementedError
-
     async def enumerate_group(self, group: str, new=None) -> list:
         """
         List messages received from group.
@@ -95,6 +86,15 @@ class BaseClient:
                         new (not read) messages if `True`,
                         old (read) messages if `False`.
         :return: Serialized messages list
+        """
+        raise NotImplementedError
+
+    async def create_message(self, group: str, message: dict) -> str:
+        """
+        Save message on database.
+        :param group: Group identifier
+        :param message: Message data
+        :return: Message identifier
         """
         raise NotImplementedError
 
@@ -167,10 +167,10 @@ class Client(BaseClient):
     async def leave_group(self, group_name):
         pass
 
-    async def create_message(self, group, message):
+    async def enumerate_group(self, group, new=None):
         pass
 
-    async def enumerate_group(self, group, new=None):
+    async def create_message(self, group, message):
         pass
 
     async def get_messages(self, group, message_ids):
@@ -295,16 +295,20 @@ class MessengerHandler(WebSocketChannelHandler):
         Receive message from current channel.
         If there is need for message pre-processing we can
         do it right here, for example:
-
-        if message['action'] == specific_action:
+        ```
+        if action_is(specific_action):
              do_some_work()
+        ```
         """
-        if message['action'] == 'delete_group':
-            group = message['data']['name']
+        def action_is(action_name):
+            return message['action'] == action_name
+
+        if action_is('delete_group'):
+            group = message['group']
             if group in self.get_groups():
                 await self.channel_layer.group_discard(group, self.channel_name)
                 await self.send(message)  # Send the message only if subscribed on the group
-        elif message['action'] == 'update_group':
+        elif action_is('update_group'):
             old_group_name = message['group']
             new_group_name = message['data']['name']
             group_name_changed = old_group_name != new_group_name
@@ -313,10 +317,10 @@ class MessengerHandler(WebSocketChannelHandler):
                     await self.channel_layer.group_discard(old_group_name, self.channel_name)
                     await self.channel_layer.group_add(new_group_name, self.channel_name)
                     await self.send(message)  # Send the message only if subscribed on the group
-        elif message['action'] == 'ping':
+        elif action_is('ping'):
             # We can send message to client to answer with `pong`.
             # Also we can answer with `pong` right here (hidden ping).
-            # Hidden ping can be used to get network status (online or offline).
+            # Hidden ping can be used to get user network status (online or offline).
             hidden = message['data'].get('hidden', False)
             if hidden:
                 message['data'].update(text='pong')
@@ -372,23 +376,26 @@ class MessengerHandler(WebSocketChannelHandler):
     # Client actions
 
     @action()
-    async def create_group(self, _: None, message: dict) -> None:
+    async def create_group(self, group: str, message: dict) -> None:
         """
         Message format:
         {
             "request_id": request_id,
             "action": "create_group",
             "type": "",
-            "data": {"name": name, "direct": False}, # Destination user_id if group is direct
+            "group": group, # Destination user_id if group is direct
+            "data": {"direct": False},
             "user_id": user_id, # Added automatically
         }
         """
         group_data = message['data']
         direct = group_data.get('direct', False)
-        group_name = await self.client.create_group(group_data)  # Save group on database
+        await self.client.create_group(group_data)  # Save group on database
         if direct:
-            user_id = group_data['name']  # user_id if group is direct
+            user_id = message['group']  # user_id if group is direct
             group_name = self.build_direct_group_with(user_id)
+        else:
+            group_name = group
         await self.channel_layer.group_add(group_name, self.channel_name)  # Subscribe on the created group
         reply = {
             'request_id': self.request_id,
@@ -399,20 +406,19 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send(reply)
 
     @action()
-    async def delete_group(self, _: None, message: dict) -> None:
+    async def delete_group(self, group: str, message: dict) -> None:
         """
         Message format:
         {
             "request_id": request_id,
             "action": "delete_group",
             "type": "",
-            "data": {"name": name},
+            "group": group, # Destination user_id if group is direct
             "user_id": user_id, # Added automatically
         }
         """
-        group_name = message['data']['name']
-        await self.send_to_global_groups(message)   # Notify all user channels about the group deletion
-        await self.client.delete_group(group_name)  # Finally delete the group from database
+        await self.send_to_global_groups(message)  # Notify all user channels about the group deletion
+        await self.client.delete_group(group)      # Finally delete the group from database
 
     @action()
     async def update_group(self, group: str, message: dict) -> None:
@@ -433,15 +439,13 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.send_to_group(group, message)
 
     @action()
-    async def join_group(self, _: None, message: dict) -> None:
-        group = message['data']['name']
+    async def join_group(self, group: str, message: dict) -> None:
         await self.client.join_group(group)
         await self.channel_layer.group_add(group, self.channel_name)
         await self.send(message)
 
     @action()
-    async def leave_group(self, _: None, message: dict) -> None:
-        group = message['data']['name']
+    async def leave_group(self, group: str, message: dict) -> None:
         await self.channel_layer.group_discard(group, self.channel_name)
         await self.client.leave_group(group)
         await self.send(message)
@@ -562,7 +566,7 @@ class MessengerHandler(WebSocketChannelHandler):
 
     @action(name='ping')
     async def ping_group(self, group: str, message: dict) -> None:
-        # Hidden ping can be used to get network status (online or offline).
+        # Hidden ping can be used to get user network status (online or offline).
         hidden = message['data'].get('hidden', False)
         reply = {
             'action': 'ping',
