@@ -17,7 +17,7 @@ def auth_required(func):
     @wraps(func)
     async def wrapper(self, *args, **kwargs):
         user = self.client.user
-        if user is not None and isinstance(user, AnonymousUser):
+        if user is None or isinstance(user, AnonymousUser):
             raise NotAuthenticatedError('Authentication required')
         return await func(self, *args, **kwargs)
     return wrapper
@@ -56,16 +56,28 @@ class BaseClient:
     def get_user_serialized(self):
         return
 
+    async def online(self):
+        raise NotImplementedError
+
     async def get_friends(self, id_only=False):
         raise NotImplementedError
 
     async def get_groups(self):
         raise NotImplementedError
 
-    async def online(self):
+    async def create_group(self, group_data: dict) -> str:
         raise NotImplementedError
 
-    async def create_group(self, data: dict) -> str:
+    async def delete_group(self, group_name: str) -> None:
+        raise NotImplementedError
+
+    async def update_group(self, group_name: str, group_data: dict) -> None:
+        raise NotImplementedError
+
+    async def join_group(self, group_name: str) -> None:
+        raise NotImplementedError
+
+    async def leave_group(self, group_name: str) -> None:
         raise NotImplementedError
 
     async def create_message(self, group: str, message: dict) -> int:
@@ -140,13 +152,25 @@ class Client(BaseClient):
     async def get_friends(self, id_only=False):
         pass
 
-    async def get_groups(self):
-        pass
-
     async def online(self):
         pass
 
-    async def create_group(self, data):
+    async def get_groups(self):
+        pass
+
+    async def create_group(self, group_data):
+        pass
+
+    async def delete_group(self, group_name):
+        pass
+
+    async def update_group(self, group_name, group_data):
+        pass
+
+    async def join_group(self, group_name):
+        pass
+
+    async def leave_group(self, group_name):
         pass
 
     async def create_message(self, group, message):
@@ -273,8 +297,30 @@ class MessengerHandler(WebSocketChannelHandler):
 
     @auth_required
     async def on_channel_message(self, message):
-        """Receive message from current channel."""
-        await self.send(message)
+        """
+        Receive message from current channel.
+        If there is need for message pre-processing we can
+        do it right here, for example:
+
+        if message['action'] == specific_action:
+             do_some_work()
+        """
+        if message['action'] == 'delete_group':
+            group = message['data']['name']
+            if group in self.get_groups():
+                await self.channel_layer.group_discard(group, self.channel_name)
+                await self.send(message)  # Send the message only if subscribed on the group
+        elif message['action'] == 'update_group':
+            old_group_name = message['group']
+            new_group_name = message['data']['name']
+            group_name_changed = old_group_name != new_group_name
+            if group_name_changed:
+                if old_group_name in self.get_groups():  # No need in our case because we notify the group
+                    await self.channel_layer.group_discard(old_group_name, self.channel_name)
+                    await self.channel_layer.group_add(new_group_name, self.channel_name)
+                    await self.send(message)  # Send the message only if subscribed on the group
+        else:
+            await self.send(message)
 
     @auth_required
     async def on_message(self, message):
@@ -350,11 +396,51 @@ class MessengerHandler(WebSocketChannelHandler):
 
     @action()
     async def delete_group(self, _: None, message: dict) -> None:
-        pass
+        """
+        Message format:
+        {
+            "request_id": request_id,
+            "action": "delete_group",
+            "type": "",
+            "data": {"name": name},
+            "user_id": user_id, # Added automatically
+        }
+        """
+        group_name = message['data']['name']
+        await self.send_to_global_groups(message)   # Notify all user channels about the group deletion
+        await self.client.delete_group(group_name)  # Finally delete the group from database
 
     @action()
-    async def update_group(self, _: None, message: dict) -> None:
-        pass
+    async def update_group(self, group: str, message: dict) -> None:
+        """
+        Message format:
+        {
+            "request_id": request_id,
+            "action": "update_group",
+            "type": "",
+            "group": group, # Destination user_id if group is direct
+            "data": {"name": new_name, "direct": False},
+            "user_id": user_id, # Added automatically
+            "direct": True
+        }
+        """
+        group_data = message['data']
+        await self.client.update_group(group, group_data=group_data)
+        await self.send_to_group(group, message)
+
+    @action()
+    async def join_group(self, _: None, message: dict) -> None:
+        group = message['data']['name']
+        await self.client.join_group(group)
+        await self.channel_layer.group_add(group, self.channel_name)
+        await self.send(message)
+
+    @action()
+    async def leave_group(self, _: None, message: dict) -> None:
+        group = message['data']['name']
+        await self.channel_layer.group_discard(group, self.channel_name)
+        await self.client.leave_group(group)
+        await self.send(message)
 
     @action()
     async def create_message(self, group: str, message: dict) -> None:
@@ -429,7 +515,7 @@ class MessengerHandler(WebSocketChannelHandler):
         Data format:
         {
             "data": {
-                "user_id": {"content": content, "binary": False, "draft": False},
+                "message_id": {"content": content, "binary": False, "draft": False},
                 ...
             }
         }
