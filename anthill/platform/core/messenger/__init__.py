@@ -214,6 +214,7 @@ class MessengerHandler(WebSocketChannelHandler):
     direct_group_prefix = '__direct'  # Must starts with `__`
     secure_direct = True
     secure_groups = True
+    clients = {}
     # TODO: force wss
 
     def __init__(self, *args, **kwargs):
@@ -277,7 +278,7 @@ class MessengerHandler(WebSocketChannelHandler):
     def is_group_system(cls, group: str) -> bool:
         return group.startswith('__')
 
-    def build_direct_group_with(self, user_id, reverse=False):
+    def build_direct_group_with(self, user_id: str, reverse: bool=False) -> str:
         if reverse:
             return ':'.join([self.direct_group_prefix, user_id, self.client.get_user_id()])
         return ':'.join([self.direct_group_prefix, self.client.get_user_id(), user_id])
@@ -288,6 +289,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.client.authenticate()
         if self.notification_on_net_status_changed:
             self.send_net_status('online')
+        self.clients.setdefault(self.client.get_user_id(), []).append(self)
 
     @auth_required
     async def on_channel_message(self, message):
@@ -339,6 +341,7 @@ class MessengerHandler(WebSocketChannelHandler):
         super(MessengerHandler, self).on_connection_close()
         if self.notification_on_net_status_changed:
             self.send_net_status('offline')
+        self.clients[self.client.get_user_id()].remove(self)
 
     async def message_handler(self, message):
         message = json.loads(message)
@@ -363,6 +366,8 @@ class MessengerHandler(WebSocketChannelHandler):
 
         action_method = getattr(self, self.available_actions[action_name])
         try:
+            # In action method we process message, put message to channel queue
+            # and send notification to the client about action status using `self.send`.
             await action_method(group_name, message)
         except Exception as e:
             reply = {
@@ -661,6 +666,20 @@ class MessengerHandler(WebSocketChannelHandler):
         {
             "action": "offline",
             "type": "",
+            "user_id": user_id,
+        }
+        """
+        await self.send_to_group(group, message)
+
+    @action()
+    async def delivered(self, group: str, message: dict) -> None:
+        """
+        Message delivered to client.
+        Message format:
+        {
+            "action": "delivered",
+            "type": "",
+            "data": {"message_id": message_id}
             "user_id": user_id,
         }
         """
