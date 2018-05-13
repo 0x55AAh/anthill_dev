@@ -5,6 +5,7 @@ from anthill.framework.apps import app
 import signal
 import logging
 
+from anthill.framework.core.exceptions import ImproperlyConfigured
 
 logger = logging.getLogger('anthill.server')
 
@@ -52,15 +53,16 @@ class BaseService(TornadoWebApplication):
 
     @property
     def server_kwargs(self):
-        """
-        HTTPS supporting:
-        ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ssl_ctx.load_cert_chain(os.path.join(data_dir, "mydomain.crt"),
-                           os.path.join(data_dir, "mydomain.key"))
-        if app.protocol == 'https':
-            kwargs.update(ssl_options=ssl_ctx)
-        """
         kwargs = {}
+        https_config = getattr(self.config, 'HTTPS', None)
+        if https_config is not None:
+            import ssl
+            key_file, crt_file = https_config.get('key_file'), https_config.get('crt_file')
+            if None in (key_file, crt_file):
+                raise ImproperlyConfigured('Key or crt file not configured')
+            ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            ssl_ctx.load_cert_chain(crt_file, key_file)
+            kwargs.update(ssl_options=ssl_ctx)
         return kwargs
 
     def setup_server(self, **kwargs):

@@ -30,6 +30,11 @@ REDIS_LOG_IGNORED_EXCEPTIONS = False
 REDIS_LOGGER = False
 REDIS_SCAN_ITERSIZE = 10
 
+HTTPS = {
+    'key_file': 'key_file_path',
+    'crt_file': 'crt_file_path',
+}
+
 
 ##########
 # CELERY #

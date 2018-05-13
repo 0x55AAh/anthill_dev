@@ -20,6 +20,8 @@ INTERNAL_IPS = [
     '::1/128'
 ]
 
+HTTPS = None
+
 TIME_ZONE = 'UTC'
 USE_TZ = False
 
