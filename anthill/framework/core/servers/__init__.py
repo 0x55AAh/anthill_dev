@@ -54,15 +54,20 @@ class BaseService(TornadoWebApplication):
     @property
     def server_kwargs(self):
         kwargs = {}
+        # HTTPS supporting
         https_config = getattr(self.config, 'HTTPS', None)
         if https_config is not None:
             import ssl
-            key_file, crt_file = https_config.get('key_file'), https_config.get('crt_file')
+            key_file = https_config.get('key_file')
+            crt_file = https_config.get('crt_file')
             if None in (key_file, crt_file):
                 raise ImproperlyConfigured('Key or crt file not configured')
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_ctx.load_cert_chain(crt_file, key_file)
             kwargs.update(ssl_options=ssl_ctx)
+            logger.debug('HTTPS is ON.')
+        else:
+            logger.warning('HTTPS not configured. May issue security problems.')
         return kwargs
 
     def setup_server(self, **kwargs):

@@ -173,7 +173,7 @@ class MessengerHandler(WebSocketChannelHandler):
     secure_direct = True
     secure_groups = True
     _clients = {}  # Mapping user_id to list of handlers
-    same_clients_limit = None
+    same_clients_limit = None  # Same user_id clients count limitation
 
     def __init__(self, *args, **kwargs):
         super(MessengerHandler, self).__init__(*args, **kwargs)
@@ -243,9 +243,12 @@ class MessengerHandler(WebSocketChannelHandler):
         return group.startswith('__')
 
     def build_direct_group_with(self, user_id: str, reverse: bool=False) -> str:
+        items = [self.direct_group_prefix]
         if reverse:
-            return '.'.join([self.direct_group_prefix, user_id, self.client.get_user_id()])
-        return '.'.join([self.direct_group_prefix, self.client.get_user_id(), user_id])
+            items += [user_id, self.client.get_user_id()]
+        else:
+            items += [self.client.get_user_id(), user_id]
+        return '.'.join(items)
 
     async def open(self, *args, **kwargs) -> None:
         """Invoked when a new connection is opened."""
