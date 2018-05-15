@@ -22,7 +22,7 @@ class FileStreamingHandler(WebSocketHandler):
             self.filename = filename
         self.last_lines_limit = last_lines_limit
 
-    def get_filename(self):
+    def get_filename(self) -> str:
         return self.filename
 
     def open(self):
@@ -38,17 +38,17 @@ class FileStreamingHandler(WebSocketHandler):
             self._process.set_exit_callback(self._close)
             self._process.stdout.read_until(b'\n', self.write_line)
 
-    def _close(self):
+    def _close(self) -> None:
         self.close(reason=self.streaming_finished_message)
 
     def on_close(self, *args, **kwargs):
         self._process.proc.terminate()
         self._process.proc.wait()
 
-    def transform_output_data(self, data):
+    def transform_output_data(self, data: bytes) -> bytes:
         return data
 
-    def write_line(self, data):
+    def write_line(self, data: bytes) -> None:
         self.write_message(self.transform_output_data(data.strip()))
         self._process.stdout.read_until(b'\n', self.write_line)
 
@@ -57,7 +57,7 @@ class FileStreamingHandler(WebSocketHandler):
 
 
 class TextStreamingHandler(FileStreamingHandler):
-    def transform_output_data(self, data):
+    def transform_output_data(self, data: bytes) -> str:
         return to_unicode(data)
 
 
@@ -70,7 +70,7 @@ class LogStreamingHandler(TextStreamingHandler):
         super().initialize(filename, last_lines_limit)
         self.handler_name = handler_name
 
-    def get_filename(self):
+    def get_filename(self) -> str:
         if self.filename:
             return self.filename
         # Retrieve file name from logging configuration
