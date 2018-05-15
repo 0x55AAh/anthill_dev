@@ -418,7 +418,7 @@ class MessengerHandler(WebSocketChannelHandler):
         """
         await self.send_to_global_groups(message)  # Notify all user channels about the group deletion
         await self.client.delete_group(group)      # Finally delete the group from database
-        self.send({  # Everybody will get the message, so there is no need in `send_personal`
+        self.send({
             'request_id': self.request_id,
             'code': 200,
             'group': group,
@@ -442,7 +442,7 @@ class MessengerHandler(WebSocketChannelHandler):
         group_data = message['data']
         await self.client.update_group(group, group_data=group_data)  # Update group on database
         await self.send_to_group(group, message)
-        self.send({  # Everybody subscribed will get the message, so there is no need in `send_personal`
+        self.send({
             'request_id': self.request_id,
             'code': 200,
             'group': group,
@@ -456,7 +456,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.client.join_group(group)
         await self.channel_layer.group_add(group, self.channel_name)
         await self.send_to_group(group, message)
-        await self.send({  # Everybody subscribed will get the message, so there is no need in `send_personal`
+        await self.send({
             'request_id': self.request_id,
             'code': 200,
             'group': group,
@@ -469,7 +469,7 @@ class MessengerHandler(WebSocketChannelHandler):
         await self.channel_layer.group_discard(group, self.channel_name)
         await self.client.leave_group(group)
         await self.send_to_group(group, message)
-        await self.send({  # Everybody subscribed will get the message, so there is no need in `send_personal`
+        await self.send({
             'request_id': self.request_id,
             'code': 200,
             'group': group,
