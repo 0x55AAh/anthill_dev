@@ -5,10 +5,12 @@ from anthill.framework.handlers.base import (
 from anthill.framework.handlers.jsonrpc import (
     JSONRPCHandler, CORSIgnoreJSONRPCHandler, WithCredentialsJSONRPCHandler
 )
-from anthill.framework.handlers.streaming import FileStreamingHandler, LogStreamingHandler
+from anthill.framework.handlers.streaming import (
+    FileStreamingHandler, TextStreamingHandler, LogStreamingHandler
+)
 
 __all__ = [
     'RequestHandler', 'WebSocketHandler', 'TemplateHandler', 'RedirectHandler',
     'JSONRPCHandler', 'CORSIgnoreJSONRPCHandler', 'WithCredentialsJSONRPCHandler',
-    'JSONHandler', 'FileStreamingHandler', 'LogStreamingHandler'
+    'JSONHandler', 'FileStreamingHandler', 'TextStreamingHandler', 'LogStreamingHandler'
 ]
