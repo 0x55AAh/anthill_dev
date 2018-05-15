@@ -9,23 +9,25 @@ class FileStreamingHandler(WebSocketHandler):
     Sends new data to WebSocket client while file changing.
     """
     streaming_finished_message = 'File streaming has finished up'
-    extra_args = ['-n', '0']
+    extra_args = []
+    last_lines_limit = None
     filename = None
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self._process = None
 
-    def initialize(self, filename=None):
+    def initialize(self, filename=None, last_lines_limit=0):
         if filename is not None:
             self.filename = filename
+        self.last_lines_limit = last_lines_limit
 
     def get_filename(self):
         return self.filename
 
     def open(self):
         try:
-            cmd = ['tail'] + self.extra_args + ['-f', self.get_filename()]
+            cmd = ['tail'] + ['-n', self.last_lines_limit] + self.extra_args + ['-f', self.get_filename()]
             self._process = Subprocess(cmd, stdout=Subprocess.STREAM, bufsize=1)
         except Exception as e:
             self.close(reason=str(e))
@@ -61,8 +63,8 @@ class LogStreamingHandler(TextStreamingHandler):
         self.handler_name = None
         super().__init__(application, request, **kwargs)
 
-    def initialize(self, handler_name=None, filename=None):
-        super().initialize(filename)
+    def initialize(self, filename=None, last_lines_limit=0, handler_name=None):
+        super().initialize(filename, last_lines_limit)
         self.handler_name = handler_name
 
     def get_filename(self):
