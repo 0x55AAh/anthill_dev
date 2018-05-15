@@ -26,8 +26,11 @@ class FileStreamingHandler(WebSocketHandler):
         return self.filename
 
     def open(self):
+        cmd = ['tail']
+        cmd += ['-n', self.last_lines_limit]
+        cmd += self.extra_args
         try:
-            cmd = ['tail'] + ['-n', self.last_lines_limit] + self.extra_args + ['-f', self.get_filename()]
+            cmd += ['-f', self.get_filename()]
             self._process = Subprocess(cmd, stdout=Subprocess.STREAM, bufsize=1)
         except Exception as e:
             self.close(reason=str(e))
