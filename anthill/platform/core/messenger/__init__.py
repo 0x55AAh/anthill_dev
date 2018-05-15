@@ -27,8 +27,7 @@ def auth_required(func):
 def action(**kwargs):
     def decorator(func):
         func.action = True
-        func.kwargs = {'system': False}
-        func.kwargs.update(kwargs)
+        func.kwargs = kwargs
         return func
     return decorator
 
@@ -191,7 +190,7 @@ class MessengerHandler(WebSocketChannelHandler):
             raise ImproperlyConfigured('Client class is undefined')
         return self.client_class()
 
-    async def send_personal(self, message, user_id=None):
+    async def send_personal(self, message: dict, user_id: str=None) -> None:
         group = self.client.get_personal_group(user_id=user_id)
         await self.send_to_group(group, message)
 
@@ -276,20 +275,39 @@ class MessengerHandler(WebSocketChannelHandler):
         def action_is(action_name):
             return message['action'] == action_name
 
+        def sender_is_me():
+            return self.client.get_user_id() == message['user_id']
+
+        # DELETE GROUP
         if action_is('delete_group'):
             group = message['group']
             if group in self.get_groups():
                 await self.channel_layer.group_discard(group, self.channel_name)
                 await self.send(message)  # Send the message only if subscribed on the group
+
+        # UPDATE GROUP
         elif action_is('update_group'):
             old_group_name = message['group']
             new_group_name = message['data']['name']
-            group_name_changed = old_group_name != new_group_name
-            if group_name_changed:
+            if old_group_name != new_group_name:
                 if old_group_name in self.get_groups():  # No need in our case because we notify the group
                     await self.channel_layer.group_discard(old_group_name, self.channel_name)
                     await self.channel_layer.group_add(new_group_name, self.channel_name)
                     await self.send(message)  # Send the message only if subscribed on the group
+
+        # CREATE GROUP
+        elif action_is('create_group'):  # Use in context of `send_personal` method, so no user_id checking need so far
+            if sender_is_me():  # Join and notify only if the same user_id
+                group = message['group']
+                direct = message.get('data', {}).get('direct', False)
+                if direct:
+                    group_name = self.build_direct_group_with(user_id=group)  # Group is user_id if group is direct
+                else:
+                    group_name = group
+                await self.channel_layer.group_add(group_name, self.channel_name)
+                await self.send(message)
+
+        # PING MESSAGE
         elif action_is('ping'):
             # We can send message to client to answer with `pong`.
             # Also we can answer with `pong` right here (hidden ping).
@@ -300,6 +318,8 @@ class MessengerHandler(WebSocketChannelHandler):
                 await self.send_personal(message, user_id=message['user_id'])
             else:
                 await self.send(message)
+
+        # DEFAULT
         else:
             await self.send(message)
 
@@ -370,22 +390,19 @@ class MessengerHandler(WebSocketChannelHandler):
         }
         """
         group_data = message['data']
-        direct = group_data.get('direct', False)
-        await self.client.create_group(group_data)  # Save group on database
-        if direct:
-            user_id = message['group']  # user_id if group is direct
-            group_name = self.build_direct_group_with(user_id)
-        else:
-            group_name = group
-        await self.channel_layer.group_add(group_name, self.channel_name)  # Subscribe on the created group
-        reply = {
+        group_id = await self.client.create_group(group_data)  # Save group on database
+        await self.send_personal(message)
+        # await self.channel_layer.group_add(group_name, self.channel_name)  # Subscribe on the created group
+        group_data.update(id=group_id)
+        await self.send({
             'request_id': self.request_id,
-            'code': 200,
+            'code': 201,
+            'group': group,
             'action': self.action_name,
             'type': self.message_type,
-            'data': {'name': group}
-        }
-        await self.send(reply)
+            'data': group_data,
+            'user_id': message['user_id']
+        })
 
     @action()
     async def delete_group(self, group: str, message: dict) -> None:
@@ -401,14 +418,13 @@ class MessengerHandler(WebSocketChannelHandler):
         """
         await self.send_to_global_groups(message)  # Notify all user channels about the group deletion
         await self.client.delete_group(group)      # Finally delete the group from database
-        reply = {
+        self.send({  # Everybody will get the message, so there is no need in `send_personal`
             'request_id': self.request_id,
             'code': 200,
+            'group': group,
             'action': self.action_name,
-            'type': self.message_type,
-            'data': {'name': group}
-        }
-        self.send(reply)
+            'type': self.message_type
+        })
 
     @action()
     async def update_group(self, group: str, message: dict) -> None:
@@ -418,49 +434,48 @@ class MessengerHandler(WebSocketChannelHandler):
             "request_id": request_id,
             "action": "update_group",
             "type": "",
-            "group": group, # Destination user_id if group is direct
-            "data": {"name": new_name, "direct": False},
+            "group": group,
+            "data": {"name": new_name},
             "user_id": user_id, # Added automatically
-            "direct": True
         }
         """
         group_data = message['data']
-        await self.client.update_group(group, group_data=group_data)
+        await self.client.update_group(group, group_data=group_data)  # Update group on database
         await self.send_to_group(group, message)
-        reply = {
+        self.send({  # Everybody subscribed will get the message, so there is no need in `send_personal`
             'request_id': self.request_id,
             'code': 200,
+            'group': group,
             'action': self.action_name,
             'type': self.message_type,
-            'data': {'name': group}
-        }
-        self.send(reply)
+            'data': group_data
+        })
 
     @action()
     async def join_group(self, group: str, message: dict) -> None:
         await self.client.join_group(group)
         await self.channel_layer.group_add(group, self.channel_name)
-        reply = {
+        await self.send_to_group(group, message)
+        await self.send({  # Everybody subscribed will get the message, so there is no need in `send_personal`
             'request_id': self.request_id,
             'code': 200,
+            'group': group,
             'action': self.action_name,
-            'type': self.message_type,
-            'data': {'name': group}
-        }
-        await self.send(reply)
+            'type': self.message_type
+        })
 
     @action()
     async def leave_group(self, group: str, message: dict) -> None:
         await self.channel_layer.group_discard(group, self.channel_name)
         await self.client.leave_group(group)
-        reply = {
+        await self.send_to_group(group, message)
+        await self.send({  # Everybody subscribed will get the message, so there is no need in `send_personal`
             'request_id': self.request_id,
             'code': 200,
+            'group': group,
             'action': self.action_name,
-            'type': self.message_type,
-            'data': {'name': group}
-        }
-        await self.send(reply)
+            'type': self.message_type
+        })
 
     # /GROUPS
 

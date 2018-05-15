@@ -170,6 +170,10 @@ RATE_LIMIT_CONFIG = {}
 # WEBSOCKETS #
 ##############
 
+WEBSOCKET_PING_INTERVAL = 10
+WEBSOCKET_PING_TIMEOUT = 30
+WEBSOCKET_MAX_MESSAGE_SIZE = None
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "anthill.platform.core.messenger.channels.layers.backends.redis.ChannelLayer",
