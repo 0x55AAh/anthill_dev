@@ -297,7 +297,7 @@ class MessengerHandler(WebSocketChannelHandler):
 
         # CREATE GROUP
         elif action_is('create_group'):  # Use in context of `send_personal` method, so no user_id checking need so far
-            if sender_is_me():  # Join and notify only if the same user_id
+            if sender_is_me():  # Join and notify only if message sender is me
                 group = message['group']
                 direct = message.get('data', {}).get('direct', False)
                 if direct:
