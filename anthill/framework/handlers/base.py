@@ -47,9 +47,9 @@ class WebSocketHandler(BaseWebSocketHandler):
         return None
 
 
-class JsonWebSocketHandler(BaseWebSocketHandler):
-    def data_received(self, chunk):
-        """Implement this method to handle streamed request data."""
+class JsonWebSocketHandler(WebSocketHandler):
+    def set_default_headers(self):
+        self.set_header('Content-Type', 'application/json')
 
     def on_message(self, message):
         """Handle incoming messages on the WebSocket."""

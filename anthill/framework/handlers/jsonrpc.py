@@ -1,159 +1,53 @@
-# See https://github.com/Pavel-Egorov/tornado_jsonrpc
-import json
-from copy import deepcopy
-from sys import exc_info
-
-from anthill.framework.handlers.base import RequestHandler
-
-MAX_ERROR_MESSAGE_LENGTH = 200
-
-PROTOCOL_VERSIONS = ('2.0',)
+from anthill.framework.handlers import JsonWebSocketHandler
+from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestException
+from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
+from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
+from anthill.framework.core.jsonrpc.utils import DatetimeDecimalEncoder
+from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
+import logging
+import copy
 
 
-class JSONRPCHandler(RequestHandler):
-    def __init__(self, *args, **kwargs):
-        super(JSONRPCHandler, self).__init__(*args, **kwargs)
-        self.views = None
-
+class JSONRPCMixin:
     def set_default_headers(self):
         self.set_header('Content-Type', 'application/json')
 
     def set_extra_headers(self, path):
         self.set_header('Cache-Control', 'no-store')
 
-    def initialize(self, views):
-        self.views = views
-
-    async def post(self, *args, **kwargs):
+    async def json_rpc(self, message: str):
         try:
-            request_body = json.loads(self.request.body.decode())
-            if not request_body:
-                raise InvalidJSON
+            json_rpc_request = JSONRPCRequest.from_json(message)
+        except (TypeError, ValueError, JSONRPCInvalidRequestException):
+            response = await JSONRPCResponseManager.handle(message, self.dispatcher)
+        else:
+            json_rpc_request.params = json_rpc_request.params or {}
+            response = await JSONRPCResponseManager.handle_request(
+                json_rpc_request, self.dispatcher)
 
-            is_list = isinstance(request_body, list)
-            is_dict = isinstance(request_body, dict)
+        if response:
+            response.serialize = self._serialize
+            response = response.json
 
-            if not (is_dict or is_list):
-                raise InvalidJSON
-        except (UnicodeDecodeError, json.JSONDecodeError) as exception:
-            self.write({'id': None, 'result': None, 'error': _get_error(exception)})
-            return
+        return response
 
-        if is_dict:
-            response = await _get_response(self, self.views, request_body)
-            if response:
-                self.write(response)
-        elif is_list:
-            responses = []
-
-            for i in request_body:
-                response = await _get_response(self, self.views, i)
-                if response:
-                    responses.append(response)
-
-            if responses:
-                self.write(json.dumps(responses).encode())
+    def json_rpc_map(self):
+        """Map of json-rpc available calls."""
+        raise NotImplementedError
 
 
-class CORSIgnoreJSONRPCHandler(JSONRPCHandler):
-    def set_default_headers(self):
-        super().set_default_headers()
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.set_header('Access-Control-Allow-Headers', 'x-requested-with, Content-Type')
-        self.set_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+class WebSocketJSONRPCHandler(JSONRPCMixin, JsonWebSocketHandler):
+    def __init__(self, application, request, dispatcher=None, **kwargs):
+        super().__init__(application, request, **kwargs)
+        self.dispatcher = dispatcher if dispatcher is not None else Dispatcher()
 
-    def options(self):
-        pass
+    async def on_message(self, message):
+        """Handle incoming messages on the WebSocket."""
+        result = await self.json_rpc(message)
+        self.write_message(result)
 
-
-class WithCredentialsJSONRPCHandler(CORSIgnoreJSONRPCHandler):
-    def set_default_headers(self):
-        super().set_default_headers()
-        self.set_header('withCredentials', 'true')
-
-
-def _get_error(exception):
-    return {
-        'code': getattr(exception, 'code', InternalError.code),
-        'message': getattr(exception, 'message', str(exc_info()[0]))[:MAX_ERROR_MESSAGE_LENGTH],
-        'data': getattr(exception, 'data', None)
-    }
-
-
-async def _get_response(request, views, request_body):
-    version = None
-    request_id = None
-
-    try:
-        request_id = request_body.get('id')
-        version = _get_version(request_body)
-        result = await _get_result(request, _get_method(views, request_body), request_body.get('params'))
-    except Exception as exception:
-        return _get_with_protocol_version({'id': request_id, 'result': None, 'error': _get_error(exception)}, version)
-
-    if request_id:
-        return _get_with_protocol_version({'id': request_id, 'result': result, 'error': None}, version)
-
-
-def _get_method(views, request_body):
-    method = getattr(views, request_body.get('method', ''), None)
-    if not method:
-        raise MethodNotFound
-    return method
-
-
-def _get_version(request_body):
-    version = request_body.get('jsonrpc')
-    if version and version not in PROTOCOL_VERSIONS:
-        raise InvalidVersion
-    return version
-
-
-async def _get_result(request, method, params):
-    if params is None:
-        return await method(request)
-
-    elif isinstance(params, list):
-        return await method(request, *params)
-
-    elif isinstance(params, dict):
-        return await method(request, **params)
-
-    raise InvalidParams
-
-
-def _get_with_protocol_version(response, version):
-    updated_response = deepcopy(response)
-    if version:
-        updated_response['jsonrpc'] = version
-    return updated_response
-
-
-class InvalidVersion(Exception):
-    code = -32600
-    message = 'Invalid Request'
-    data = None
-
-
-class MethodNotFound(Exception):
-    code = -32601
-    message = 'Method not found'
-    data = None
-
-
-class InvalidParams(Exception):
-    code = -32602
-    message = 'Invalid params'
-    data = None
-
-
-class InternalError(Exception):
-    code = -32603
-    message = 'Internal error'
-    data = None
-
-
-class InvalidJSON(Exception):
-    code = -32700
-    message = 'Parse error'
-    data = None
+    def json_rpc_map(self):
+        return dict(
+            (method_name, func.__doc__)
+            for method_name, func in self.dispatcher.items()
+        )

@@ -43,8 +43,8 @@ class JSONRPC20Request(JSONRPCBaseRequest):
     """
 
     JSONRPC_VERSION = "2.0"
-    REQUIRED_FIELDS = set(["jsonrpc", "method"])
-    POSSIBLE_FIELDS = set(["jsonrpc", "method", "params", "id"])
+    REQUIRED_FIELDS = {"jsonrpc", "method"}
+    POSSIBLE_FIELDS = {"jsonrpc", "method", "params", "id"}
 
     @property
     def data(self):
