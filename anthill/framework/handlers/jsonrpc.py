@@ -48,6 +48,6 @@ class WebSocketJSONRPCHandler(JSONRPCMixin, JsonWebSocketHandler):
 
     def json_rpc_map(self):
         return dict(
-            (method_name, func.__doc__)
-            for method_name, func in self.dispatcher.items()
+            (m_name, func.__doc__) for m_name, func
+            in self.dispatcher.items()
         )
