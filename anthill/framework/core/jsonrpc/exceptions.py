@@ -4,7 +4,6 @@ import json
 
 
 class JSONRPCError(object):
-
     """ Error for JSON-RPC communication.
 
     When a rpc call encounters an error, the Response Object MUST contain the
@@ -31,7 +30,6 @@ class JSONRPCError(object):
         This may be omitted.
         The value of this member is defined by the Server (e.g. detailed error
         information, nested errors etc.).
-
     """
 
     serialize = staticmethod(json.dumps)
@@ -86,7 +84,6 @@ class JSONRPCError(object):
 
 
 class JSONRPCParseError(JSONRPCError):
-
     """ Parse Error.
 
     Invalid JSON was received by the server.
@@ -99,7 +96,6 @@ class JSONRPCParseError(JSONRPCError):
 
 
 class JSONRPCInvalidRequest(JSONRPCError):
-
     """ Invalid Request.
 
     The JSON sent is not a valid Request object.
@@ -111,7 +107,6 @@ class JSONRPCInvalidRequest(JSONRPCError):
 
 
 class JSONRPCMethodNotFound(JSONRPCError):
-
     """ Method not found.
 
     The method does not exist / is not available.
@@ -123,7 +118,6 @@ class JSONRPCMethodNotFound(JSONRPCError):
 
 
 class JSONRPCInvalidParams(JSONRPCError):
-
     """ Invalid params.
 
     Invalid method parameter(s).
@@ -135,7 +129,6 @@ class JSONRPCInvalidParams(JSONRPCError):
 
 
 class JSONRPCInternalError(JSONRPCError):
-
     """ Internal error.
 
     Internal JSON-RPC error.
@@ -147,7 +140,6 @@ class JSONRPCInternalError(JSONRPCError):
 
 
 class JSONRPCServerError(JSONRPCError):
-
     """ Server error.
 
     Reserved for implementation-defined server-errors.
@@ -159,21 +151,14 @@ class JSONRPCServerError(JSONRPCError):
 
 
 class JSONRPCException(Exception):
-
     """ JSON-RPC Exception."""
-
-    pass
 
 
 class JSONRPCInvalidRequestException(JSONRPCException):
-
     """ Request is not valid."""
-
-    pass
 
 
 class JSONRPCDispatchException(JSONRPCException):
-
     """ JSON-RPC Dispatch Exception.
 
     Should be thrown in dispatch methods.

@@ -2,10 +2,14 @@ from anthill.framework.handlers import JsonWebSocketHandler
 from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestException
 from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
 from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
-from anthill.framework.core.jsonrpc.utils import DatetimeDecimalEncoder
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
-import logging
-import copy
+from anthill.framework.core.jsonrpc.utils import DatetimeDecimalEncoder
+import json
+
+
+def response_serialize(obj):
+    """Serializes response's data object to JSON."""
+    return json.dumps(obj, cls=DatetimeDecimalEncoder)
 
 
 class JSONRPCMixin:
@@ -26,7 +30,7 @@ class JSONRPCMixin:
                 json_rpc_request, self.dispatcher)
 
         if response:
-            response.serialize = self._serialize
+            response.serialize = response_serialize
             response = response.json
 
         return response
@@ -44,10 +48,8 @@ class WebSocketJSONRPCHandler(JSONRPCMixin, JsonWebSocketHandler):
     async def on_message(self, message):
         """Handle incoming messages on the WebSocket."""
         result = await self.json_rpc(message)
-        self.write_message(result)
+        if result is not None:
+            self.write_message(result)
 
     def json_rpc_map(self):
-        return dict(
-            (m_name, func.__doc__) for m_name, func
-            in self.dispatcher.items()
-        )
+        return dict((f_name, f.__doc__) for f_name, f in self.dispatcher.items())

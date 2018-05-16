@@ -1,4 +1,4 @@
-from anthill.framework.handlers import TemplateHandler, RedirectHandler
+from anthill.framework.handlers import TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler
 from anthill.platform.core.messenger import MessengerHandler, BaseClient
 from .ui.modules import ServiceCard
 
@@ -142,3 +142,7 @@ class TestMessengerHandler(MessengerHandler):
 
     def get_client_instance(self):
         return self.client_class(user=User(1))
+
+
+class TestWSJSONRPCHandler(WebSocketJSONRPCHandler):
+    pass

@@ -73,9 +73,9 @@ class JSONRPC20Request(JSONRPCBaseRequest):
 
         if value.startswith("rpc."):
             raise ValueError(
-                "Method names that begin with the word rpc followed by a " +
-                "period character (U+002E or ASCII 46) are reserved for " +
-                "rpc-internal methods and extensions and MUST NOT be used " +
+                "Method names that begin with the word rpc followed by a "
+                "period character (U+002E or ASCII 46) are reserved for "
+                "rpc-internal methods and extensions and MUST NOT be used "
                 "for anything else.")
 
         self._data["method"] = str(value)
@@ -100,8 +100,7 @@ class JSONRPC20Request(JSONRPCBaseRequest):
 
     @_id.setter
     def _id(self, value):
-        if value is not None and \
-           not isinstance(value, six.string_types + six.integer_types):
+        if value is not None and not isinstance(value, six.string_types + six.integer_types):
             raise ValueError("id should be string or integer")
 
         self._data["id"] = value
@@ -120,8 +119,7 @@ class JSONRPC20Request(JSONRPCBaseRequest):
             raise JSONRPCInvalidRequestException("[] value is not accepted")
 
         if not all(isinstance(d, dict) for d in data):
-            raise JSONRPCInvalidRequestException(
-                "Each request should be an object (dict)")
+            raise JSONRPCInvalidRequestException("Each request should be an object (dict)")
 
         result = []
         for d in data:
@@ -143,7 +141,6 @@ class JSONRPC20Request(JSONRPCBaseRequest):
 
 
 class JSONRPC20BatchRequest(object):
-
     """ Batch JSON-RPC 2.0 Request.
 
     :param JSONRPC20Request *requests: requests
@@ -168,7 +165,6 @@ class JSONRPC20BatchRequest(object):
 
 
 class JSONRPC20Response(JSONRPCBaseResponse):
-
     """ JSON-RPC response object to JSONRPC20Request.
 
     When a rpc call is made, the Server MUST reply with a Response, except for
@@ -240,8 +236,7 @@ class JSONRPC20Response(JSONRPCBaseResponse):
 
     @_id.setter
     def _id(self, value):
-        if value is not None and \
-           not isinstance(value, six.string_types + six.integer_types):
+        if value is not None and not isinstance(value, six.string_types + six.integer_types):
             raise ValueError("id should be string or integer")
 
         self._data["id"] = value

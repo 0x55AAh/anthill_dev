@@ -1,7 +1,6 @@
 # For more details about routing, see
 # http://www.tornadoweb.org/en/stable/routing.html
 from tornado.web import url
-from anthill.framework.handlers import LogStreamingHandler
 from admin import handlers
 
 
@@ -13,5 +12,6 @@ route_patterns = [
 ]
 
 route_patterns += [
-    url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat')
+    url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat'),
+    url(r'^/json-rpc/?$', handlers.TestWSJSONRPCHandler, name='json-rpc')
 ]

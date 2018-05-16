@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 class JSONRPCResponseManager(object):
-
     """ JSON-RPC response manager.
 
     Method brings syntactic sugar into library. Given dispatcher it handles
@@ -71,10 +70,11 @@ class JSONRPCResponseManager(object):
         .. versionadded: 1.8.0
 
         """
-        rs = request if isinstance(request, JSONRPC20BatchRequest) \
-            else [request]
-        responses = [r for r in await cls._get_responses(rs, dispatcher)
-                     if r is not None]
+        rs = request if isinstance(request, JSONRPC20BatchRequest) else [request]
+        responses = [
+            r for r in await cls._get_responses(rs, dispatcher)
+            if r is not None
+        ]
 
         # notifications
         if not responses:
@@ -97,6 +97,7 @@ class JSONRPCResponseManager(object):
           TypeError inside the function is distinguished from Invalid Params.
 
         """
+        responses = []
         for request in requests:
             def make_response(**kwargs):
                 response = cls.RESPONSE_CLASS_MAP[request.JSONRPC_VERSION](_id=request._id, **kwargs)
@@ -133,4 +134,5 @@ class JSONRPCResponseManager(object):
                     output = make_response(result=result)
             finally:
                 if not request.is_notification:
-                    yield output
+                    responses.append(output)
+        return responses

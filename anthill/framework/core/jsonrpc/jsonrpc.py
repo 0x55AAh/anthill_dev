@@ -12,7 +12,6 @@ from .jsonrpc2 import JSONRPC20Request
 
 
 class JSONRPCRequest(JSONSerializable):
-
     """ JSONRPC Request."""
 
     @classmethod
