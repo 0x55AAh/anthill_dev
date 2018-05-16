@@ -7,8 +7,8 @@ import functools
 
 
 class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, application, request, **kwargs):
+        super().__init__(application, request, **kwargs)
 
         IOLoop.current().add_callback(self.channel_receive_callback)
 
@@ -27,7 +27,7 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
         groups = await self.get_groups() or []
         try:
             for group in groups:
-                await self.channel_layer.group_add(group, self.channel_name)
+                await self.group_add(group)
         except AttributeError:
             raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
 
@@ -43,7 +43,7 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
         # Remove channel groups
         try:
             for group in self.groups:
-                await self.channel_layer.group_discard(group, self.channel_name)
+                await self.group_discard(group)
         except AttributeError:
             raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
         super().on_connection_close()

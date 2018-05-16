@@ -100,7 +100,7 @@ class Client(BaseClient):
     async def get_groups(self):
         pass
 
-    async def create_group(self, group_data):
+    async def create_group(self, group_name, group_data):
         pass
 
     async def delete_group(self, group_name):
