@@ -1,3 +1,4 @@
+"""Originated from https://github.com/pavlov99/json-rpc"""
 from .manager import JSONRPCResponseManager
 from .dispatcher import Dispatcher
 
