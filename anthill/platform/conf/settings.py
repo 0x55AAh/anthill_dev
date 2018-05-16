@@ -117,6 +117,15 @@ LOGGING = {
     }
 }
 
+LOG_STREAMING = {
+    'handler': {
+        'class': 'anthill.framework.handlers.LogStreamingHandler',
+        'kwargs': {'handler_name': 'anthill'}
+    },
+    'name': 'log',
+    'path': '/log/',
+}
+
 
 ##############
 # RATE LIMIT #

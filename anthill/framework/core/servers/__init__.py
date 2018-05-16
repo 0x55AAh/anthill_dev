@@ -49,10 +49,9 @@ class BaseService(TornadoWebApplication):
     @property
     def server(self):
         """Returns an instance of server class ``self.server_class``"""
-        return self.server_class(self, **self.server_kwargs)
+        return self.server_class(self, **self.get_server_kwargs())
 
-    @property
-    def server_kwargs(self):
+    def get_server_kwargs(self):
         kwargs = {}
         # HTTPS supporting
         https_config = getattr(self.config, 'HTTPS', None)
