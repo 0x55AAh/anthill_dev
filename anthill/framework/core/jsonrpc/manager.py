@@ -23,7 +23,8 @@ logger = logging.getLogger(__name__)
 
 
 class JSONRPCResponseManager(object):
-    """ JSON-RPC response manager.
+    """
+    JSON-RPC response manager.
 
     Method brings syntactic sugar into library. Given dispatcher it handles
     request (both single and batch) and handles errors.
@@ -33,7 +34,6 @@ class JSONRPCResponseManager(object):
         JSONRPC20Request, JSONRPC20BatchRequest or JSONRPC10Request
 
     :param dict dispather: dict<function_name:function>.
-
     """
 
     RESPONSE_CLASS_MAP = {
@@ -60,15 +60,12 @@ class JSONRPCResponseManager(object):
 
     @classmethod
     async def handle_request(cls, request, dispatcher):
-        """ Handle request data.
-
+        """
+        Handle request data.
         At this moment request has correct jsonrpc format.
 
         :param dict request: data parsed from request_str.
         :param jsonrpc.dispatcher.Dispatcher dispatcher:
-
-        .. versionadded: 1.8.0
-
         """
         rs = request if isinstance(request, JSONRPC20BatchRequest) else [request]
         responses = [
@@ -89,13 +86,9 @@ class JSONRPCResponseManager(object):
 
     @classmethod
     async def _get_responses(cls, requests, dispatcher):
-        """ Response to each single JSON-RPC Request.
-
+        """
+        Response to each single JSON-RPC Request.
         :return iterator(JSONRPC20Response):
-
-        .. versionadded: 1.9.0
-          TypeError inside the function is distinguished from Invalid Params.
-
         """
         responses = []
         for request in requests:

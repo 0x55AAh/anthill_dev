@@ -7,11 +7,11 @@ import collections
 
 
 class Dispatcher(collections.MutableMapping):
-
     """ Dictionary like object which maps method_name to method."""
 
     def __init__(self, prototype=None):
-        """ Build method dispatcher.
+        """
+        Build method dispatcher.
 
         Parameters
         ----------
@@ -25,7 +25,6 @@ class Dispatcher(collections.MutableMapping):
 
         >>> Dispatcher({"sum": lambda a, b: a + b})
         None
-
         """
         self.method_map = dict()
 
@@ -64,7 +63,8 @@ class Dispatcher(collections.MutableMapping):
         self.build_method_map(dict, prefix)
 
     def add_method(self, f, name=None):
-        """ Add a method to the dispatcher.
+        """
+        Add a method to the dispatcher.
 
         Parameters
         ----------
@@ -92,13 +92,13 @@ class Dispatcher(collections.MutableMapping):
         >>> @d.add_method
             def mymethod(*args, **kwargs):
                 print(args, kwargs)
-
         """
         self.method_map[name or f.__name__] = f
         return f
 
     def build_method_map(self, prototype, prefix=''):
-        """ Add prototype methods to the dispatcher.
+        """
+        Add prototype methods to the dispatcher.
 
         Parameters
         ----------
@@ -110,7 +110,6 @@ class Dispatcher(collections.MutableMapping):
             be used.
         prefix: string, optional
             Prefix of methods
-
         """
         if not isinstance(prototype, dict):
             prototype = dict((method, getattr(prototype, method))

@@ -5,8 +5,8 @@ from .exceptions import JSONRPCInvalidRequestException, JSONRPCError
 
 
 class JSONRPC10Request(JSONRPCBaseRequest):
-
-    """ JSON-RPC 1.0 Request.
+    """
+    JSON-RPC 1.0 Request.
 
     A remote method is invoked by sending a request to a remote service.
     The request is a single object serialized using json.
@@ -16,9 +16,7 @@ class JSONRPC10Request(JSONRPCBaseRequest):
     :param _id: This can be of any type. It is used to match the response with
         the request that it is replying to.
     :param bool is_notification: whether request notification or not.
-
     """
-
     JSONRPC_VERSION = "1.0"
     REQUIRED_FIELDS = {"method", "params", "id"}
     POSSIBLE_FIELDS = {"method", "params", "id"}
@@ -33,7 +31,6 @@ class JSONRPC10Request(JSONRPCBaseRequest):
     def data(self, value):
         if not isinstance(value, dict):
             raise ValueError("data should be dict")
-
         self._data = value
 
     @property
@@ -44,7 +41,6 @@ class JSONRPC10Request(JSONRPCBaseRequest):
     def method(self, value):
         if not isinstance(value, six.string_types):
             raise ValueError("Method should be string")
-
         self._data["method"] = str(value)
 
     @property
@@ -55,7 +51,6 @@ class JSONRPC10Request(JSONRPCBaseRequest):
     def params(self, value):
         if not isinstance(value, (list, tuple)):
             raise ValueError("Incorrect params {0}".format(value))
-
         self._data["params"] = list(value)
 
     @property
@@ -103,7 +98,6 @@ class JSONRPC10Request(JSONRPCBaseRequest):
 
 
 class JSONRPC10Response(JSONRPCBaseResponse):
-
     JSONRPC_VERSION = "1.0"
 
     @property
@@ -115,7 +109,6 @@ class JSONRPC10Response(JSONRPCBaseResponse):
     def data(self, value):
         if not isinstance(value, dict):
             raise ValueError("data should be dict")
-
         self._data = value
 
     @property

@@ -4,13 +4,11 @@ import datetime
 import decimal
 import inspect
 import json
-
 import six
 
 
 class JSONSerializable(six.with_metaclass(ABCMeta, object)):
-
-    """ Common functionality for json serializable objects."""
+    """Common functionality for json serializable objects."""
 
     serialize = staticmethod(json.dumps)
     deserialize = staticmethod(json.loads)
@@ -30,12 +28,10 @@ class JSONSerializable(six.with_metaclass(ABCMeta, object)):
 
 
 class DatetimeDecimalEncoder(json.JSONEncoder):
-
     """ Encoder for datetime and decimal serialization.
 
     Usage: json.dumps(object, cls=DatetimeDecimalEncoder)
     NOTE: _iterencode does not work
-
     """
 
     def default(self, o):
@@ -59,9 +55,6 @@ def is_invalid_params(func, *args, **kwargs):
     NOTE: Method is called after funct(*args, **kwargs) generated TypeError,
     it is aimed to destinguish TypeError because of invalid parameters from
     TypeError from inside the function.
-
-    .. versionadded: 1.9.0
-
     """
     # For builtin functions inspect.getargspec(funct) return error. If builtin
     # function generates TypeError, it is because of wrong parameters.

@@ -6,8 +6,8 @@ from .base import JSONRPCBaseRequest, JSONRPCBaseResponse
 
 
 class JSONRPC20Request(JSONRPCBaseRequest):
-
-    """ A rpc call is represented by sending a Request object to a Server.
+    """
+    A rpc call is represented by sending a Request object to a Server.
 
     :param str method: A String containing the name of the method to be
         invoked. Method names that begin with the word rpc followed by a
@@ -39,9 +39,7 @@ class JSONRPC20Request(JSONRPCBaseRequest):
 
     [2] Fractional parts may be problematic, since many decimal fractions
     cannot be represented exactly as binary fractions.
-
     """
-
     JSONRPC_VERSION = "2.0"
     REQUIRED_FIELDS = {"jsonrpc", "method"}
     POSSIBLE_FIELDS = {"jsonrpc", "method", "params", "id"}
@@ -59,7 +57,6 @@ class JSONRPC20Request(JSONRPCBaseRequest):
     def data(self, value):
         if not isinstance(value, dict):
             raise ValueError("data should be dict")
-
         self._data = value
 
     @property
@@ -102,7 +99,6 @@ class JSONRPC20Request(JSONRPCBaseRequest):
     def _id(self, value):
         if value is not None and not isinstance(value, six.string_types + six.integer_types):
             raise ValueError("id should be string or integer")
-
         self._data["id"] = value
 
     @classmethod
@@ -141,12 +137,10 @@ class JSONRPC20Request(JSONRPCBaseRequest):
 
 
 class JSONRPC20BatchRequest(object):
-    """ Batch JSON-RPC 2.0 Request.
-
-    :param JSONRPC20Request *requests: requests
-
     """
-
+    Batch JSON-RPC 2.0 Request.
+    :param JSONRPC20Request *requests: requests
+    """
     JSONRPC_VERSION = "2.0"
 
     def __init__(self, *requests):
@@ -165,7 +159,8 @@ class JSONRPC20BatchRequest(object):
 
 
 class JSONRPC20Response(JSONRPCBaseResponse):
-    """ JSON-RPC response object to JSONRPC20Request.
+    """
+    JSON-RPC response object to JSONRPC20Request.
 
     When a rpc call is made, the Server MUST reply with a Response, except for
     in the case of Notifications. The Response is expressed as a single JSON
@@ -191,9 +186,7 @@ class JSONRPC20Response(JSONRPCBaseResponse):
 
     Either the result member or error member MUST be included, but both
     members MUST NOT be included.
-
     """
-
     JSONRPC_VERSION = "2.0"
 
     @property
@@ -238,12 +231,10 @@ class JSONRPC20Response(JSONRPCBaseResponse):
     def _id(self, value):
         if value is not None and not isinstance(value, six.string_types + six.integer_types):
             raise ValueError("id should be string or integer")
-
         self._data["id"] = value
 
 
 class JSONRPC20BatchResponse(object):
-
     JSONRPC_VERSION = "2.0"
 
     def __init__(self, *responses):

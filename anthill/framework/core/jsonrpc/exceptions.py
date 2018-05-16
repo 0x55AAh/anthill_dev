@@ -1,10 +1,11 @@
-""" JSON-RPC Exceptions."""
+"""JSON-RPC Exceptions."""
 import six
 import json
 
 
 class JSONRPCError(object):
-    """ Error for JSON-RPC communication.
+    """
+    Error for JSON-RPC communication.
 
     When a rpc call encounters an error, the Response Object MUST contain the
     error member with a value that is a Object with the following members:
@@ -47,7 +48,6 @@ class JSONRPCError(object):
     def __set_code(self, value):
         if not isinstance(value, six.integer_types):
             raise ValueError("Error code should be integer")
-
         self._data["code"] = value
 
     code = property(__get_code, __set_code)
@@ -58,7 +58,6 @@ class JSONRPCError(object):
     def __set_message(self, value):
         if not isinstance(value, six.string_types):
             raise ValueError("Error message should be string")
-
         self._data["message"] = value
 
     message = property(__get_message, __set_message)
@@ -75,8 +74,7 @@ class JSONRPCError(object):
     @classmethod
     def from_json(cls, json_str):
         data = cls.deserialize(json_str)
-        return cls(
-            code=data["code"], message=data["message"], data=data.get("data"))
+        return cls(code=data["code"], message=data["message"], data=data.get("data"))
 
     @property
     def json(self):
@@ -84,85 +82,79 @@ class JSONRPCError(object):
 
 
 class JSONRPCParseError(JSONRPCError):
-    """ Parse Error.
+    """
+    Parse Error.
 
     Invalid JSON was received by the server.
     An error occurred on the server while parsing the JSON text.
-
     """
-
     CODE = -32700
     MESSAGE = "Parse error"
 
 
 class JSONRPCInvalidRequest(JSONRPCError):
-    """ Invalid Request.
+    """
+    Invalid Request.
 
     The JSON sent is not a valid Request object.
-
     """
-
     CODE = -32600
     MESSAGE = "Invalid Request"
 
 
 class JSONRPCMethodNotFound(JSONRPCError):
-    """ Method not found.
+    """
+    Method not found.
 
     The method does not exist / is not available.
-
     """
-
     CODE = -32601
     MESSAGE = "Method not found"
 
 
 class JSONRPCInvalidParams(JSONRPCError):
-    """ Invalid params.
+    """
+    Invalid params.
 
     Invalid method parameter(s).
-
     """
-
     CODE = -32602
     MESSAGE = "Invalid params"
 
 
 class JSONRPCInternalError(JSONRPCError):
-    """ Internal error.
+    """
+    Internal error.
 
     Internal JSON-RPC error.
-
     """
-
     CODE = -32603
     MESSAGE = "Internal error"
 
 
 class JSONRPCServerError(JSONRPCError):
-    """ Server error.
+    """
+    Server error.
 
     Reserved for implementation-defined server-errors.
-
     """
-
     CODE = -32000
     MESSAGE = "Server error"
 
 
 class JSONRPCException(Exception):
-    """ JSON-RPC Exception."""
+    """JSON-RPC Exception."""
 
 
 class JSONRPCInvalidRequestException(JSONRPCException):
-    """ Request is not valid."""
+    """Request is not valid."""
 
 
 class JSONRPCDispatchException(JSONRPCException):
-    """ JSON-RPC Dispatch Exception.
+    """
+    JSON-RPC Dispatch Exception.
 
     Should be thrown in dispatch methods.
-
     """
 
     def __init__(self, code=None, message=None, data=None, *args, **kwargs):
