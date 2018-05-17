@@ -1,5 +1,19 @@
-<div class="footer text-muted{% if centered %} text-center{% end %}" style="bottom: 19px;">
-    &copy; 2018{% if now.year > 2018 %}-{{ now.year }}{% end %}.
-    <a href="#">Anthill Platform Admin Tool</a> by <a href="#" target="_blank">Lysenko Vladimir</a>
+<!--<div class="footer text-muted{% if centered %} text-center{% end %}" style="bottom: 19px">-->
+    <!--&copy; 2018{% if now.year > 2018 %}-{{ now.year }}{% end %}.-->
+    <!--<a href="#">Anthill Platform Admin Tool</a> by <a href="#" target="_blank">Lysenko Vladimir</a><br/>-->
+    <!--UI based on-->
+    <!--<a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>-->
+    <!--<div class="footer-version">Version {{ app_version }}</div>-->
+<!--</div>-->
+
+<div style="{% if centered %}padding:0;position:absolute;left:0;bottom:0;height:100px;width:100%;overflow:hidden;{% else %}padding:0;position:relative;left:0;bottom:0;height:100px;width:100%;overflow:hidden;{% end %}">
+    <div>
+        <div class="text-muted{% if centered %} text-center{% end %}">
+             &copy; 2018{% if now.year > 2018 %}-{{ now.year }}{% end %}.
+    <a href="#">Anthill Platform Admin Tool</a> by <a href="#" target="_blank">Lysenko Vladimir</a><br/>
+    UI based on
+    <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
     <div class="footer-version">Version {{ app_version }}</div>
+        </div>
+    </div>
 </div>

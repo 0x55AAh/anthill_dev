@@ -59,16 +59,17 @@ class JsonWebSocketHandler(WebSocketHandler):
 class JSONHandlerMixin:
     extra_context = None
 
-    def dumps(self, data):
+    def set_default_headers(self):
+        self.set_header('Content-Type', 'application/json')
+
+    @staticmethod
+    def dumps(data):
         return json.dumps(data, escape_forward_slashes=False)
 
     async def get_context_data(self, **kwargs):
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
         return kwargs
-
-    def set_default_headers(self):
-        self.set_header('Content-Type', 'application/json')
 
 
 class ContextMixin:
@@ -111,9 +112,9 @@ class RedirectMixin:
                 from anthill.framework.utils.urls import reverse as reverse_url
                 url = reverse_url(self.handler_name, *args, **kwargs)
             except KeyError:
-                return None
+                return
         else:
-            return None
+            return
 
         request_query = self.request.query
         if request_query and self.query_string:
@@ -194,4 +195,5 @@ class RedirectHandler(RedirectMixin, RequestHandler):
 
 class JSONHandler(JSONHandlerMixin, RequestHandler):
     async def get(self, *args, **kwargs):
-        self.write(self.dumps(await self.get_context_data(**kwargs)))
+        context = await self.get_context_data(**kwargs)
+        self.write(self.dumps(context))

@@ -52,4 +52,5 @@ class WebSocketJSONRPCHandler(JSONRPCMixin, JsonWebSocketHandler):
             self.write_message(result)
 
     def json_rpc_map(self):
+        """Map of json-rpc available calls."""
         return dict((f_name, f.__doc__) for f_name, f in self.dispatcher.items())

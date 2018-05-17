@@ -9,6 +9,6 @@ from anthill.framework.handlers.streaming import (
 
 __all__ = [
     'RequestHandler', 'WebSocketHandler', 'JsonWebSocketHandler',
-    'TemplateHandler', 'RedirectHandler', 'WebSocketJSONRPCHandler',
-    'JSONHandler', 'FileStreamingHandler', 'TextStreamingHandler', 'LogStreamingHandler'
+    'TemplateHandler', 'RedirectHandler', 'WebSocketJSONRPCHandler', 'JSONHandler',
+    'FileStreamingHandler', 'TextStreamingHandler', 'LogStreamingHandler'
 ]
