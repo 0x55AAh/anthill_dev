@@ -44,7 +44,12 @@ class WebSocketHandler(BaseWebSocketHandler):
         """Invoked when the response to a ping frame is received."""
 
     def get_compression_options(self):
-        return None
+        if not settings.WEBSOCKET_COMPRESSION_LEVEL:
+            return
+        options = dict(compression_level=settings.WEBSOCKET_COMPRESSION_LEVEL)
+        if settings.WEBSOCKET_MEM_LEVEL is not None:
+            options.update(mem_level=settings.WEBSOCKET_MEM_LEVEL)
+        return options
 
 
 class JsonWebSocketHandler(WebSocketHandler):

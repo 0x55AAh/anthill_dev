@@ -228,4 +228,17 @@ WEBSOCKET_PING_INTERVAL = None
 WEBSOCKET_PING_TIMEOUT = None
 WEBSOCKET_MAX_MESSAGE_SIZE = None
 
+# An integer from 0 to 9 or -1.
+# A value of 1 is fastest and produces the least compression,
+# while a value of 9 is slowest and produces the most.
+# 0 is no compression. The default value is -1.
+# Default value represents a default compromise between speed
+# and compression (currently equivalent to level 6).
+WEBSOCKET_COMPRESSION_LEVEL = -1
+
+# Controls the amount of memory used for the internal compression state.
+# Valid values range from 1 to 9. Higher values use more memory,
+# but are faster and produce smaller output.
+WEBSOCKET_MEM_LEVEL = None
+
 CHANNEL_LAYERS = {}
