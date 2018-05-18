@@ -102,8 +102,11 @@ class DiscoveryService(BaseService):
             await self.setup_service(service_name, networks)
 
     async def remove_services(self):
-        for service_name in self.registry.keys():
+        for service_name in await self.get_installed_services():
             await self.remove_service(service_name)
+
+    async def get_installed_services(self):
+        raise NotImplementedError
 
     async def setup_service(self, name, networks):
         raise NotImplementedError

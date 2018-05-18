@@ -19,3 +19,6 @@ class Service(DiscoveryService):
 
     async def get_service_location(self, name, network_name):
         return self.storage.hget(name, network_name)
+
+    async def get_installed_services(self):
+        return self.storage.keys()
