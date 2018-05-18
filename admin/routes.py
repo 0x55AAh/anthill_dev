@@ -12,6 +12,6 @@ route_patterns = [
 ]
 
 route_patterns += [
-    url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat'),
-    url(r'^/json-rpc/?$', handlers.TestWSJSONRPCHandler, name='json-rpc')
+    url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat'),  # Test
+    # url(r'^/json-rpc/?$', handlers.TestWSJSONRPCHandler, name='json-rpc')  # Test
 ]
