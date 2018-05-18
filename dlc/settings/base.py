@@ -35,6 +35,8 @@ STATIC_URL = '/static/'
 
 UI_MODULE = 'dlc.ui'
 
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/4"
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

@@ -15,9 +15,8 @@ DISCOVERY_SECRET_KEY = 'DISCOVERY_SERVICE_SECRET_KEY'
 CACHES = {
     "default": {
         "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-        "LOCATION": "localhost:6379",
+        "LOCATION": "redis://localhost:6379/0",
         "OPTIONS": {
-            "DB": 1,
             "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 500
@@ -134,9 +133,8 @@ LOG_STREAMING = {
 CACHES.update(
     rate_limit={
         "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-        "LOCATION": "localhost:6379",
+        "LOCATION": "redis://localhost:6379/1",
         "OPTIONS": {
-            "DB": 2,
             "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 500

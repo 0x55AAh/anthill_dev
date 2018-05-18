@@ -10,7 +10,7 @@ from anthill.framework.conf import settings
 
 class RequestHandler(BaseRequestHandler):
     def reverse_url(self, name, *args):
-        url = super(RequestHandler, self).reverse_url(name, *args)
+        url = super().reverse_url(name, *args)
         return url[:-1] if url.endswith('?') else url
 
     def data_received(self, chunk):
@@ -19,7 +19,7 @@ class RequestHandler(BaseRequestHandler):
 
 class WebSocketHandler(BaseWebSocketHandler):
     def __init__(self, application, request, **kwargs):
-        super(WebSocketHandler, self).__init__(application, request, **kwargs)
+        super().__init__(application, request, **kwargs)
         self.settings.update(websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL)
         self.settings.update(websocket_ping_timeout=settings.WEBSOCKET_PING_TIMEOUT)
         self.settings.update(websocket_max_message_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE)
@@ -137,11 +137,11 @@ class TemplateMixin:
 
     def render(self, **kwargs):
         template_name = self.get_template_name()
-        return super(TemplateMixin, self).render(template_name, **kwargs)
+        return super().render(template_name, **kwargs)
 
     def get_template_namespace(self):
         from anthill.framework.apps import app
-        namespace = super(TemplateMixin, self).get_template_namespace()
+        namespace = super().get_template_namespace()
         namespace.update(app_version=app.version)
         namespace.update(debug=app.debug)
         namespace.update(bytes2human=bytes2human)

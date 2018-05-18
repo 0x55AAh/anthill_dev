@@ -37,6 +37,8 @@ UI_MODULE = 'event.ui'
 
 CELERY_ENABLE = True
 
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/5"
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

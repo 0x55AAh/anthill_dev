@@ -60,6 +60,8 @@ STATIC_URL = '/static/'
 
 UI_MODULE = 'discovery.ui'
 
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/3"
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

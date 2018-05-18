@@ -14,6 +14,8 @@ class AnthillApplication(BaseAnthillApplication):
     def __init__(self):
         super(AnthillApplication, self).__init__()
         self.registered_services = getattr(settings, 'REGISTERED_SERVICES', {})
+        if self.registered_services:
+            return
         try:
             if getattr(settings, 'REGISTERED_SERVICES_EXTERNAL', None):
                 with open(settings.REGISTERED_SERVICES_EXTERNAL) as f:

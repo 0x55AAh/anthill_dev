@@ -41,6 +41,8 @@ CONTEXT_PROCESSORS = [
     'admin.context_processors.health_control'
 ]
 
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/2"
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

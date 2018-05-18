@@ -1,7 +1,9 @@
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.apps import app
 from anthill.platform.utils.celery import CeleryMixin
+from anthill.framework.core.cache import cache
 import logging
+import json
 
 logger = logging.getLogger('anthill.server')
 
@@ -49,6 +51,9 @@ class PlainService(BaseService):
         data = app.registry_entry
         key = 'DISCOVERY_SERVICE_SECRET_KEY'
 
+    async def unregister_on_discovery(self):
+        pass
+
     async def discover(self, names=None, network=None):
         pass
 
@@ -62,6 +67,25 @@ class AdminService(PlainService):
 
 
 class DiscoveryService(BaseService):
+    cleanup_storage_on_stop = True
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.registry = app.registered_services
+
+    async def on_start(self):
+        await super().on_start()
+        await self.set_storage()
+        await self.setup_services()
+
+    async def on_stop(self):
+        await super().on_stop()
+        if self.cleanup_storage_on_stop:
+            await self.remove_services()
+
+    async def set_storage(self):
+        raise NotImplementedError
+
     async def register_service(self, name, data, key):
         if not self.register_allowed(key):
             raise RegisterNotAllowed
@@ -69,6 +93,26 @@ class DiscoveryService(BaseService):
             name: data
         }
         # Add the entry to discovery services registry
+
+    async def unregister_service(self, name):
+        pass
+
+    async def setup_services(self):
+        for service_name, networks in self.registry.items():
+            await self.setup_service(service_name, networks)
+
+    async def remove_services(self):
+        for service_name in self.registry.keys():
+            await self.remove_service(service_name)
+
+    async def setup_service(self, name, networks):
+        raise NotImplementedError
+
+    async def remove_service(self, name):
+        raise NotImplementedError
+
+    async def get_service_location(self, name, network):
+        raise NotImplementedError
 
     def register_allowed(self, key):
         if app.settings.SECRET_KEY == key:

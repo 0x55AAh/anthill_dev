@@ -1,3 +1,8 @@
+# Originated from https://github.com/niwinz/django-redis
+VERSION = (4, 9, 0)
+__version__ = '.'.join(map(str, VERSION))
+
+
 def get_redis_connection(alias='default', write=True):
     """
     Helper used for obtaining a raw redis client.
