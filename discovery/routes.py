@@ -5,5 +5,6 @@ from discovery import handlers
 
 
 route_patterns = [
-
+    url(r'^/register-service/?$', handlers.RegisterService, name='register'),
+    url(r'^/register-service/(?P<name>[^/]*)/?$', handlers.RegisterService, name='register-name'),
 ]

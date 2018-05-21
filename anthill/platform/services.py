@@ -47,9 +47,8 @@ class BaseService(CeleryMixin, _BaseService):
 
 class PlainService(BaseService):
     async def register_on_discovery(self):
-        label = app.label
-        data = app.registry_entry
-        key = 'DISCOVERY_SERVICE_SECRET_KEY'
+        service_name = app.label
+        networks_data = app.registry_entry
 
     async def unregister_on_discovery(self):
         pass
@@ -100,7 +99,7 @@ class DiscoveryService(BaseService):
     async def remove_service(self, name: str) -> None:
         raise NotImplementedError
 
-    async def get_service(self, name: str, networks: list) -> tuple:
+    async def get_service(self, name: str, networks: list=None) -> tuple:
         raise NotImplementedError
 
     async def setup_storage(self) -> None:

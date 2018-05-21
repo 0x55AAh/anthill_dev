@@ -201,4 +201,7 @@ class RedirectHandler(RedirectMixin, RequestHandler):
 class JSONHandler(JSONHandlerMixin, RequestHandler):
     async def get(self, *args, **kwargs):
         context = await self.get_context_data(**kwargs)
-        self.write(self.dumps(context))
+        self.write(context)
+
+    def write(self, data):
+        super().write(self.dumps(data))
