@@ -1,19 +1,19 @@
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.apps import app
 from anthill.platform.utils.celery import CeleryMixin
-from anthill.framework.core.cache import cache
 import logging
-import json
 
 logger = logging.getLogger('anthill.server')
 
 
-class RegisterNotAllowed(Exception):
-    pass
+class ServiceAlreadyRegistered(Exception):
+    def __init__(self, name, message=None):
+        super().__init__(message)
+        self.name = name
 
 
 class BaseService(CeleryMixin, _BaseService):
-    def setup(self):
+    def setup(self) -> None:
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)
         if log_streaming_config:
             from tornado.web import url
@@ -32,16 +32,16 @@ class BaseService(CeleryMixin, _BaseService):
             ])
         super().setup()
 
-    def get_server_kwargs(self):
+    def get_server_kwargs(self) -> dict:
         kwargs = super().get_server_kwargs()
         kwargs.update(xheaders=True)
         return kwargs
 
-    async def on_start(self):
+    async def on_start(self) -> None:
         logger.info('Service `%s` started.' % self.name)
         self.start_celery()
 
-    async def on_stop(self):
+    async def on_stop(self) -> None:
         logger.info('Service `%s` stopped.' % self.name)
 
 
@@ -57,7 +57,7 @@ class PlainService(BaseService):
     async def discover(self, names=None, network=None):
         pass
 
-    async def on_start(self):
+    async def on_start(self) -> None:
         await self.register_on_discovery()
         await super().on_start()
 
@@ -73,51 +73,60 @@ class DiscoveryService(BaseService):
         super().__init__(*args, **kwargs)
         self.registry = app.registered_services
 
-    async def on_start(self):
+    async def on_start(self) -> None:
         await super().on_start()
-        await self.set_storage()
+        await self.setup_storage()
         await self.setup_services()
 
-    async def on_stop(self):
+    async def on_stop(self) -> None:
         await super().on_stop()
         if self.cleanup_storage_on_stop:
             await self.remove_services()
 
-    async def set_storage(self):
-        raise NotImplementedError
-
-    async def register_service(self, name, data, key):
-        if not self.register_allowed(key):
-            raise RegisterNotAllowed
-        entry = {
-            name: data
-        }
-        # Add the entry to discovery services registry
-
-    async def unregister_service(self, name):
-        pass
-
-    async def setup_services(self):
+    async def setup_services(self) -> None:
         for service_name, networks in self.registry.items():
             await self.setup_service(service_name, networks)
 
-    async def remove_services(self):
-        for service_name in await self.get_installed_services():
+    async def remove_services(self) -> None:
+        for service_name in await self.get_registered_services():
             await self.remove_service(service_name)
 
-    async def get_installed_services(self):
+    async def get_registered_services(self) -> list:
         raise NotImplementedError
 
-    async def setup_service(self, name, networks):
+    async def setup_service(self, name: str, networks: dict) -> None:
         raise NotImplementedError
 
-    async def remove_service(self, name):
+    async def remove_service(self, name: str) -> None:
         raise NotImplementedError
 
-    async def get_service_location(self, name, network):
+    async def get_service(self, name: str, networks: list) -> tuple:
         raise NotImplementedError
 
-    def register_allowed(self, key):
-        if app.settings.SECRET_KEY == key:
-            return True
-        return False
+    async def setup_storage(self) -> None:
+        raise NotImplementedError
+
+    # Request for register service
+
+    async def create_request_for_register_service(self, name: str, networks: dict) -> str:
+        raise NotImplementedError
+
+    async def delete_request_for_register_service(self, request_id: str) -> None:
+        raise NotImplementedError
+
+    async def get_request_for_register_service(self, request_id: str) -> tuple:
+        raise NotImplementedError
+
+    async def get_requests_for_register_service(self) -> dict:
+        raise NotImplementedError
+
+    async def register_service(self, request_id: str) -> None:
+        name, networks = await self.get_request_for_register_service(request_id)
+        if name in await self.get_registered_services():
+            raise ServiceAlreadyRegistered(name)
+        await self.setup_service(name, networks)
+
+    async def unregister_service(self, name: str) -> None:
+        await self.remove_service(name)
+
+    # /Request for register service

@@ -7,18 +7,37 @@ class Service(DiscoveryService):
         super().__init__(*args, **kwargs)
         self.storage = None
 
-    async def set_storage(self):
+    async def setup_storage(self) -> None:
         self.storage = get_redis_connection()
 
-    async def setup_service(self, name, networks):
+    async def setup_service(self, name: str, networks: dict) -> None:
         for network_name, service_location in networks.items():
             self.storage.hset(name, network_name, service_location)
 
-    async def remove_service(self, name):
+    async def remove_service(self, name: str) -> None:
         self.storage.delete(name)
 
-    async def get_service_location(self, name, network_name):
-        return self.storage.hget(name, network_name)
+    async def get_service(self, name: str, networks: list) -> tuple:
+        return name, {
+                network: self.storage.hget(name, network)
+                for network in networks
+            }
 
-    async def get_installed_services(self):
+    async def get_registered_services(self) -> list:
         return self.storage.keys()
+
+    # Request for register service
+
+    async def create_request_for_register_service(self, name: str, networks: dict) -> str:
+        pass
+
+    async def delete_request_for_register_service(self, request_id: str) -> None:
+        pass
+
+    async def get_request_for_register_service(self, request_id: str) -> tuple:
+        pass
+
+    async def get_requests_for_register_service(self) -> dict:
+        pass
+
+    # /Request for register service
