@@ -2,11 +2,11 @@ from collections import defaultdict
 from anthill.framework.utils.text import slugify, camel_case_to_spaces
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
+from anthill.platform.api.internal import api as internal_api
 from urllib.parse import urlparse, urljoin
 from functools import lru_cache
 from _thread import get_ident
 import importlib
-from anthill.platform.api.internal import api as internal_api
 
 
 class CommandNamesDuplicatedError(Exception):
@@ -172,7 +172,7 @@ class Application:
 
     def setup_internal_api(self):
         importlib.import_module(self.internal_api_module)
-        self.internal.service = self.service
+        internal_api.service = self.service
 
     @property
     @lru_cache()

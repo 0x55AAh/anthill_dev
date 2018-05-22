@@ -1,11 +1,11 @@
 """
 Internal api methods for current service.
 Example:
-    >>> from anthill.platform.api.internal import internal, InternalAPIError, InternalAPI
+    >>> from anthill.platform.api.internal import as_internal, InternalAPIError, InternalAPI
     >>>
-    >>> @internal()
+    >>> @as_internal()
     >>> async def your_internal_api_method(api: InternalAPI):
     >>>    # service = api.service
     >>>    pass
 """
-from anthill.platform.api.internal import internal, InternalAPIError, InternalAPI
+from anthill.platform.api.internal import as_internal, InternalAPIError, InternalAPI

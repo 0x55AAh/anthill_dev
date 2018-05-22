@@ -1,8 +1,7 @@
 from anthill.framework.utils.singleton import Singleton
 from tornado.httpclient import AsyncHTTPClient
-from functools import wraps
 
-__all__ = ['Internal', 'InternalAPIError', 'internal', 'api', 'InternalAPI']
+__all__ = ['Internal', 'InternalAPIError', 'as_internal', 'api', 'InternalAPI']
 
 
 class Internal(Singleton):
@@ -28,16 +27,15 @@ class InternalAPIError(Exception):
 
 
 class InternalAPI(Singleton):
-    def __init__(self, service=None):
-        self.service = service
+    def as_internal(self):
+        """Decorator marks function as an internal api method."""
+
+        def decorator(func):
+            setattr(self, func.__name__, func)
+            return func
+
+        return decorator
 
 
 api = InternalAPI()
-
-
-def internal():
-    """Decorator marks function as an internal api method."""
-    def decorator(func):
-        setattr(api, func.__name__, func)
-        return func
-    return decorator
+as_internal = api.as_internal
