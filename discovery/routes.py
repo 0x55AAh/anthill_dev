@@ -6,5 +6,5 @@ from discovery import handlers
 
 route_patterns = [
     url(r'^/register-service/?$', handlers.RegisterService, name='register'),
-    url(r'^/register-service/(?P<name>[^/]*)/?$', handlers.RegisterService, name='register-name'),
+    url(r'^/register-service/(?P<request_id>[^/]*)/?$', handlers.RegisterService, name='register-request-id'),
 ]
