@@ -191,3 +191,19 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+#######
+# API #
+#######
+
+INTERNAL_API_CONF = 'api.v1.internal'
+
+
+#########
+# GEOIP #
+#########
+
+GEOIP_PATH = None
+GEOIP_CITY = 'GeoLite2-City.mmdb'
+GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'

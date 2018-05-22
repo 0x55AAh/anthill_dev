@@ -6,6 +6,7 @@ from urllib.parse import urlparse, urljoin
 from functools import lru_cache
 from _thread import get_ident
 import importlib
+from anthill.platform.api.internal import api
 
 
 class CommandNamesDuplicatedError(Exception):
@@ -26,6 +27,9 @@ class Application:
         self.verbose_name = settings.APPLICATION_VERBOSE_NAME or self.label.title()
         self.description = settings.APPLICATION_DESCRIPTION
         self.icon_class = settings.APPLICATION_ICON_CLASS
+
+        self.internal_api_module = settings.INTERNAL_API_CONF
+        self.internal = api
 
         self.routes_conf = self._get_default('ROUTES_CONF', '%s.routes' % self.name)
         self.service_class = self._get_default('SERVICE_CLASS', '%s.services.Service' % self.name)
@@ -164,6 +168,7 @@ class Application:
     def setup(self):
         """Setup application"""
         importlib.import_module(self.models_conf)
+        importlib.import_module(self.internal_api_module)
 
     @property
     @lru_cache()

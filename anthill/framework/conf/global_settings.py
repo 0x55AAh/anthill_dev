@@ -241,4 +241,11 @@ WEBSOCKET_COMPRESSION_LEVEL = -1
 # but are faster and produce smaller output.
 WEBSOCKET_MEM_LEVEL = None
 
-CHANNEL_LAYERS = {}
+
+#########
+# GEOIP #
+#########
+
+GEOIP_PATH = None
+GEOIP_CITY = None
+GEOIP_COUNTRY = None
