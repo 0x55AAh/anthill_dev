@@ -1,7 +1,6 @@
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import Internal
-from anthill.framework.apps import app
 import logging
 
 logger = logging.getLogger('anthill.server')
@@ -43,17 +42,17 @@ class BaseService(CeleryMixin, _BaseService):
         return kwargs
 
     async def on_start(self) -> None:
-        logger.info('Service `%s` started.' % self.name)
+        logger.info('Service `%s` started.' % self.app.name)
         self.start_celery()
 
     async def on_stop(self) -> None:
-        logger.info('Service `%s` stopped.' % self.name)
+        logger.info('Service `%s` stopped.' % self.app.name)
 
 
 class PlainService(BaseService):
     async def register_on_discovery(self):
-        service_name = app.label
-        networks_data = app.registry_entry
+        service_name = self.app.label
+        networks_data = self.app.registry_entry
 
     async def unregister_on_discovery(self):
         pass
@@ -75,7 +74,7 @@ class DiscoveryService(BaseService):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.registry = app.registered_services
+        self.registry = self.app.registered_services
 
     async def on_start(self) -> None:
         await super().on_start()

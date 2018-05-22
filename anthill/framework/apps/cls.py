@@ -6,7 +6,7 @@ from urllib.parse import urlparse, urljoin
 from functools import lru_cache
 from _thread import get_ident
 import importlib
-from anthill.platform.api.internal import api
+from anthill.platform.api.internal import api as internal_api
 
 
 class CommandNamesDuplicatedError(Exception):
@@ -28,14 +28,14 @@ class Application:
         self.description = settings.APPLICATION_DESCRIPTION
         self.icon_class = settings.APPLICATION_ICON_CLASS
 
-        self.internal_api_module = settings.INTERNAL_API_CONF
-        self.internal = api
-
         self.routes_conf = self._get_default('ROUTES_CONF', '%s.routes' % self.name)
         self.service_class = self._get_default('SERVICE_CLASS', '%s.services.Service' % self.name)
         self.management_conf = self._get_default('MANAGEMENT_CONF', '%s.management' % self.name)
         self.models_conf = self._get_default('MODELS_CONF', '%s.models' % self.name)
         self.ui_module = self._get_default('UI_MODULE', '%s.ui' % self.name)
+
+        self.internal_api_module = settings.INTERNAL_API_CONF
+        self.internal = internal_api
 
         self.protocol, self.host, self.port = self.split_location()
         self.extensions = {}
@@ -168,14 +168,18 @@ class Application:
     def setup(self):
         """Setup application"""
         importlib.import_module(self.models_conf)
+        self.setup_internal_api()
+
+    def setup_internal_api(self):
         importlib.import_module(self.internal_api_module)
+        self.internal.service = self.service
 
     @property
     @lru_cache()
     def service(self):
         """Returns an instance of service class ``self.service_class``"""
         service_class = import_string(self.service_class)
-        service_instance = service_class()
+        service_instance = service_class(app=self)
         return service_instance
 
     def reverse_url(self, name, *args, external=False):

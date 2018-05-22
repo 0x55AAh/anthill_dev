@@ -1,7 +1,6 @@
 from tornado.web import Application as TornadoWebApplication
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
-from anthill.framework.apps import app
 import signal
 import logging
 
@@ -13,7 +12,7 @@ logger = logging.getLogger('anthill.server')
 class BaseService(TornadoWebApplication):
     server_class = HTTPServer
 
-    def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
+    def __init__(self, handlers=None, default_host=None, transforms=None, app=None, **kwargs):
         kwargs.update(debug=app.debug)
         kwargs.update(compress_response=app.settings.COMPRESS_RESPONSE)
         kwargs.update(static_path=app.settings.STATIC_PATH)
@@ -22,23 +21,23 @@ class BaseService(TornadoWebApplication):
         super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
 
         self.config = app.settings
-        self.name = app.name
+        self.app = app
         self.setup()
 
     def setup(self):
         """Setup server variables"""
-        self.add_handlers(r'^(.*)$', app.routes)
+        self.add_handlers(r'^(.*)$', self.app.routes)
 
-        self.settings.update(cookie_secret=app.settings.SECRET_KEY)
-        self.settings.update(xsrf_cookies=app.settings.CSRF_COOKIES)
-        self.settings.update(template_path=app.settings.TEMPLATE_PATH)
-        self.settings.update(login_url=app.settings.LOGIN_URL)
+        self.settings.update(cookie_secret=self.app.settings.SECRET_KEY)
+        self.settings.update(xsrf_cookies=self.app.settings.CSRF_COOKIES)
+        self.settings.update(template_path=self.app.settings.TEMPLATE_PATH)
+        self.settings.update(login_url=self.app.settings.LOGIN_URL)
 
-        self._load_ui_modules(app.ui_modules)
-        self._load_ui_methods(app.ui_modules)
+        self._load_ui_modules(self.app.ui_modules)
+        self._load_ui_methods(self.app.ui_modules)
 
     def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, self.name)
+        return '<%s: %s>' % (self.__class__.__name__, self.app.name)
 
     def __sig_handler__(self, sig, frame):
         IOLoop.instance().add_callback(self.on_stop)
@@ -70,7 +69,7 @@ class BaseService(TornadoWebApplication):
         return kwargs
 
     def setup_server(self, **kwargs):
-        self.server.listen(app.port, app.host)
+        self.server.listen(self.app.port, self.app.host)
 
         signal.signal(signal.SIGPIPE, self.__sigpipe_handler__)
         signal.signal(signal.SIGTERM, self.__sig_handler__)
