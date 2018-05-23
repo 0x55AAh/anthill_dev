@@ -163,3 +163,20 @@ LOGGING = {
         },
     }
 }
+
+
+#########
+# GEOIP #
+#########
+
+GEOIP_PATH = os.path.join(BASE_DIR, '../')
+
+
+#########
+# HTTPS #
+#########
+
+HTTPS = {
+    'key_file': os.path.join(BASE_DIR, '../server.key'),
+    'crt_file': os.path.join(BASE_DIR, '../server.crt'),
+}

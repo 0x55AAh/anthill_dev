@@ -1,6 +1,7 @@
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import Internal
+from anthill.framework.utils.geoip import GeoIP2
 import logging
 
 logger = logging.getLogger('anthill.server')
@@ -16,6 +17,10 @@ class BaseService(CeleryMixin, _BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.internal = Internal()
+        if getattr(self.config, 'GEOIP_PATH', None):
+            self.gis = GeoIP2()
+        else:
+            self.gis = None
 
     def setup(self) -> None:
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)
