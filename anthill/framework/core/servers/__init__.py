@@ -65,7 +65,7 @@ class BaseService(TornadoWebApplication):
             kwargs.update(ssl_options=ssl_ctx)
             logger.debug('HTTPS is ON.')
         else:
-            logger.warning('HTTPS not configured. May issue security problems.')
+            logger.warning('HTTPS is OFF.')
         return kwargs
 
     def setup_server(self, **kwargs):
