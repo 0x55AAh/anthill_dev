@@ -6,11 +6,10 @@ import logging
 logger = logging.getLogger('celery')
 
 SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
-APP_NAME = getattr(settings, 'CELERY_APP_NAME', 'tasks')
 USE_CELERY = getattr(settings, 'CELERY_ENABLE', False)
 WORKER_LOG_LEVEL = getattr(settings, 'CELERY_LOG_LEVEL', 'info')
 
-celery = Celery(APP_NAME)
+celery = Celery()
 celery.conf.update(SETTINGS)
 
 

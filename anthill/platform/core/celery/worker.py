@@ -7,7 +7,7 @@ from celery.utils.dispatch import Signal
 from celery.utils.nodenames import anon_nodename
 from celery.worker.consumer import Consumer
 from typing import Iterable, Any, Union
-from anthill.framework.conf import settings
+
 
 worker_starting = Signal(
     name='worker_starting',
@@ -98,8 +98,8 @@ def _start_worker_thread(app: Celery,
     assert 'celery.ping' in app.tasks
 
     # Make sure we can connect to the broker
-    # with app.connection() as conn:
-    #     conn.default_channel.queue_declare
+    with app.connection() as conn:
+        conn.default_channel.queue_declare
 
     worker = WorkController(
         app=app,

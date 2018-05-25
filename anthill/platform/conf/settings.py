@@ -50,8 +50,6 @@ CELERY_SETTINGS = {
     'result_backend': 'redis://'
 }
 
-CELERY_APP_NAME = 'tasks'
-
 CELERY_ENABLE = False
 
 
