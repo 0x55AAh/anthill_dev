@@ -29,7 +29,7 @@ class ChannelLayer(BaseChannelLayer):
     def __init__(
         self,
         hosts=None,
-        prefix="asgi:",
+        prefix="anthill",
         expiry=60,
         group_expiry=86400,
         capacity=100,
@@ -112,12 +112,12 @@ class ChannelLayer(BaseChannelLayer):
         assert isinstance(message, dict), "message is not a dict"
         assert self.valid_channel_name(channel), "Channel name not valid"
         # Make sure the message does not contain reserved keys
-        assert "__asgi_channel__" not in message
+        assert "__anthill_channel__" not in message
         # If it's a process-local channel, strip off local part and stick full name in message
         channel_non_local_name = channel
         if "!" in channel:
             message = dict(message.items())
-            message["__asgi_channel__"] = channel
+            message["__anthill_channel__"] = channel
             channel_non_local_name = self.non_local_name(channel)
         # Write out message into expiring key (avoids big items in list)
         channel_key = self.prefix + channel_non_local_name
@@ -220,9 +220,9 @@ class ChannelLayer(BaseChannelLayer):
             message = self.deserialize(content[1])
             # TODO: message expiry?
             # If there is a full channel name stored in the message, unpack it.
-            if "__asgi_channel__" in message:
-                channel = message["__asgi_channel__"]
-                del message["__asgi_channel__"]
+            if "__anthill_channel__" in message:
+                channel = message["__anthill_channel__"]
+                del message["__anthill_channel__"]
             return channel, message
 
     async def new_channel(self, prefix="specific"):
@@ -313,7 +313,7 @@ class ChannelLayer(BaseChannelLayer):
             # Create a LUA script specific for this connection.
             # Make sure to use the message specific to this channel, it is
             # stored in channel_to_message dict and contains the
-            # __asgi_channel__ key.
+            # __anthill_channel__ key.
             group_send_lua = """
                 for i=1,#KEYS do
                     if redis.call('LLEN', KEYS[i]) < tonumber(ARGV[i + #KEYS]) then
@@ -343,7 +343,7 @@ class ChannelLayer(BaseChannelLayer):
         For a list of channel names, bucket each one to a dict keyed by the
         connection index.
         Also for each channel create a message specific to that channel, adding
-        the __asgi_channel__ key to the message.
+        the __anthill_channel__ key to the message.
         We also return a mapping from channel names to their corresponding Redis
         keys, and a mapping of channels to their capacity.
         """
@@ -356,7 +356,7 @@ class ChannelLayer(BaseChannelLayer):
             channel_non_local_name = channel
             if "!" in channel:
                 message = dict(message.items())
-                message["__asgi_channel__"] = channel
+                message["__anthill_channel__"] = channel
                 channel_non_local_name = self.non_local_name(channel)
             channel_key = self.prefix + channel_non_local_name
             idx = self.consistent_hash(channel_non_local_name)

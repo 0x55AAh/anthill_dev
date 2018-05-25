@@ -1,5 +1,6 @@
 from anthill.framework.handlers import TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler
-from anthill.platform.core.messenger import MessengerHandler, BaseClient
+from anthill.platform.core.messenger.handlers import MessengerHandler
+from anthill.platform.core.messenger.client import BaseClient
 from .ui.modules import ServiceCard
 
 

@@ -181,8 +181,19 @@ WEBSOCKET_MAX_MESSAGE_SIZE = None
 WEBSOCKET_COMPRESSION_LEVEL = -1
 WEBSOCKET_MEM_LEVEL = 6
 
+
+############
+# CHANNELS #
+############
+
 CHANNEL_LAYERS = {
     "default": {
+        "BACKEND": "anthill.platform.core.messenger.channels.layers.backends.redis.ChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+    "internal": {
         "BACKEND": "anthill.platform.core.messenger.channels.layers.backends.redis.ChannelLayer",
         "CONFIG": {
             "hosts": [("localhost", 6379)],

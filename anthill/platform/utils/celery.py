@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger('celery')
 
 SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
-USE_CELERY = getattr(settings, 'CELERY_ENABLE', False)
+CELERY_ENABLE = getattr(settings, 'CELERY_ENABLE', False)
 WORKER_LOG_LEVEL = getattr(settings, 'CELERY_LOG_LEVEL', 'info')
 
 celery = Celery()
@@ -15,9 +15,12 @@ celery.conf.update(SETTINGS)
 
 class CeleryMixin:
     def start_celery(self):
-        if USE_CELERY:
+        if CELERY_ENABLE:
             logger.debug('Celery is enabled.')
-            with start_worker(app=celery, loglevel=WORKER_LOG_LEVEL):
+            with start_worker(
+                    app=celery,
+                    concurrency=1,
+                    loglevel=WORKER_LOG_LEVEL):
                 pass
         else:
             logger.debug('Celery is disabled.')

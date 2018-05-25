@@ -1,6 +1,6 @@
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
-from anthill.platform.api.internal import Internal
+from anthill.platform.api.internal import JSONRPCInternalConnection
 from anthill.framework.utils.geoip import GeoIP2
 import logging
 
@@ -16,7 +16,7 @@ class ServiceAlreadyRegistered(Exception):
 class BaseService(CeleryMixin, _BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
-        self.internal = Internal()
+        self.internal_connection = JSONRPCInternalConnection(service=self)
         if getattr(self.config, 'GEOIP_PATH', None):
             self.gis = GeoIP2()
         else:
@@ -48,10 +48,12 @@ class BaseService(CeleryMixin, _BaseService):
 
     async def on_start(self) -> None:
         logger.info('Service `%s` started.' % self.app.name)
+        await self.internal_connection.connect()
         self.start_celery()
 
     async def on_stop(self) -> None:
         logger.info('Service `%s` stopped.' % self.app.name)
+        await self.internal_connection.disconnect()
 
 
 class PlainService(BaseService):

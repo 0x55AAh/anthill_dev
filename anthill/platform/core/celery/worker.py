@@ -87,7 +87,7 @@ def _start_worker_thread(app: Celery,
                          pool: str='solo',
                          loglevel: Union[str, int]='info',
                          logfile: str=None,
-                         WorkController: Any=WorkController,
+                         work_controller: Any=WorkController,
                          **kwargs: Any) -> Iterable:
     """Start Celery worker in a thread.
 
@@ -101,7 +101,7 @@ def _start_worker_thread(app: Celery,
     with app.connection() as conn:
         conn.default_channel.queue_declare
 
-    worker = WorkController(
+    worker = work_controller(
         app=app,
         concurrency=concurrency,
         hostname=anon_nodename(),

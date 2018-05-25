@@ -31,7 +31,7 @@ class ChannelLayer(BaseChannelLayer):
         assert isinstance(message, dict), "message is not a dict"
         assert self.valid_channel_name(channel), "Channel name not valid"
         # If it's a process-local channel, strip off local part and stick full name in message
-        assert "__asgi_channel__" not in message
+        assert "__anthill_channel__" not in message
 
         queue = self.channels.setdefault(channel, queues.Queue())
         # Are we full

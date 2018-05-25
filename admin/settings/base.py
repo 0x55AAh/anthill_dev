@@ -43,6 +43,7 @@ CONTEXT_PROCESSORS = [
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/2"
 
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
