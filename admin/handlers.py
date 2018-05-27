@@ -56,6 +56,8 @@ class HomeHandler(TemplateHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super(HomeHandler, self).get_context_data(**kwargs)
+        r = await self.application.internal_connection.request('dlc', method='test')
+        print(r)
         return context
 
 

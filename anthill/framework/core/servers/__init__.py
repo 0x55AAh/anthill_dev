@@ -22,6 +22,7 @@ class BaseService(TornadoWebApplication):
 
         self.config = app.settings
         self.app = app
+        self.name = app.label
         self.setup()
 
     def setup(self):
