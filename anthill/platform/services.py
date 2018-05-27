@@ -14,9 +14,11 @@ class ServiceAlreadyRegistered(Exception):
 
 
 class BaseService(CeleryMixin, _BaseService):
+    internal_api_connection_class = JSONRPCInternalConnection
+
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
-        self.internal_connection = JSONRPCInternalConnection(service=self)
+        self.internal_connection = self.internal_api_connection_class(service=self)
         if getattr(self.config, 'GEOIP_PATH', None):
             self.gis = GeoIP2()
         else:

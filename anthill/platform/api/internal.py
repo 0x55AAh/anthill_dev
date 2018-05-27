@@ -72,7 +72,7 @@ class InternalConnection(Singleton):
     channel_group_name_prefix = 'internal'
     request_timeout = 10
 
-    def __init__(self, service):
+    def __init__(self, service=None):
         self.channel_layer = None
         self.channel_name = None
         self.channel_receive = None
@@ -143,7 +143,7 @@ class InternalConnection(Singleton):
 class JSONRPCInternalConnection(InternalConnection):
     message_type = 'internal_json_rpc'
 
-    def __init__(self, service, dispatcher=None):
+    def __init__(self, service=None, dispatcher=None):
         super().__init__(service)
         self.dispatcher = dispatcher if dispatcher is not None else Dispatcher()
         for method_name in api:
