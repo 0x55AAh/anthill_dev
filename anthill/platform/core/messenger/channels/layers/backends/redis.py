@@ -81,9 +81,7 @@ class ChannelLayer(BaseChannelLayer):
         # Decode each hosts entry into a kwargs dict
         result = []
         for entry in hosts:
-            result.append({
-                "address": entry,
-            })
+            result.append({"address": entry})
         return result
 
     def _setup_encryption(self, symmetric_encryption_keys):

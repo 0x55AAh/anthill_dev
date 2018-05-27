@@ -12,13 +12,6 @@ class ChannelLayerManager:
     def __init__(self):
         self.backends = {}
 
-    def _reset_backends(self, setting, **kwargs):
-        """
-        Removes cached channel layers when the CHANNEL_LAYERS setting changes.
-        """
-        if setting == "CHANNEL_LAYERS":
-            self.backends = {}
-
     @property
     def configs(self):
         # Lazy load settings so we can be imported

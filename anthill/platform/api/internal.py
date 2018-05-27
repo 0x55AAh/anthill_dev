@@ -1,4 +1,5 @@
 from tornado.gen import with_timeout
+from tornado.util import TimeoutError
 
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
