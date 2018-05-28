@@ -35,7 +35,7 @@ class Service(DiscoveryService):
             networks = self.storage.hkeys(name)
         key = self.get_service_storage_key(name)
         return name, {
-                network: self.storage.hget(key, network)
+                network: self.storage.hget(key, network).decode('utf8')
                 for network in networks
             }
 

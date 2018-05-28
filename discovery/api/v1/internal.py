@@ -12,10 +12,11 @@ from anthill.platform.api.internal import as_internal, InternalAPIError, Interna
 
 
 @as_internal()
-async def get_service(api: InternalAPI, service_name: str, network: str=None):
-    current_service = api.service
+async def get_service(api: InternalAPI, name: str, network: str=None):
+    result = await api.service.get_service(name, [network])
+    return dict([result])
 
 
 @as_internal()
-async def set_service(api: InternalAPI, service_name: str, network: str, location: str):
+async def set_service(api: InternalAPI, name: str, network: str, location: str):
     current_service = api.service
