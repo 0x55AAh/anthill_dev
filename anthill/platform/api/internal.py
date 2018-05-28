@@ -184,15 +184,19 @@ class JSONRPCInternalConnection(InternalConnection):
             future = self._responses[request_id]
             future.set_result(result)
         elif 'method' in payload:
-            payload = json.dumps(payload)
+            _payload = json.dumps(payload)
             try:
-                json_rpc_request = JSONRPCRequest.from_json(payload)
+                json_rpc_request = JSONRPCRequest.from_json(_payload)
             except (TypeError, ValueError, JSONRPCInvalidRequestException):
-                response = await JSONRPCResponseManager.handle(payload, self.dispatcher)
+                response = await JSONRPCResponseManager.handle(_payload, self.dispatcher)
             else:
                 json_rpc_request.params = json_rpc_request.params or {}
                 response = await JSONRPCResponseManager.handle_request(
                     json_rpc_request, self.dispatcher)
+
+            # No reply needed if response is None (in case of push).
+            if response is None:
+                return
 
             def response_serialize(obj):
                 """Serializes response's data object to JSON."""
