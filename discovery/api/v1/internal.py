@@ -5,12 +5,17 @@ Example:
     >>>
     >>> @as_internal()
     >>> async def your_internal_api_method(api: InternalAPI, **kwargs):
-    >>>    # service = api.service
+    >>>    # current_service = api.service
     >>>    ...
 """
 from anthill.platform.api.internal import as_internal, InternalAPIError, InternalAPI
 
 
 @as_internal()
-async def test(api: InternalAPI, **kwargs):
-    return {'method': 'test', 'service': api.service.name}
+async def get_service(api: InternalAPI, service_name: str, network: str=None):
+    current_service = api.service
+
+
+@as_internal()
+async def set_service(api: InternalAPI, service_name: str, network: str, location: str):
+    current_service = api.service

@@ -62,12 +62,19 @@ class InternalAPI(Singleton):
     def __len__(self):
         return len(self.methods)
 
+    def add_method(self, method):
+        self.methods.append(method.__name__)
+        setattr(self.__class__, method.__name__, method)
+
+    def add_methods(self, methods):
+        for method in methods:
+            self.add_method(method)
+
     def as_internal(self):
         """Decorator marks function as an internal api method."""
 
         def decorator(func):
-            self.methods.append(func.__name__)
-            setattr(self.__class__, func.__name__, func)
+            self.add_method(func)
             return func
 
         return decorator
@@ -75,6 +82,19 @@ class InternalAPI(Singleton):
 
 api = InternalAPI()
 as_internal = api.as_internal
+
+
+# ## Api methods for diagnostic purposes ###
+async def test(api_: InternalAPI):
+    return {'method': 'test', 'service': api_.service.name}
+
+
+async def ping(api_: InternalAPI):
+    return {'message': 'pong', 'service': api_.service.name}
+# ## /Api methods for diagnostic purposes ###
+
+
+api.add_methods([test, ping])
 
 
 class InternalConnection(Singleton):
@@ -133,31 +153,17 @@ class InternalConnection(Singleton):
         return self._current_request_id
 
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
-        request_id = self.next_request_id()
-        message = {
-            'type': self.message_type,
-            'service': self.service.name,
-            'payload': {
-                'jsonrpc': '2.0',
-                'method': method,
-                'params': kwargs,
-                'id': request_id
-            }
-        }
-        self._responses[request_id] = future = Future()
-        await self.send(service, message)
-        timeout = timeout or self.request_timeout
-        try:
-            return await with_timeout(datetime.timedelta(seconds=timeout), future)
-        except TimeoutError:
-            raise InternalAPIRequestTimeoutError(
-                'Service `%s` not responded for %s sec' % (service, timeout))
-        finally:
-            del self._responses[request_id]
+        """Request for method and wait for result."""
+        raise NotImplementedError
+
+    async def push(self, service: str, method: str, **kwargs) -> None:
+        """Request for method with no wait for result."""
+        raise NotImplementedError
 
 
 class JSONRPCInternalConnection(InternalConnection):
     message_type = 'internal_json_rpc'
+    json_rpc_ver = '2.0'
 
     def __init__(self, service=None, dispatcher=None):
         super().__init__(service)
@@ -203,3 +209,38 @@ class JSONRPCInternalConnection(InternalConnection):
             }
 
             await self.send(service, message)
+
+    async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
+        request_id = self.next_request_id()
+        message = {
+            'type': self.message_type,
+            'service': self.service.name,
+            'payload': {
+                'jsonrpc': self.json_rpc_ver,
+                'method': method,
+                'params': kwargs,
+                'id': request_id
+            }
+        }
+        self._responses[request_id] = future = Future()
+        await self.send(service, message)
+        timeout = timeout or self.request_timeout
+        try:
+            return await with_timeout(datetime.timedelta(seconds=timeout), future)
+        except TimeoutError:
+            raise InternalAPIRequestTimeoutError(
+                'Service `%s` not responded for %s sec' % (service, timeout))
+        finally:
+            del self._responses[request_id]
+
+    async def push(self, service: str, method: str, **kwargs) -> None:
+        message = {
+            'type': self.message_type,
+            'service': self.service.name,
+            'payload': {
+                'jsonrpc': self.json_rpc_ver,
+                'method': method,
+                'params': kwargs
+            }
+        }
+        await self.send(service, message)
