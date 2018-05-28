@@ -163,7 +163,7 @@ class InternalConnection(Singleton):
 
 class JSONRPCInternalConnection(InternalConnection):
     message_type = 'internal_json_rpc'
-    json_rpc_ver = '2.0'
+    json_rpc_ver = '2.0'  # Only 2.0 supported!
 
     def __init__(self, service=None, dispatcher=None):
         super().__init__(service)
