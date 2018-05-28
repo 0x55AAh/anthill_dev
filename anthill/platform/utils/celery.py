@@ -7,20 +7,18 @@ logger = logging.getLogger('celery')
 
 SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
 CELERY_ENABLE = getattr(settings, 'CELERY_ENABLE', False)
-WORKER_LOG_LEVEL = getattr(settings, 'CELERY_LOG_LEVEL', 'info')
+TIME_ZONE = getattr(settings, 'TIME_ZONE', 'UTC')
 
-celery = Celery()
-celery.conf.update(SETTINGS)
+celery_app = Celery()
+celery_app.conf.update(SETTINGS)
 
 
 class CeleryMixin:
-    def start_celery(self):
+    @staticmethod
+    def start_celery():
         if CELERY_ENABLE:
             logger.debug('Celery is enabled.')
-            with start_worker(
-                    app=celery,
-                    concurrency=1,
-                    loglevel=WORKER_LOG_LEVEL):
+            with start_worker(app=celery_app, timezone=TIME_ZONE):
                 pass
         else:
             logger.debug('Celery is disabled.')

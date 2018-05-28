@@ -15,7 +15,7 @@ GEOIP_SETTINGS = {
 }
 
 
-def _city(response):
+def __city(response):
     return {
         'city': response.city.name,
         'continent_code': response.continent.code,
@@ -31,14 +31,14 @@ def _city(response):
     }
 
 
-def _country(response):
+def __country(response):
     return {
         'country_code': response.country.iso_code,
         'country_name': response.country.name,
     }
 
 
-Country, City = _country, _city
+Country, City = __country, __city
 
 
 class GeoIP2Exception(Exception):

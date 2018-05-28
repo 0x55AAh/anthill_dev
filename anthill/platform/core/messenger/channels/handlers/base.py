@@ -9,6 +9,7 @@ class ChannelHandlerMixin:
         return self.groups or []
 
     async def channel_receive_callback(self) -> None:
+        """Channel messages listener callback."""
         if self.channel_receive:
             while True:
                 message = await self.channel_receive()

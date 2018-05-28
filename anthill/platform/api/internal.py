@@ -1,11 +1,11 @@
 from tornado.gen import with_timeout
 from tornado.util import TimeoutError
+from tornado.ioloop import IOLoop
+from tornado.concurrent import Future
 
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
-from tornado.ioloop import IOLoop
-from tornado.concurrent import Future
 import functools
 import datetime
 
@@ -21,6 +21,19 @@ __all__ = [
     'InternalConnection', 'JSONRPCInternalConnection', 'InternalAPIError',
     'as_internal', 'api', 'InternalAPI'
 ]
+
+
+def has_keys(d, keys):
+    for k in d.keys():
+        if k in keys:
+            return True
+    return False
+
+
+def get_result(d, keys):
+    for k, v in d.items():
+        if k in keys:
+            return v
 
 
 class InternalAPIError(Exception):
@@ -68,7 +81,8 @@ class InternalConnection(Singleton):
     """
     Implements communications between services.
     """
-    message_type = channel_alias = 'internal'
+    message_type = 'internal'
+    channel_alias = 'internal'
     channel_group_name_prefix = 'internal'
     request_timeout = 10
 
@@ -86,6 +100,7 @@ class InternalConnection(Singleton):
         return '_'.join([self.channel_group_name_prefix, service_name])
 
     async def channel_receive_callback(self) -> None:
+        """Messages listener callback."""
         if self.channel_receive:
             while True:
                 message = await self.channel_receive()
@@ -113,6 +128,7 @@ class InternalConnection(Singleton):
             raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
 
     def next_request_id(self):
+        """Generate and save new request id."""
         self._current_request_id += 1
         return self._current_request_id
 
@@ -156,17 +172,6 @@ class JSONRPCInternalConnection(InternalConnection):
         if isinstance(payload, str):
             payload = json.loads(payload)
 
-        def has_keys(d, keys):
-            for k in d.keys():
-                if k in keys:
-                    return True
-            return False
-
-        def get_result(d, keys):
-            for k, v in d.items():
-                if k in keys:
-                    return v
-
         if has_keys(payload, ('result', 'error')):
             result = get_result(payload, ('result', 'error'))
             request_id = payload.get('id')
@@ -191,6 +196,10 @@ class JSONRPCInternalConnection(InternalConnection):
                 response.serialize = response_serialize
                 response = response.json
 
-            message = dict(payload=response, service=self.service.name, type=self.message_type)
+            message = {
+                'type': self.message_type,
+                'service': self.service.name,
+                'payload': response
+            }
 
             await self.send(service, message)

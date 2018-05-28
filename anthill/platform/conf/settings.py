@@ -41,13 +41,22 @@ HTTPS = None
 # CELERY #
 ##########
 
-CELERY_LOG_LEVEL = 'info'
-
 # All celery configuration options:
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
 CELERY_SETTINGS = {
     'broker_url': 'amqp://guest:guest@localhost:5672',
-    'result_backend': 'redis://'
+    'broker_transport_options': {},
+    'broker_connection_timeout': 4,
+
+    'result_backend': 'redis://',
+    'redis_max_connections': 150,
+
+    'worker_concurrency': None,
+    'worker_pool': 'solo',
+
+    'task_serializer': 'json',
+    'task_compression': None,
+    'task_routes': {},
 }
 
 CELERY_ENABLE = False

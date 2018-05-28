@@ -53,9 +53,9 @@ def ping() -> str:
 
 @contextmanager
 def start_worker(app: Celery,
-                 concurrency: int=1,
-                 pool: str='solo',
-                 loglevel: Union[str, int]='info',
+                 concurrency: int=None,
+                 pool: str=None,
+                 loglevel: Union[str, int]=None,
                  logfile: str=None,
                  perform_ping_check: bool=True,
                  ping_task_timeout: float=10.0,
@@ -72,20 +72,20 @@ def start_worker(app: Celery,
                               pool=pool,
                               loglevel=loglevel,
                               logfile=logfile,
-                              **kwargs) as worker:
+                              **kwargs) as _worker:
         if perform_ping_check:
             with allow_join_result():
                 assert ping.delay().get(timeout=ping_task_timeout) == 'pong'
 
-        yield worker
+        yield _worker
     worker_stopped.send(sender=app, worker=worker)
 
 
 @contextmanager
 def _start_worker_thread(app: Celery,
-                         concurrency: int=1,
-                         pool: str='solo',
-                         loglevel: Union[str, int]='info',
+                         concurrency: int=None,
+                         pool: str=None,
+                         loglevel: Union[str, int]=None,
                          logfile: str=None,
                          work_controller: Any=WorkController,
                          **kwargs: Any) -> Iterable:
@@ -101,7 +101,7 @@ def _start_worker_thread(app: Celery,
     with app.connection() as conn:
         conn.default_channel.queue_declare
 
-    worker = work_controller(
+    _worker = work_controller(
         app=app,
         concurrency=concurrency,
         hostname=anon_nodename(),
@@ -115,12 +115,12 @@ def _start_worker_thread(app: Celery,
         without_gossip=True,
         **kwargs)
 
-    t = threading.Thread(target=worker.start)
+    t = threading.Thread(target=_worker.start)
     t.start()
-    worker.ensure_started()
+    _worker.ensure_started()
     _set_task_join_will_block(False)
 
-    yield worker
+    yield _worker
 
     from celery.worker import state
     state.should_terminate = 0
