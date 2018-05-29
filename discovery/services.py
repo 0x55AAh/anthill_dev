@@ -1,7 +1,17 @@
 from anthill.platform.services import DiscoveryService
 from anthill.framework.core.cache.backends.redis import get_redis_connection
+from tornado.escape import to_basestring
 import json
 import uuid
+
+
+class ServiceDoesNotExist(Exception):
+    def __init__(self, service_name):
+        self.service_name = service_name
+        self.message = 'Service does not exists: %s' % service_name
+
+    def __str__(self):
+        return self.message
 
 
 class Service(DiscoveryService):
@@ -16,6 +26,7 @@ class Service(DiscoveryService):
         return ':'.join([self.registered_service_storage_key_prefix, name])
 
     def get_entity_by_key(self, key: str) -> str:
+        key = to_basestring(key)
         return key.split(':', maxsplit=1)[1]
 
     async def setup_storage(self) -> None:
@@ -30,18 +41,24 @@ class Service(DiscoveryService):
         key = self.get_service_storage_key(name)
         self.storage.delete(key)
 
-    async def get_service(self, name: str, networks: list=None) -> tuple:
-        if networks is None:
-            networks = self.storage.hkeys(name)
+    async def is_service_exists(self, name: str) -> bool:
         key = self.get_service_storage_key(name)
-        return name, {
-                network: self.storage.hget(key, network).decode('utf8')
-                for network in networks
-            }
+        return self.storage.exists(key)
 
-    async def get_registered_services(self) -> list:
-        keys = self.storage.keys(self.registered_service_storage_key_prefix)
-        return [self.get_entity_by_key(key) for key in keys]
+    async def get_service(self, name: str, networks: list=None) -> dict:
+        if not await self.is_service_exists(name):
+            raise ServiceDoesNotExist(name)
+        key = self.get_service_storage_key(name)
+        if networks is None:
+            networks = self.storage.hkeys(key)
+        return {
+            to_basestring(network): to_basestring(self.storage.hget(key, network))
+            for network in networks
+        }
+
+    async def list_services(self) -> list:
+        pattern = ':'.join([self.registered_service_storage_key_prefix, '*'])
+        return list(map(self.get_entity_by_key, self.storage.keys(pattern)))
 
     # Request for register service
 
@@ -50,7 +67,10 @@ class Service(DiscoveryService):
         return request_id, self.get_request_storage_key_by_id(request_id)
 
     def get_request_storage_key_by_id(self, request_id: str) -> str:
-        return ':'.join([self.requested_for_register_service_storage_key_prefix, request_id])
+        return ':'.join([
+            self.requested_for_register_service_storage_key_prefix,
+            request_id
+        ])
 
     async def create_request_for_register_service(self, name: str, networks: dict) -> str:
         request_id, key = self.create_request_storage_key()
@@ -68,12 +88,15 @@ class Service(DiscoveryService):
         return service_name, json.loads(networks)
 
     async def get_requests_for_register_service(self) -> dict:
-        result = {}
-        for key in self.storage.keys(self.requested_for_register_service_storage_key_prefix):
-            request_id = self.get_entity_by_key(key)
-            service_name = self.storage.hkeys(key)[0]
-            networks = self.storage.hget(key, service_name)
-            result[request_id] = {service_name: json.loads(networks)}
-        return result
+        def _networks(key_):
+            service_name_ = self.storage.hkeys(key_)[0]
+            networks_ = self.storage.hget(key_, service_name_)
+            return dict([service_name_, json.loads(networks_)])
+
+        def _request_id(key_):
+            return self.get_entity_by_key(key_)
+
+        pattern = ':'.join([self.requested_for_register_service_storage_key_prefix, '*'])
+        return {_request_id(key): _networks(key) for key in self.storage.keys(pattern)}
 
     # /Request for register service

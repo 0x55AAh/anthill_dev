@@ -112,7 +112,10 @@ class DiscoveryService(BaseService):
     async def remove_service(self, name: str) -> None:
         raise NotImplementedError
 
-    async def get_service(self, name: str, networks: list=None) -> tuple:
+    async def is_service_exists(self, name: str) -> bool:
+        raise NotImplementedError
+
+    async def get_service(self, name: str, networks: list=None) -> dict:
         raise NotImplementedError
 
     async def setup_storage(self) -> None:

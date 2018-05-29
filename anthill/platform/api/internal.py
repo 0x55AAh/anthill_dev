@@ -6,6 +6,7 @@ from tornado.concurrent import Future
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
+from functools import wraps
 import functools
 import datetime
 
@@ -29,17 +30,11 @@ def has_keys(d, keys):
     return False
 
 
-def get_result(d, keys):
-    for k, v in d.items():
-        if k in keys:
-            return v
-
-
 class InternalAPIError(Exception):
     pass
 
 
-class InternalAPIRequestTimeoutError(Exception):
+class RequestTimeoutError(InternalAPIError):
     pass
 
 
@@ -73,8 +68,14 @@ class InternalAPI(Singleton):
         """Decorator marks function as an internal api method."""
 
         def decorator(func):
-            self.add_method(func)
-            return func
+            @wraps(func)
+            async def wrapper(api_, *args, **kwargs):
+                try:
+                    return await func(api_, *args, **kwargs)
+                except Exception as e:
+                    return {'error': {'message': str(e)}}
+            self.add_method(wrapper)
+            return wrapper
 
         return decorator
 
@@ -172,13 +173,15 @@ class JSONRPCInternalConnection(InternalConnection):
             self.dispatcher.add_method(getattr(api, method_name))
 
     async def on_message(self, message: dict) -> None:
-        service = message['service']
-        payload = message['payload']
+        service, payload = message['service'], message['payload']
 
-        result_keys = ('result', 'error')
-
-        if has_keys(payload, result_keys):
-            result = get_result(payload, result_keys)
+        if has_keys(payload, ('result', 'error')):
+            result = None
+            if 'result' in payload:
+                result = payload['result']
+            elif 'error' in payload:
+                del payload['error']['code']
+                result = {'error': payload['error']}
             request_id = payload.get('id')
             future = self._responses[request_id]
             future.set_result(result)
@@ -223,7 +226,7 @@ class JSONRPCInternalConnection(InternalConnection):
         try:
             return await with_timeout(datetime.timedelta(seconds=timeout), future)
         except TimeoutError:
-            raise InternalAPIRequestTimeoutError(
+            raise RequestTimeoutError(
                 'Service `%s` not responded for %s sec' % (service, timeout))
         finally:
             del self._responses[request_id]
