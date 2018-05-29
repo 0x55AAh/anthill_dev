@@ -19,10 +19,7 @@ class BaseService(CeleryMixin, _BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.internal_connection = self.internal_api_connection_class(service=self)
-        if getattr(self.config, 'GEOIP_PATH', None):
-            self.gis = GeoIP2()
-        else:
-            self.gis = None
+        self.gis = GeoIP2() if getattr(self.config, 'GEOIP_PATH', None) else None
 
     def setup(self) -> None:
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)

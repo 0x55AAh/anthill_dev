@@ -31,7 +31,7 @@ def has_keys(d, keys):
 
 
 class InternalAPIError(Exception):
-    pass
+    """General internal API error."""
 
 
 class RequestTimeoutError(InternalAPIError):
@@ -39,6 +39,8 @@ class RequestTimeoutError(InternalAPIError):
 
 
 class InternalAPI(Singleton):
+    """Internal API methods."""
+
     methods = []
 
     def __init__(self):
@@ -91,10 +93,9 @@ async def test(api_: InternalAPI):
 
 async def ping(api_: InternalAPI):
     return {'message': 'pong', 'service': api_.service.name}
-# ## /Api methods for diagnostic purposes ###
-
 
 api.add_methods([test, ping])
+# ## /Api methods for diagnostic purposes ###
 
 
 class InternalConnection(Singleton):
@@ -185,6 +186,7 @@ class JSONRPCInternalConnection(InternalConnection):
             request_id = payload.get('id')
             future = self._responses[request_id]
             future.set_result(result)
+
         elif 'method' in payload:
             payload = json.dumps(payload)
             try:
