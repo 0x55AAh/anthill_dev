@@ -142,6 +142,7 @@ class InternalConnection(Singleton):
             self.channel_group_name(), self.channel_name)
 
     async def send(self, service: str, message: dict) -> None:
+        """Send message to service channel group."""
         try:
             await self.channel_layer.group_send(self.channel_group_name(service), message)
         except AttributeError:
@@ -175,20 +176,17 @@ class JSONRPCInternalConnection(InternalConnection):
         service = message['service']
         payload = message['payload']
 
-        if isinstance(payload, str):
-            payload = json.loads(payload)
-
         if has_keys(payload, ('result', 'error')):
             result = get_result(payload, ('result', 'error'))
             request_id = payload.get('id')
             future = self._responses[request_id]
             future.set_result(result)
         elif 'method' in payload:
-            _payload = json.dumps(payload)
+            payload = json.dumps(payload)
             try:
-                json_rpc_request = JSONRPCRequest.from_json(_payload)
+                json_rpc_request = JSONRPCRequest.from_json(payload)
             except (TypeError, ValueError, JSONRPCInvalidRequestException):
-                response = await JSONRPCResponseManager.handle(_payload, self.dispatcher)
+                response = await JSONRPCResponseManager.handle(payload, self.dispatcher)
             else:
                 json_rpc_request.params = json_rpc_request.params or {}
                 response = await JSONRPCResponseManager.handle_request(
@@ -198,18 +196,10 @@ class JSONRPCInternalConnection(InternalConnection):
             if response is None:
                 return
 
-            def response_serialize(obj):
-                """Serializes response's data object to JSON."""
-                return json.dumps(obj, cls=DatetimeDecimalEncoder)
-
-            if response:
-                response.serialize = response_serialize
-                response = response.json
-
             message = {
                 'type': self.message_type,
                 'service': self.service.name,
-                'payload': response
+                'payload': response.data
             }
 
             await self.send(service, message)
