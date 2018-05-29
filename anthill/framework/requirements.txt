@@ -14,6 +14,7 @@ python-dateutil==2.7.2
 python-editor==1.0.3
 pytz==2018.4
 redis==2.10.6
+aioredis==1.1.0
 six==1.11.0
 SQLAlchemy==1.2.6
 tornado==5.0.2

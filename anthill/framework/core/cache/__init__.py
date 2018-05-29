@@ -38,8 +38,8 @@ def _create_cache(backend, **kwargs):
                 # Trying to import the given backend, in case it's a dotted path
                 import_string(backend)
             except ImportError as e:
-                raise InvalidCacheBackendError("Could not find backend '%s': %s" % (
-                    backend, e))
+                raise InvalidCacheBackendError(
+                    "Could not find backend '%s': %s" % (backend, e))
             location = kwargs.pop('LOCATION', '')
             params = kwargs
         else:
