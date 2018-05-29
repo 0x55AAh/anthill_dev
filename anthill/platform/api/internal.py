@@ -13,7 +13,6 @@ from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestExcep
 from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
 from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
-from anthill.framework.core.jsonrpc.utils import DatetimeDecimalEncoder
 import json
 
 
@@ -176,8 +175,10 @@ class JSONRPCInternalConnection(InternalConnection):
         service = message['service']
         payload = message['payload']
 
-        if has_keys(payload, ('result', 'error')):
-            result = get_result(payload, ('result', 'error'))
+        result_keys = ('result', 'error')
+
+        if has_keys(payload, result_keys):
+            result = get_result(payload, result_keys)
             request_id = payload.get('id')
             future = self._responses[request_id]
             future.set_result(result)
