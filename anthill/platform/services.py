@@ -130,28 +130,3 @@ class DiscoveryService(BaseService):
 
     async def setup_storage(self) -> None:
         raise NotImplementedError
-
-    # Request for register service
-
-    async def create_request_for_register_service(self, name: str, networks: dict) -> str:
-        raise NotImplementedError
-
-    async def delete_request_for_register_service(self, request_id: str) -> None:
-        raise NotImplementedError
-
-    async def get_request_for_register_service(self, request_id: str) -> tuple:
-        raise NotImplementedError
-
-    async def get_requests_for_register_service(self) -> dict:
-        raise NotImplementedError
-
-    async def register_service(self, request_id: str) -> None:
-        name, networks = await self.get_request_for_register_service(request_id)
-        if name in await self.get_registered_services():
-            raise ServiceAlreadyRegistered(name)
-        await self.setup_service(name, networks)
-
-    async def unregister_service(self, name: str) -> None:
-        await self.remove_service(name)
-
-    # /Request for register service
