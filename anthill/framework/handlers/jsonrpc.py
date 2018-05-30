@@ -19,7 +19,7 @@ class JSONRPCMixin:
     def set_extra_headers(self, path):
         self.set_header('Cache-Control', 'no-store')
 
-    async def json_rpc(self, message: str):
+    async def json_rpc(self, message: str) -> str:
         try:
             json_rpc_request = JSONRPCRequest.from_json(message)
         except (TypeError, ValueError, JSONRPCInvalidRequestException):

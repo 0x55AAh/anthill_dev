@@ -1,7 +1,8 @@
-from anthill.framework.handlers import WebSocketHandler
+from anthill.framework.handlers import WebSocketHandler, JSONRPCMixin
 from anthill.platform.core.messenger.channels.handlers.base import ChannelHandlerMixin
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
+from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
 from tornado.ioloop import IOLoop
 import functools
 
@@ -48,3 +49,12 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
+
+
+class JSONRPCWebSocketChannelHandler(ChannelHandlerMixin, JSONRPCMixin, WebSocketHandler):
+    def __init__(self, application, request, dispatcher=None, **kwargs):
+        self.dispatcher = dispatcher if dispatcher is not None else Dispatcher()
+        super().__init__(application, request, **kwargs)
+
+    def json_rpc_map(self):
+        pass

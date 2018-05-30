@@ -2,6 +2,7 @@ from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import JSONRPCInternalConnection
 from anthill.framework.utils.geoip import GeoIP2
+from functools import partial
 import logging
 
 logger = logging.getLogger('anthill.server')
@@ -46,29 +47,41 @@ class BaseService(CeleryMixin, _BaseService):
         return kwargs
 
     async def on_start(self) -> None:
-        logger.info('Service `%s` started.' % self.app.name)
+        logger.info('Service `%s` started.' % self.name)
         await self.internal_connection.connect()
         self.start_celery()
 
     async def on_stop(self) -> None:
-        logger.info('Service `%s` stopped.' % self.app.name)
+        logger.info('Service `%s` stopped.' % self.name)
         await self.internal_connection.disconnect()
 
 
 class PlainService(BaseService):
-    async def register_on_discovery(self):
-        service_name = self.app.label
-        networks_data = self.app.registry_entry
+    auto_register_on_discovery = True
 
-    async def unregister_on_discovery(self):
-        pass
+    def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
+        super().__init__(handlers, default_host, transforms, **kwargs)
+        self.discovery_request = partial(self.internal_connection.request, 'discovery')
 
-    async def discover(self, names=None, network=None):
-        pass
+    async def register_on_discovery(self) -> None:
+        kwargs = {'name': self.name, 'networks': self.app.registry_entry}
+        await self.discovery_request('set_service_bulk', **kwargs)
+
+    async def unregister_on_discovery(self) -> None:
+        await self.discovery_request('remove_service', name=self.name)
+
+    async def discover(self, name: str, network: str=None) -> dict:
+        return await self.discovery_request('get_service', name=name, network=network)
 
     async def on_start(self) -> None:
-        await self.register_on_discovery()
         await super().on_start()
+        if self.auto_register_on_discovery:
+            await self.register_on_discovery()
+
+    async def on_stop(self) -> None:
+        if self.auto_register_on_discovery:
+            await self.unregister_on_discovery()
+        await super().on_stop()
 
 
 class AdminService(PlainService):
@@ -80,7 +93,6 @@ class DiscoveryService(BaseService):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.registry = self.app.registered_services
 
     async def on_start(self) -> None:
         await super().on_start()
@@ -93,7 +105,8 @@ class DiscoveryService(BaseService):
             await self.remove_services()
 
     async def setup_services(self) -> None:
-        for service_name, networks in self.registry.items():
+        registry = self.app.registry
+        for service_name, networks in registry.items():
             await self.setup_service(service_name, networks)
 
     async def remove_services(self) -> None:

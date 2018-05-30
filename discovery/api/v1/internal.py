@@ -12,7 +12,7 @@ from anthill.platform.api.internal import as_internal, InternalAPI
 
 
 @as_internal()
-async def get_service(api: InternalAPI, name: str, network: str=None):
+async def get_service(api: InternalAPI, name: str, network: str=None) -> dict:
     if network is not None:
         network = [network]
     result = await api.service.get_service(name, network)
@@ -20,5 +20,15 @@ async def get_service(api: InternalAPI, name: str, network: str=None):
 
 
 @as_internal()
-async def set_service(api: InternalAPI, name: str, network: str, location: str):
+async def set_service(api: InternalAPI, name: str, network: str, location: str) -> None:
     await api.service.setup_service(name, {network: location})
+
+
+@as_internal()
+async def set_service_bulk(api: InternalAPI, name: str, networks: dict) -> None:
+    await api.service.setup_service(name, networks)
+
+
+@as_internal()
+async def remove_service(api: InternalAPI, name: str) -> None:
+    await api.service.remove_service(name)

@@ -55,10 +55,12 @@ class HomeHandler(TemplateHandler):
     }
 
     async def get_context_data(self, **kwargs):
-        context = await super(HomeHandler, self).get_context_data(**kwargs)
+        context = await super().get_context_data(**kwargs)
         # r = await self.application.internal_connection.request(
         #     'discovery', method='get_service', name='admin')
         # r = await self.application.internal_connection.request('discovery', method='test')
+        # r = await self.application.internal_connection.request('discovery', method='ping')
+        # r = await self.application.discover(name='event', network=None)
         # print(r)
         return context
 
@@ -70,7 +72,7 @@ class LoginHandler(TemplateHandler):
         pass
 
     async def get_context_data(self, **kwargs):
-        context = await super(LoginHandler, self).get_context_data(**kwargs)
+        context = await super().get_context_data(**kwargs)
         return context
 
 
@@ -79,14 +81,14 @@ class LogoutHandler(AuthenticatedHandlerMixin, RedirectHandler):
 
     async def get(self, *args, **kwargs):
         await self.logout()
-        await super(LogoutHandler, self).get(*args, **kwargs)
+        await super().get(*args, **kwargs)
 
 
 class DebugHandler(TemplateHandler):
     template_name = 'debug.html'
 
     async def get_context_data(self, **kwargs):
-        context = await super(DebugHandler, self).get_context_data(**kwargs)
+        context = await super().get_context_data(**kwargs)
         return context
 
 

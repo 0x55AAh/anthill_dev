@@ -230,6 +230,7 @@ class JSONRPCInternalConnection(InternalConnection):
         except TimeoutError:
             raise RequestTimeoutError(
                 'Service `%s` not responded for %s sec' % (service, timeout))
+            # return {'error': {'message': 'Service `%s` not responded for %s sec' % (service, timeout)}}
         finally:
             del self._responses[request_id]
 
