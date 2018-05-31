@@ -20,9 +20,8 @@ class HomeHandler(TemplateHandler):
     template_name = 'index.html'
 
     async def get_context_data(self, **kwargs):
-        internal_request = self.application.internal_connection.request
         try:
-            services = await internal_request('discovery', method='get_services')
+            services = await self.internal_request('discovery', method='get_services')
         except RequestTimeoutError:
             pass
         else:
@@ -31,7 +30,7 @@ class HomeHandler(TemplateHandler):
                 if name == self.application.name:
                     continue
                 try:
-                    meta = await internal_request(name, method='get_service_meta')
+                    meta = await self.internal_request(name, method='get_service_meta')
                     card = ServiceCard.Entry(**meta)
                     service_cards.append(card)
                 except RequestTimeoutError:

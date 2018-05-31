@@ -9,6 +9,10 @@ import json
 
 
 class RequestHandler(BaseRequestHandler):
+    def __init__(self, application, request, **kwargs):
+        super().__init__(application, request, **kwargs)
+        self.internal_request = self.application.internal_connection.request
+
     def reverse_url(self, name, *args):
         url = super().reverse_url(name, *args)
         return url[:-1] if url.endswith('?') else url
