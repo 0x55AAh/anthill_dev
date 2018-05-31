@@ -23,8 +23,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 APPLICATION_CLASS = 'admin.apps.AnthillApplication'
 APPLICATION_NAME = 'admin'
 APPLICATION_VERBOSE_NAME = 'Admin'
-APPLICATION_DESCRIPTION = None
-APPLICATION_ICON_CLASS = None
 
 SERVICE_CLASS = 'admin.services.Service'
 
@@ -38,7 +36,6 @@ UI_MODULE = 'admin.ui'
 CONTEXT_PROCESSORS = [
     'anthill.framework.context_processors.datetime',
     'admin.context_processors.main_sidebar',
-    'admin.context_processors.health_control'
 ]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/2"
@@ -157,7 +154,8 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # HTTPS #
 #########
 
-HTTPS = {
-    'key_file': os.path.join(BASE_DIR, '../server.key'),
-    'crt_file': os.path.join(BASE_DIR, '../server.crt'),
-}
+# HTTPS = {
+#     'key_file': os.path.join(BASE_DIR, '../server.key'),
+#     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
+# }
+HTTPS = None

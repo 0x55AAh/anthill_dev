@@ -25,6 +25,7 @@ APPLICATION_NAME = 'dlc'
 APPLICATION_VERBOSE_NAME = 'DLC'
 APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
 APPLICATION_ICON_CLASS = 'icon-cloud-download2'
+APPLICATION_COLOR = 'primary'
 
 SERVICE_CLASS = 'dlc.services.Service'
 
@@ -149,7 +150,8 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # HTTPS #
 #########
 
-HTTPS = {
-    'key_file': os.path.join(BASE_DIR, '../server.key'),
-    'crt_file': os.path.join(BASE_DIR, '../server.crt'),
-}
+# HTTPS = {
+#     'key_file': os.path.join(BASE_DIR, '../server.key'),
+#     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
+# }
+HTTPS = None

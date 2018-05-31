@@ -20,6 +20,14 @@ async def get_service(api: InternalAPI, name: str, network: str=None) -> dict:
 
 
 @as_internal()
+async def get_services(api: InternalAPI) -> dict:
+    return {
+        name: await api.service.get_service(name) for name
+        in await api.service.list_services()
+    }
+
+
+@as_internal()
 async def set_service(api: InternalAPI, name: str, network: str, location: str) -> None:
     await api.service.setup_service(name, {network: location})
 

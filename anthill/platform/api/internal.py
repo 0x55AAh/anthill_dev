@@ -3,6 +3,7 @@ from tornado.util import TimeoutError
 from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 
+from anthill.framework.conf import settings
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
@@ -18,7 +19,7 @@ import json
 
 __all__ = [
     'InternalConnection', 'JSONRPCInternalConnection', 'InternalAPIError',
-    'as_internal', 'api', 'InternalAPI'
+    'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError'
 ]
 
 
@@ -85,7 +86,7 @@ api = InternalAPI()
 as_internal = api.as_internal
 
 
-# ## Api methods for diagnostic purposes ###
+# ## Predefined API methods ###
 async def test(api_: InternalAPI):
     return {'method': 'test', 'service': api_.service.name}
 
@@ -93,8 +94,17 @@ async def test(api_: InternalAPI):
 async def ping(api_: InternalAPI):
     return {'message': 'pong', 'service': api_.service.name}
 
-api.add_methods([test, ping])
-# ## /Api methods for diagnostic purposes ###
+
+async def get_service_meta(api_: InternalAPI):
+    return {
+        'title': settings.APPLICATION_VERBOSE_NAME,
+        'icon_class': settings.APPLICATION_ICON_CLASS,
+        'description': settings.APPLICATION_DESCRIPTION,
+        'color': settings.APPLICATION_COLOR
+    }
+
+api.add_methods([test, ping, get_service_meta])
+# ## /Predefined API methods ###
 
 
 class InternalConnection(Singleton):

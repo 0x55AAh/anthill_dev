@@ -87,7 +87,7 @@ class ContextMixin:
     async def get_context_data(self, **kwargs):
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
-        kwargs.update(await build_context_from_context_processors(self.request))
+        kwargs.update(await build_context_from_context_processors(self))
         return kwargs
 
 

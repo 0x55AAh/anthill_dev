@@ -11,6 +11,11 @@ DEBUG = False
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
+APPLICATION_VERBOSE_NAME = 'Service Name'
+APPLICATION_DESCRIPTION = 'Service description'
+APPLICATION_ICON_CLASS = 'icon-question6'
+APPLICATION_COLOR = '{{ app_color }}'
+
 STATIC_URL = '/static/'
 
 CONTEXT_PROCESSORS = [

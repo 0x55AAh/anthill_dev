@@ -10,8 +10,6 @@ RESOLVERS = {
     }
 }
 
-DISCOVERY_SECRET_KEY = 'DISCOVERY_SERVICE_SECRET_KEY'
-
 CACHES = {
     "default": {
         "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",

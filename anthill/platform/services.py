@@ -92,39 +92,54 @@ class AdminService(PlainService):
 
 class DiscoveryService(BaseService):
     cleanup_storage_on_stop = True
-    cleanup_services_period = 5
+    cleanup_services_period = 1
+    ping_services = True
+    ping_max_retries = 3
+    ping_timeout = 1
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cleanup_monitor = PeriodicCallback(
-            self.remove_dead_services, self.cleanup_services_period * 1000)
+        self.ping_monitor = None
+        if self.ping_services:
+            self.ping_monitor = PeriodicCallback(
+                self.remove_dead_services, self.cleanup_services_period * 1000)
+        self.registry = self.app.registry
 
     async def on_start(self) -> None:
         await super().on_start()
         await self.setup_storage()
         await self.setup_services()
-        self.cleanup_monitor.start()
+        if self.ping_monitor is not None:
+            self.ping_monitor.start()
 
     async def on_stop(self) -> None:
         await super().on_stop()
         if self.cleanup_storage_on_stop:
             await self.remove_services()
-        self.cleanup_monitor.stop()
+        if self.ping_monitor is not None:
+            self.ping_monitor.stop()
 
     async def is_service_alive(self, name):
-        try:
-            result = await self.internal_connection.request(name, 'ping')
-            return result['message'] == 'pong'
-        except (RequestTimeoutError, KeyError, TypeError):
-            return False
+        for _ in range(self.ping_max_retries):
+            try:
+                request = partial(self.internal_connection.request, name)
+                result = await request('ping', timeout=self.ping_timeout)
+                if result['message'] == 'pong':
+                    return True
+            except (RequestTimeoutError, KeyError, TypeError):
+                pass
+        return False
 
     async def remove_dead_services(self):
-        for name in await self.list_services():
+        for name in self.registry.keys():
             if not await self.is_service_alive(name):
                 await self.remove_service(name)
+            else:
+                if name not in await self.list_services():
+                    await self.setup_service(name, self.registry[name])
 
     async def setup_services(self) -> None:
-        for name, networks in self.app.registry.items():
+        for name, networks in self.registry.items():
             await self.setup_service(name, networks)
 
     async def remove_services(self) -> None:

@@ -20,7 +20,7 @@ class AnthillApplication(BaseAnthillApplication):
         fn = getattr(settings, 'REGISTERED_SERVICES_EXTERNAL', None)
         try:
             if fn is not None:
-                with open(fn) as _f:
-                    self.registry = json.load(_f)
+                with open(fn) as f:
+                    self.registry = json.load(f)
         except Exception as e:
             logging.warning(force_text(e))

@@ -25,6 +25,7 @@ APPLICATION_NAME = 'event'
 APPLICATION_VERBOSE_NAME = 'Event'
 APPLICATION_DESCRIPTION = 'Compete players with time-limited events'
 APPLICATION_ICON_CLASS = 'icon-calendar'
+APPLICATION_COLOR = 'success'
 
 SERVICE_CLASS = 'event.services.Service'
 
@@ -151,7 +152,8 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # HTTPS #
 #########
 
-HTTPS = {
-    'key_file': os.path.join(BASE_DIR, '../server.key'),
-    'crt_file': os.path.join(BASE_DIR, '../server.crt'),
-}
+# HTTPS = {
+#     'key_file': os.path.join(BASE_DIR, '../server.key'),
+#     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
+# }
+HTTPS = None

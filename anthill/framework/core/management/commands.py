@@ -6,7 +6,7 @@ import argparse
 import shutil
 from tornado.escape import to_unicode
 from tornado.template import Template
-from anthill.framework.core.management.utils import get_random_secret_key
+from anthill.framework.core.management.utils import get_random_secret_key, get_random_color
 
 
 class InvalidCommand(Exception):
@@ -413,17 +413,21 @@ class StartApplication(Command):
         # Create a random SECRET_KEY to put it in the main settings.
         secret_key = get_random_secret_key()
 
+        app_color = get_random_color()
+
         secret_key_name = 'secret_key'
         base_name = 'app_name'
         base_directory = 'app_directory'
         camel_case_name = 'camel_case_app_name'
         camel_case_value = ''.join(x for x in name.title() if x != '_')
+        app_color_name = 'app_color'
 
         context = {
             base_name: name,
             base_directory: app_dir,
             camel_case_name: camel_case_value,
-            secret_key_name: secret_key
+            secret_key_name: secret_key,
+            app_color_name: app_color
         }
 
         prefix_length = len(template_dir) + 1

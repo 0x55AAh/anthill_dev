@@ -50,6 +50,7 @@ APPLICATION_NAME = 'discovery'
 APPLICATION_VERBOSE_NAME = 'Discovery'
 APPLICATION_DESCRIPTION = 'Map each service location dynamically'
 APPLICATION_ICON_CLASS = 'icon-direction'
+APPLICATION_COLOR = 'danger'
 
 SERVICE_CLASS = 'discovery.services.Service'
 
@@ -176,7 +177,8 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # HTTPS #
 #########
 
-HTTPS = {
-    'key_file': os.path.join(BASE_DIR, '../server.key'),
-    'crt_file': os.path.join(BASE_DIR, '../server.crt'),
-}
+# HTTPS = {
+#     'key_file': os.path.join(BASE_DIR, '../server.key'),
+#     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
+# }
+HTTPS = None
