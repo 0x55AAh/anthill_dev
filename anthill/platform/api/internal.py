@@ -6,8 +6,7 @@ from tornado.concurrent import Future
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
-from functools import wraps
-import functools
+from functools import wraps, partial
 import datetime
 
 from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestException
@@ -135,7 +134,7 @@ class InternalConnection(Singleton):
         self.channel_layer = get_channel_layer(alias=self.channel_alias)
         if self.channel_layer is not None:
             self.channel_name = await self.channel_layer.new_channel(prefix=self.service.app.label)
-            self.channel_receive = functools.partial(self.channel_layer.receive, self.channel_name)
+            self.channel_receive = partial(self.channel_layer.receive, self.channel_name)
             await self.channel_layer.group_add(self.channel_group_name(), self.channel_name)
 
     async def disconnect(self) -> None:

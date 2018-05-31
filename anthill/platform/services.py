@@ -1,6 +1,8 @@
+from tornado.ioloop import PeriodicCallback
+
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
-from anthill.platform.api.internal import JSONRPCInternalConnection
+from anthill.platform.api.internal import JSONRPCInternalConnection, RequestTimeoutError
 from anthill.framework.utils.geoip import GeoIP2
 from functools import partial
 import logging
@@ -90,30 +92,47 @@ class AdminService(PlainService):
 
 class DiscoveryService(BaseService):
     cleanup_storage_on_stop = True
+    cleanup_services_period = 5
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.cleanup_monitor = PeriodicCallback(
+            self.remove_dead_services, self.cleanup_services_period * 1000)
 
     async def on_start(self) -> None:
         await super().on_start()
         await self.setup_storage()
         await self.setup_services()
+        self.cleanup_monitor.start()
 
     async def on_stop(self) -> None:
         await super().on_stop()
         if self.cleanup_storage_on_stop:
             await self.remove_services()
+        self.cleanup_monitor.stop()
+
+    async def is_service_alive(self, name):
+        try:
+            result = await self.internal_connection.request(name, 'ping')
+            return result['message'] == 'pong'
+        except (RequestTimeoutError, KeyError, TypeError):
+            return False
+
+    async def remove_dead_services(self):
+        for name in await self.list_services():
+            if not await self.is_service_alive(name):
+                await self.remove_service(name)
 
     async def setup_services(self) -> None:
-        registry = self.app.registry
-        for service_name, networks in registry.items():
-            await self.setup_service(service_name, networks)
+        for name, networks in self.app.registry.items():
+            await self.setup_service(name, networks)
 
     async def remove_services(self) -> None:
-        for service_name in await self.get_registered_services():
-            await self.remove_service(service_name)
+        for name in await self.list_services():
+            await self.remove_service(name)
 
     async def list_services(self) -> list:
+        """Returns a list of services names."""
         raise NotImplementedError
 
     async def setup_service(self, name: str, networks: dict) -> None:

@@ -74,6 +74,7 @@ class BaseService(TornadoWebApplication):
 
         signal.signal(signal.SIGPIPE, self.__sigpipe_handler__)
         signal.signal(signal.SIGTERM, self.__sig_handler__)
+        signal.signal(signal.SIGHUP, self.__sig_handler__)
         signal.signal(signal.SIGINT, self.__sig_handler__)
 
     def start(self, **kwargs):
