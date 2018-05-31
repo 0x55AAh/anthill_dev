@@ -1,4 +1,4 @@
-from anthill.framework.utils.json import json
+import json
 from .base import BaseSerializer
 
 

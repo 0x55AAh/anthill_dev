@@ -2,7 +2,7 @@ from anthill.framework.handlers import TemplateHandler, RedirectHandler, WebSock
 from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError
-from .ui.modules import ServiceCard
+from admin.ui.modules import ServiceCard
 
 
 class AuthenticatedHandlerMixin:

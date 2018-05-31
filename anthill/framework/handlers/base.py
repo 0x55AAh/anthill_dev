@@ -4,8 +4,8 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
 from anthill.framework.utils.format import bytes2human
 from anthill.framework.context_processors import build_context_from_context_processors
-from anthill.framework.utils.json import json
 from anthill.framework.conf import settings
+import json
 
 
 class RequestHandler(BaseRequestHandler):
@@ -69,7 +69,7 @@ class JSONHandlerMixin:
 
     @staticmethod
     def dumps(data):
-        return json.dumps(data, escape_forward_slashes=False)
+        return json.dumps(data)
 
     async def get_context_data(self, **kwargs):
         if self.extra_context is not None:

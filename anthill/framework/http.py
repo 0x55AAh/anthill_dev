@@ -1,5 +1,4 @@
 from tornado.web import HTTPError as _HTTPError
-from anthill.framework.utils.json import json
 
 
 class HTTPError(_HTTPError):
