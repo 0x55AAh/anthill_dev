@@ -95,7 +95,7 @@ async def ping(api_: InternalAPI):
     return {'message': 'pong', 'service': api_.service.name}
 
 
-async def get_service_meta(api_: InternalAPI):
+async def get_service_metadata(api_: InternalAPI):
     return {
         'title': settings.APPLICATION_VERBOSE_NAME,
         'icon_class': settings.APPLICATION_ICON_CLASS,
@@ -103,7 +103,7 @@ async def get_service_meta(api_: InternalAPI):
         'color': settings.APPLICATION_COLOR
     }
 
-api.add_methods([test, ping, get_service_meta])
+api.add_methods([test, ping, get_service_metadata])
 # ## /Predefined API methods ###
 
 

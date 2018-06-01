@@ -13,10 +13,10 @@ async def main_sidebar(handler):
             if name == handler.application.name:
                 continue
             try:
-                meta = await handler.internal_request(name, method='get_service_meta')
+                metadata = await handler.internal_request(name, method='get_service_metadata')
                 kwargs = {
-                    'title': meta['title'],
-                    'icon_class': meta['icon_class']
+                    'title': metadata['title'],
+                    'icon_class': metadata['icon_class']
                 }
                 entry = MainSidebar.Entry(**kwargs)
                 main_sidebar_entries.append(entry)

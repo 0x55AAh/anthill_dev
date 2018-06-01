@@ -21,10 +21,10 @@ async def get_service(api: InternalAPI, name: str, network: str=None) -> dict:
 
 @as_internal()
 async def get_services(api: InternalAPI) -> dict:
-    return {
-        name: await api.service.get_service(name) for name
-        in await api.service.list_services()
-    }
+    result = {}
+    for name in await api.service.list_services():
+        result.update({name: await api.service.get_service(name)})
+    return result
 
 
 @as_internal()

@@ -30,8 +30,8 @@ class HomeHandler(TemplateHandler):
                 if name == self.application.name:
                     continue
                 try:
-                    meta = await self.internal_request(name, method='get_service_meta')
-                    card = ServiceCard.Entry(**meta)
+                    metadata = await self.internal_request(name, method='get_service_metadata')
+                    card = ServiceCard.Entry(**metadata)
                     service_cards.append(card)
                 except RequestTimeoutError:
                     pass

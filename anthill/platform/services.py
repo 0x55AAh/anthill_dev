@@ -102,7 +102,7 @@ class DiscoveryService(BaseService):
         self.ping_monitor = None
         if self.ping_services:
             self.ping_monitor = PeriodicCallback(
-                self.remove_dead_services, self.cleanup_services_period * 1000)
+                self.update_services, self.cleanup_services_period * 1000)
         self.registry = self.app.registry
 
     async def on_start(self) -> None:
@@ -130,7 +130,7 @@ class DiscoveryService(BaseService):
                 pass
         return False
 
-    async def remove_dead_services(self):
+    async def update_services(self):
         for name in self.registry.keys():
             if not await self.is_service_alive(name):
                 await self.remove_service(name)
