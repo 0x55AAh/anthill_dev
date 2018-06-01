@@ -200,16 +200,24 @@ def auth_generic_route(uri, template, handler):
     return AuthHandler
 
 
+class ResultNotSuccessful(Exception):
+    def __init__(self, result):
+        self.result = result
+
+
 def retry(max_retries=3, delay=3, exception_callback=None, final_callback=None,
-          raise_exception=False, exception_types=(Exception, )):
+          raise_exception=False, exception_types=(Exception, ), result_successful_callback=None):
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             exc = None
             for _ in range(max_retries):
                 try:
-                    return await func(*args, **kwargs)
-                except tuple(exception_types) as e:
+                    result = await func(*args, **kwargs)
+                    if result_successful_callback and not result_successful_callback(result):
+                        raise ResultNotSuccessful(result)
+                    return result
+                except tuple(exception_types) + (ResultNotSuccessful, ) as e:
                     exc = e
                     if exception_callback is not None:
                         exception_callback(func, e)

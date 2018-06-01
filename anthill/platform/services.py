@@ -120,7 +120,8 @@ class DiscoveryService(BaseService):
             self.ping_monitor.stop()
 
     @method_decorator(retry(max_retries=ping_max_retries, delay=0,
-                            exception_types=(RequestTimeoutError, KeyError, TypeError)))
+                            exception_types=(RequestTimeoutError, KeyError, TypeError),
+                            result_successful_callback=lambda x: x))
     async def is_service_alive(self, name):
         request = partial(self.internal_connection.request, name)
         result = await request('ping', timeout=self.ping_timeout)
