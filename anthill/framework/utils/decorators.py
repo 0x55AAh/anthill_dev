@@ -1,7 +1,8 @@
 from functools import update_wrapper
-from tornado.web import (
-    url, RedirectHandler, RequestHandler, authenticated
-)
+from tornado.web import url, RedirectHandler, RequestHandler, authenticated
+from functools import wraps
+from tornado.gen import sleep
+import logging
 
 
 class classonlymethod(classmethod):
@@ -197,3 +198,26 @@ def auth_generic_route(uri, template, handler):
             return self.render(self._template)
 
     return AuthHandler
+
+
+def retry(max_retries=3, delay=3, exception_callback=None, final_callback=None,
+          raise_exception=False, exception_types=(Exception, )):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            exc = None
+            for _ in range(max_retries):
+                try:
+                    return await func(*args, **kwargs)
+                except tuple(exception_types) as e:
+                    exc = e
+                    if exception_callback is not None:
+                        exception_callback(func, e)
+                    if delay:
+                        sleep(delay)
+            if final_callback is not None:
+                final_callback(func, max_retries)
+            if raise_exception:
+                raise exc
+        return wrapper
+    return decorator

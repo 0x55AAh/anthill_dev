@@ -1,5 +1,5 @@
 from tornado.ioloop import PeriodicCallback
-
+from anthill.framework.utils.decorators import method_decorator, retry
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import JSONRPCInternalConnection, RequestTimeoutError
@@ -119,16 +119,13 @@ class DiscoveryService(BaseService):
         if self.ping_monitor is not None:
             self.ping_monitor.stop()
 
+    @method_decorator(retry(max_retries=ping_max_retries, delay=0,
+                            exception_types=(RequestTimeoutError, KeyError, TypeError)))
     async def is_service_alive(self, name):
-        for _ in range(self.ping_max_retries):
-            try:
-                request = partial(self.internal_connection.request, name)
-                result = await request('ping', timeout=self.ping_timeout)
-                if result['message'] == 'pong':
-                    return True
-            except (RequestTimeoutError, KeyError, TypeError):
-                pass
-        return False
+        request = partial(self.internal_connection.request, name)
+        result = await request('ping', timeout=self.ping_timeout)
+        if result['message'] == 'pong':
+            return True
 
     async def update_services(self):
         for name in self.registry.keys():

@@ -10,6 +10,9 @@ elif TOR43:
     from tornado.platform.asyncio import to_tornado_future
 
 
+__all__ = ['ThreadPoolExecution', 'thread_pool_exec']
+
+
 class ThreadPoolExecution:
     """Tiny wrapper around ThreadPoolExecutor"""
 
