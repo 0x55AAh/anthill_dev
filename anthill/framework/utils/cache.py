@@ -1,12 +1,14 @@
 from anthill.framework.core.cache import cache
 from anthill.framework.utils.asynchronous import thread_pool_exec as async_exec
-from functools import wraps
+from functools import wraps, partial
 import inspect
 
 
-def cached(timeout, key, method=False):
-    def decorator(func):
+__all__ = ['cached', 'cached_method', 'request_key_method']
 
+
+def _cached(timeout, key, method=False):
+    def decorator(func):
         def get_key(self):
             if callable(key):
                 return key(self) if method else key()
@@ -35,3 +37,11 @@ def cached(timeout, key, method=False):
         else:
             return wrapper
     return decorator
+
+
+cached = partial(_cached, method=False)
+cached_method = partial(_cached, method=True)
+
+
+def request_key_method(handler):
+    request = handler.request
