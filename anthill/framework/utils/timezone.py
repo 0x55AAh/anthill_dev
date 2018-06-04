@@ -2,16 +2,19 @@
 Timezone-related classes and functions.
 """
 
-import functools
-from datetime import datetime, timedelta, tzinfo
-
-import pytz
-
 from anthill.framework.conf import settings
+from datetime import timedelta, tzinfo
+from threading import local
+import datetime
+import pytz
+import functools
 
 __all__ = [
-    'get_fixed_timezone', 'get_default_timezone',
-    'now', 'is_aware', 'is_naive', 'utc'
+    'utc', 'get_fixed_timezone',
+    'get_default_timezone', 'get_default_timezone_name',
+    'get_current_timezone', 'get_current_timezone_name',
+    'localtime', 'now',
+    'is_aware', 'is_naive',
 ]
 
 ZERO = timedelta(0)
@@ -43,7 +46,7 @@ class FixedOffset(tzinfo):
 
 
 # UTC time zone as a tzinfo instance.
-utc = pytz.utc
+utc = datetime.timezone(ZERO, 'UTC')
 
 
 def get_fixed_timezone(offset):
@@ -62,20 +65,76 @@ def get_fixed_timezone(offset):
 def get_default_timezone():
     """
     Return the default time zone as a tzinfo instance.
+
     This is the time zone defined by settings.TIME_ZONE.
     """
     return pytz.timezone(settings.TIME_ZONE)
+
+
+# This function exists for consistency with get_current_timezone_name
+def get_default_timezone_name():
+    """Return the name of the default time zone."""
+    return _get_timezone_name(get_default_timezone())
+
+
+_active = local()
+
+
+def get_current_timezone():
+    """Return the currently active time zone as a tzinfo instance."""
+    return getattr(_active, "value", get_default_timezone())
+
+
+def get_current_timezone_name():
+    """Return the name of the currently active time zone."""
+    return _get_timezone_name(get_current_timezone())
+
+
+def _get_timezone_name(timezone):
+    """Return the name of ``timezone``."""
+    return timezone.tzname(None)
+
+
+# Utilities
+
+def localtime(value=None, timezone=None):
+    """
+    Convert an aware datetime.datetime to local time.
+
+    Only aware datetimes are allowed. When value is omitted, it defaults to
+    now().
+
+    Local time is defined by the current time zone, unless another time zone
+    is specified.
+    """
+    if value is None:
+        value = now()
+    if timezone is None:
+        timezone = get_current_timezone()
+    # Emulate the behavior of astimezone() on Python < 3.6.
+    if is_naive(value):
+        raise ValueError("localtime() cannot be applied to a naive datetime")
+    return value.astimezone(timezone)
+
+
+def localdate(value=None, timezone=None):
+    """
+    Convert an aware datetime to local time and return the value's date.
+
+    Only aware datetimes are allowed. When value is omitted, it defaults to
+    now().
+
+    Local time is defined by the current time zone, unless another time zone is
+    specified.
+    """
+    return localtime(value, timezone).date()
 
 
 def now():
     """
     Return an aware or naive datetime.datetime, depending on settings.USE_TZ.
     """
-    if settings.USE_TZ:
-        # timeit shows that datetime.now(tz=utc) is 24% slower
-        return datetime.utcnow().replace(tzinfo=utc)
-    else:
-        return datetime.now()
+    return datetime.datetime.now(utc if settings.USE_TZ else None)
 
 
 def is_aware(value):
