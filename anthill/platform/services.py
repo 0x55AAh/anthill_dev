@@ -121,7 +121,7 @@ class DiscoveryService(BaseService):
 
     @method_decorator(retry(max_retries=ping_max_retries, delay=0,
                             exception_types=(RequestTimeoutError, KeyError, TypeError),
-                            check_result_callback=lambda result: result['message'] == 'pong'))
+                            check_result_callback=lambda r: r['message'] == 'pong'))
     async def is_service_alive(self, name):
         request = partial(self.internal_connection.request, name)
         return await request('ping', timeout=self.ping_timeout)

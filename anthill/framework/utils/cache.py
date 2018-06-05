@@ -13,11 +13,11 @@ import re
 __all__ = ['cached', 'cached_method', 'request_handler_cache_key']
 
 
-def _cached(timeout, key, key_prefix=None, handler_method=False, http_method=None):
+def _cached(timeout, key, cache=cache, key_prefix=None, handler_method=False, http_method=None):
     def decorator(func):
         def get_key(handler):
             if callable(key):
-                return key(handler, timeout, key_prefix) if handler_method else key()
+                return key(handler, timeout, key_prefix, cache) if handler_method else key()
             return key
 
         def validate_http_method(handler):
@@ -86,7 +86,7 @@ def _generate_cache_header_key(key_prefix, request):
     return _i18n_cache_key_suffix(request, cache_key)
 
 
-def request_handler_cache_key(handler, cache_timeout=None, key_prefix=None):
+def request_handler_cache_key(handler, cache_timeout=None, key_prefix=None, cache=cache):
     """Return a cache key based on the request URL and query."""
     request, headers = handler.request, handler._headers
     if key_prefix is None:
