@@ -59,16 +59,18 @@ cached_method = partial(_cached, handler_method=True, http_method='GET')
 _CC_DELIMITER_RE = re.compile(r'\s*,\s*')
 
 
-def _i18n_cache_key_suffix(request, cache_key):
-    """If necessary, add the current locale or time zone to the cache key."""
+def _i18n_cache_key_suffix(handler, cache_key):
+    """Add the current locale or time zone to the cache key."""
+    cache_key += '.%s' % handler.locale.code
     if settings.USE_TZ:
         cache_key += '.%s' % get_current_timezone_name()
     return cache_key
 
 
-def _generate_cache_key(request, method, header_list, key_prefix):
+def _generate_cache_key(handler, method, header_list, key_prefix):
     """Return a cache key from the headers given in the header list."""
     ctx = hashlib.md5()
+    request = handler.request
     for header in header_list:
         value = request.headers.get(header)
         if value is not None:
@@ -76,14 +78,15 @@ def _generate_cache_key(request, method, header_list, key_prefix):
     url = hashlib.md5(force_bytes(iri_to_uri(request.full_url())))
     cache_key = 'cache.cache_page.%s.%s.%s.%s' % (
         key_prefix, method, url.hexdigest(), ctx.hexdigest())
-    return _i18n_cache_key_suffix(request, cache_key)
+    return _i18n_cache_key_suffix(handler, cache_key)
 
 
-def _generate_cache_header_key(key_prefix, request):
+def _generate_cache_header_key(key_prefix, handler):
     """Return a cache key for the header cache."""
+    request = handler.request
     url = hashlib.md5(force_bytes(iri_to_uri(request.full_url())))
     cache_key = 'cache.cache_header.%s.%s' % (key_prefix, url.hexdigest())
-    return _i18n_cache_key_suffix(request, cache_key)
+    return _i18n_cache_key_suffix(handler, cache_key)
 
 
 def request_handler_cache_key(handler, cache_timeout=None, key_prefix=None, cache=cache):
@@ -91,7 +94,7 @@ def request_handler_cache_key(handler, cache_timeout=None, key_prefix=None, cach
     request, headers = handler.request, handler._headers
     if key_prefix is None:
         key_prefix = 'default'
-    cache_key = _generate_cache_header_key(key_prefix, request)
+    cache_key = _generate_cache_header_key(key_prefix, handler)
     header_list = cache.get(cache_key)
     if header_list is None:
         if 'Vary' in headers:
@@ -99,4 +102,4 @@ def request_handler_cache_key(handler, cache_timeout=None, key_prefix=None, cach
             cache.set(cache_key, header_list, cache_timeout)
         else:
             header_list = []
-    return _generate_cache_key(request, request.method, header_list, key_prefix)
+    return _generate_cache_key(handler, request.method, header_list, key_prefix)

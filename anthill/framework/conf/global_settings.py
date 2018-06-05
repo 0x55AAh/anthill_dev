@@ -25,7 +25,9 @@ HTTPS = None
 TIME_ZONE = 'UTC'
 USE_TZ = False
 
-LANGUAGE_CODE = 'en_US'
+LOCALE = 'en_US'
+USE_I18N = True
+USE_L10N = False
 
 LOCATION = 'http://localhost:9500'
 

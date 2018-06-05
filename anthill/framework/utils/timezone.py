@@ -4,7 +4,6 @@ Timezone-related classes and functions.
 
 from anthill.framework.conf import settings
 from datetime import timedelta, tzinfo
-from threading import local
 import datetime
 import pytz
 import functools
@@ -77,12 +76,9 @@ def get_default_timezone_name():
     return _get_timezone_name(get_default_timezone())
 
 
-_active = local()
-
-
 def get_current_timezone():
-    """Return the currently active time zone as a tzinfo instance."""
-    return getattr(_active, "value", get_default_timezone())
+    """Return the current time zone as a tzinfo instance."""
+    return get_default_timezone()
 
 
 def get_current_timezone_name():

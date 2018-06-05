@@ -1,12 +1,17 @@
+from anthill.framework.core.exceptions import ImproperlyConfigured
 from tornado.web import Application as TornadoWebApplication
-from tornado.ioloop import IOLoop
+from tornado.ioloop import IOLoop as _IOLoop
 from tornado.httpserver import HTTPServer
 import signal
 import logging
 
-from anthill.framework.core.exceptions import ImproperlyConfigured
 
 logger = logging.getLogger('anthill.server')
+
+
+class IOLoop(_IOLoop):
+    def handle_callback_exception(self, callback):
+        logger.error("Exception in callback %r", callback, exc_info=True)
 
 
 class BaseService(TornadoWebApplication):
@@ -20,6 +25,7 @@ class BaseService(TornadoWebApplication):
 
         super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
 
+        self.io_loop = IOLoop.current()
         self.config = app.settings
         self.app = app
         self.name = app.label
@@ -41,7 +47,7 @@ class BaseService(TornadoWebApplication):
         return '<%s: %s>' % (self.__class__.__name__, self.app.name)
 
     def __sig_handler__(self, sig, frame):
-        IOLoop.instance().add_callback(self.on_stop)
+        self.io_loop.add_callback(self.on_stop)
 
     def __sigpipe_handler__(self, sig, frame):
         pass
@@ -80,13 +86,13 @@ class BaseService(TornadoWebApplication):
     def start(self, **kwargs):
         """Start server"""
         self.setup_server(**kwargs)
-        IOLoop.instance().add_callback(self.on_start)
-        IOLoop.instance().start()
+        self.io_loop.add_callback(self.on_start)
+        self.io_loop.start()
 
     def stop(self):
         """Stop server"""
         if self.server:
-            IOLoop.instance().add_callback(self.on_stop)
+            self.io_loop.add_callback(self.on_stop)
             self.server.stop()
 
     async def on_start(self):

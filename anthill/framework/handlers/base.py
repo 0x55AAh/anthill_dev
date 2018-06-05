@@ -3,12 +3,29 @@ from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
 from anthill.framework.utils.format import bytes2human
+from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.conf import settings
 import json
 
 
-class RequestHandler(BaseRequestHandler):
+class TranslationHandlerMixin:
+    def get_user_locale(self):
+        """
+        Override to determine the locale from the authenticated user.
+        If None is returned, we fall back to `get_browser_locale()`.
+        This method should return a `tornado.locale.Locale` object,
+        most likely obtained via a call like ``tornado.locale.get("en")``
+        """
+        return default_locale
+
+
+class LogExceptionHandlerMixin:
+    def log_exception(self, typ, value, tb):
+        super().log_exception(typ, value, tb)
+
+
+class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequestHandler):
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self.internal_request = self.application.internal_connection.request
@@ -17,11 +34,22 @@ class RequestHandler(BaseRequestHandler):
         url = super().reverse_url(name, *args)
         return url[:-1] if url.endswith('?') else url
 
+    def get_current_user(self):
+        """
+        Override to determine the current user from, e.g., a cookie.
+        This method may not be a coroutine.
+        """
+        return None
+
     def data_received(self, chunk):
+        """
+        Implement this method to handle streamed request data.
+        Requires the `.stream_request_body` decorator.
+        """
         pass
 
 
-class WebSocketHandler(BaseWebSocketHandler):
+class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseWebSocketHandler):
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self.settings.update(websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL)

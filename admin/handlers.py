@@ -3,7 +3,6 @@ from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError
 from admin.ui.modules import ServiceCard
-from anthill.framework.utils.cache import cached_method, request_handler_cache_key
 
 
 class AuthenticatedHandlerMixin:
@@ -20,7 +19,6 @@ class AuthenticatedHandlerMixin:
 class HomeHandler(TemplateHandler):
     template_name = 'index.html'
 
-    # @cached_method(30, key=request_handler_cache_key)
     async def get_context_data(self, **kwargs):
         try:
             services = await self.internal_request('discovery', method='get_services')
