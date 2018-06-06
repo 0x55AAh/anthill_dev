@@ -60,8 +60,9 @@ _CC_DELIMITER_RE = re.compile(r'\s*,\s*')
 
 
 def _i18n_cache_key_suffix(handler, cache_key):
-    """Add the current locale or time zone to the cache key."""
-    cache_key += '.%s' % handler.locale.code
+    """If necessary, add the current locale or time zone to the cache key."""
+    if settings.USE_I18N or settings.USE_L10N:
+        cache_key += '.%s' % handler.locale.code
     if settings.USE_TZ:
         cache_key += '.%s' % get_current_timezone_name()
     return cache_key

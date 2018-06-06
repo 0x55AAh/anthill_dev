@@ -12,7 +12,10 @@ def setup():
     """
     from anthill.framework.conf import settings
     from anthill.framework.utils.log import configure_logging
-    from tornado.locale import set_default_locale
+    from tornado.locale import set_default_locale, load_gettext_translations
 
     configure_logging(settings.LOGGING_CONFIG, settings.LOGGING)
-    set_default_locale(settings.LOCALE)
+
+    if settings.USE_I18N:
+        set_default_locale(settings.LOCALE)
+        load_gettext_translations('locale', 'messages')
