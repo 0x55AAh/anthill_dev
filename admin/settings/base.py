@@ -159,3 +159,13 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 #     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
 # }
 HTTPS = None
+
+
+#######
+# API #
+#######
+
+GRAPHENE = {
+    'SCHEMA': 'admin.api.v1.public.schema',
+    'MIDDLEWARE': ()
+}

@@ -5,6 +5,7 @@ from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import JSONRPCInternalConnection, RequestTimeoutError
 from anthill.framework.utils.geoip import GeoIP2
 from functools import partial
+from tornado.web import url
 import logging
 
 logger = logging.getLogger('anthill.server')
@@ -25,9 +26,9 @@ class BaseService(CeleryMixin, _BaseService):
         self.gis = GeoIP2() if getattr(self.config, 'GEOIP_PATH', None) else None
 
     def setup(self) -> None:
+        # Log streaming
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)
         if log_streaming_config:
-            from tornado.web import url
             from anthill.framework.handlers import LogStreamingHandler
             custom_handler_class = log_streaming_config.get('handler', {}).get('class')
             if not custom_handler_class:
@@ -41,6 +42,12 @@ class BaseService(CeleryMixin, _BaseService):
             self.add_handlers(r'^(.*)$', [
                 url(r'^%s?$' % url_path, handler_class, kwargs=handler_kwargs, name=url_name),
             ])
+
+        # Public API
+        from anthill.framework.handlers import GraphQLHandler
+        self.add_handlers(r'^(.*)$', [
+            url(r'^/api/?$', GraphQLHandler, dict(graphiql=True), name='api')])
+
         super().setup()
 
     def get_server_kwargs(self) -> dict:
