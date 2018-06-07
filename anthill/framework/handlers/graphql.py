@@ -213,7 +213,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             'A Schema is required to be provided to %s.' % self.__class__.__name__
         assert isinstance(self.executor, AsyncioExecutor), \
             'An executor is required to be subclassed from `AsyncioExecutor`.'
-        assert not all((self.graphiql, self.batch)),\
+        assert not all((self.graphiql, self.batch)), \
             'Use either graphiql or batch processing'
 
     @error_response

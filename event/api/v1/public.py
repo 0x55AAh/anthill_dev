@@ -3,8 +3,8 @@ from graphene_sqlalchemy import SQLAlchemyObjectType
 from event import models
 
 
-class Query(graphene.ObjectType):
+class RootQuery(graphene.ObjectType):
     pass
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=RootQuery)
