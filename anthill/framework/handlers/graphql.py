@@ -7,7 +7,7 @@ from graphql.error import GraphQLError, format_error
 from anthill.framework.http import HttpForbiddenError, HttpBadRequestError
 from tornado.log import app_log
 from functools import wraps
-from tornado import web
+from tornado.web import HTTPError
 import traceback
 import inspect
 import importlib
@@ -115,7 +115,7 @@ def instantiate_middleware(middlewares):
 
 
 def error_status(exception):
-    if isinstance(exception, web.HTTPError):
+    if isinstance(exception, HTTPError):
         return exception.status_code
     elif isinstance(exception, (ExecutionError, GraphQLError)):
         return 400
@@ -128,7 +128,7 @@ def error_format(exception):
         return [{'message': e} for e in exception.errors]
     elif isinstance(exception, GraphQLError):
         return [format_error(exception)]
-    elif isinstance(exception, web.HTTPError):
+    elif isinstance(exception, HTTPError):
         return [{'message': exception.log_message,
                  'reason': exception.reason}]
     else:
@@ -141,7 +141,7 @@ def error_response(func):
         try:
             result = await func(self, *args, **kwargs)
         except Exception as ex:
-            if not isinstance(ex, (web.HTTPError, ExecutionError, GraphQLError)):
+            if not isinstance(ex, (HTTPError, ExecutionError, GraphQLError)):
                 tb = ''.join(traceback.format_exception(*sys.exc_info()))
                 app_log.error('Error: {0} {1}'.format(ex, tb))
             self.set_status(error_status(ex))
@@ -239,7 +239,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         return all([
             self.graphiql,
             self.request.method.lower() == 'get',
-            'raw' not in self.request.query,
+            'raw' not in self.request.query_arguments,
             settings.DEBUG,
             any([
                 'text/html' in self.request.headers.get('accept', {}),
@@ -251,7 +251,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         return any([
             self.pretty,
             self.is_graphiql(),
-            self.request.query.get('pretty'),
+            # self.request.query_arguments('pretty')
         ])
 
     async def get_graphql_response(self, data):
