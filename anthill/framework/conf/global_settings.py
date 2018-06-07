@@ -252,3 +252,10 @@ WEBSOCKET_MEM_LEVEL = None
 GEOIP_PATH = None
 GEOIP_CITY = None
 GEOIP_COUNTRY = None
+
+
+############
+# GRAPHENE #
+############
+
+GRAPHENE = {}

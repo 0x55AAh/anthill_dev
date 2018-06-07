@@ -161,9 +161,9 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 HTTPS = None
 
 
-#######
-# API #
-#######
+############
+# GRAPHENE #
+############
 
 GRAPHENE = {
     'SCHEMA': 'admin.api.v1.public.schema',

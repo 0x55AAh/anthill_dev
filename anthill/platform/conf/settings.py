@@ -126,7 +126,6 @@ LOG_STREAMING = {
         'class': 'anthill.framework.handlers.LogStreamingHandler',
         'kwargs': {'handler_name': 'anthill'}
     },
-    'name': 'log',
     'path': '/log/',
 }
 
@@ -214,6 +213,7 @@ CHANNEL_LAYERS = {
 #######
 
 INTERNAL_API_CONF = 'api.v1.internal'
+PUBLIC_API_URL = '/api/'
 
 
 #########

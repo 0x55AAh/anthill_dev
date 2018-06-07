@@ -26,6 +26,12 @@ class BaseService(CeleryMixin, _BaseService):
         self.gis = GeoIP2() if getattr(self.config, 'GEOIP_PATH', None) else None
 
     def setup(self) -> None:
+        def url_pattern(_url, float_slash=True):
+            _url, end = _url.rstrip('/'), ''
+            if float_slash is not None:
+                end += '/?' if float_slash else '/'
+            return r'^{url}{end}$'.format(url=_url, end=end)
+
         # Log streaming
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)
         if log_streaming_config:
@@ -37,16 +43,16 @@ class BaseService(CeleryMixin, _BaseService):
                 from anthill.framework.utils.module_loading import import_string
                 handler_class = import_string(custom_handler_class)
             handler_kwargs = log_streaming_config.get('handler', {}).get('kwargs', dict(handler_name='anthill'))
-            url_name = log_streaming_config.get('name', 'log')
-            url_path = log_streaming_config.get('path', '/log/').rstrip('/') + '/'
+            log_streaming_url = log_streaming_config.get('path', '/log/')
             self.add_handlers(r'^(.*)$', [
-                url(r'^%s?$' % url_path, handler_class, kwargs=handler_kwargs, name=url_name),
+                url(url_pattern(log_streaming_url), handler_class, kwargs=handler_kwargs, name='log'),
             ])
 
         # Public API
         from anthill.framework.handlers import GraphQLHandler
+        public_api_url = getattr(self.config, 'PUBLIC_API_URL', '/api/')
         self.add_handlers(r'^(.*)$', [
-            url(r'^/api/?$', GraphQLHandler, dict(graphiql=True), name='api')])
+            url(url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
 
         super().setup()
 

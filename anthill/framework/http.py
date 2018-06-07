@@ -2,7 +2,7 @@ from tornado.web import HTTPError as _HTTPError
 
 
 class HTTPError(_HTTPError):
-    """Base HTTP exception class"""
+    """Base HTTP exception class."""
     status_code = 500
 
     def __init__(self, log_message=None, *args, **kwargs):

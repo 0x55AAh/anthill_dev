@@ -283,7 +283,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         return result, status_code
 
     async def execute_graphql_request(self, query, variable_values, operation_name):
-        execution_result = await self.schema.execute(
+        result = await self.schema.execute(
             query,
             variable_values=variable_values,
             operation_name=operation_name,
@@ -293,7 +293,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             root_value=self.root_value,
             executor=self.executor
         )
-        return execution_result
+        return result
 
     def get_graphql_params(self, data):
         id_ = data.get('id')

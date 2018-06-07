@@ -123,3 +123,13 @@ LOGGING = {
         },
     }
 }
+
+
+############
+# GRAPHENE #
+############
+
+GRAPHENE = {
+    'SCHEMA': '{{app_name}}.api.v1.public.schema',
+    'MIDDLEWARE': ()
+}
