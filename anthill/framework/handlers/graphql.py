@@ -4,7 +4,7 @@ from graphql.type.schema import GraphQLSchema
 from anthill.framework.conf import settings
 from tornado.escape import json_decode, json_encode
 from graphql.error import GraphQLError, format_error
-from anthill.framework.http import HttpBadRequestError
+from anthill.framework.http import HttpForbiddenError, HttpBadRequestError
 from tornado.log import app_log
 from functools import wraps
 from tornado import web
@@ -59,11 +59,12 @@ def import_from_string(val, setting_name):
         module = importlib.import_module(module_path)
         return getattr(module, class_name)
     except (ImportError, AttributeError) as e:
-        msg = "Could not import '%s' for Graphene setting '%s'. %s: %s." % (val, setting_name, e.__class__.__name__, e)
+        msg = "Could not import '%s' for Graphene setting '%s'. " \
+              "%s: %s." % (val, setting_name, e.__class__.__name__, e)
         raise ImportError(msg)
 
 
-class GrapheneSettings(object):
+class GrapheneSettings:
     """
     A settings object, that allows API settings to be accessed as properties.
     Any setting with string import paths will be automatically resolved
@@ -163,8 +164,11 @@ class ExecutionError(Exception):
 
 
 class GraphQLHandler(TemplateMixin, RequestHandler):
+    SUPPORTED_METHODS = ('GET', 'POST')
+
     graphiql_template = 'graphene/graphiql.html'
     graphiql_version = '0.11.11'
+
     schema = None
     middleware = None
     graphiql = False
@@ -172,7 +176,6 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
     root_value = None
     pretty = False
     batch = False
-    enable_async = True
 
     def initialize(
             self,
@@ -184,50 +187,53 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             executor=None,
             root_value=None,
             pretty=False,
-            batch=False,
-            enable_async=True):
+            batch=False):
         super().initialize(graphiql_template)
         if not schema:
             schema = graphene_settings.SCHEMA
         if middleware is None:
             middleware = graphene_settings.MIDDLEWARE
-        self.schema = self.schema or schema
         if middleware is not None:
             self.middleware = list(instantiate_middleware(middleware))
+        if not executor:
+            executor = AsyncioExecutor()
+        self.graphiql_version = graphiql_version
+        self.schema = self.schema or schema
         self.graphiql = self.graphiql or graphiql
-        self.executor = self.executor or executor or AsyncioExecutor()
+        self.executor = self.executor or executor
         self.root_value = root_value
         self.pretty = pretty
         self.batch = batch
-        self.enable_async = enable_async and isinstance(self.executor, AsyncioExecutor)
 
     def __init__(self, application, request, **kwargs):
-        self.schema = None
-        self.middleware = None
-        self.graphiql = False
-        self.executor = None
-        self.root_value = None
-        self.pretty = False
-        self.batch = False
-        self.enable_async = True
-        self.template_name = self.graphiql_template
         super().__init__(application, request, **kwargs)
+        self.template_name = self.graphiql_template
+        self.enable_async = isinstance(self.executor, AsyncioExecutor)
         assert isinstance(self.schema, GraphQLSchema), \
             'A Schema is required to be provided to %s.' % self.__class__.__name__
         assert isinstance(self.executor, AsyncioExecutor), \
             'An executor is required to be subclassed from `AsyncioExecutor`.'
-
-    def options(self):
-        self.set_status(204)
-        self.finish()
+        assert not all((self.graphiql, self.batch)),\
+            'Use either graphiql or batch processing'
 
     @error_response
     async def post(self):
-        return await self.handle_graphql()
+        data = self.parse_body()
+        if self.batch:
+            responses = []
+            for entry in data:
+                responses.append(await self.get_graphql_response(entry))
+            result = '[{}]'.format(','.join([response[0] for response in responses]))
+            status_code = responses and max(responses, key=lambda response: response[1])[1] or 200
+        else:
+            result, status_code = await self.get_graphql_response(data)
+        self.set_status(status_code)
+        self.write(result)
 
-    def get(self):
+    async def get(self):
         if self.is_graphiql():
             return self.render()
+        raise HttpForbiddenError('Method `GET` not allowed.')
 
     def is_graphiql(self):
         return all([
@@ -248,28 +254,63 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             self.request.query.get('pretty'),
         ])
 
-    async def handle_graphql(self):
-        result = await self.execute_graphql()
-        if result and (result.errors or result.invalid):
-            ex = ExecutionError(errors=result.errors)
-            app_log.warn('GraphQL Error: %s', ex)
-            raise ex
+    async def get_graphql_response(self, data):
+        query, variable_values, operation_name, id_ = self.get_graphql_params(data)
+        execution_result = await self.execute_graphql_request(query, variable_values, operation_name)
 
-        response = {'data': result.data}
-        self.write(json_encode(response))
+        status_code = 200
+        if execution_result:
+            response = {}
 
-    async def execute_graphql(self):
-        data = self.parse_body()
-        return await self.schema.execute(
-            data.get('query'),
-            variable_values=data.get('variables'),
-            operation_name=data.get('operationName'),
-            context_value=self.context,
+            if execution_result.errors:
+                ex = ExecutionError(errors=execution_result.errors)
+                app_log.warn('GraphQL Error: %s', ex)
+                raise ex
+
+            if execution_result.invalid:
+                status_code = 400
+            else:
+                response['data'] = execution_result.data
+
+            if self.batch:
+                response['id'] = id_
+                response['status'] = status_code
+
+            result = json_encode(response)
+        else:
+            result = None
+
+        return result, status_code
+
+    async def execute_graphql_request(self, query, variable_values, operation_name):
+        execution_result = await self.schema.execute(
+            query,
+            variable_values=variable_values,
+            operation_name=operation_name,
+            context_value=self.get_context(),
             middleware=self.middleware,
             return_promise=self.enable_async,
             root_value=self.root_value,
             executor=self.executor
         )
+        return execution_result
+
+    def get_graphql_params(self, data):
+        id_ = data.get('id')
+        query = data.get('query')
+
+        variables = data.get('variables')
+        if variables and isinstance(variables, six.text_type):
+            try:
+                variables = json_decode(variables)
+            except Exception:
+                raise HttpBadRequestError('Variables are invalid JSON.')
+
+        operation_name = data.get('operationName')
+        if operation_name == 'null':
+            operation_name = None
+
+        return query, variables, operation_name, id_
 
     def get_template_namespace(self):
         namespace = super().get_template_namespace()
@@ -279,10 +320,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
     def parse_body(self):
         content_type = self.get_content_type()
 
-        if content_type == 'application/graphql':
-            return {'query': self.request.body.decode()}
-
-        elif content_type == 'application/json':
+        if content_type == 'application/json':
             request_json = json_decode(self.request.body)
             if self.batch:
                 assert isinstance(request_json, list), (
@@ -297,15 +335,11 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
                 )
             return request_json
 
-        elif content_type in ['application/x-www-form-urlencoded', 'multipart/form-data']:
-            pass
-
         return {}
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
         return content_type.split(';', 1)[0].lower()
 
-    @property
-    def context(self):
-        return {}
+    def get_context(self):
+        return self.request
