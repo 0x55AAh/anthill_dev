@@ -35,6 +35,7 @@ class HomeHandler(TemplateHandler):
                     service_cards.append(card)
                 except RequestTimeoutError:
                     pass
+            service_cards.sort()
             kwargs.update(service_cards=service_cards)
 
         context = await super().get_context_data(**kwargs)

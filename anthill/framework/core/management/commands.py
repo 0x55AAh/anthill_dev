@@ -380,10 +380,13 @@ class StartApplication(Command):
         super().__init__()
         self.base_dir = base_dir
         self.config_mod = config_mod
+        self.default_host = 'localhost'
 
     def get_options(self):
         options = (
             Option('-n', '--name', dest='name', required=True, help='Name of the application.'),
+            Option('-h', '--host', dest='host', default=self.default_host, help='Server hostname.'),
+            Option('-p', '--port', dest='port', required=True, help='Server port number.'),
             Option('-e', '--extension', dest='extensions', default=['py'], action='append',
                    help='The file extension(s) to render (default: "py"). '
                         'Separate multiple extensions with commas, or use '
@@ -391,7 +394,7 @@ class StartApplication(Command):
         )
         return options
 
-    def run(self, name, extensions):
+    def run(self, name, host, port, extensions):
         try:
             from importlib import import_module
             _conf = import_module(self.config_mod)
@@ -421,13 +424,17 @@ class StartApplication(Command):
         camel_case_name = 'camel_case_app_name'
         camel_case_value = ''.join(x for x in name.title() if x != '_')
         app_color_name = 'app_color'
+        server_port_name = 'server_port'
+        server_host_name = 'server_hostname'
 
         context = {
             base_name: name,
             base_directory: app_dir,
             camel_case_name: camel_case_value,
             secret_key_name: secret_key,
-            app_color_name: app_color
+            app_color_name: app_color,
+            server_port_name: port,
+            server_host_name: host
         }
 
         prefix_length = len(template_dir) + 1

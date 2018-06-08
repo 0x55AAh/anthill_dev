@@ -38,28 +38,28 @@ REGISTERED_SERVICES = {
 
 REGISTERED_SERVICES_EXTERNAL = os.path.join(BASE_DIR, 'registry.json')
 
-SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_discovery'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_discovery@/anthill_discovery'
 
 LOCATION = 'http://localhost:9502'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-ROUTES_CONF = 'discovery.routes'
+# ROUTES_CONF = 'discovery.routes'
 
-APPLICATION_CLASS = 'discovery.apps.AnthillApplication'
+# APPLICATION_CLASS = 'discovery.apps.AnthillApplication'
 APPLICATION_NAME = 'discovery'
 APPLICATION_VERBOSE_NAME = 'Discovery'
 APPLICATION_DESCRIPTION = 'Map each service location dynamically'
 APPLICATION_ICON_CLASS = 'icon-direction'
 APPLICATION_COLOR = 'danger'
 
-SERVICE_CLASS = 'discovery.services.Service'
+# SERVICE_CLASS = 'discovery.services.Service'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 STATIC_URL = '/static/'
 
-UI_MODULE = 'discovery.ui'
+# UI_MODULE = 'discovery.ui'
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/3"
 

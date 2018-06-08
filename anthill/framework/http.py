@@ -1,7 +1,7 @@
-from tornado.web import HTTPError as _HTTPError
+from tornado.web import HTTPError as GenericHTTPError
 
 
-class HTTPError(_HTTPError):
+class HTTPError(GenericHTTPError):
     """Base HTTP exception class."""
     status_code = 500
 

@@ -22,6 +22,7 @@ async def main_sidebar(handler):
                 main_sidebar_entries.append(entry)
             except RequestTimeoutError:
                 pass
+        main_sidebar_entries.sort()
         return {
             'main_sidebar_entries': main_sidebar_entries
         }

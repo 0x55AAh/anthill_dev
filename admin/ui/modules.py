@@ -98,6 +98,9 @@ class MainSidebar(TemplateModule):
         def __repr__(self):
             return '%s(title="%s")' % (self.__class__.__name__, self.title)
 
+        def __lt__(self, other):
+            return self.title < other.title
+
     def render(self, entries, current=None):
         return super(MainSidebar, self).render(entries=entries, current=current)
 
@@ -118,6 +121,9 @@ class ServiceCard(TemplateModule):
         def __repr__(self):
             return '%s(title="%s", description="%s")' % (
                 self.__class__.__name__, self.title, self.description)
+
+        def __lt__(self, other):
+            return self.title < other.title
 
     def render(self, entry):
         return super(ServiceCard, self).render(entry=entry)

@@ -13,32 +13,34 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_login'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_login@/anthill_login'
 
 LOCATION = 'http://localhost:9507'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-ROUTES_CONF = 'login.routes'
+# ROUTES_CONF = 'login.routes'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
-APPLICATION_CLASS = 'login.apps.AnthillApplication'
+# APPLICATION_CLASS = 'login.apps.AnthillApplication'
 APPLICATION_NAME = 'login'
 APPLICATION_VERBOSE_NAME = 'Login'
 APPLICATION_DESCRIPTION = 'Manage user accounts, credentials and access tokens'
 APPLICATION_ICON_CLASS = 'icon-key'
 APPLICATION_COLOR = 'pink'
 
-SERVICE_CLASS = 'login.services.Service'
+# SERVICE_CLASS = 'login.services.Service'
 
 STATIC_URL = '/static/'
 
-UI_MODULE = 'login.ui'
+# UI_MODULE = 'login.ui'
 
 CONTEXT_PROCESSORS = [
 
 ]
+
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/7"
 
 LOGGING = {
     'version': 1,

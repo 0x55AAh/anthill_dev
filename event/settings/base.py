@@ -13,28 +13,28 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_event'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_event@/anthill_event'
 
 LOCATION = 'http://localhost:9506'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-ROUTES_CONF = 'event.routes'
+# ROUTES_CONF = 'event.routes'
 
-APPLICATION_CLASS = 'event.apps.AnthillApplication'
+# APPLICATION_CLASS = 'event.apps.AnthillApplication'
 APPLICATION_NAME = 'event'
 APPLICATION_VERBOSE_NAME = 'Event'
 APPLICATION_DESCRIPTION = 'Compete players with time-limited events'
 APPLICATION_ICON_CLASS = 'icon-calendar'
 APPLICATION_COLOR = 'success'
 
-SERVICE_CLASS = 'event.services.Service'
+# SERVICE_CLASS = 'event.services.Service'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 STATIC_URL = '/static/'
 
-UI_MODULE = 'event.ui'
+# UI_MODULE = 'event.ui'
 
 CELERY_ENABLE = True
 

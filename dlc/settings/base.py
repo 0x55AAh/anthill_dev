@@ -13,28 +13,28 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_dlc'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_dlc@/anthill_dlc'
 
 LOCATION = 'http://localhost:9505'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-ROUTES_CONF = 'dlc.routes'
+# ROUTES_CONF = 'dlc.routes'
 
-APPLICATION_CLASS = 'dlc.apps.AnthillApplication'
+# APPLICATION_CLASS = 'dlc.apps.AnthillApplication'
 APPLICATION_NAME = 'dlc'
 APPLICATION_VERBOSE_NAME = 'DLC'
 APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
 APPLICATION_ICON_CLASS = 'icon-cloud-download2'
 APPLICATION_COLOR = 'primary'
 
-SERVICE_CLASS = 'dlc.services.Service'
+# SERVICE_CLASS = 'dlc.services.Service'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 STATIC_URL = '/static/'
 
-UI_MODULE = 'dlc.ui'
+# UI_MODULE = 'dlc.ui'
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/4"
 

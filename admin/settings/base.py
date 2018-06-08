@@ -13,25 +13,25 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-SQLALCHEMY_DATABASE_URI = 'postgres://ah_admin@/ah_admin'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_admin@/anthill_admin'
 
-ROUTES_CONF = 'admin.routes'
+# ROUTES_CONF = 'admin.routes'
 
 LOCATION = 'http://localhost:9500'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-APPLICATION_CLASS = 'admin.apps.AnthillApplication'
+# APPLICATION_CLASS = 'admin.apps.AnthillApplication'
 APPLICATION_NAME = 'admin'
 APPLICATION_VERBOSE_NAME = 'Admin'
 
-SERVICE_CLASS = 'admin.services.Service'
+# SERVICE_CLASS = 'admin.services.Service'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 STATIC_URL = '/static/'
 
-UI_MODULE = 'admin.ui'
+# UI_MODULE = 'admin.ui'
 
 CONTEXT_PROCESSORS = [
     'anthill.framework.context_processors.datetime',

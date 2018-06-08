@@ -13,28 +13,30 @@ ADMINS = (
 
 )
 
-SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/ah_{{ app_name }}'
+# Database uri example:
+# SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/db_name'
+SQLALCHEMY_DATABASE_URI = ''
 
-LOCATION = ''
+LOCATION = 'http://{{ server_host_name }}:{{ server_port }}'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-ROUTES_CONF = '{{ app_name }}.routes'
+# ROUTES_CONF = '{{ app_name }}.routes'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
-APPLICATION_CLASS = '{{ app_name }}.apps.AnthillApplication'
+# APPLICATION_CLASS = '{{ app_name }}.apps.AnthillApplication'
 APPLICATION_NAME = '{{ app_name }}'
 APPLICATION_VERBOSE_NAME = '{{ camel_case_app_name }}'
 APPLICATION_DESCRIPTION = 'Service description'
 APPLICATION_ICON_CLASS = 'icon-question6'
 APPLICATION_COLOR = '{{ app_color }}'
 
-SERVICE_CLASS = '{{ app_name }}.services.Service'
+# SERVICE_CLASS = '{{ app_name }}.services.Service'
 
 STATIC_URL = '/static/'
 
-UI_MODULE = '{{ app_name }}.ui'
+# UI_MODULE = '{{ app_name }}.ui'
 
 CONTEXT_PROCESSORS = [
 

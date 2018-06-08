@@ -3,9 +3,11 @@ from graphql.execution.executors.asyncio import AsyncioExecutor
 from graphql.type.schema import GraphQLSchema
 from anthill.framework.conf import settings
 from tornado.escape import json_decode, json_encode
-from graphql.error import GraphQLError, format_error
+from graphql.error import GraphQLError, format_error as format_graphql_error
 from anthill.framework.http import HttpForbiddenError, HttpBadRequestError
+from collections import Mapping
 from tornado.log import app_log
+from tornado.escape import to_basestring
 from functools import wraps
 from tornado.web import HTTPError
 import traceback
@@ -127,12 +129,13 @@ def error_format(exception):
     if isinstance(exception, ExecutionError):
         return [{'message': e} for e in exception.errors]
     elif isinstance(exception, GraphQLError):
-        return [format_error(exception)]
+        return [format_graphql_error(exception)]
     elif isinstance(exception, HTTPError):
         return [{'message': exception.log_message,
                  'reason': exception.reason}]
     else:
-        return [{'message': 'Unknown server error'}]
+        # return [{'message': 'Unknown server error'}]
+        return [{'message': str(exception)}]
 
 
 def error_response(func):
@@ -176,6 +179,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
     root_value = None
     pretty = False
     batch = False
+    context = None
 
     def initialize(
             self,
@@ -187,7 +191,8 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             executor=None,
             root_value=None,
             pretty=False,
-            batch=False):
+            batch=False,
+            context=None):
         super().initialize(graphiql_template)
         if not schema:
             schema = graphene_settings.SCHEMA
@@ -230,7 +235,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         self.set_status(status_code)
         self.write(result)
 
-    async def get(self):
+    def get(self):
         if self.is_graphiql():
             return self.render()
         raise HttpForbiddenError('Method `GET` not allowed.')
@@ -303,8 +308,9 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         if variables and isinstance(variables, six.text_type):
             try:
                 variables = json_decode(variables)
-            except Exception:
-                raise HttpBadRequestError('Variables are invalid JSON.')
+            except Exception as e:
+                raise HttpBadRequestError(
+                    'Variables are invalid JSON.', reason=str(e))
 
         operation_name = data.get('operationName')
         if operation_name == 'null':
@@ -320,8 +326,15 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
     def parse_body(self):
         content_type = self.get_content_type()
 
-        if content_type == 'application/json':
-            request_json = json_decode(self.request.body)
+        if content_type == 'application/graphql':
+            return {'query': to_basestring(self.request.body)}
+
+        elif content_type == 'application/json':
+            try:
+                request_json = json_decode(self.request.body)
+            except Exception as e:
+                raise HttpBadRequestError(
+                    'The received data is not a valid JSON query.', reason=str(e))
             if self.batch:
                 assert isinstance(request_json, list), (
                     'Batch requests should receive a list, but received {}.'
@@ -335,6 +348,12 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
                 )
             return request_json
 
+        elif content_type in ('application/x-www-form-urlencoded', 'multipart/form-data'):
+            return {
+                k: self.decode_argument(v[0]) for k, v
+                in self.request.arguments.items()
+            }
+
         return {}
 
     def get_content_type(self):
@@ -342,4 +361,10 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         return content_type.split(';', 1)[0].lower()
 
     def get_context(self):
-        return self.request
+        if self.context and isinstance(self.context, Mapping):
+            context = self.context.copy()
+        else:
+            context = {}
+        if isinstance(context, Mapping) and 'request' not in context:
+            context.update({'request': self.request})
+        return context
