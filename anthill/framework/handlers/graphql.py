@@ -5,28 +5,18 @@ from anthill.framework.conf import settings
 from tornado.escape import json_decode, json_encode
 from graphql.error import GraphQLError, format_error as format_graphql_error
 from anthill.framework.http import HttpForbiddenError, HttpBadRequestError
-from collections import Mapping
 from tornado.log import app_log
 from tornado.escape import to_basestring
-from functools import wraps
+from graphql.execution import ExecutionResult
 from tornado.web import HTTPError
-import traceback
 import inspect
 import importlib
 import six
-import sys
 
 
 DEFAULTS = {
     'SCHEMA': None,
-    'SCHEMA_OUTPUT': 'schema.json',
-    'SCHEMA_INDENT': None,
-    'MIDDLEWARE': (),
-    # Set to True if the connection fields must have
-    # either the first or last argument
-    'RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST': False,
-    # Max items returned in ConnectionFields / FilterConnectionFields
-    'RELAY_CONNECTION_MAX_LIMIT': 100,
+    'MIDDLEWARE': ()
 }
 
 
@@ -119,51 +109,7 @@ def instantiate_middleware(middlewares):
 def error_status(exception):
     if isinstance(exception, HTTPError):
         return exception.status_code
-    elif isinstance(exception, (ExecutionError, GraphQLError)):
-        return 400
-    else:
-        return 500
-
-
-def error_format(exception):
-    if isinstance(exception, ExecutionError):
-        return [{'message': e} for e in exception.errors]
-    elif isinstance(exception, GraphQLError):
-        return [format_graphql_error(exception)]
-    elif isinstance(exception, HTTPError):
-        return [{'message': exception.log_message,
-                 'reason': exception.reason}]
-    else:
-        # return [{'message': 'Unknown server error'}]
-        return [{'message': str(exception)}]
-
-
-def error_response(func):
-    @wraps(func)
-    async def wrapper(self, *args, **kwargs):
-        try:
-            result = await func(self, *args, **kwargs)
-        except Exception as ex:
-            if not isinstance(ex, (HTTPError, ExecutionError, GraphQLError)):
-                tb = ''.join(traceback.format_exception(*sys.exc_info()))
-                app_log.error('Error: {0} {1}'.format(ex, tb))
-            self.set_status(error_status(ex))
-            error_json = json_encode({'errors': error_format(ex)})
-            app_log.debug('error_json: %s', error_json)
-            self.write(error_json)
-        else:
-            return result
-    return wrapper
-
-
-class ExecutionError(Exception):
-    def __init__(self, status_code=400, errors=None):
-        self.status_code = status_code
-        if errors is None:
-            self.errors = []
-        else:
-            self.errors = [str(e) for e in errors]
-        self.message = '\n'.join(self.errors)
+    return 500
 
 
 class GraphQLHandler(TemplateMixin, RequestHandler):
@@ -209,6 +155,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         self.root_value = root_value
         self.pretty = pretty
         self.batch = batch
+        self.context = context
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
@@ -221,17 +168,25 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         assert not all((self.graphiql, self.batch)), \
             'Use either graphiql or batch processing'
 
-    @error_response
     async def post(self):
-        data = self.parse_body()
-        if self.batch:
-            responses = []
-            for entry in data:
-                responses.append(await self.get_graphql_response(entry))
-            result = '[{}]'.format(','.join([response[0] for response in responses]))
-            status_code = responses and max(responses, key=lambda response: response[1])[1] or 200
-        else:
-            result, status_code = await self.get_graphql_response(data)
+        try:
+            data = self.parse_body()
+            if self.batch:
+                responses = []
+                for entry in data:
+                    responses.append(await self.get_graphql_response(entry))
+                result = '[{}]'.format(','.join([response[0] for response in responses]))
+                status_code = responses and max(responses, key=lambda response: response[1])[1] or 200
+            else:
+                result, status_code = await self.get_graphql_response(data)
+        except Exception as e:
+            if isinstance(e, (HTTPError, )):
+                app_log.error('{0}'.format(e))
+            else:
+                app_log.exception('{0}'.format(e))
+            status_code = error_status(e)
+            result = json_encode({'errors': [self.format_error(e)]})
+
         self.set_status(status_code)
         self.write(result)
 
@@ -260,17 +215,19 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         ])
 
     async def get_graphql_response(self, data):
-        query, variable_values, operation_name, id_ = self.get_graphql_params(data)
-        execution_result = await self.execute_graphql_request(query, variable_values, operation_name)
+        query, variable_values, operation_name, id = self.get_graphql_params(data)
+        execution_result = await self.execute_graphql_request(
+            query, variable_values, operation_name)
 
         status_code = 200
         if execution_result:
             response = {}
 
             if execution_result.errors:
-                ex = ExecutionError(errors=execution_result.errors)
-                app_log.warn('GraphQL Error: %s', ex)
-                raise ex
+                response['errors'] = [
+                    self.format_error(e) for e in execution_result.errors]
+                app_log.error(
+                    '\n'.join(map(lambda e: e['message'], response['errors'])))
 
             if execution_result.invalid:
                 status_code = 400
@@ -278,7 +235,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
                 response['data'] = execution_result.data
 
             if self.batch:
-                response['id'] = id_
+                response['id'] = id
                 response['status'] = status_code
 
             result = json_encode(response)
@@ -288,21 +245,31 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         return result, status_code
 
     async def execute_graphql_request(self, query, variable_values, operation_name):
-        result = await self.schema.execute(
-            query,
-            variable_values=variable_values,
-            operation_name=operation_name,
-            context_value=self.get_context(),
-            middleware=self.middleware,
-            return_promise=self.enable_async,
-            root_value=self.root_value,
-            executor=self.executor
-        )
+        if not query:
+            if self.is_graphiql():
+                return None
+            raise HttpBadRequestError('Must provide query string.')
+        try:
+            result = await self.schema.execute(
+                query,
+                variable_values=variable_values,
+                operation_name=operation_name,
+                context_value=self.get_context(),
+                middleware=self.middleware,
+                return_promise=self.enable_async,
+                root_value=self.root_value,
+                executor=self.executor
+            )
+        except Exception as e:
+            return ExecutionResult(errors=[e], invalid=True)
         return result
 
     def get_graphql_params(self, data):
-        id_ = data.get('id')
         query = data.get('query')
+
+        id = data.get('id')
+        if id == 'null':
+            id = None
 
         variables = data.get('variables')
         if variables and isinstance(variables, six.text_type):
@@ -316,7 +283,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         if operation_name == 'null':
             operation_name = None
 
-        return query, variables, operation_name, id_
+        return query, variables, operation_name, id
 
     def get_template_namespace(self):
         namespace = super().get_template_namespace()
@@ -360,11 +327,22 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
         return content_type.split(';', 1)[0].lower()
 
+    @staticmethod
+    def format_error(error):
+        if isinstance(error, GraphQLError):
+            return format_graphql_error(error)
+        elif isinstance(error, HTTPError):
+            return {
+                'message': error.log_message,
+                'reason': error.reason
+            }
+        return {'message': six.text_type(error)}
+
     def get_context(self):
-        if self.context and isinstance(self.context, Mapping):
+        if self.context and isinstance(self.context, dict):
             context = self.context.copy()
         else:
             context = {}
-        if isinstance(context, Mapping) and 'request' not in context:
+        if isinstance(context, dict) and 'request' not in context:
             context.update({'request': self.request})
         return context
