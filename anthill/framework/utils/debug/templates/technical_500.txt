@@ -14,7 +14,7 @@ Request URL: {{ request.full_url() }}
 Traceback:
 {% for frame in frames %}{% if frame['exc_cause'] %}{% if frame['exc_cause_explicit'] %}The above exception ({{ frame['exc_cause'] }}) was the direct cause of the following exception:{% else %}During handling of the above exception ({{ frame['exc_cause'] }}), another exception occurred:{% end %}{% end %}
 File "{{ frame['filename'] }}" in {{ frame['function'] }}
-{% if frame['context_line'] %}  {{ frame['lineno'] }}.     {{ frame['context_line'] }}
+{% if frame['context_line'] %}  {{ frame['lineno'] }}. {{ frame['context_line'] }}
 {% end %}
 {% end %}
 {% if exception_type %}Exception Type: {{ exception_type }}{% end %}

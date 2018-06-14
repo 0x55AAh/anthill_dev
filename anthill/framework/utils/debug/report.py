@@ -210,7 +210,7 @@ class ExceptionReporter:
                 'lineno': lineno + 1,
                 'id': id(tb),
                 'pre_context': pre_context,
-                'context_line': context_line.strip(),
+                'context_line': context_line,
                 'post_context': post_context,
                 'pre_context_lineno': pre_context_lineno + 1,
             })
