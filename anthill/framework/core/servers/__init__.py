@@ -61,8 +61,7 @@ class BaseService(TornadoWebApplication):
         in `sys.exc_info`.
         """
         logger.exception("Exception in callback %r", callback)
-        logging.getLogger('anthill').exception(
-            str(sys.exc_info()[1]), extra={'app': self.app})
+        logging.getLogger('anthill').exception(str(sys.exc_info()[1]))
 
     @property
     def server(self):

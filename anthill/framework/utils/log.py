@@ -124,9 +124,9 @@ class AdminEmailHandler(logging.Handler):
         else:
             exc_info = (None, record.getMessage(), None)
 
-        app_or_handler = getattr(record, 'app', getattr(record, 'handler', None))
+        handler = getattr(record, 'handler', None)
 
-        reporter = ExceptionReporter(app_or_handler, exc_info=exc_info, is_email=True)
+        reporter = ExceptionReporter(handler, exc_info=exc_info, is_email=True)
         message = "%s\n\n%s" % (self.format(no_exc_record), reporter.get_traceback_text())
         html_message = reporter.get_traceback_html() if self.include_html else None
         self.send_mail(subject, message, fail_silently=True, html_message=html_message)

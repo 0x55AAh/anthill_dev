@@ -27,21 +27,11 @@ class ExceptionReporter:
     html_template_name = 'technical_500.html'
     text_template_name = 'technical_500.txt'
 
-    def __init__(self, app_or_handler, exc_info=None, is_email=False):
-        from anthill.framework.apps import Application
+    def __init__(self, handler=None, exc_info=None, is_email=False):
+        from anthill.framework.apps import app
 
-        self.app = self.handler = None
-        if isinstance(app_or_handler, Application):
-            self.app = app_or_handler
-        elif isinstance(app_or_handler, RequestHandler):
-            self.handler = app_or_handler
-            self.app = app_or_handler.application.app
-        else:
-            raise ImproperlyConfigured(
-                'First argument must be `anthill.framework.apps.Application` '
-                'or `tornado.web.RequestHandler` instance.'
-            )
-
+        self.app = app
+        self.handler = handler
         self.is_email = is_email
 
         self.exc_info = exc_info or sys.exc_info()
