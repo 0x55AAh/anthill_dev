@@ -51,6 +51,7 @@ class BaseService(TornadoWebApplication):
     def __sigpipe_handler__(self, sig, frame):
         pass
 
+    # noinspection PyMethodMayBeStatic
     def __io_loop_handle_callback_exception__(self, callback):
         """
         Shortcut for `self.io_loop.handle_callback_exception`.

@@ -107,10 +107,7 @@ class AdminEmailHandler(logging.Handler):
         self.email_backend = email_backend
 
     def emit(self, record):
-        subject = '%s: %s' % (
-            record.levelname,
-            record.getMessage()
-        )
+        subject = '%s: %s' % (record.levelname, record.getMessage())
         subject = self.format_subject(subject)
 
         # Since we add a nicely formatted traceback on our own, create a copy
