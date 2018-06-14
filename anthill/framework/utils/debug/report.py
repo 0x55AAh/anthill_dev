@@ -28,6 +28,10 @@ class ExceptionReporter:
     text_template_name = 'technical_500.txt'
 
     def __init__(self, handler=None, exc_info=None, is_email=False):
+        if handler is not None and not isinstance(handler, RequestHandler):
+            raise ImproperlyConfigured(
+                '`handler` argument must be a `tornado.web.RequestHandler` instance')
+
         from anthill.framework.apps import app
 
         self.app = app
