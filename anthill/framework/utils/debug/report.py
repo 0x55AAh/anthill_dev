@@ -28,8 +28,6 @@ class ExceptionReporter:
     text_template_name = 'technical_500.txt'
 
     def __init__(self, app_or_handler, exc_info=None, is_email=False):
-        self.is_email = is_email
-
         from anthill.framework.apps import Application
 
         self.app = self.handler = None
@@ -42,6 +40,8 @@ class ExceptionReporter:
                 'First argument must be `anthill.framework.apps.Application` '
                 'or `tornado.web.RequestHandler` instance.'
             )
+
+        self.is_email = is_email
 
         if self.app is None and self.handler is not None:
             self.app = self.handler.application.app

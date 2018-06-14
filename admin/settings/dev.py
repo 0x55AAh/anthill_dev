@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = True
 EMAIL_BACKEND = 'anthill.framework.core.mail.backends.console.EmailBackend'
 
 HTTPS = None
