@@ -35,6 +35,7 @@ class ExceptionReporter:
             self.app = app_or_handler
         elif isinstance(app_or_handler, RequestHandler):
             self.handler = app_or_handler
+            self.app = app_or_handler.application.app
         else:
             raise ImproperlyConfigured(
                 'First argument must be `anthill.framework.apps.Application` '
@@ -42,9 +43,6 @@ class ExceptionReporter:
             )
 
         self.is_email = is_email
-
-        if self.app is None and self.handler is not None:
-            self.app = self.handler.application.app
 
         self.exc_info = exc_info or sys.exc_info()
         self.exc_type, self.exc_value, self.tb = self.exc_info
