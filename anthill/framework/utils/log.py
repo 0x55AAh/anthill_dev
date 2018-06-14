@@ -1,14 +1,13 @@
-import logging
-import logging.config  # needed when logging_config doesn't start with logging.config
-from copy import copy
-
 from anthill.framework.conf import settings
 from anthill.framework.core import mail
 from anthill.framework.core.mail import get_connection
-from anthill.framework.utils.debug import ExceptionReporter
+from anthill.framework.utils.debug.report import ExceptionReporter
 from anthill.framework.utils.module_loading import import_string
 from tornado.log import LogFormatter
+from copy import copy
 import os
+import logging
+import logging.config  # needed when logging_config doesn't start with logging.config
 
 
 def current_log_level():
@@ -125,12 +124,9 @@ class AdminEmailHandler(logging.Handler):
         else:
             exc_info = (None, record.getMessage(), None)
 
-        reporter = ExceptionReporter(
-            app=getattr(record, 'app', None),
-            handler=getattr(record, 'handler', None),
-            exc_info=exc_info,
-            is_email=True
-        )
+        app_or_handler = getattr(record, 'app', getattr(record, 'handler', None))
+
+        reporter = ExceptionReporter(app_or_handler, exc_info=exc_info, is_email=True)
         message = "%s\n\n%s" % (self.format(no_exc_record), reporter.get_traceback_text())
         html_message = reporter.get_traceback_html() if self.include_html else None
         self.send_mail(subject, message, fail_silently=True, html_message=html_message)
