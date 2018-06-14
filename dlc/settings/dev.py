@@ -31,11 +31,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
-        'anthill': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'anthill.server',
-        },
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -51,14 +46,8 @@ LOGGING = {
         'anthill': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
-            'propagate': False
         },
         'anthill.application': {
-            'handlers': ['anthill.server'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
-        'anthill.server': {
             'handlers': ['anthill.server'],
             'level': 'DEBUG',
             'propagate': False

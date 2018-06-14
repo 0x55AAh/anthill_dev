@@ -3,7 +3,8 @@ from anthill.framework.conf import settings
 from anthill.platform.core.celery.worker import start_worker
 import logging
 
-logger = logging.getLogger('celery')
+logger = logging.getLogger('anthill.application')
+
 
 SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
 CELERY_ENABLE = getattr(settings, 'CELERY_ENABLE', False)

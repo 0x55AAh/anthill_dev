@@ -1,17 +1,13 @@
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from tornado.web import Application as TornadoWebApplication
-from tornado.ioloop import IOLoop as _IOLoop
+from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
 import signal
 import logging
+import sys
 
 
-logger = logging.getLogger('anthill.server')
-
-
-class IOLoop(_IOLoop):
-    def handle_callback_exception(self, callback):
-        logger.error("Exception in callback %r", callback, exc_info=True)
+logger = logging.getLogger('anthill.application')
 
 
 class BaseService(TornadoWebApplication):
@@ -32,8 +28,11 @@ class BaseService(TornadoWebApplication):
         self.setup()
 
     def setup(self):
+        # Override `io_loop.handle_callback_exception` method to catch exceptions globally.
+        self.io_loop.handle_callback_exception = self.__io_loop_handle_callback_exception__
+
         """Setup server variables"""
-        self.add_handlers(r'^(.*)$', self.app.routes)
+        self.add_handlers(self.app.host_regex, self.app.routes)
 
         self.settings.update(cookie_secret=self.app.settings.SECRET_KEY)
         self.settings.update(xsrf_cookies=self.app.settings.CSRF_COOKIES)
@@ -51,6 +50,19 @@ class BaseService(TornadoWebApplication):
 
     def __sigpipe_handler__(self, sig, frame):
         pass
+
+    def __io_loop_handle_callback_exception__(self, callback):
+        """
+        Shortcut for `self.io_loop.handle_callback_exception`.
+        This method is called whenever a callback run by the `IOLoop`
+        throws an exception.
+
+        The exception itself is not passed explicitly, but is available
+        in `sys.exc_info`.
+        """
+        logger.exception("Exception in callback %r", callback)
+        logging.getLogger('anthill').exception(
+            str(sys.exc_info()[1]), extra={'app': self.app})
 
     @property
     def server(self):

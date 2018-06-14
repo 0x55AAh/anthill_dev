@@ -74,53 +74,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CSRF_COOKIES = True
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'anthill.server': {
-            '()': 'anthill.framework.utils.log.ServerFormatter',
-            'fmt': '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S',
-            'style': '%',
-        }
-    },
-    'handlers': {
-        'anthill': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'anthill.server',
-        },
-        'anthill.server': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'anthill.server',
-        },
-    },
-    'loggers': {
-        'celery': {
-            'handlers': ['anthill.server'],
-            'level': 'INFO',
-            'propagate': False
-        },
-        'celery.worker': {
-            'handlers': ['anthill.server'],
-            'level': 'INFO',
-            'propagate': False
-        },
-        'celery.task': {
-            'handlers': ['anthill.server'],
-            'level': 'INFO',
-            'propagate': False
-        },
-        'celery.redirected': {
-            'handlers': ['anthill.server'],
-            'level': 'INFO',
-            'propagate': False
-        },
-    }
-}
-
 LOG_STREAMING = {
     'handler': {
         'class': 'anthill.framework.handlers.LogStreamingHandler',

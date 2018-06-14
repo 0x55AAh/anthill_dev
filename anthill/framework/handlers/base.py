@@ -7,6 +7,7 @@ from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.conf import settings
 import json
+import logging
 
 
 class TranslationHandlerMixin:
@@ -21,8 +22,10 @@ class TranslationHandlerMixin:
 
 
 class LogExceptionHandlerMixin:
-    def log_exception(self, typ, value, tb):
-        super().log_exception(typ, value, tb)
+    def log_exception(self, exc_type, exc_value, tb):
+        super().log_exception(exc_type, exc_value, tb)
+        logging.getLogger('anthill').exception(
+            str(exc_value), extra={'handler': self})
 
 
 class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequestHandler):
@@ -46,7 +49,12 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
         Implement this method to handle streamed request data.
         Requires the `.stream_request_body` decorator.
         """
-        pass
+
+    def prepare(self):
+        """Called at the beginning of a request before  `get`/`post`/etc."""
+
+    def on_finish(self):
+        """Called after the end of a request."""
 
 
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseWebSocketHandler):

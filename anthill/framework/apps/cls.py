@@ -7,6 +7,7 @@ from urllib.parse import urlparse, urljoin
 from functools import lru_cache
 from _thread import get_ident
 import importlib
+import re
 
 
 class CommandNamesDuplicatedError(Exception):
@@ -38,6 +39,7 @@ class Application:
         self.internal = internal_api
 
         self.protocol, self.host, self.port = self.split_location()
+        self.host_regex = r'^(%s)$' % re.escape(self.host)
         self.extensions = {}
 
         setattr(self, '__ident_func__', get_ident)
@@ -74,6 +76,7 @@ class Application:
             raise ApplicationExtensionNotRegistered(name)
         return self.extensions[name]
 
+    # noinspection PyProtectedMember,PyBroadException
     def get_models(self):
         ext = self.get_extension('sqlalchemy')
         classes, models, table_names = [], [], []
@@ -88,10 +91,12 @@ class Application:
                 models.append(classes[table_names.index(table[0])])
         return models
 
+    # noinspection PyProtectedMember
     def get_model(self, name):
         ext = self.get_extension('sqlalchemy')
         return ext.db.Model._decl_class_registry.get(name, None)
 
+    # noinspection PyProtectedMember
     def get_model_by_tablename(self, tablename):
         ext = self.get_extension('sqlalchemy')
         for clazz in ext.db.Model._decl_class_registry.values():
@@ -152,8 +157,8 @@ class Application:
         """Returns routes map"""
         routes_mod = importlib.import_module(self.routes_conf)
         routes_list = getattr(routes_mod, 'route_patterns', [])
-        for route in routes_list[:]:
-            pass
+        # for route in routes_list[:]:
+        #     pass
         return routes_list
 
     @property

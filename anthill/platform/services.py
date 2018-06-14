@@ -8,7 +8,7 @@ from functools import partial
 from tornado.web import url
 import logging
 
-logger = logging.getLogger('anthill.server')
+logger = logging.getLogger('anthill.application')
 
 
 class ServiceAlreadyRegistered(Exception):
@@ -44,14 +44,14 @@ class BaseService(CeleryMixin, _BaseService):
                 handler_class = import_string(custom_handler_class)
             handler_kwargs = log_streaming_config.get('handler', {}).get('kwargs', dict(handler_name='anthill'))
             log_streaming_url = log_streaming_config.get('path', '/log/')
-            self.add_handlers(r'^(.*)$', [
+            self.add_handlers(self.app.host_regex, [
                 url(url_pattern(log_streaming_url), handler_class, kwargs=handler_kwargs, name='log'),
             ])
 
         # Public API
         from anthill.framework.handlers import GraphQLHandler
         public_api_url = getattr(self.config, 'PUBLIC_API_URL', '/api/')
-        self.add_handlers(r'^(.*)$', [
+        self.add_handlers(self.app.host_regex, [
             url(url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
 
         super().setup()

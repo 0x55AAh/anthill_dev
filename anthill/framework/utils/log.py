@@ -5,7 +5,8 @@ from copy import copy
 from anthill.framework.conf import settings
 from anthill.framework.core import mail
 from anthill.framework.core.mail import get_connection
-from .module_loading import import_string
+from anthill.framework.utils.debug import ExceptionReporter
+from anthill.framework.utils.module_loading import import_string
 from tornado.log import LogFormatter
 import os
 
@@ -44,11 +45,6 @@ DEFAULT_LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
-        'anthill': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'anthill.server',
-        },
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -64,14 +60,8 @@ DEFAULT_LOGGING = {
         'anthill': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
-            'propagate': False
         },
         'anthill.application': {
-            'handlers': ['anthill.server'],
-            'level': current_log_level(),
-            'propagate': False
-        },
-        'anthill.server': {
             'handlers': ['anthill.server'],
             'level': current_log_level(),
             'propagate': False
@@ -108,10 +98,8 @@ def configure_logging(logging_config, logging_settings):
 
 
 class AdminEmailHandler(logging.Handler):
-    """An exception log handler that emails log entries to site admins.
-
-    If the request is passed as the first argument to the log record,
-    request data will be provided in the email report.
+    """
+    An exception log handler that emails log entries to site admins.
     """
 
     def __init__(self, include_html=False, email_backend=None):
@@ -120,20 +108,10 @@ class AdminEmailHandler(logging.Handler):
         self.email_backend = email_backend
 
     def emit(self, record):
-        try:
-            request = record.request
-            subject = '%s (%s IP): %s' % (
-                record.levelname,
-                ('internal' if request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS
-                 else 'EXTERNAL'),
-                record.getMessage()
-            )
-        except Exception:
-            subject = '%s: %s' % (
-                record.levelname,
-                record.getMessage()
-            )
-            request = None
+        subject = '%s: %s' % (
+            record.levelname,
+            record.getMessage()
+        )
         subject = self.format_subject(subject)
 
         # Since we add a nicely formatted traceback on our own, create a copy
@@ -147,8 +125,14 @@ class AdminEmailHandler(logging.Handler):
         else:
             exc_info = (None, record.getMessage(), None)
 
-        message = self.format(no_exc_record)
-        html_message = message if self.include_html else None
+        reporter = ExceptionReporter(
+            app=getattr(record, 'app', None),
+            handler=getattr(record, 'handler', None),
+            exc_info=exc_info,
+            is_email=True
+        )
+        message = "%s\n\n%s" % (self.format(no_exc_record), reporter.get_traceback_text())
+        html_message = reporter.get_traceback_html() if self.include_html else None
         self.send_mail(subject, message, fail_silently=True, html_message=html_message)
 
     def send_mail(self, subject, message, *args, **kwargs):
@@ -157,10 +141,9 @@ class AdminEmailHandler(logging.Handler):
     def connection(self):
         return get_connection(backend=self.email_backend, fail_silently=True)
 
+    # noinspection PyMethodMayBeStatic
     def format_subject(self, subject):
-        """
-        Escape CR and LF characters.
-        """
+        """Escape CR and LF characters."""
         return subject.replace('\n', '\\n').replace('\r', '\\r')
 
 

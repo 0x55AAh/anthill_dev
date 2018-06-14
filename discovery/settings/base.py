@@ -89,14 +89,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
-        'anthill': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '../discovery.log',
-            'formatter': 'anthill.server',
-            'maxBytes': 100 * 1024 * 1024,
-            'backupCount': 10
-        },
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -115,14 +107,8 @@ LOGGING = {
         'anthill': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
-            'propagate': False
         },
         'anthill.application': {
-            'handlers': ['anthill.server'],
-            'level': 'INFO',
-            'propagate': False
-        },
-        'anthill.server': {
             'handlers': ['anthill.server'],
             'level': 'INFO',
             'propagate': False

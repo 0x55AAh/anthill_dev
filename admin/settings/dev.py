@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = True
+DEBUG = False
 EMAIL_BACKEND = 'anthill.framework.core.mail.backends.console.EmailBackend'
 
 HTTPS = None
@@ -32,11 +32,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
         },
-        'anthill': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'anthill.server',
-        },
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -45,21 +40,15 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
-            'class': 'anthill.framework.utils.log.AdminEmailHandler'
+            'class': 'anthill.framework.utils.log.AdminEmailHandler',
         }
     },
     'loggers': {
         'anthill': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
-            'propagate': False
         },
         'anthill.application': {
-            'handlers': ['anthill.server'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
-        'anthill.server': {
             'handlers': ['anthill.server'],
             'level': 'DEBUG',
             'propagate': False
