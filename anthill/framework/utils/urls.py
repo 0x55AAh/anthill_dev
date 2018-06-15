@@ -5,7 +5,7 @@ from .functional import lazy
 def reverse(name, *args, **kwargs):
     """Returns a URL path for handler named ``name``"""
     url = app.reverse_url(name, *args, **kwargs)
-    return url[:-1] if url.endswith('?') else url
+    return url.rstrip('?')
 
 
 def resolve(path):

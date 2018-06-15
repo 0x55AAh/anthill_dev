@@ -77,8 +77,10 @@ class BaseService(TornadoWebApplication):
             import ssl
             key_file = https_config.get('key_file')
             crt_file = https_config.get('crt_file')
-            if None in (key_file, crt_file):
-                raise ImproperlyConfigured('Key or crt file not configured')
+            if key_file is None:
+                raise ImproperlyConfigured('Key file not configured')
+            if crt_file is None:
+                raise ImproperlyConfigured('Crt file not configured')
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_ctx.load_cert_chain(crt_file, key_file)
             kwargs.update(ssl_options=ssl_ctx)

@@ -35,7 +35,7 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
 
     def reverse_url(self, name, *args):
         url = super().reverse_url(name, *args)
-        return url[:-1] if url.endswith('?') else url
+        return url.rstrip('?')
 
     def get_current_user(self):
         """
