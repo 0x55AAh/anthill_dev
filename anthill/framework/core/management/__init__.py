@@ -40,8 +40,9 @@ except ImportError:
 def add_help(parser, help_args):
     if not help_args:
         return
-    parser.add_argument(*help_args, action='help', default=argparse.SUPPRESS,
-                        help='show this help message and exit')
+    parser.add_argument(
+        *help_args, action='help', default=argparse.SUPPRESS,
+        help='show this help message and exit')
 
 
 class BaseManager:
@@ -188,7 +189,7 @@ class BaseManager:
                 self._patch_argparser(subparser)
 
         # enable autocomplete only for parent parser when argcomplete is
-        # imported and it is NOT disabled in constructor
+        # imported and it is NOT disabcurrent_appled in constructor
         if parent is None and ARGCOMPLETE_IMPORTED and not self.disable_argcomplete:
             argcomplete.autocomplete(parser, always_complete_options=True)
 

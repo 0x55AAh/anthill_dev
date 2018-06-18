@@ -11,18 +11,21 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-def save(instance, **kwargs):
+def _save(instance, **kwargs):
     db.session.add(instance)
     db.session.commit()
 
 
-def delete(instance, **kwargs):
+def _delete(instance, **kwargs):
     db.session.delete(instance)
     db.session.commit()
 
 
-setattr(db.Model, 'save', save)
-setattr(db.Model, 'delete', delete)
+setattr(db.Model, 'save', _save)
+setattr(db.Model, 'delete', _delete)
+
+del _save
+del _delete
 
 
 ma = Marshmallow(app)

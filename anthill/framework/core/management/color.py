@@ -25,7 +25,7 @@ def supports_color():
 
 
 class Style:
-    ...
+    pass
 
 
 def make_style(config_string=''):
