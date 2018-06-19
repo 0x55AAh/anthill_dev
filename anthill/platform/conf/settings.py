@@ -176,3 +176,6 @@ PUBLIC_API_URL = '/api/'
 GEOIP_PATH = None
 GEOIP_CITY = 'GeoLite2-City.mmdb'
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
+
+
+COMPRESS_RESPONSE = True

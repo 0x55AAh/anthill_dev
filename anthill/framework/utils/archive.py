@@ -141,7 +141,6 @@ class BaseArchive:
 
 
 class TarArchive(BaseArchive):
-
     def __init__(self, file):
         self._archive = tarfile.open(file)
 
@@ -183,7 +182,6 @@ class TarArchive(BaseArchive):
 
 
 class ZipArchive(BaseArchive):
-
     def __init__(self, file):
         self._archive = zipfile.ZipFile(file)
 

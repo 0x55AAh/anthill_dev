@@ -21,16 +21,17 @@ class BreadCrumbs(TemplateModule):
     template_name = 'modules/breadcrumbs.html'
 
     class Entry:
-        def __init__(self, title='', icon_class='', url=''):
+        def __init__(self, title, icon_class='', url=''):
             self.title = title
             self.icon_class = icon_class
             self.url = url
 
         def __repr__(self):
-            return '%s(title="%s")' % (self.__class__.__name__, self.title)
+            return 'BreadCrumbsEntry(title="%s")' % self.title
 
+    # noinspection PyMethodOverriding
     def render(self, entries):
-        return super(BreadCrumbs, self).render(entries=entries)
+        return super().render(entries=entries)
 
 
 class Paginator(TemplateModule):
@@ -40,6 +41,7 @@ class Paginator(TemplateModule):
     """
     template_name = 'modules/paginator.html'
 
+    # noinspection PyMethodOverriding
     def render(self, page, begin_pages=1, end_pages=1,
                before_pages=2, after_pages=2, style=''):
         query_string = ''
@@ -55,8 +57,9 @@ class Paginator(TemplateModule):
         page_range = list(page.paginator.page_range)
         begin = page_range[:begin_pages]
         end = page_range[-end_pages:]
-        middle = page_range[max(page.number - before_pages - 1, 0):
-                            page.number + after_pages]
+        middle = page_range[
+            max(page.number - before_pages - 1, 0):page.number + after_pages
+        ]
 
         if set(begin) & set(middle):  # [1, 2, 3], [2, 3, 4], [...]
             begin = sorted(set(begin + middle))  # [1, 2, 3, 4]
@@ -78,7 +81,7 @@ class Paginator(TemplateModule):
             begin += end  # [1, 2, 3, 4, 5, 6]
             middle, end = [], []
 
-        return super(Paginator, self).render(
+        return super().render(
             page=page, begin=begin, middle=middle, end=end,
             query_string=query_string, style=style
         )
@@ -91,18 +94,19 @@ class MainSidebar(TemplateModule):
     template_name = 'modules/main-sidebar.html'
 
     class Entry:
-        def __init__(self, title='', icon_class=''):
+        def __init__(self, title, icon_class=''):
             self.title = title
             self.icon_class = icon_class
 
         def __repr__(self):
-            return '%s(title="%s")' % (self.__class__.__name__, self.title)
+            return 'MainSidebarEntry(title="%s")' % self.title
 
         def __lt__(self, other):
             return self.title < other.title
 
+    # noinspection PyMethodOverriding
     def render(self, entries, current=None):
-        return super(MainSidebar, self).render(entries=entries, current=current)
+        return super().render(entries=entries, current=current)
 
 
 class ServiceCard(TemplateModule):
@@ -112,18 +116,18 @@ class ServiceCard(TemplateModule):
     template_name = 'modules/service-card.html'
 
     class Entry:
-        def __init__(self, title='', description='', icon_class='', color=''):
+        def __init__(self, title, description='', icon_class='', color=''):
             self.title = title
             self.description = description
             self.icon_class = icon_class
             self.color = color
 
         def __repr__(self):
-            return '%s(title="%s", description="%s")' % (
-                self.__class__.__name__, self.title, self.description)
+            return 'ServiceCard(title="%s")' % self.title
 
         def __lt__(self, other):
             return self.title < other.title
 
+    # noinspection PyMethodOverriding
     def render(self, entry):
-        return super(ServiceCard, self).render(entry=entry)
+        return super().render(entry=entry)
