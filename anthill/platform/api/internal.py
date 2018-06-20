@@ -18,8 +18,8 @@ import json
 
 
 __all__ = [
-    'InternalConnection', 'JSONRPCInternalConnection', 'InternalAPIError',
-    'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError'
+    'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
+    'InternalAPIError', 'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError'
 ]
 
 
@@ -107,7 +107,7 @@ api.add_methods([test, ping, get_service_metadata])
 # ## /Predefined API methods ###
 
 
-class InternalConnection(Singleton):
+class BaseInternalConnection(Singleton):
     """
     Implements communications between services.
     """
@@ -172,7 +172,7 @@ class InternalConnection(Singleton):
         raise NotImplementedError
 
 
-class JSONRPCInternalConnection(InternalConnection):
+class JSONRPCInternalConnection(BaseInternalConnection):
     message_type = 'internal_json_rpc'
     json_rpc_ver = '2.0'  # Only 2.0 supported!
 
@@ -254,3 +254,6 @@ class JSONRPCInternalConnection(InternalConnection):
             }
         }
         await self.send(service, message)
+
+
+InternalConnection = JSONRPCInternalConnection  # More simple alias
