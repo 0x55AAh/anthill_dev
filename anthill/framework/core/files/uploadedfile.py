@@ -1,13 +1,11 @@
 """
 Classes representing uploaded files.
 """
-
-import os
-from io import BytesIO
-
 from anthill.framework.conf import settings
-from anthill.framework.core.files import temp as tempfile
 from anthill.framework.core.files.base import File
+from io import BytesIO
+import tempfile
+import os
 
 __all__ = ('UploadedFile', 'TemporaryUploadedFile', 'InMemoryUploadedFile',
            'SimpleUploadedFile')
@@ -73,7 +71,7 @@ class TemporaryUploadedFile(UploadedFile):
             # The file was moved or deleted before the tempfile could unlink
             # it. Still sets self.file.close_called and calls
             # self.file.file.close() before the exception.
-            ...
+            pass
 
 
 class InMemoryUploadedFile(UploadedFile):

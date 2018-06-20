@@ -50,7 +50,7 @@ def file_move_safe(old_file_name, new_file_name, chunk_size=1024 * 64, allow_ove
     except OSError:
         # OSError happens with os.rename() if moving to another filesystem or
         # when moving opened files on certain operating systems.
-        ...
+        pass
 
     # first open the old file, so that it won't go away
     with open(old_file_name, 'rb') as old_file:

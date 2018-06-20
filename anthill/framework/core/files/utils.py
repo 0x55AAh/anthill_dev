@@ -1,7 +1,7 @@
 class FileProxyMixin:
     """
     A mixin class used to forward file methods to an underlaying file
-    object.  The internal file object has to be called "file"::
+    object. The internal file object has to be called "file"::
 
         class FileProxy(FileProxyMixin):
             def __init__(self, file):

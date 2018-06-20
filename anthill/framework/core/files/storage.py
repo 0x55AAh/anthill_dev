@@ -47,6 +47,7 @@ class Storage:
 
     # These methods are part of the public API, with default implementations.
 
+    # noinspection PyMethodMayBeStatic
     def get_valid_name(self, name):
         """
         Return a filename, based on the provided filename, that's suitable for
@@ -184,6 +185,7 @@ class FileSystemStorage(Storage):
         elif setting == 'FILE_UPLOAD_DIRECTORY_PERMISSIONS':
             self.__dict__.pop('directory_permissions_mode', None)
 
+    # noinspection PyMethodMayBeStatic
     def _value_or_setting(self, value, setting):
         return setting if value is None else value
 
@@ -233,7 +235,7 @@ class FileSystemStorage(Storage):
                 # There's a race between os.path.exists() and os.makedirs().
                 # If os.makedirs() fails with FileNotFoundError, the directory
                 # was created concurrently.
-                ...
+                pass
         if not os.path.isdir(directory):
             raise IOError("%s exists and is not a directory." % directory)
 
@@ -297,7 +299,7 @@ class FileSystemStorage(Storage):
         except FileNotFoundError:
             # FileNotFoundError is raised if the file or directory was removed
             # concurrently.
-            ...
+            pass
 
     def exists(self, name):
         return os.path.exists(self.path(name))
@@ -326,6 +328,7 @@ class FileSystemStorage(Storage):
             url = url.lstrip('/')
         return urljoin(self.base_url, url)
 
+    # noinspection PyMethodMayBeStatic
     def _datetime_from_timestamp(self, ts):
         """
         If timezone support is enabled, make an aware datetime object in UTC;

@@ -6,6 +6,7 @@ from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.conf import settings
+from anthill.framework.core.files import uploadhandler
 import json
 import logging
 
@@ -32,6 +33,10 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self.internal_request = self.application.internal_connection.request
+
+    def get_content_type(self):
+        content_type = self.request.headers.get('Content-Type', 'text/plain')
+        return list(map(lambda x: x.strip(), content_type.split(';', 1)))
 
     def reverse_url(self, name, *args):
         url = super().reverse_url(name, *args)

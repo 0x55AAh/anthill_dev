@@ -44,11 +44,11 @@ __all__ = ['RateLimit', 'RateLimitException', 'default_rate_limit']
 
 class RateLimitConfig(dict):
     _PERIODS = {
-        's': 1,
-        'm': 60,
-        'h': 60 * 60,
-        'd': 24 * 60 * 60,
-        'w': 7 * 24 * 60 * 60
+        's': 1,                # seconds
+        'm': 60,               # minutes
+        'h': 60 * 60,          # hours
+        'd': 24 * 60 * 60,     # days
+        'w': 7 * 24 * 60 * 60  # weeks
     }
 
     def _parse_callback(self, entry):

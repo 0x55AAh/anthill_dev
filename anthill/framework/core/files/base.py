@@ -34,7 +34,7 @@ class File(FileProxyMixin):
             try:
                 return os.path.getsize(self.file.name)
             except (OSError, TypeError):
-                ...
+                pass
         if hasattr(self.file, 'tell') and hasattr(self.file, 'seek'):
             pos = self.file.tell()
             self.file.seek(0, os.SEEK_END)
@@ -63,7 +63,7 @@ class File(FileProxyMixin):
         try:
             self.seek(0)
         except (AttributeError, UnsupportedOperation):
-            ...
+            pass
 
         while True:
             data = self.read(chunk_size)
@@ -147,7 +147,7 @@ class ContentFile(File):
         return self
 
     def close(self):
-        ...
+        pass
 
 
 def endswith_cr(line):
