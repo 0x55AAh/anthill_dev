@@ -9,8 +9,9 @@ import math
 
 __all__ = [
     'ParseError', 'SizeLimitError',
-    'StreamedPart', 'TemporaryFileStreamedPart', 'MultiPartStreamer',
-    'BandwidthMonitor'
+    'StreamedPart', 'DummyStreamedPart', 'TemporaryFileStreamedPart',
+    'ContentStreamedPart', 'MultiPartStreamer',
+    'BandwidthMonitor', 'format_speed', 'format_size'
 ]
 
 
@@ -120,6 +121,27 @@ class StreamedPart:
         return bool(self.get_filename())
 
 
+class DummyStreamedPart(StreamedPart):
+    def feed(self, data):
+        pass
+
+    def get_payload(self):
+        pass
+
+
+class ContentStreamedPart(StreamedPart):
+    def __init__(self, streamer, headers):
+        super().__init__(streamer, headers)
+        self.content = b''
+
+    def feed(self, data):
+        print(self.headers)
+        self.content += data
+
+    def get_payload(self):
+        return self.content.decode('utf8')
+
+
 class TemporaryFileStreamedPart(StreamedPart):
     """A multi part streamer/part that feeds data into a named temporary file.
 
@@ -215,7 +237,8 @@ class MultiPartStreamer:
     header_encoding = "UTF-8"
 
     def __init__(self, total):
-        """Create a new PostDataStreamer
+        """
+        Create a new PostDataStreamer
 
         :param total: Total number of bytes in the stream. This is what the http client sends as
                       the Content-Length header of the whole form.
@@ -230,9 +253,8 @@ class MultiPartStreamer:
         self.received = 0
 
     def _get_raw_header(self, data):
-        """Return raw header data.
-
-        Internal method. Do not call directly.
+        """
+        Return raw header data.
 
         :param data: A string containing raw data from the form part
         :return: A tuple of (header_value, tail) where header_value is the first line of the form part.
@@ -246,9 +268,8 @@ class MultiPartStreamer:
             return None, data
 
     def _parse_header(self, header):
-        """Parse raw header data.
-
-        Internal method. Do not call directly.
+        """
+        Parse raw header data.
 
         :param header: Raw data of the part.
         :return: A dict that contains the ``name``, ``value`` and ``params`` for the header.
@@ -271,30 +292,35 @@ class MultiPartStreamer:
             return {"value": header}
 
     def _begin_part(self, headers):
-        """Internal method called when a new part is started in the stream.
-
-        :param headers: A dict of headers as returned by parse_header."""
+        """
+        Called when a new part is started in the stream.
+        :param headers: A dict of headers as returned by parse_header.
+        """
         self.part = self.create_part(headers)
         assert isinstance(self.part, StreamedPart)
         self.parts.append(self.part)
 
     def _feed_part(self, data):
-        """Internal method called when content is added to the current part.
-
-        :param data: Raw data for the current part."""
+        """
+        Called when content is added to the current part.
+        :param data: Raw data for the current part.
+        """
         # noinspection PyProtectedMember
         self.part._size += len(data)
         self.part.feed(data)
 
     def _end_part(self):
-        """Internal method called when receiving the current part has finished.
+        """
+        Called when receiving the current part has finished.
 
         The implementation of this does nothing,
-        but it can be overridden to do something with ``self.fout``."""
+        but it can be overridden to do something with ``self.f_out``.
+        """
         self.part.finalize()
 
     def data_received(self, chunk):
-        """Receive a chunk of data for the form.
+        """
+        Receive a chunk of data for the form.
 
         :param chunk: Binary string that was received from the http(s) client.
 
@@ -349,9 +375,11 @@ class MultiPartStreamer:
                         return
 
     def data_complete(self):
-        """Call this after the last receive() call, e.g. when all data arrived for the form.
+        """
+        Call this after the last receive() call, e.g. when all data arrived for the form.
 
-        You MUST call this before using the parts."""
+        You MUST call this before using the parts.
+        """
         if self.in_data:
             idx = self.buf.rfind(self.SEP + self.delimiter[:-2])
             if idx > 0:
@@ -359,7 +387,8 @@ class MultiPartStreamer:
             self._end_part()
 
     def create_part(self, headers):
-        """Called when a new part needs to be created.
+        """
+        Called when a new part needs to be created.
 
         :param headers: A dict of header values for the new part to be created.
 
@@ -370,13 +399,16 @@ class MultiPartStreamer:
         return TemporaryFileStreamedPart(self, headers)
 
     def release_parts(self):
-        """Call this to release resources for all parts created.
+        """
+        Call this to release resources for all parts created.
 
-         This method will call the release() method on all parts created for the stream."""
+        This method will call the release() method on all parts created for the stream.
+        """
         [part.release() for part in self.parts]
 
     def get_parts_by_name(self, part_name):
-        """Get a parts by name.
+        """
+        Get a parts by name.
 
         :param part_name: Name of the part. This is case sensitive!
 
@@ -386,20 +418,21 @@ class MultiPartStreamer:
         return [part for part in self.parts if (part.get_name() == part_name)]
 
     def get_values(self, names, size_limit=10 * 1024):
-        """Return a dictionary of values for the given field names.
+        """
+        Return a dictionary of values for the given field names.
 
         :param names: A list of field names, case sensitive.
         :param size_limit: Maximum size of the value of a single field.
                            If a field's size exceeds this value, then SizeLimitError is raised.
 
         Caveats:
-
             * do not use this for big file values, because values are loaded into memory
             * a form may have posted multiple values for a field name. This method returns the first available
               value for that name. If the form might contain multiple values for the same name, then do not
               use this method.  To get all values for a name, use the get_parts_by_name method instead.
 
-        Tip: use get_nonfile_parts() to get a list of parts that are not originally files (read the docstring)
+        Tip:
+            use get_nonfile_parts() to get a list of parts that are not originally files (read the docstring)
         """
         res = {}
         for name in names:
@@ -413,7 +446,8 @@ class MultiPartStreamer:
         return res
 
     def get_nonfile_parts(self):
-        """Get a list of parts that are originally not files.
+        """
+        Get a list of parts that are originally not files.
 
         It examines the filename attribute of the Content-Disposition header.
         Be aware that these fields still may be huge in size.
@@ -423,7 +457,8 @@ class MultiPartStreamer:
         return [part for part in self.parts if not part.is_file()]
 
     def on_progress(self, received, total):
-        """Override this function to handle progress of receiving data.
+        """
+        Override this function to handle progress of receiving data.
 
         :param received: Number of bytes received
         :param total: Total bytes to be received.
@@ -450,18 +485,23 @@ def format_size(value):
 
 
 class BandwidthMonitor:
-    """This class can be used to monitor data transfer speed for a MultiPartStreamer.
+    """
+    This class can be used to monitor data transfer speed for a MultiPartStreamer.
 
-    You will most likely create a BandwidthMonitor instance in the prepare() method of your request handler."""
+    You will most likely create a BandwidthMonitor instance in the prepare() method
+    of your request handler.
+    """
 
     hist_interval = 0.5  # Minimum number of seconds between two history records.
     hist_max_size = 100  # Max. history size. Zero means infinite.
 
     def __init__(self, total):
-        """Create new bandwidth monitor.
+        """
+        Create new bandwidth monitor.
 
-        :param total: Total size of the request in bytes. If you don't know this value then you can use zero,
-            but then you can't call the get_remaining_time() method.
+        :param total: Total size of the request in bytes.
+                      If you don't know this value then you can use zero,
+                      but then you can't call the get_remaining_time() method.
         """
         self.started = None  # When the request started
         self.total = total  # Total size of the request in bytes
@@ -480,8 +520,9 @@ class BandwidthMonitor:
 
         :param look_back_steps: Number of steps to go back in history.
         :return: Average speed between now and the looked back point in time.
-            This method may use a shorter time if the number of history records is less than look_back_steps.
-            This method may return None if the number of history records is less than two."""
+                 This method may use a shorter time if the number of history records is less than look_back_steps.
+                 This method may return None if the number of history records is less than two.
+        """
         if len(self.history) < 2:
             return None
         start = self.history[-1]
@@ -494,11 +535,14 @@ class BandwidthMonitor:
         return received / elapsed
 
     def get_remaining_time(self, speed=None):
-        """Calculate the time needed to complete the request.
+        """
+        Calculate the time needed to complete the request.
 
-        :param speed: Use this speed for the calculation. When not given, the last known speed will be used.
-        :return: If the current speed is zero or not known, then None is returned. Otherwise the number of seconds
-            is returned."""
+        :param speed: Use this speed for the calculation.
+                      When not given, the last known speed will be used.
+        :return: If the current speed is zero or not known, then None is returned.
+                 Otherwise the number of seconds is returned.
+        """
         if speed is None:
             speed = self.curr_speed
         if speed and speed > 0.1:
@@ -507,7 +551,8 @@ class BandwidthMonitor:
             return None
 
     def data_received(self, size):
-        """Call this when a chunk of data was received.
+        """
+        Call this when a chunk of data was received.
 
         :param size: Number of bytes received.
 

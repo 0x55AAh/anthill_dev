@@ -36,7 +36,12 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
-        return list(map(lambda x: x.strip(), content_type.split(';', 1)))
+        content_type, params = list(map(lambda x: x.strip(), content_type.split(';', 1)))
+        params = [
+            param.split('=') for param
+            in map(lambda x: x.strip(), params.split(';'))
+        ]
+        return content_type, dict(params)
 
     def reverse_url(self, name, *args):
         url = super().reverse_url(name, *args)
@@ -60,6 +65,12 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
 
     def on_finish(self):
         """Called after the end of a request."""
+
+    def clear(self):
+        """Resets all headers and content for this response."""
+        super().clear()
+        if settings.HIDE_SERVER_VERSION:
+            del self._headers['Server']
 
 
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseWebSocketHandler):
@@ -112,8 +123,8 @@ class JSONHandlerMixin:
     def set_default_headers(self):
         self.set_header('Content-Type', 'application/json')
 
-    @staticmethod
-    def dumps(data):
+    # noinspection PyMethodMayBeStatic
+    def dumps(self, data):
         return json.dumps(data)
 
     async def get_context_data(self, **kwargs):

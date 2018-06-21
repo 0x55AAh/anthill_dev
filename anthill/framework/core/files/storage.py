@@ -205,11 +205,13 @@ class FileSystemStorage(Storage):
 
     @cached_property
     def file_permissions_mode(self):
-        return self._value_or_setting(self._file_permissions_mode, settings.FILE_UPLOAD_PERMISSIONS)
+        return self._value_or_setting(
+            self._file_permissions_mode, settings.FILE_UPLOAD_PERMISSIONS)
 
     @cached_property
     def directory_permissions_mode(self):
-        return self._value_or_setting(self._directory_permissions_mode, settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
+        return self._value_or_setting(
+            self._directory_permissions_mode, settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS)
 
     def _open(self, name, mode='rb'):
         return File(open(self.path(name), mode))

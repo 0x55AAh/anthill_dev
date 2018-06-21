@@ -259,3 +259,6 @@ GEOIP_COUNTRY = None
 ############
 
 GRAPHENE = {}
+
+
+HIDE_SERVER_VERSION = False

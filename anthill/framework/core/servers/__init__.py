@@ -70,7 +70,21 @@ class BaseService(TornadoWebApplication):
         return self.server_class(self, **self.get_server_kwargs())
 
     def get_server_kwargs(self):
-        kwargs = {}
+        kwargs = {
+            'no_keep_alive': False,
+            'xheaders': False,
+            'ssl_options': None,
+            'protocol': None,
+            'decompress_request': False,
+            'chunk_size': None,
+            'max_header_size': None,
+            'idle_connection_timeout': None,
+            'body_timeout': None,
+            'max_body_size': None,
+            'max_buffer_size': None,
+            'trusted_downstream': None
+        }
+
         # HTTPS supporting
         https_config = getattr(self.config, 'HTTPS', None)
         if https_config is not None:
@@ -87,6 +101,7 @@ class BaseService(TornadoWebApplication):
             logger.debug('HTTPS is ON.')
         else:
             logger.warning('HTTPS is OFF.')
+
         return kwargs
 
     def setup_server(self, **kwargs):
