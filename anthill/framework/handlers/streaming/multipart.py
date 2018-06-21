@@ -1,9 +1,17 @@
 """Multipart/form-data streamer for tornado."""
+from anthill.framework.conf import settings
 import os
 import re
 import tempfile
 import time
 import math
+
+
+__all__ = [
+    'ParseError', 'SizeLimitError',
+    'StreamedPart', 'TemporaryFileStreamedPart', 'MultiPartStreamer',
+    'BandwidthMonitor'
+]
 
 
 class ParseError(Exception):
@@ -28,10 +36,10 @@ class StreamedPart:
         self.headers = headers
         self._size = 0
 
+    @property
     def get_size(self):
+        """Size of the streamed part. It will be a growing value while the part is streamed."""
         return self._size
-
-    size = property(get_size, doc="Size of the streamed part. It will be a growing value while the part is streamed.")
 
     def feed(self, data):
         """Feed data into the stream.
@@ -50,8 +58,8 @@ class StreamedPart:
     def get_payload(self):
         """Load part data and return it as a binary string.
 
-        Warning! This method will load the whole data into memory. First you should check the get_size() method
-        the see if the data fits into memory.
+        Warning! This method will load the whole data into memory.
+        First you should check the get_size() method the see if the data fits into memory.
 
         .. note:: In the base class, this is not implemented.
         """
@@ -60,8 +68,8 @@ class StreamedPart:
     def get_ct_params(self):
         """Get Content-Disposition parameters.
 
-        :return:  If there is no content-disposition header for the part, then it returns an empty list.
-            Otherwise it returns a list of values given for Content-Disposition headers.
+        :return: If there is no content-disposition header for the part, then it returns an empty list.
+                 Otherwise it returns a list of values given for Content-Disposition headers.
         :rtype: list
         """
         for header in self.headers:
@@ -117,12 +125,11 @@ class TemporaryFileStreamedPart(StreamedPart):
 
     This class has an ``f_out`` attribute that is bound to a NamedTemporaryFile.
     """
-    def __init__(self, streamer, headers, tmp_dir=None):
+    def __init__(self, streamer, headers):
         """Create a new streamed part that writes part data into a NamedTemporaryFile.
 
         :param streamer: The MultiPartStreamer that feeds this streamed part.
         :param headers: A dict of part headers
-        :param tmp_dir: Directory for the NamedTemporaryFile. Will be passed to NamedTemporaryFile constructor.
 
         The NamedTemporaryFile is available through the ``f_out`` attribute. It is created with delete=False, argument,
         so the temporary file is not automatically deleted when closed. You can use the move() method to move the
@@ -132,7 +139,9 @@ class TemporaryFileStreamedPart(StreamedPart):
         super().__init__(streamer, headers)
         self.is_moved = False
         self.is_finalized = False
-        self.f_out = tempfile.NamedTemporaryFile(dir=tmp_dir, delete=False)
+        _, ext = os.path.splitext(self.get_filename())
+        self.f_out = tempfile.NamedTemporaryFile(
+            suffix='.upload' + ext, dir=settings.FILE_UPLOAD_TEMP_DIR, delete=False)
 
     def feed(self, data):
         """Feed data into the stream.
@@ -190,14 +199,14 @@ class TemporaryFileStreamedPart(StreamedPart):
 
 
 class MultiPartStreamer:
-    """Parse a stream of multpart/form-data.
+    """Parse a stream of multipart/form-data.
 
     Useful for request handlers decorated with ``tornado.web.stream_request_body``.
     """
     SEP = b"\r\n"  # line separator in multipart/form-data
     L_SEP = len(SEP)
-    PAT_HEADER_VALUE = re.compile(r"""([^:]+):\s+([^\s;]+)(.*)""")
-    PAT_HEADER_PARAMS = re.compile(r""";\s*([^=]+)=\"(.*?)\"(.*)""")
+    PAT_HEADER_VALUE = re.compile(r'([^:]+):\s+([^\s;]+)(.*)')
+    PAT_HEADER_PARAMS = re.compile(r';\s*([^=]+)=\"(.*?)\"(.*)')
 
     # Encoding for the header values. Only header name and parameters
     # will be decoded. Streamed data will remain binary.
@@ -209,7 +218,7 @@ class MultiPartStreamer:
         """Create a new PostDataStreamer
 
         :param total: Total number of bytes in the stream. This is what the http client sends as
-            the Content-Length header of the whole form.
+                      the Content-Length header of the whole form.
         """
         self.buf = b""
         self.dlen = None
@@ -227,7 +236,8 @@ class MultiPartStreamer:
 
         :param data: A string containing raw data from the form part
         :return: A tuple of (header_value, tail) where header_value is the first line of the form part.
-            If there is no first line yet (e.g. the whole data is a single line) then header_value will be None.
+                 If there is no first line yet (e.g. the whole data is a single line)
+                 then header_value will be None.
         """
         idx = data.find(self.SEP)
         if idx >= 0:
@@ -242,7 +252,7 @@ class MultiPartStreamer:
 
         :param header: Raw data of the part.
         :return: A dict that contains the ``name``, ``value`` and ``params`` for the header.
-            If the header is a simple value, then it may only return a dict with a ``value``.
+                 If the header is a simple value, then it may only return a dict with a ``value``.
         """
         header = header.decode(self.header_encoding)
         res = self.PAT_HEADER_VALUE.match(header)
@@ -279,7 +289,8 @@ class MultiPartStreamer:
     def _end_part(self):
         """Internal method called when receiving the current part has finished.
 
-        The implementation of this does nothing, but it can be overriden to do something with ``self.fout``."""
+        The implementation of this does nothing,
+        but it can be overridden to do something with ``self.fout``."""
         self.part.finalize()
 
     def data_received(self, chunk):
@@ -352,8 +363,9 @@ class MultiPartStreamer:
 
         :param headers: A dict of header values for the new part to be created.
 
-        You can override this to create a custom StreamedPart. The default method creates a
-        TemporaryFileStreamedPart that streams data into a named temporary file.
+        You can override this to create a custom StreamedPart.
+        The default method creates a TemporaryFileStreamedPart
+        that streams data into a named temporary file.
         """
         return TemporaryFileStreamedPart(self, headers)
 
@@ -368,8 +380,8 @@ class MultiPartStreamer:
 
         :param part_name: Name of the part. This is case sensitive!
 
-        Attention! A form may have posted multiple values for the same name. So the return value of this method is a
-        list of parts!
+        Attention! A form may have posted multiple values for the same name.
+        So the return value of this method is a list of parts!
         """
         return [part for part in self.parts if (part.get_name() == part_name)]
 
@@ -378,7 +390,7 @@ class MultiPartStreamer:
 
         :param names: A list of field names, case sensitive.
         :param size_limit: Maximum size of the value of a single field.
-            If a field's size exceeds this value, then SizeLimitError is raised.
+                           If a field's size exceeds this value, then SizeLimitError is raised.
 
         Caveats:
 

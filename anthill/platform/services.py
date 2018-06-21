@@ -35,10 +35,10 @@ class BaseService(CeleryMixin, _BaseService):
         # Log streaming
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)
         if log_streaming_config:
-            from anthill.framework.handlers import LogStreamingHandler
+            from anthill.framework.handlers import WatchLogFileHandler
             custom_handler_class = log_streaming_config.get('handler', {}).get('class')
             if not custom_handler_class:
-                handler_class = LogStreamingHandler
+                handler_class = WatchLogFileHandler
             else:
                 from anthill.framework.utils.module_loading import import_string
                 handler_class = import_string(custom_handler_class)

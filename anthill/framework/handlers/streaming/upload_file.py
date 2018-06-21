@@ -1,7 +1,10 @@
 from tornado.web import stream_request_body
-from anthill.framework.handlers import RequestHandler
-from .multipart import (
-    MultiPartStreamer, BandwidthMonitor, StreamedPart, TemporaryFileStreamedPart
+from anthill.framework.handlers import (
+    RequestHandler,
+    MultiPartStreamer,
+    BandwidthMonitor,
+    StreamedPart,
+    TemporaryFileStreamedPart
 )
 
 
@@ -9,15 +12,12 @@ MB = 1024 * 1024
 GB = 1024 * MB
 TB = 1024 * GB
 
-MAX_BUFFER_SIZE = 4 * MB  # Max. size loaded into memory!
-MAX_BODY_SIZE = 4 * MB  # Max. size loaded into memory!
+MAX_BUFFER_SIZE = 4 * MB    # Max. size loaded into memory!
+MAX_BODY_SIZE = 4 * MB      # Max. size loaded into memory!
 MAX_STREAMED_SIZE = 1 * TB  # Max. size streamed in one request!
-# TMP_DIR = 'Y:/'  # Path for storing streamed temporary files. Set this to a directory that receives the files.
 
 
-class MyStreamer(MultiPartStreamer):
-    """You can create your own multipart streamer, and override some methods."""
-
+class UploadFileStreamer(MultiPartStreamer):
     def __init__(self, total):
         super().__init__(total)
         self._last_progress = 0.0  # Last time of updating the progress
@@ -35,10 +35,9 @@ class MyStreamer(MultiPartStreamer):
 
         If you do not override this method, then a TemporaryFileStreamedPart will be created with system default
         temporary directory."""
-        # global TMP_DIR
         dummy = StreamedPart(self, headers)  # you can use a dummy StreamedPart to examine the headers.
         print("Starting new part, is_file=%s, headers=%s" % (dummy.is_file(), headers))
-        return TemporaryFileStreamedPart(self, headers, tmp_dir=None)
+        return TemporaryFileStreamedPart(self, headers)
 
     def data_received(self, chunk):
         super().data_received(chunk)
@@ -47,7 +46,7 @@ class MyStreamer(MultiPartStreamer):
 
 
 @stream_request_body
-class StreamHandler(RequestHandler):
+class UploadFileHandler(RequestHandler):
     def prepare(self):
         """In request preparation, we get the total size of the request and create a MultiPartStreamer for it.
 
@@ -63,7 +62,7 @@ class StreamHandler(RequestHandler):
         except KeyError:
             total = 0  # For any well formed browser request, Content-Length should have a value.
         # noinspection PyAttributeOutsideInit
-        self.ps = MyStreamer(total)
+        self.ps = UploadFileStreamer(total)
 
     def data_received(self, chunk):
         """When a chunk of data is received, we forward it to the multipart streamer.

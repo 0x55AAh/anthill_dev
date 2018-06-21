@@ -6,7 +6,11 @@ from anthill.framework.handlers.base import (
 )
 from anthill.framework.handlers.jsonrpc import WebSocketJSONRPCHandler, JSONRPCMixin
 from anthill.framework.handlers.streaming import (
-    FileStreamingHandler, TextStreamingHandler, LogStreamingHandler
+    WatchFileHandler, WatchTextFileHandler, WatchLogFileHandler,
+    ParseError, SizeLimitError,
+    StreamedPart, TemporaryFileStreamedPart, MultiPartStreamer,
+    BandwidthMonitor,
+    UploadFileStreamer, UploadFileHandler
 )
 from anthill.framework.handlers.graphql import GraphQLHandler
 
@@ -16,6 +20,10 @@ __all__ = [
     'WebSocketHandler', 'JsonWebSocketHandler',
     'WebSocketJSONRPCHandler', 'JSONRPCMixin',
     'JSONHandler', 'JSONHandlerMixin',
-    'FileStreamingHandler', 'TextStreamingHandler', 'LogStreamingHandler',
+    'WatchFileHandler', 'WatchTextFileHandler', 'WatchLogFileHandler',
+    'ParseError', 'SizeLimitError',
+    'StreamedPart', 'TemporaryFileStreamedPart', 'MultiPartStreamer',
+    'BandwidthMonitor',
+    'UploadFileStreamer', 'UploadFileHandler',
     'GraphQLHandler'
 ]
