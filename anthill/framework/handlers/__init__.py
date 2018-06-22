@@ -15,7 +15,7 @@ from anthill.framework.handlers.streaming.multipart import (
     format_speed, format_size
 )
 from anthill.framework.handlers.streaming.upload_file import (
-    UploadFileStreamer, UploadFileHandler
+    UploadFileStreamer, UploadFileStreamHandler
 )
 from anthill.framework.handlers.graphql import GraphQLHandler
 
@@ -29,6 +29,6 @@ __all__ = [
     'ParseError', 'SizeLimitError',
     'StreamedPart', 'TemporaryFileStreamedPart', 'MultiPartStreamer',
     'BandwidthMonitor', 'DummyStreamedPart', 'ContentStreamedPart',
-    'UploadFileStreamer', 'UploadFileHandler',
+    'UploadFileStreamer', 'UploadFileStreamHandler',
     'GraphQLHandler'
 ]

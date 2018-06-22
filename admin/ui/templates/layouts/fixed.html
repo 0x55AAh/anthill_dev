@@ -18,6 +18,22 @@
 	<!-- /global stylesheets -->
 
 	{% block css %}{% end %}
+
+	<!-- Core JS files -->
+	<script type="text/javascript" src="{{ static_url('js/core/libraries/jquery.min.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/cookie.js') }}"></script>
+	<!-- /core JS files -->
+
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="{{ static_url('js/plugins/ui/nicescroll.min.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/core/app.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/pages/layout_fixed_custom.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/plugins/uploaders/dropzone.min.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/cookie.js') }}"></script>
+	<!-- /theme JS files -->
+
+    {% block js %}{% end %}
 </head>
 
 <body class="{% block body-class %}navbar-top{% end %}">
@@ -67,18 +83,5 @@
 </div>
 <!-- /page container -->
 
-<!-- Core JS files -->
-<script type="text/javascript" src="{{ static_url('js/core/libraries/jquery.min.js') }}"></script>
-<script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
-<script type="text/javascript" src="{{ static_url('js/plugins/extensions/cookie.js') }}"></script>
-<!-- /core JS files -->
-
-<!-- Theme JS files -->
-<script type="text/javascript" src="{{ static_url('js/plugins/ui/nicescroll.min.js') }}"></script>
-<script type="text/javascript" src="{{ static_url('js/core/app.js') }}"></script>
-<script type="text/javascript" src="{{ static_url('js/pages/layout_fixed_custom.js') }}"></script>
-<!-- /theme JS files -->
-
-{% block js %}{% end %}
 </body>
 </html>

@@ -13,6 +13,7 @@ route_patterns = [
 
 route_patterns += [
     url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat'),  # Test
-    # url(r'^/json-rpc/?$', handlers.TestWSJSONRPCHandler, name='json-rpc')  # Test
-    url(r'^/upload/?$', handlers.UploadFileHandler, dict(template_name='upload_form.html'), name='upload'),  # Test
+    url(r'^/json-rpc/?$', handlers.TestWSJSONRPCHandler, name='json-rpc'),  # Test
+    url(r'^/upload/?$', handlers.UploadFileStreamHandler,
+        dict(template_name='upload_form.html'), name='upload'),  # Test
 ]

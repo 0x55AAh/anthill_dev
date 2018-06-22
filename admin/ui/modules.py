@@ -12,6 +12,7 @@
 #     ...
 #
 from anthill.framework.ui import TemplateModule
+from anthill.framework.conf import settings
 
 
 class BreadCrumbs(TemplateModule):
@@ -133,15 +134,26 @@ class ServiceCard(TemplateModule):
         return super().render(entry=entry)
 
 
+# noinspection SpellCheckingInspection
 class DropZoneUploader(TemplateModule):
     template_name = 'modules/uploaders/dropzone.html'
+    options_default = {
+        'max_file_size': settings.FILE_UPLOAD_MAX_FILE_SIZE / (1024 * 1024),
+        'url': '/upload/',
+        'default_message': 'Drop files to upload <span>or CLICK</span>',
+        'param_name': 'file',
+        'accepted_files': '',
+        'max_files': 5
+    }
+
+    def __init__(self, handler):
+        super().__init__(handler)
+        self.dropzone_id = None
+        self.options = self.options_default.copy()
 
     # noinspection PyMethodOverriding
-    def render(self):
-        return super().render()
-
-    def javascript_files(self):
-        return [
-            '/static/js/plugins/uploaders/dropzone.min.js',
-            '/static/js/pages/uploader_dropzone.js'
-        ]
+    def render(self, dropzone_id, **options):
+        self.dropzone_id = dropzone_id
+        if options:
+            self.options.update(options)
+        return super().render(dropzone_id=dropzone_id, **self.options)

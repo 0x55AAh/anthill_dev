@@ -1,5 +1,6 @@
 """Multipart/form-data streamer for tornado."""
 from anthill.framework.conf import settings
+from anthill.framework.core.files.storage import default_storage
 import os
 import re
 import tempfile
@@ -191,8 +192,11 @@ class TemporaryFileStreamedPart(StreamedPart):
             raise Exception("Cannot move temporary file: stream is not finalized yet.")
         if self.is_moved:
             raise Exception("Cannot move temporary file: it has already been moved.")
+        # self.f_out.close()
+        # os.rename(self.f_out.name, file_path)
+        default_storage.save(file_path, self.f_out)
         self.f_out.close()
-        os.rename(self.f_out.name, file_path)
+        os.unlink(self.f_out.name)
         self.is_moved = True
 
     def release(self):
@@ -455,6 +459,12 @@ class MultiPartStreamer:
         without giving Content-Disposition.
         """
         return [part for part in self.parts if not part.is_file()]
+
+    def get_file_parts(self):
+        """
+        Get a list of parts that are files.
+        """
+        return [part for part in self.parts if part.is_file()]
 
     def on_progress(self, received, total):
         """

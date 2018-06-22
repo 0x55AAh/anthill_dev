@@ -88,10 +88,8 @@ class Storage:
 
     def generate_filename(self, filename):
         """
-        Validate the filename by calling get_valid_name() and return a filename
-        to be passed to the save() method.
+        Validate the filename by calling get_valid_name() and return a filename.
         """
-        # `filename` may include a path as returned by FileField.upload_to.
         dirname, filename = os.path.split(filename)
         return os.path.normpath(os.path.join(dirname, self.get_valid_name(filename)))
 

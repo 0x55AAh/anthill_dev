@@ -31,6 +31,8 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # UI_MODULE = 'admin.ui'
 
 CONTEXT_PROCESSORS = [

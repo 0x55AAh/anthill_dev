@@ -1,15 +1,15 @@
 {% extends 'layouts/fixed.html' %}
 
+{% block meta %}{% end %}
+
 {% block main-sidebar %}
-{% module MainSidebar(main_sidebar_entries) %}
+    {% module MainSidebar(main_sidebar_entries) %}
 {% end %}
 
-{% block header %}
-
-{% end %}
+{% block header %}{% end %}
 
 {% block content %}
 <div class="row">
-    {% module DropZoneUploader() %}
+    {% module DropZoneUploader('dropzone') %}
 </div>
 {% end %}

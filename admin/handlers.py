@@ -3,7 +3,7 @@ from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError
 from admin.ui.modules import ServiceCard
-from anthill.framework.handlers import UploadFileHandler
+from anthill.framework.handlers import UploadFileStreamHandler
 
 
 class AuthenticatedHandlerMixin:
