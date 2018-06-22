@@ -131,3 +131,17 @@ class ServiceCard(TemplateModule):
     # noinspection PyMethodOverriding
     def render(self, entry):
         return super().render(entry=entry)
+
+
+class DropZoneUploader(TemplateModule):
+    template_name = 'modules/uploaders/dropzone.html'
+
+    # noinspection PyMethodOverriding
+    def render(self):
+        return super().render()
+
+    def javascript_files(self):
+        return [
+            '/static/js/plugins/uploaders/dropzone.min.js',
+            '/static/js/pages/uploader_dropzone.js'
+        ]

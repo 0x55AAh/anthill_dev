@@ -42,7 +42,7 @@ class UploadFileHandler(TemplateHandler):
         super().__init__(application, request, **kwargs)
         self.ps = None
 
-    def prepare(self):
+    async def prepare(self):
         if self.request.method.lower() in map(lambda x: x.lower(), self.methods):
             self.request.connection.set_max_body_size(self.max_upload_size)
         try:
@@ -52,14 +52,14 @@ class UploadFileHandler(TemplateHandler):
             total = 0
         self.ps = self.streamer_class(total)
 
-    def data_received(self, chunk):
+    async def data_received(self, chunk):
         """
         When a chunk of data is received, forward it to the multipart streamer.
         :param chunk: Binary string received for this request.
         """
         self.ps.data_received(chunk)
 
-    def post(self):
+    async def post(self):
         try:
             # Before using the form parts, you must call data_complete(),
             # so that the last part can be finalized.
