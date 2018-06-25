@@ -32,6 +32,14 @@ class LogExceptionHandlerMixin:
             str(exc_value), extra={'handler': self})
 
 
+def is_secure(request):
+    return request.protocol in ('https', )
+
+
+def is_ajax(request):
+    return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+
 class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequestHandler):
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)

@@ -206,27 +206,44 @@ class StreamingMultiPartParser:
         self.files = {}
         self.variables = {}
 
-    async def complete_file(self, handler):
-        file_obj = await handler.complete_file(self._data_size)
-        if file_obj and self._field_name is not None:
-            # If it returns a file object, then set the files dict.
-            self.files.setdefault(self._field_name, []).append(file_obj)
-        self._field_name = None
+    async def upload_start(self):
+        for handler in self.upload_handlers:
+            await handler.upload_start(self.content_length, self._boundary, self.encoding)
 
-    # noinspection PyMethodMayBeStatic
-    async def receive_data_chunk(self, raw_data, handler):
-        chunk = await handler.receive_data_chunk(raw_data)
-        if chunk is None:
-            # Don't continue if the chunk received by the handler is None.
-            raise StopFutureHandlers
+    async def new_file(self, field_name, file_name, content_type, content_length,
+                       charset=None, content_type_extra=None):
+        for handler in self.upload_handlers:
+            try:
+                await handler.new_file(
+                    field_name, file_name, content_type, content_length,
+                    charset, content_type_extra)
+            except StopFutureHandlers:
+                break
+
+    async def receive_data_chunk(self, raw_data):
+        for handler in self.upload_handlers:
+            chunk = await handler.receive_data_chunk(raw_data)
+            if chunk is None:
+                # Don't continue if the chunk received by the handler is None.
+                break
+
+    async def complete_file(self):
+        for handler in self.upload_handlers:
+            file_obj = await handler.complete_file(self._data_size)
+            if file_obj and self._field_name is not None:
+                # If it returns a file object, then set the files dict.
+                self.files.setdefault(self._field_name, []).append(file_obj)
+
+    async def upload_complete(self):
+        for handler in self.upload_handlers:
+            await handler.upload_complete()
 
     async def data_received(self, chunk):
         """
         Receive chunk of multipart/form-data.
         """
         if self._buffer is None:
-            for handler in self.upload_handlers:
-                await handler.upload_start(self.content_length, self._boundary, self.encoding)
+            await self.upload_start()
 
         if not self._buffer:
             self._buffer = chunk
@@ -240,8 +257,7 @@ class StreamingMultiPartParser:
                         self.current_phase = PHASE_HEADERS
                         self._buffer = self._buffer[len(self._boundary_delimiter):]
                     elif self._buffer.startswith(self._end_boundary):
-                        for handler in self.upload_handlers:
-                            await self.complete_file(handler)
+                        await self.complete_file()
                         return
                     else:
                         gen_log.warning("Invalid multipart/form-data")
@@ -293,13 +309,9 @@ class StreamingMultiPartParser:
                     except (TypeError, ValueError):
                         content_length = None
 
-                    for handler in self.upload_handlers:
-                        try:
-                            await handler.new_file(
-                                field_name, file_name, content_type, content_length,
-                                charset=charset, content_type_extra=content_type_extra)
-                        except StopFutureHandlers:
-                            break
+                    await self.new_file(
+                        field_name, file_name, content_type, content_length,
+                        charset, content_type_extra)
                 else:
                     # Wait for all headers for current file
                     return
@@ -309,34 +321,23 @@ class StreamingMultiPartParser:
                     data, remaining_data = self._buffer.split(self._boundary_delimiter, 1)
                     self._buffer = remaining_data
                     self._data_size += len(data[:-2])
-                    for handler in self.upload_handlers:
-                        try:
-                            await self.receive_data_chunk(data[:-2], handler)
-                        except StopFutureHandlers:
-                            break
-                    for handler in self.upload_handlers:
-                        await self.complete_file(handler)
+                    await self.receive_data_chunk(data[:-2])
+                    await self.complete_file()
+                    self._field_name = None
+
                     self.current_phase = PHASE_HEADERS
                     continue
                 elif self._end_boundary in self._buffer:
                     remaining_data = self._buffer.split(self._end_boundary)[0]
                     self._data_size += len(remaining_data)
-                    for handler in self.upload_handlers:
-                        try:
-                            await self.receive_data_chunk(remaining_data, handler)
-                        except StopFutureHandlers:
-                            break
-                    for handler in self.upload_handlers:
-                        await self.complete_file(handler)
+                    await self.receive_data_chunk(remaining_data)
+                    await self.complete_file()
+                    self._field_name = None
                     return
                 else:
                     if self._buffer:
                         self._data_size += len(self._buffer)
-                        for handler in self.upload_handlers:
-                            try:
-                                await self.receive_data_chunk(self._buffer, handler)
-                            except StopFutureHandlers:
-                                break
+                        await self.receive_data_chunk(self._buffer)
                     self._buffer = b""
                     return
 

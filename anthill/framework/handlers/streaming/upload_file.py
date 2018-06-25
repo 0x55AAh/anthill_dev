@@ -7,18 +7,15 @@ from .multipartparser import StreamingMultiPartParser, TemporaryFileUploadHandle
 @stream_request_body
 class UploadFileStreamHandler(TemplateHandler):
     max_upload_size = settings.FILE_STREAM_MAX_FILE_SIZE
-    template_name = None
     multipart_parser_class = StreamingMultiPartParser
     methods = ['post']
-    upload_handlers = [
-        MemoryFileUploadHandler(),
-        TemporaryFileUploadHandler()
-    ]
+    template_name = None
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
-        # self.initialize_handlers()
         self.multipart_parser = None
+        self.upload_handlers = None
+        self.initialize_handlers()
 
     def is_method_matched(self):
         return self.request.method.lower() in map(lambda x: x.lower(), self.methods)
@@ -27,6 +24,7 @@ class UploadFileStreamHandler(TemplateHandler):
         if self.is_method_matched():
             self.multipart_parser = self.multipart_parser_class(
                 self.request.headers, self.upload_handlers)
+            self.request.files = self.multipart_parser.files
 
     async def data_received(self, chunk):
         """
@@ -38,8 +36,14 @@ class UploadFileStreamHandler(TemplateHandler):
 
     def initialize_handlers(self):
         self.upload_handlers = [
-            load_handler(handler) for handler in settings.FILE_UPLOAD_HANDLERS
+            MemoryFileUploadHandler(),
+            TemporaryFileUploadHandler()
         ]
+        # self.upload_handlers = [
+        #     load_handler(handler) for handler in settings.FILE_UPLOAD_HANDLERS
+        # ]
 
     async def post(self):
+        await self.multipart_parser.upload_complete()
         print(self.multipart_parser.files)
+        print(self.multipart_parser.variables)
