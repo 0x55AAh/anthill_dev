@@ -6,12 +6,14 @@ from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.conf import settings
-from anthill.framework.core.files import uploadhandler
+# noinspection PyProtectedMember
+from tornado.httputil import _parse_header
 import json
 import logging
 
 
 class TranslationHandlerMixin:
+    # noinspection PyMethodMayBeStatic
     def get_user_locale(self):
         """
         Override to determine the locale from the authenticated user.
@@ -24,6 +26,7 @@ class TranslationHandlerMixin:
 
 class LogExceptionHandlerMixin:
     def log_exception(self, exc_type, exc_value, tb):
+        # noinspection PyUnresolvedReferences
         super().log_exception(exc_type, exc_value, tb)
         logging.getLogger('anthill').exception(
             str(exc_value), extra={'handler': self})
@@ -36,12 +39,7 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
-        content_type, params = list(map(lambda x: x.strip(), content_type.split(';', 1)))
-        params = [
-            param.split('=') for param
-            in map(lambda x: x.strip(), params.split(';'))
-        ]
-        return content_type, dict(params)
+        return _parse_header(content_type)
 
     def reverse_url(self, name, *args):
         url = super().reverse_url(name, *args)
@@ -120,6 +118,7 @@ class JsonWebSocketHandler(WebSocketHandler):
 class JSONHandlerMixin:
     extra_context = None
 
+    # noinspection PyUnresolvedReferences
     def set_default_headers(self):
         self.set_header('Content-Type', 'application/json')
 
@@ -143,6 +142,7 @@ class ContextMixin:
     async def get_context_data(self, **kwargs):
         if self.extra_context is not None:
             kwargs.update(self.extra_context)
+        # noinspection PyTypeChecker
         kwargs.update(await build_context_from_context_processors(self))
         return kwargs
 
@@ -177,6 +177,7 @@ class RedirectMixin:
         else:
             return
 
+        # noinspection PyUnresolvedReferences
         request_query = self.request.query
         if request_query and self.query_string:
             url = "%s?%s" % (url, request_query)
@@ -193,10 +194,12 @@ class TemplateMixin:
 
     def render(self, **kwargs):
         template_name = self.get_template_name()
+        # noinspection PyUnresolvedReferences
         return super().render(template_name, **kwargs)
 
     def get_template_namespace(self):
         from anthill.framework.apps import app
+        # noinspection PyUnresolvedReferences
         namespace = super().get_template_namespace()
         namespace.update(app_version=app.version)
         namespace.update(debug=app.debug)
