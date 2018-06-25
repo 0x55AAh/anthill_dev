@@ -5,12 +5,10 @@ from anthill.framework.handlers.base import (
     TemplateHandler, TemplateMixin
 )
 from anthill.framework.handlers.jsonrpc import WebSocketJSONRPCHandler, JSONRPCMixin
-from anthill.framework.handlers.streaming.watch_file import (
+from anthill.framework.handlers.streaming.watchfile import (
     WatchFileHandler, WatchTextFileHandler, WatchLogFileHandler
 )
-from anthill.framework.handlers.streaming.upload_file import (
-    UploadFileStreamHandler
-)
+from anthill.framework.handlers.streaming.uploadfile import UploadFileStreamHandler
 from anthill.framework.handlers.graphql import GraphQLHandler
 
 __all__ = [
