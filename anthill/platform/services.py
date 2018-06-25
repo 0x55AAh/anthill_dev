@@ -152,7 +152,7 @@ class DiscoveryService(BaseService):
     async def check_services(self):
         for name in self.registry.keys():
             if name == self.name:
-                # Skip self pinging
+                # Prevent self pinging
                 continue
             if not await self.is_service_alive(name):
                 await self.remove_service(name)

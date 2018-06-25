@@ -202,40 +202,46 @@ class StreamingMultiPartParser:
         self._buffer = None
         self._data_size = 0
         self._field_name = None
+        self._skip_field_name = None
 
         self.files = {}
         self.variables = {}
 
     async def upload_start(self):
-        for handler in self.upload_handlers:
+        for i, handler in enumerate(self.upload_handlers):
             await handler.upload_start(self.content_length, self._boundary, self.encoding)
 
     async def new_file(self, field_name, file_name, content_type, content_length,
                        charset=None, content_type_extra=None):
-        for handler in self.upload_handlers:
+        for i, handler in enumerate(self.upload_handlers):
             try:
                 await handler.new_file(
                     field_name, file_name, content_type, content_length,
                     charset, content_type_extra)
             except StopFutureHandlers:
+                self._skip_field_name = (field_name, i + 1)
                 break
 
     async def receive_data_chunk(self, raw_data):
-        for handler in self.upload_handlers:
+        for i, handler in enumerate(self.upload_handlers):
+            if self._skip_field_name == (self._field_name, i):
+                break
             chunk = await handler.receive_data_chunk(raw_data)
             if chunk is None:
                 # Don't continue if the chunk received by the handler is None.
                 break
 
     async def complete_file(self):
-        for handler in self.upload_handlers:
+        for i, handler in enumerate(self.upload_handlers):
+            if self._skip_field_name == (self._field_name, i):
+                break
             file_obj = await handler.complete_file(self._data_size)
             if file_obj and self._field_name is not None:
                 # If it returns a file object, then set the files dict.
                 self.files.setdefault(self._field_name, []).append(file_obj)
 
     async def upload_complete(self):
-        for handler in self.upload_handlers:
+        for i, handler in enumerate(self.upload_handlers):
             await handler.upload_complete()
 
     async def data_received(self, chunk):
