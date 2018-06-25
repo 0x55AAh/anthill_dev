@@ -73,14 +73,20 @@ class BaseService(CeleryMixin, _BaseService):
 
 class PlainService(BaseService):
     auto_register_on_discovery = True
+    register_max_retries = 0
 
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.discovery_request = partial(self.internal_connection.request, 'discovery')
 
+    @method_decorator(retry(max_retries=register_max_retries, delay=0,
+                            on_exception=lambda func, e:
+                                logger.fatal('Service `discovery` is unreachable.'),
+                            exception_types=(RequestTimeoutError,)))
     async def register_on_discovery(self) -> None:
         kwargs = {'name': self.name, 'networks': self.app.registry_entry}
         await self.discovery_request('set_service_bulk', **kwargs)
+        logger.info('Connected to `discovery` service.')
 
     async def unregister_on_discovery(self) -> None:
         await self.discovery_request('remove_service', name=self.name)
@@ -107,7 +113,7 @@ class DiscoveryService(BaseService):
     cleanup_storage_on_stop = True
     cleanup_services_period = 1
     ping_services = True
-    ping_max_retries = 3
+    ping_max_retries = 1
     ping_timeout = 1
 
     def __init__(self, *args, **kwargs):
@@ -115,7 +121,7 @@ class DiscoveryService(BaseService):
         self.ping_monitor = None
         if self.ping_services:
             self.ping_monitor = PeriodicCallback(
-                self.update_services, self.cleanup_services_period * 1000)
+                self.check_services, self.cleanup_services_period * 1000)
         self.registry = self.app.registry
 
     async def on_start(self) -> None:
@@ -133,14 +139,21 @@ class DiscoveryService(BaseService):
             self.ping_monitor.stop()
 
     @method_decorator(retry(max_retries=ping_max_retries, delay=0,
-                            exception_types=(RequestTimeoutError, KeyError, TypeError),
-                            check_result_callback=lambda r: r['message'] == 'pong'))
+                            exception_types=(RequestTimeoutError, KeyError, TypeError)))
     async def is_service_alive(self, name):
         request = partial(self.internal_connection.request, name)
-        return await request('ping', timeout=self.ping_timeout)
+        try:
+            response = await request('ping', timeout=self.ping_timeout)
+            return response['message'] == 'pong'
+        except Exception:
+            logger.error('Service `%s` is unreachable.' % name)
+            raise
 
-    async def update_services(self):
+    async def check_services(self):
         for name in self.registry.keys():
+            if name == self.name:
+                # Skip self pinging
+                continue
             if not await self.is_service_alive(name):
                 await self.remove_service(name)
             else:

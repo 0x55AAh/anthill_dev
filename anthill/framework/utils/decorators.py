@@ -200,37 +200,37 @@ def auth_generic_route(uri, template, handler):
     return AuthHandler
 
 
-class UnsuccessfulResult(Exception):
-    def __init__(self, result):
-        self.result = result
+def retry(max_retries=3, delay=3, on_exception=None, on_finish=None,
+          raise_exception=False, exception_types=None):
 
+    exception_types = exception_types or (Exception, )
+    if not isinstance(exception_types, (tuple, )):
+        raise ValueError(
+            '`exception_types` must be a tuple, %s passed.' % type(exception_types))
 
-def retry(max_retries=3, delay=3, exception_callback=None, final_callback=None,
-          raise_exception=False, exception_types=(Exception, ), check_result_callback=None):
+    max_retries = max_retries or 9999
+
     def decorator(func):
+
         @wraps(func)
         async def wrapper(*args, **kwargs):
             exc = None
-            if not isinstance(exception_types, (tuple, )):
-                raise ValueError('Exception types must be tuple.')
-            _exception_types = exception_types
-            if Exception not in exception_types:
-                _exception_types += (UnsuccessfulResult, )
-            for _ in range(max_retries):
+            for retries_count in range(1, max_retries + 1):
                 try:
                     result = await func(*args, **kwargs)
-                    if check_result_callback and not check_result_callback(result):
-                        raise UnsuccessfulResult(result)
-                    return result
-                except _exception_types as e:
+                except exception_types as e:
                     exc = e
-                    if exception_callback is not None:
-                        exception_callback(func, e)
+                    if on_exception is not None:
+                        on_exception(func, e)
                     if delay:
-                        sleep(delay)
-            if final_callback is not None:
-                final_callback(func, max_retries)
+                        await sleep(delay)
+                else:
+                    return result
+            if on_finish is not None:
+                on_finish(func, max_retries)
             if raise_exception:
                 raise exc
+
         return wrapper
+
     return decorator
