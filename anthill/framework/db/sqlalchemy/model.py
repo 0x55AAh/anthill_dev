@@ -1,19 +1,10 @@
-import re
-
-import sqlalchemy as sa
+from tornado.escape import to_basestring
 from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import DeclarativeMeta, declared_attr
+# noinspection PyProtectedMember
 from sqlalchemy.schema import _get_table_key
-
-
-def to_str(x, charset='utf8', errors='strict'):
-    if x is None or isinstance(x, str):
-        return x
-
-    if isinstance(x, bytes):
-        return x.decode(charset, errors)
-
-    return str(x)
+import sqlalchemy as sa
+import re
 
 
 def should_set_tablename(cls):
@@ -158,5 +149,5 @@ class Model:
         if identity is None:
             pk = "(transient {0})".format(id(self))
         else:
-            pk = ', '.join(to_str(value) for value in identity)
+            pk = ', '.join(to_basestring(value) for value in identity)
         return '<{0} {1}>'.format(type(self).__name__, pk)

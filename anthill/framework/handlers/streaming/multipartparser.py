@@ -1,7 +1,7 @@
 """
 Multi-part parsing for file uploads.
 
-Exposes one class, ``MultiPartParser``, which feeds chunks of uploaded data to
+Exposes one class, ``StreamingMultiPartParser``, which feeds chunks of uploaded data to
 file upload handlers for processing.
 """
 from anthill.framework.core.files.uploadhandler import StopFutureHandlers

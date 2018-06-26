@@ -143,13 +143,6 @@ class GeoIP2:
     def _reader(self):
         return self._country or self._city
 
-    @property
-    def _country_or_city(self):
-        if self._country:
-            return self._country.country
-        else:
-            return self._city.city
-
     def __del__(self):
         # Cleanup any GeoIP file handles lying around.
         if self._reader:
@@ -214,7 +207,7 @@ class GeoIP2:
         """
         # Returning the country code and name
         enc_query = self._check_query(query, city_or_country=True)
-        return Country(self._country_or_city(enc_query))
+        return Country(self._country.country(enc_query))
 
     # #### Coordinate retrieval routines ####
     def coords(self, query, ordering=('longitude', 'latitude')):

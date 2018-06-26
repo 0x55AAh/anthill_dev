@@ -31,6 +31,7 @@ from anthill.framework.core.signals import Namespace
 from .model import Model
 from six import string_types
 from .model import DefaultMeta
+from tornado.escape import to_basestring
 
 __version__ = '2.3.2'
 
@@ -39,16 +40,6 @@ _timer = time.time
 
 def itervalues(d):
     return iter(d.values())
-
-
-def to_str(x, charset='utf8', errors='strict'):
-    if x is None or isinstance(x, str):
-        return x
-
-    if isinstance(x, bytes):
-        return x.decode(charset, errors)
-
-    return str(x)
 
 
 _signals = Namespace()
