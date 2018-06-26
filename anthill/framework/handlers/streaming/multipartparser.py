@@ -80,7 +80,7 @@ class StreamingMultiPartParser:
         self._buffer = None
         self._data_size = 0
         self._field_name = None
-        self._skip_field_name = None
+        self._skip_field_name = None  # Tuple (field_name, upload_handler_index)
 
         self.files = {}
         self.variables = {}
@@ -101,6 +101,7 @@ class StreamingMultiPartParser:
                 break
 
     async def receive_data_chunk(self, raw_data):
+        self._data_size += len(raw_data)
         for i, handler in enumerate(self.upload_handlers):
             if self._skip_field_name == (self._field_name, i):
                 break
@@ -117,6 +118,7 @@ class StreamingMultiPartParser:
             if file_obj and self._field_name is not None:
                 # If it returns a file object, then set the files dict.
                 self.files.setdefault(self._field_name, []).append(file_obj)
+        self._field_name = None
 
     async def upload_complete(self):
         # Signal that the upload has completed.
@@ -206,23 +208,17 @@ class StreamingMultiPartParser:
                 if self._boundary_delimiter in self._buffer:
                     data, remaining_data = self._buffer.split(self._boundary_delimiter, 1)
                     self._buffer = remaining_data
-                    self._data_size += len(data[:-2])
                     await self.receive_data_chunk(data[:-2])
                     await self.complete_file()
-                    self._field_name = None
-
                     self.current_phase = PHASE_HEADERS
                     continue
                 elif self._end_boundary in self._buffer:
                     remaining_data = self._buffer.split(self._end_boundary)[0]
-                    self._data_size += len(remaining_data)
                     await self.receive_data_chunk(remaining_data)
                     await self.complete_file()
-                    self._field_name = None
                     return
                 else:
                     if self._buffer:
-                        self._data_size += len(self._buffer)
                         await self.receive_data_chunk(self._buffer)
                     self._buffer = b""
                     return
