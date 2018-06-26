@@ -80,7 +80,7 @@ class BaseService(TornadoWebApplication):
             'max_header_size': None,
             'idle_connection_timeout': None,
             'body_timeout': None,
-            'max_body_size': None,
+            'max_body_size': self.config.FILE_UPLOAD_MAX_BODY_SIZE,
             'max_buffer_size': None,
             'trusted_downstream': None
         }

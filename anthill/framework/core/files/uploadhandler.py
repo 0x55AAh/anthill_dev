@@ -1,78 +1,50 @@
 """
 Base file upload handler classes, and the built-in concrete subclasses
 """
-from anthill.framework.conf import settings
-from anthill.framework.core.files.uploadedfile import (
-    InMemoryUploadedFile, TemporaryUploadedFile,
-)
+from anthill.framework.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from anthill.framework.utils.module_loading import import_string
+from anthill.framework.conf import settings
 from io import BytesIO
 
 
 __all__ = [
-    'UploadFileException', 'StopUpload', 'SkipFile', 'FileUploadHandler',
-    'TemporaryFileUploadHandler', 'MemoryFileUploadHandler', 'StopFutureHandlers',
-    'load_handler'
+    'UploadFileException', 'FileUploadHandler',
+    'TemporaryFileUploadHandler', 'MemoryFileUploadHandler', 'load_handler',
+    'StopFutureHandlers'
 ]
 
 
 class UploadFileException(Exception):
-    """Any error having to do with uploading files."""
-
-
-class StopUpload(UploadFileException):
-    """This exception is raised when an upload must abort."""
-
-    def __init__(self, connection_reset=False):
-        """
-        If ``connection_reset`` is ``True``, framework knows will halt the upload
-        without consuming the rest of the upload. This will cause the browser to
-        show a "connection reset" error.
-        """
-        self.connection_reset = connection_reset
-
-    def __str__(self):
-        if self.connection_reset:
-            return 'StopUpload: Halt current upload.'
-        else:
-            return 'StopUpload: Consume request data, then halt.'
-
-
-class SkipFile(UploadFileException):
     """
-    This exception is raised by an upload handler that wants to skip a given file.
+    Any error having to do with uploading files.
     """
+    pass
 
 
 class StopFutureHandlers(UploadFileException):
     """
-    Upload handlers that have handled a file and do not want future handlers to
+    Upload handers that have handled a file and do not want future handlers to
     run should raise this exception instead of returning None.
     """
+    pass
 
 
 class FileUploadHandler:
     """Base class for streaming upload handlers."""
 
-    chunk_size = 64 * 2 ** 10  # : The default chunk size is 64 KB.
-
-    def __init__(self, request=None):
+    def __init__(self):
+        self.field_name = None
         self.file_name = None
         self.content_type = None
         self.content_length = None
         self.charset = None
         self.content_type_extra = None
-        self.request = request
 
-    def handle_raw_input(self, input_data, request, content_length, boundary, encoding=None):
+    async def upload_start(self, content_length, boundary, encoding=None):
         """
-        Handle the raw input from the client.
+        Signal that a uploading has been started.
 
         Parameters:
-            :input_data:
-                An object that supports reading via .read().
-            :request:
-                Handler request object.
             :content_length:
                 The value (integer) of the Content-Length header from the client.
             :boundary:
@@ -80,7 +52,8 @@ class FileUploadHandler:
                 Be sure to prepend two '--'.
         """
 
-    def new_file(self, field_name, file_name, content_type, content_length, charset=None, content_type_extra=None):
+    async def new_file(self, field_name, file_name, content_type, content_length,
+                       charset=None, content_type_extra=None):
         """
         Signal that a new file has been started.
 
@@ -94,23 +67,16 @@ class FileUploadHandler:
         self.charset = charset
         self.content_type_extra = content_type_extra
 
-    def receive_data_chunk(self, raw_data, start):
+    async def receive_data_chunk(self, raw_data):
         """
-        Receive data from the streamed upload parser. ``start`` is the position
-        in the file of the chunk.
+        Receive data from the streamed upload parser.
         """
         raise NotImplementedError('subclasses of FileUploadHandler must provide a receive_data_chunk() method')
 
-    def file_complete(self, file_size):
-        """
-        Signal that a file has completed. File size corresponds to the actual
-        size accumulated by all the chunks.
+    async def complete_file(self, file_size):
+        """Called when a file has been received."""
 
-        Subclasses should return a valid ``UploadedFile`` object.
-        """
-        raise NotImplementedError('subclasses of FileUploadHandler must provide a file_complete() method')
-
-    def upload_complete(self):
+    async def upload_complete(self):
         """
         Signal that the upload is complete. Subclasses should perform cleanup
         that is necessary for this handler.
@@ -120,18 +86,19 @@ class FileUploadHandler:
 class TemporaryFileUploadHandler(FileUploadHandler):
     """Upload handler that streams data into a temporary file."""
 
-    def new_file(self, *args, **kwargs):
-        """
-        Create the file object to append to as data is coming in.
-        """
-        super().new_file(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
+        self.file = None
+
+    async def new_file(self, *args, **kwargs):
+        await super().new_file(*args, **kwargs)
         self.file = TemporaryUploadedFile(
             self.file_name, self.content_type, 0, self.charset, self.content_type_extra)
 
-    def receive_data_chunk(self, raw_data, start):
+    async def receive_data_chunk(self, raw_data):
         self.file.write(raw_data)
 
-    def file_complete(self, file_size):
+    async def complete_file(self, file_size):
         self.file.seek(0)
         self.file.size = file_size
         return self.file
@@ -142,7 +109,12 @@ class MemoryFileUploadHandler(FileUploadHandler):
     File upload handler to stream uploads into memory (used for small files).
     """
 
-    def handle_raw_input(self, input_data, request, content_length, boundary, encoding=None):
+    def __init__(self):
+        super().__init__()
+        self.activated = True
+        self.file = None
+
+    async def upload_start(self, content_length, boundary, encoding=None):
         """
         Use the content_length to signal whether or not this handler should be used.
         """
@@ -153,20 +125,20 @@ class MemoryFileUploadHandler(FileUploadHandler):
         else:
             self.activated = True
 
-    def new_file(self, *args, **kwargs):
-        super().new_file(*args, **kwargs)
+    async def new_file(self, *args, **kwargs):
+        await super().new_file(*args, **kwargs)
         if self.activated:
             self.file = BytesIO()
-            raise StopFutureHandlers()
+            raise StopFutureHandlers
 
-    def receive_data_chunk(self, raw_data, start):
+    async def receive_data_chunk(self, raw_data):
         """Add the data to the BytesIO file."""
         if self.activated:
             self.file.write(raw_data)
         else:
             return raw_data
 
-    def file_complete(self, file_size):
+    async def complete_file(self, file_size):
         """Return a file object if this handler is activated."""
         if not self.activated:
             return
@@ -187,7 +159,7 @@ def load_handler(path, *args, **kwargs):
     Given a path to a handler, return an instance of that handler.
 
     E.g.::
-        >>> load_handler('anthill.framework.core.files.uploadhandler.TemporaryFileUploadHandler', request)
+        >>> load_handler('anthill.framework.core.files.uploadhandler.TemporaryFileUploadHandler')
         <TemporaryFileUploadHandler object at 0x...>
     """
     return import_string(path)(*args, **kwargs)

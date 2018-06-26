@@ -109,8 +109,7 @@ FILE_UPLOAD_HANDLERS = [
     'anthill.framework.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
-FILE_UPLOAD_MAX_FILE_SIZE = 1024 * 1024 * 16    # i.e. 16 MB
-FILE_STREAM_MAX_FILE_SIZE = 1024 * 1024 * 1024  # i.e. 1 GB
+FILE_UPLOAD_MAX_BODY_SIZE = 1024 * 1024 * 16    # i.e. 16 MB
 
 # Maximum size, in bytes, of a request before it will be streamed to the
 # file system instead of into memory.

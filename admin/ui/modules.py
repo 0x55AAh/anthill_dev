@@ -138,7 +138,7 @@ class ServiceCard(TemplateModule):
 class DropZoneUploader(TemplateModule):
     template_name = 'modules/uploaders/dropzone.html'
     options_default = {
-        'max_file_size': settings.FILE_UPLOAD_MAX_FILE_SIZE / (1024 * 1024),
+        'max_file_size': settings.FILE_UPLOAD_MAX_BODY_SIZE / (1024 * 1024),
         'url': '/upload/',
         'default_message': 'Drop files to upload <span>or CLICK</span>',
         'param_name': 'file',
