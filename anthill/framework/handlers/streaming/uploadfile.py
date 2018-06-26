@@ -56,3 +56,5 @@ class UploadFileStreamHandler(TemplateHandler):
         >>>        default_storage.save(f.name, f.file)
         >>>        f.close()
         """
+        # Finalize uploading
+        await self.multipart_parser.upload_complete()
