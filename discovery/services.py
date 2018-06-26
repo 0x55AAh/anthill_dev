@@ -22,6 +22,7 @@ class Service(DiscoveryService):
     def get_service_storage_key(self, name: str) -> str:
         return ':'.join([self.service_storage_key_prefix, name])
 
+    # noinspection PyMethodMayBeStatic
     def get_service_name_by_key(self, key: str) -> str:
         return to_basestring(key).split(':', maxsplit=1)[1]
 

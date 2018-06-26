@@ -1,7 +1,6 @@
-import os
 from io import BytesIO, StringIO, UnsupportedOperation
-
 from anthill.framework.core.files.utils import FileProxyMixin
+import os
 
 
 class File(FileProxyMixin):

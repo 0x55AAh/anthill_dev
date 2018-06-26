@@ -110,17 +110,22 @@ class StreamingMultiPartParser:
                 break
 
     async def complete_file(self):
-        for i, handler in enumerate(self.upload_handlers):
-            if self._skip_field_name == (self._field_name, i):
-                break
-            file_obj = await handler.complete_file(self._data_size)
-            if file_obj and self._field_name is not None:
-                # If it returns a file object, then set the files dict.
-                self.files.setdefault(self._field_name, []).append(file_obj)
+        try:
+            for i, handler in enumerate(self.upload_handlers):
+                if self._skip_field_name == (self._field_name, i):
+                    break
+                file_obj = await handler.complete_file(self._data_size)
+                if file_obj and self._field_name is not None:
+                    # If it returns a file object, then set the files dict.
+                    self.files.setdefault(self._field_name, []).append(file_obj)
+        finally:
+            await self.upload_complete()
 
     async def upload_complete(self):
-        for i, handler in enumerate(self.upload_handlers):
-            await handler.upload_complete()
+        # Signal that the upload has completed.
+        for handler in self.upload_handlers:
+            if await handler.upload_complete():
+                break
 
     async def data_received(self, chunk):
         """
