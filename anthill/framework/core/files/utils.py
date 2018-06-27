@@ -1,3 +1,4 @@
+# noinspection PyUnresolvedReferences
 class FileProxyMixin:
     """
     A mixin class used to forward file methods to an underlaying file
