@@ -18,15 +18,13 @@ class UploadFileException(Exception):
     """
     Any error having to do with uploading files.
     """
-    pass
 
 
 class StopFutureHandlers(UploadFileException):
     """
-    Upload handers that have handled a file and do not want future handlers to
+    Upload handlers that have handled a file and do not want future handlers to
     run should raise this exception instead of returning None.
     """
-    pass
 
 
 class FileUploadHandler:
@@ -40,16 +38,13 @@ class FileUploadHandler:
         self.charset = None
         self.content_type_extra = None
 
-    async def upload_start(self, content_length, boundary, encoding=None):
+    async def start(self, content_length, encoding=None):
         """
         Signal that a uploading has been started.
 
         Parameters:
             :content_length:
                 The value (integer) of the Content-Length header from the client.
-            :boundary:
-                The boundary from the Content-Type header.
-                Be sure to prepend two '--'.
         """
 
     async def new_file(self, field_name, file_name, content_type, content_length,
@@ -76,7 +71,7 @@ class FileUploadHandler:
     async def complete_file(self, file_size):
         """Called when a file has been received."""
 
-    async def upload_complete(self):
+    async def complete(self):
         """
         Signal that the upload is complete. Subclasses should perform cleanup
         that is necessary for this handler.
@@ -114,7 +109,7 @@ class MemoryFileUploadHandler(FileUploadHandler):
         self.activated = True
         self.file = None
 
-    async def upload_start(self, content_length, boundary, encoding=None):
+    async def start(self, content_length, encoding=None):
         """
         Use the content_length to signal whether or not this handler should be used.
         """
@@ -122,8 +117,7 @@ class MemoryFileUploadHandler(FileUploadHandler):
         # If the post is too large, we cannot use the Memory handler.
         if content_length > settings.FILE_UPLOAD_MAX_MEMORY_SIZE:
             self.activated = False
-        else:
-            self.activated = True
+        await super().start(content_length, encoding)
 
     async def new_file(self, *args, **kwargs):
         await super().new_file(*args, **kwargs)

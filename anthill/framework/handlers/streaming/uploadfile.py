@@ -13,7 +13,7 @@ class UploadFileStreamHandler(TemplateHandler):
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
-        self.multipart_parser = None
+        self.mp = None
         self._upload_handlers = None
         self._content_type = None
 
@@ -21,13 +21,13 @@ class UploadFileStreamHandler(TemplateHandler):
         self._content_type = self.request.headers.get('Content-Type', '')
         if self._content_type.startswith('multipart/form-data'):
             self.request.connection.set_max_body_size(self.max_upload_size)
-            self.multipart_parser = self.multipart_parser_class(
-                self.request.headers, self.upload_handlers)
-            self.request.files = self.multipart_parser.files
+            self.mp = self.multipart_parser_class(self.request.headers, self.upload_handlers)
+            setattr(self.request, 'files', self.mp.files)
+            setattr(self.request, 'arguments', self.mp.arguments)
 
     async def data_received(self, chunk):
         if self._content_type.startswith('multipart/form-data'):
-            await self.multipart_parser.data_received(chunk)
+            await self.mp.data_received(chunk)
 
     def _initialize_handlers(self):
         self._upload_handlers = list(map(
@@ -43,7 +43,8 @@ class UploadFileStreamHandler(TemplateHandler):
     @upload_handlers.setter
     def upload_handlers(self, upload_handlers):
         if hasattr(self.request, 'files'):
-            raise AttributeError("You cannot set the upload handlers after the upload has been processed.")
+            raise AttributeError(
+                "You cannot set the upload handlers after the upload has been processed.")
         self._upload_handlers = upload_handlers
 
     async def post(self):
@@ -57,4 +58,4 @@ class UploadFileStreamHandler(TemplateHandler):
         >>>        f.close()
         """
         # Finalize uploading
-        await self.multipart_parser.upload_complete()
+        await self.mp.complete()

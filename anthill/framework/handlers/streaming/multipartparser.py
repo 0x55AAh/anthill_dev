@@ -7,6 +7,7 @@ file upload handlers for processing.
 from anthill.framework.core.files.uploadhandler import StopFutureHandlers
 from anthill.framework.utils.encoding import force_text
 from tornado.httputil import HTTPHeaders
+from tornado.ioloop import IOLoop
 # noinspection PyProtectedMember
 from tornado.httputil import _parse_header
 from tornado.log import gen_log
@@ -17,6 +18,10 @@ import cgi
 PHASE_BOUNDARY = 1
 PHASE_HEADERS = 2
 PHASE_BODY = 3
+
+FIELD_TYPE_RAW = 1
+FIELD_TYPE_FILE = 2
+FIELD_TYPE_FIELD = 3
 
 
 class MultiPartParserError(Exception):
@@ -75,19 +80,24 @@ class StreamingMultiPartParser:
         self.content_length = content_length
         self.encoding = encoding or settings.DEFAULT_CHARSET
 
-        self.current_phase = PHASE_BOUNDARY  # Initial phase
+        self.current_phase = PHASE_BOUNDARY
+        self.current_field_type = FIELD_TYPE_RAW
 
         self._buffer = None
         self._data_size = 0
         self._field_name = None
         self._skip_field_name = None  # Tuple (field_name, upload_handler_index)
+        self._transfer_encoding = None
 
         self.files = {}
-        self.variables = {}
+        self.arguments = {}
 
-    async def upload_start(self):
-        for i, handler in enumerate(self.upload_handlers):
-            await handler.upload_start(self.content_length, self._boundary, self.encoding)
+        IOLoop.current().add_callback(self.start)
+
+    async def start(self):
+        # Signal that the upload has started.
+        for handler in self.upload_handlers:
+            await handler.start(self.content_length, self.encoding)
 
     async def new_file(self, field_name, file_name, content_type, content_length,
                        charset=None, content_type_extra=None):
@@ -120,19 +130,23 @@ class StreamingMultiPartParser:
                 self.files.setdefault(self._field_name, []).append(file_obj)
         self._field_name = None
 
-    async def upload_complete(self):
+    async def complete_field(self):
+        self.arguments.setdefault(self._field_name, []).append(self._buffer)
+
+    async def complete_part(self):
+        if self.current_field_type == FIELD_TYPE_FILE:
+            await self.complete_file()
+        elif self.current_field_type == FIELD_TYPE_FIELD:
+            await self.complete_field()
+
+    async def complete(self):
         # Signal that the upload has completed.
         for handler in self.upload_handlers:
-            if await handler.upload_complete():
+            if await handler.complete():
                 break
 
     async def data_received(self, chunk):
-        """
-        Receive chunk of multipart/form-data.
-        """
-        if self._buffer is None:
-            await self.upload_start()
-
+        """Receive chunk of multipart/form-data."""
         if not self._buffer:
             self._buffer = chunk
         else:
@@ -145,10 +159,10 @@ class StreamingMultiPartParser:
                         self.current_phase = PHASE_HEADERS
                         self._buffer = self._buffer[len(self._boundary_delimiter):]
                     elif self._buffer.startswith(self._end_boundary):
-                        await self.complete_file()
+                        # await self.complete_file()
                         return
                     else:
-                        gen_log.warning("Invalid multipart/form-data")
+                        gen_log.warning('Invalid multipart/form-data')
                         return
                 else:
                     # Wait for next chunk
@@ -161,17 +175,18 @@ class StreamingMultiPartParser:
                     if headers:
                         headers = HTTPHeaders.parse(headers.decode(self.encoding))
                     else:
-                        gen_log.warning("multipart/form-data missing headers")
+                        gen_log.warning('multipart/form-data missing headers')
                         return
 
-                    disposition_header = headers.get("Content-Disposition", "")
+                    disposition_header = headers.get('Content-Disposition', '')
                     disposition, disposition_params = _parse_header(disposition_header)
-                    if disposition != "form-data":
-                        gen_log.warning("Invalid multipart/form-data")
+                    if disposition != 'form-data':
+                        gen_log.warning('Invalid multipart/form-data')
                         return
 
                     self._buffer = remaining_part
 
+                    self.current_field_type = FIELD_TYPE_FIELD
                     self.current_phase = PHASE_BODY
                     self._data_size = 0  # Reset data size counter before enter PHASE_BODY phase
 
@@ -182,24 +197,28 @@ class StreamingMultiPartParser:
                     field_name = force_text(field_name, self.encoding, errors='replace')
                     self._field_name = field_name
 
+                    self._transfer_encoding = headers.get('Content-Transfer-Encoding', '')
+
                     file_name = disposition_params.get('filename')
                     if file_name:
                         file_name = force_text(file_name, self.encoding, errors='replace')
-                    if not file_name:
-                        return
+                    if file_name:
+                        content_type = headers.get('Content-Type', '')
+                        content_type, content_type_extra = _parse_header(content_type)
+                        charset = content_type_extra.get('charset')
 
-                    content_type = headers.get('Content-Type', '')
-                    content_type, content_type_extra = _parse_header(content_type)
-                    charset = content_type_extra.get('charset')
+                        self.current_field_type = FIELD_TYPE_FILE
 
-                    try:
-                        content_length = int(headers.get('Content-Length', 0))
-                    except (TypeError, ValueError):
-                        content_length = None
+                        try:
+                            content_length = int(headers.get('Content-Length', 0))
+                        except (TypeError, ValueError):
+                            content_length = None
 
-                    await self.new_file(
-                        field_name, file_name, content_type, content_length,
-                        charset, content_type_extra)
+                        await self.new_file(
+                            field_name, file_name, content_type, content_length,
+                            charset, content_type_extra)
+                    else:
+                        pass
                 else:
                     # Wait for all headers for current file
                     return
@@ -209,14 +228,16 @@ class StreamingMultiPartParser:
                     data, remaining_data = self._buffer.split(self._boundary_delimiter, 1)
                     self._buffer = remaining_data
                     await self.receive_data_chunk(data[:-2])
-                    await self.complete_file()
+                    await self.complete_part()
                     self.current_phase = PHASE_HEADERS
                     continue
+
                 elif self._end_boundary in self._buffer:
                     remaining_data = self._buffer.split(self._end_boundary)[0]
                     await self.receive_data_chunk(remaining_data)
-                    await self.complete_file()
+                    await self.complete_part()
                     return
+
                 else:
                     if self._buffer:
                         await self.receive_data_chunk(self._buffer)
