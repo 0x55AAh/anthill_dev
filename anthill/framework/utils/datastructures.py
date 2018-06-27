@@ -57,10 +57,6 @@ class MultiValueDict(dict):
     >>> d.get('lastname', 'nonexistent')
     'nonexistent'
     >>> d.setlist('lastname', ['Holovaty', 'Willison'])
-
-    This class exists to solve the irritating problem raised by cgi.parse_qs,
-    which returns a list for every key, even though most Web forms submit
-    single name-value pairs.
     """
     def __init__(self, key_to_list_mapping=()):
         super().__init__(key_to_list_mapping)
@@ -258,9 +254,6 @@ class DictWrapper(dict):
     Wrap accesses to a dictionary so that certain values (those starting with
     the specified prefix) are passed through a function before being returned.
     The prefix is removed before looking up the real value.
-
-    Used by the SQL construction code to ensure that values are correctly
-    quoted before being used.
     """
     def __init__(self, data, func, prefix):
         super().__init__(data)

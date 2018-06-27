@@ -3,16 +3,15 @@ from tornado import locale
 
 
 class Translations:
-    def __init__(self, code):
+    """
+    A translations object for WTForms that gets its messages from
+    Anthill's translations providers.
+    """
+    def __init__(self, code=settings.LOCALE):
         self.locale = locale.get(code)
 
-    # noinspection SpellCheckingInspection
     def gettext(self, string):
         return self.locale.translate(string)
 
-    # noinspection SpellCheckingInspection
     def ngettext(self, singular, plural, n):
         return self.locale.translate(singular, plural, n)
-
-
-translations = Translations(code=settings.LOCALE)
