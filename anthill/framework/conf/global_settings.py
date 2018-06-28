@@ -115,6 +115,10 @@ FILE_UPLOAD_MAX_BODY_SIZE = 1024 * 1024 * 16    # i.e. 16 MB
 # file system instead of into memory.
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440  # i.e. 2.5 MB
 
+# Maximum size in bytes of request data (excluding file uploads) that will be
+# read before a SuspiciousOperation (RequestDataTooBig) is raised.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440  # i.e. 2.5 MB
+
 # Directory in which upload streamed files will be temporarily saved. A value of
 # `None` will make framework use the operating system's default temporary directory
 # (i.e. "/tmp" on *nix systems).

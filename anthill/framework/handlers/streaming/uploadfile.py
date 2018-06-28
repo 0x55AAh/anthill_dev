@@ -24,6 +24,7 @@ class UploadFileStreamHandler(TemplateHandler):
             self.mp = self.multipart_parser_class(self.request.headers, self.upload_handlers)
             setattr(self.request, 'files', self.mp.files)
             setattr(self.request, 'arguments', self.mp.arguments)
+            setattr(self.request, 'body_arguments', self.mp.arguments)
 
     async def data_received(self, chunk):
         if self._content_type.startswith('multipart/form-data'):
@@ -31,7 +32,7 @@ class UploadFileStreamHandler(TemplateHandler):
 
     def _initialize_handlers(self):
         self._upload_handlers = list(map(
-            lambda x: load_handler(x), settings.FILE_UPLOAD_HANDLERS))
+            lambda x: load_handler(x, self.request), settings.FILE_UPLOAD_HANDLERS))
 
     @property
     def upload_handlers(self):

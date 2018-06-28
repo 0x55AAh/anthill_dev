@@ -30,13 +30,14 @@ class StopFutureHandlers(UploadFileException):
 class FileUploadHandler:
     """Base class for streaming upload handlers."""
 
-    def __init__(self):
+    def __init__(self, request=None):
         self.field_name = None
         self.file_name = None
         self.content_type = None
         self.content_length = None
         self.charset = None
         self.content_type_extra = None
+        self.request = request
 
     async def start(self, content_length, encoding=None):
         """
@@ -153,7 +154,7 @@ def load_handler(path, *args, **kwargs):
     Given a path to a handler, return an instance of that handler.
 
     E.g.::
-        >>> load_handler('anthill.framework.core.files.uploadhandler.TemporaryFileUploadHandler')
+        >>> load_handler('anthill.framework.core.files.uploadhandler.TemporaryFileUploadHandler', request)
         <TemporaryFileUploadHandler object at 0x...>
     """
     return import_string(path)(*args, **kwargs)

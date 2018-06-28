@@ -27,6 +27,13 @@ class DisallowedHost(SuspiciousOperation):
     """HTTP_HOST header contains invalid value"""
 
 
+class RequestDataTooBig(SuspiciousOperation):
+    """
+    The size of the request (excluding any file uploads) exceeded
+    settings.DATA_UPLOAD_MAX_MEMORY_SIZE.
+    """
+
+
 class PermissionDenied(Exception):
     """The user did not have permission to do that"""
 
