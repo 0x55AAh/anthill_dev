@@ -89,6 +89,8 @@ class StreamingMultiPartParser:
         self._skip_field_name = None  # Tuple (field_name, upload_handler_index)
         self._transfer_encoding = None
 
+        self._read_field_data = None
+
         self.files = {}
         self.arguments = {}
 
@@ -112,13 +114,18 @@ class StreamingMultiPartParser:
 
     async def receive_data_chunk(self, raw_data):
         self._data_size += len(raw_data)
-        for i, handler in enumerate(self.upload_handlers):
-            if self._skip_field_name == (self._field_name, i):
-                break
-            chunk = await handler.receive_data_chunk(raw_data)
-            if chunk is None:
-                # Don't continue if the chunk received by the handler is None.
-                break
+        if self.current_field_type == FIELD_TYPE_FILE:
+            for i, handler in enumerate(self.upload_handlers):
+                if self._skip_field_name == (self._field_name, i):
+                    break
+                chunk = await handler.receive_data_chunk(raw_data)
+                if chunk is None:
+                    # Don't continue if the chunk received by the handler is None.
+                    break
+        elif self.current_field_type == FIELD_TYPE_FIELD:
+            if self._read_field_data is None:
+                self._read_field_data = b''
+            self._read_field_data += raw_data
 
     async def complete_file(self):
         for i, handler in enumerate(self.upload_handlers):
@@ -128,16 +135,18 @@ class StreamingMultiPartParser:
             if file_obj and self._field_name is not None:
                 # If it returns a file object, then set the files dict.
                 self.files.setdefault(self._field_name, []).append(file_obj)
-        self._field_name = None
 
     async def complete_field(self):
-        self.arguments.setdefault(self._field_name, []).append(self._buffer)
+        data = self._read_field_data
+        self.arguments.setdefault(self._field_name, []).append(data)
+        self._read_field_data = b''
 
     async def complete_part(self):
         if self.current_field_type == FIELD_TYPE_FILE:
             await self.complete_file()
         elif self.current_field_type == FIELD_TYPE_FIELD:
             await self.complete_field()
+        self._field_name = None
 
     async def complete(self):
         # Signal that the upload has completed.
