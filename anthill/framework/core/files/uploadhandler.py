@@ -82,8 +82,8 @@ class FileUploadHandler:
 class TemporaryFileUploadHandler(FileUploadHandler):
     """Upload handler that streams data into a temporary file."""
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, request=None):
+        super().__init__(request)
         self.file = None
 
     async def new_file(self, *args, **kwargs):
@@ -105,8 +105,8 @@ class MemoryFileUploadHandler(FileUploadHandler):
     File upload handler to stream uploads into memory (used for small files).
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, request=None):
+        super().__init__(request)
         self.activated = True
         self.file = None
 

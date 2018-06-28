@@ -18,13 +18,14 @@ class UploadFileStreamHandler(TemplateHandler):
         self._content_type = None
 
     async def prepare(self):
+        super().prepare()
         self._content_type = self.request.headers.get('Content-Type', '')
         if self._content_type.startswith('multipart/form-data'):
             self.request.connection.set_max_body_size(self.max_upload_size)
             self.mp = self.multipart_parser_class(self.request.headers, self.upload_handlers)
-            setattr(self.request, 'files', self.mp.files)
-            setattr(self.request, 'arguments', self.mp.arguments)
-            setattr(self.request, 'body_arguments', self.mp.arguments)
+            self.request.files = self.mp.files
+            self.request.arguments = self.mp.arguments
+            self.request.body_arguments = self.mp.arguments
 
     async def data_received(self, chunk):
         if self._content_type.startswith('multipart/form-data'):
