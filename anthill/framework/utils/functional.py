@@ -9,11 +9,11 @@ from functools import total_ordering, wraps
 # CPython) is a type and its instances don't bind.
 def curry(_curried_func, *args, **kwargs):
     def _curried(*moreargs, **morekwargs):
-        return _curried_func(*(args + moreargs), **{**kwargs, **morekwargs})
+        return _curried_func(*args, *moreargs, **{**kwargs, **morekwargs})
     return _curried
 
 
-class cached_property:
+class CachedProperty:
     """
     Decorator that converts a method with a single self argument into a
     property cached on the instance.
@@ -36,6 +36,9 @@ class cached_property:
             return self
         res = instance.__dict__[self.name] = self.func(instance)
         return res
+
+
+cached_property = CachedProperty
 
 
 class Promise:
@@ -189,12 +192,9 @@ def keep_lazy(*resultclasses):
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            for arg in itertools.chain(args, kwargs.values()):
-                if isinstance(arg, Promise):
-                    break
-            else:
-                return func(*args, **kwargs)
-            return lazy_func(*args, **kwargs)
+            if any(isinstance(arg, Promise) for arg in itertools.chain(args, kwargs.values())):
+                return lazy_func(*args, **kwargs)
+            return func(*args, **kwargs)
         return wrapper
     return decorator
 
@@ -338,8 +338,9 @@ class SimpleLazyObject(LazyObject):
         Pass in a callable that returns the object to be wrapped.
 
         If copies are made of the resulting SimpleLazyObject, which can happen
-        in various circumstances within framework, then you must ensure that the
-        callable can be safely run more than once and will return the same value.
+        in various circumstances within Anthill, then you must ensure that the
+        callable can be safely run more than once and will return the same
+        value.
         """
         self.__dict__['_setupfunc'] = func
         super().__init__()
