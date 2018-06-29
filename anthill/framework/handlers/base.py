@@ -2,6 +2,7 @@ from tornado.web import RequestHandler as BaseRequestHandler
 from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
+from anthill.framework.utils.cache import patch_vary_headers
 from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
@@ -102,8 +103,7 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
                 )
             else:
                 if accessed:
-                    # patch_vary_headers(response, ('Cookie',))
-                    pass
+                    patch_vary_headers(self._headers, ('Cookie',))
                 if (modified or settings.SESSION_SAVE_EVERY_REQUEST) and not empty:
                     if self.request.session.get_expire_at_browser_close():
                         max_age = None

@@ -289,7 +289,7 @@ SESSION_COOKIE_PATH = '/'
 # Whether to use the non-RFC standard httpOnly flag (IE, FF3+, others)
 SESSION_COOKIE_HTTPONLY = True
 # Whether to save the session data on every request.
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_SAVE_EVERY_REQUEST = False
 # Whether a user's session cookie expires when the Web browser is closed.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # The module to store session data
@@ -299,3 +299,8 @@ SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
 SESSION_FILE_PATH = None
 # class to serialize session data
 SESSION_SERIALIZER = 'anthill.framework.sessions.serializers.JSONSerializer'
+
+
+OUTPUT_TRANSFORMS = [
+    'tornado.web.GZipContentEncoding',
+]

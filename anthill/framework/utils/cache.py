@@ -10,7 +10,10 @@ import hashlib
 import re
 
 
-__all__ = ['cached', 'cached_method', 'request_handler_cache_key']
+__all__ = [
+    'cached', 'cached_method', 'request_handler_cache_key',
+    'patch_vary_headers'
+]
 
 
 def _cached(timeout, key, cache=cache, key_prefix=None, handler_method=False, http_method=None):
@@ -104,3 +107,23 @@ def request_handler_cache_key(handler, cache_timeout=None, key_prefix=None, cach
         else:
             header_list = []
     return _generate_cache_key(handler, request.method, header_list, key_prefix)
+
+
+def patch_vary_headers(oldheaders, newheaders):
+    """
+    Add (or update) the "Vary" header in the oldheaders.
+    newheaders is a list of header names that should be in "Vary".
+    Existing headers in "Vary" aren't removed.
+    """
+    # Note that we need to keep the original order intact, because cache
+    # implementations may rely on the order of the Vary contents in, say,
+    # computing an MD5 hash.
+    if 'Vary' in oldheaders:
+        vary_headers = _CC_DELIMITER_RE.split(oldheaders['Vary'])
+    else:
+        vary_headers = []
+    # Use .lower() here so we treat headers as case-insensitive.
+    existing_headers = set(map(str.lower, vary_headers))
+    additional_headers = list(filter(
+        lambda newheader: newheader.lower() not in existing_headers, newheaders))
+    oldheaders['Vary'] = ', '.join(vary_headers + additional_headers)

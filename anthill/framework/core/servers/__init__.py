@@ -2,6 +2,7 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from tornado.web import Application as TornadoWebApplication
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
+from anthill.framework.utils.module_loading import import_string
 import signal
 import logging
 import sys
@@ -19,6 +20,7 @@ class BaseService(TornadoWebApplication):
         kwargs.update(static_path=app.settings.STATIC_PATH)
         kwargs.update(static_url_prefix=app.settings.STATIC_URL)
 
+        transforms = transforms or list(map(import_string, app.settings.OUTPUT_TRANSFORMS or []))
         super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
 
         self.io_loop = IOLoop.current()
