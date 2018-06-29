@@ -118,6 +118,7 @@ def patch_vary_headers(oldheaders, newheaders):
     # Note that we need to keep the original order intact, because cache
     # implementations may rely on the order of the Vary contents in, say,
     # computing an MD5 hash.
+    print(oldheaders)
     if 'Vary' in oldheaders:
         vary_headers = _CC_DELIMITER_RE.split(oldheaders['Vary'])
     else:
@@ -125,5 +126,5 @@ def patch_vary_headers(oldheaders, newheaders):
     # Use .lower() here so we treat headers as case-insensitive.
     existing_headers = set(map(str.lower, vary_headers))
     additional_headers = list(filter(
-        lambda newheader: newheader.lower() not in existing_headers, newheaders))
+        lambda header: header.lower() not in existing_headers, newheaders))
     oldheaders['Vary'] = ', '.join(vary_headers + additional_headers)

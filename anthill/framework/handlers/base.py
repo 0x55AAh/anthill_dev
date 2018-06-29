@@ -50,8 +50,8 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
         super().__init__(application, request, **kwargs)
         self.internal_request = self.application.internal_connection.request
         # Setup SessionStore
-        engine = import_module(settings.SESSION_ENGINE)
-        self.SessionStore = engine.SessionStore
+        session_engine = import_module(settings.SESSION_ENGINE)
+        self.SessionStore = session_engine.SessionStore
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
