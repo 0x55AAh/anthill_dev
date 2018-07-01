@@ -1,7 +1,6 @@
 from anthill.framework.sessions.backends.base import (
     CreateError, SessionBase, UpdateError,
 )
-from anthill.framework.core.exceptions import SuspiciousOperation
 from anthill.framework.utils.functional import cached_property
 from anthill.framework.utils import timezone
 import logging
@@ -11,7 +10,6 @@ class SessionStore(SessionBase):
     """
     Implement database session store.
     """
-
     def __init__(self, session_key=None):
         super().__init__(session_key)
 
@@ -73,7 +71,7 @@ class SessionStore(SessionBase):
             return self.create()
         data = self._get_session(no_load=must_create)
         obj = self.create_model_instance(data)
-        obj.save()
+        obj.save(force_insert=must_create)
 
     def delete(self, session_key=None):
         if session_key is None:

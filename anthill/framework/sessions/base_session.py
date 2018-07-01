@@ -4,7 +4,6 @@ from anthill.framework.db import db
 class AbstractBaseSession(db.Model):
     __abstract__ = True
 
-    # id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     session_key = db.Column(db.String(40), unique=True, primary_key=True)
     session_data = db.Column(db.Text, nullable=False)
     expire_date = db.Column(db.DateTime, nullable=False, index=True)

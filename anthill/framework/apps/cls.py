@@ -170,9 +170,23 @@ class Application:
         """
         return importlib.import_module('%s.modules' % self.ui_module)
 
+    def get_models_modules(self):
+        sys_modules = ('anthill.framework.sessions.models',)
+        if isinstance(self.models_conf, str):
+            usr_modules = (self.models_conf,)
+        elif isinstance(self.models_conf, (tuple, list)):
+            usr_modules = self.models_conf
+        else:
+            usr_modules = ()
+        return sys_modules + usr_modules
+
+    def setup_models(self):
+        for module in self.get_models_modules():
+            importlib.import_module(module)
+
     def setup(self):
         """Setup application"""
-        importlib.import_module(self.models_conf)
+        self.setup_models()
         self.setup_internal_api()
 
     def setup_internal_api(self):

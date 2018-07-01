@@ -51,8 +51,8 @@ class AbstractUser(db.Model):
             self.save()
         return check_password(raw_password, self.password, setter=setter)
 
-    def save(self):
-        super(AbstractUser, self).save()
+    def save(self, *args, **kwargs):
+        super(AbstractUser, self).save(*args, **kwargs)
         if self._password is not None:
             password_validation.password_changed(self._password, self)
             self._password = None
@@ -119,19 +119,19 @@ class AnonymousUser:
         return self.username
 
 
-# class Profile(db.Model):
-#     """
-#     Extra fields for User model
-#     """
-#     __tablename__ = 'profiles'
-#
-#     id = db.Column(db.Integer, primary_key=True)
-#     user = db.relationship(
-#         'User',
-#         backref=db.backref('profile', lazy='joined'),
-#         uselist=False
-#     )
-#
-#     @classmethod
-#     def __declare_last__(cls):
-#         """Validation must be here"""
+class Profile(db.Model):
+    """
+    Extra fields for User model
+    """
+    __tablename__ = 'profiles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.relationship(
+        'User',
+        backref=db.backref('profile', lazy='joined'),
+        uselist=False
+    )
+
+    @classmethod
+    def __declare_last__(cls):
+        """Validation must be here"""
