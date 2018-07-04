@@ -18,7 +18,7 @@ class UploadFileStreamHandler(TemplateHandler):
         self._content_type = None
 
     async def prepare(self):
-        super().prepare()
+        await super().prepare()
         self._content_type = self.request.headers.get('Content-Type', '')
         if self._content_type.startswith('multipart/form-data'):
             self.request.connection.set_max_body_size(self.max_upload_size)

@@ -1,6 +1,7 @@
 from anthill.framework.auth.hashers import make_password, check_password
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
+from anthill.framework.utils.crypto import salted_hmac
 from . import password_validation
 
 
@@ -57,11 +58,16 @@ class AbstractUser(db.Model):
             password_validation.password_changed(self._password, self)
             self._password = None
 
+    def get_session_auth_hash(self):
+        """
+        Return an HMAC of the password field.
+        """
+        key_salt = "anthill.framework.auth.models.AbstractUser.get_session_auth_hash"
+        return salted_hmac(key_salt, self.password).hexdigest()
+
 
 class User(AbstractUser):
-    """
-    Default User model
-    """
+    """Default User model."""
     __tablename__ = 'users'
 
     username = db.Column(db.String(128), nullable=False, unique=True)
@@ -104,16 +110,16 @@ class AnonymousUser:
         return False
 
     def save(self):
-        raise NotImplementedError("Framework doesn't provide a DB representation for AnonymousUser.")
+        raise NotImplementedError("Anthill doesn't provide a DB representation for AnonymousUser.")
 
     def delete(self):
-        raise NotImplementedError("Framework doesn't provide a DB representation for AnonymousUser.")
+        raise NotImplementedError("Anthill doesn't provide a DB representation for AnonymousUser.")
 
     def set_password(self, raw_password):
-        raise NotImplementedError("Framework doesn't provide a DB representation for AnonymousUser.")
+        raise NotImplementedError("Anthill doesn't provide a DB representation for AnonymousUser.")
 
     def check_password(self, raw_password):
-        raise NotImplementedError("Framework doesn't provide a DB representation for AnonymousUser.")
+        raise NotImplementedError("Anthill doesn't provide a DB representation for AnonymousUser.")
 
     def get_username(self):
         return self.username

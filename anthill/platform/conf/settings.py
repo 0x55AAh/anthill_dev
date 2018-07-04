@@ -179,3 +179,6 @@ GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
 
 COMPRESS_RESPONSE = True
+
+
+SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'

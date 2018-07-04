@@ -8,6 +8,7 @@ from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.core.exceptions import SuspiciousOperation
 from anthill.framework.sessions.backends.base import UpdateError
+from anthill.framework.auth.handlers import UserHandlerMixin
 from anthill.framework.conf import settings
 # noinspection PyProtectedMember
 from tornado.httputil import _parse_header
@@ -37,21 +38,85 @@ class LogExceptionHandlerMixin:
             str(exc_value), extra={'handler': self})
 
 
-def _is_secure(request):
-    return request.protocol in ('https', )
-
-
-def _is_ajax(request):
-    return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-
-
-class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequestHandler):
-    def __init__(self, application, request, **kwargs):
-        super().__init__(application, request, **kwargs)
-        self.internal_request = self.application.internal_connection.request
-        # Setup SessionStore
+class SessionHandlerMixin:
+    def init_session(self):
         session_engine = import_module(settings.SESSION_ENGINE)
         self.SessionStore = session_engine.SessionStore
+
+    def setup_session(self):
+        session_key = self.get_cookie(settings.SESSION_COOKIE_NAME)
+        self.session = self.SessionStore(session_key)
+
+    def update_session(self):
+        # If session was modified, or if the configuration is to save the
+        # session every time, save the changes and set a session cookie or delete
+        # the session cookie if the session has been emptied.
+        try:
+            accessed = self.session.accessed
+            modified = self.session.modified
+            empty = self.session.is_empty()
+        except AttributeError:
+            pass
+        else:
+            # First check if we need to delete this cookie.
+            # The session should be deleted only if the session is entirely empty
+            if settings.SESSION_COOKIE_NAME in self.cookies and empty:
+                self.clear_cookie(
+                    settings.SESSION_COOKIE_NAME,
+                    path=settings.SESSION_COOKIE_PATH,
+                    domain=settings.SESSION_COOKIE_DOMAIN,
+                )
+            else:
+                if accessed:
+                    patch_vary_headers(self._headers, ('Cookie',))
+                if (modified or settings.SESSION_SAVE_EVERY_REQUEST) and not empty:
+                    if self.session.get_expire_at_browser_close():
+                        max_age = None
+                        expires = None
+                    else:
+                        max_age = self.session.get_expiry_age()
+                        expires = time.time() + max_age
+                    # Save the session data and refresh the client cookie.
+                    # Skip session save for 500 responses.
+                    if self._status_code != 500:
+                        try:
+                            self.session.save()
+                        except UpdateError:
+                            raise SuspiciousOperation(
+                                "The request's session was deleted before the "
+                                "request completed. The user may have logged "
+                                "out in a concurrent request, for example."
+                            )
+                        self.set_cookie(
+                            settings.SESSION_COOKIE_NAME,
+                            self.session.session_key,
+                            max_age=max_age,
+                            expires=expires,
+                            domain=settings.SESSION_COOKIE_DOMAIN,
+                            path=settings.SESSION_COOKIE_PATH,
+                            secure=settings.SESSION_COOKIE_SECURE or None,
+                            httponly=settings.SESSION_COOKIE_HTTPONLY or None
+                        )
+
+
+class CommonRequestHandlerMixin:
+    def clear(self):
+        """Resets all headers and content for this response."""
+        super().clear()
+        if settings.HIDE_SERVER_VERSION:
+            self.clear_header('Server')
+
+    def is_secure(self):
+        pass
+
+
+class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
+                     CommonRequestHandlerMixin, UserHandlerMixin, BaseRequestHandler):
+    def __init__(self, application, request, **kwargs):
+        super().__init__(application, request, **kwargs)
+        self.current_user = None
+        self.internal_request = self.application.internal_connection.request
+        self.init_session()
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
@@ -74,77 +139,28 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseRequ
         Requires the `.stream_request_body` decorator.
         """
 
-    def prepare(self):
+    def is_secure(self):
+        return self.request.protocol in ('https',)
+
+    def is_ajax(self):
+        return self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    async def prepare(self):
         """Called at the beginning of a request before  `get`/`post`/etc."""
-        session_key = self.get_cookie(settings.SESSION_COOKIE_NAME)
-        self.request.session = self.SessionStore(session_key)
-        setattr(self.request.__class__, 'is_secure', _is_secure)
-        setattr(self.request.__class__, 'is_ajax', _is_ajax)
+        self.setup_session()
+        await self.setup_user()
 
     def finish(self, chunk=None):
         """Finishes this response, ending the HTTP request."""
-        # If request.session was modified, or if the configuration is to save the
-        # session every time, save the changes and set a session cookie or delete
-        # the session cookie if the session has been emptied.
-        try:
-            accessed = self.request.session.accessed
-            modified = self.request.session.modified
-            empty = self.request.session.is_empty()
-        except AttributeError:
-            pass
-        else:
-            # First check if we need to delete this cookie.
-            # The session should be deleted only if the session is entirely empty
-            if settings.SESSION_COOKIE_NAME in self.cookies and empty:
-                self.clear_cookie(
-                    settings.SESSION_COOKIE_NAME,
-                    path=settings.SESSION_COOKIE_PATH,
-                    domain=settings.SESSION_COOKIE_DOMAIN,
-                )
-            else:
-                if accessed:
-                    patch_vary_headers(self._headers, ('Cookie',))
-                if (modified or settings.SESSION_SAVE_EVERY_REQUEST) and not empty:
-                    if self.request.session.get_expire_at_browser_close():
-                        max_age = None
-                        expires = None
-                    else:
-                        max_age = self.request.session.get_expiry_age()
-                        expires = time.time() + max_age
-                    # Save the session data and refresh the client cookie.
-                    # Skip session save for 500 responses.
-                    if self._status_code != 500:
-                        try:
-                            self.request.session.save()
-                        except UpdateError:
-                            raise SuspiciousOperation(
-                                "The request's session was deleted before the "
-                                "request completed. The user may have logged "
-                                "out in a concurrent request, for example."
-                            )
-                        self.set_cookie(
-                            settings.SESSION_COOKIE_NAME,
-                            self.request.session.session_key,
-                            max_age=max_age,
-                            expires=expires,
-                            domain=settings.SESSION_COOKIE_DOMAIN,
-                            path=settings.SESSION_COOKIE_PATH,
-                            secure=settings.SESSION_COOKIE_SECURE or None,
-                            httponly=settings.SESSION_COOKIE_HTTPONLY or None
-                        )
+        self.update_session()
         super().finish(chunk)
 
     def on_finish(self):
         """Called after the end of a request."""
 
-    def clear(self):
-        """Resets all headers and content for this response."""
-        super().clear()
-        if settings.HIDE_SERVER_VERSION:
-            self.clear_header('Server')
 
-
-class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, BaseWebSocketHandler):
+class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, CommonRequestHandlerMixin,
+                       BaseWebSocketHandler):
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self.settings.update(websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL)

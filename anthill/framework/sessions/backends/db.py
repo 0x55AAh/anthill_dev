@@ -6,6 +6,9 @@ from anthill.framework.utils import timezone
 import logging
 
 
+logger = logging.getLogger('anthill.application')
+
+
 class SessionStore(SessionBase):
     """
     Implement database session store.
@@ -29,7 +32,6 @@ class SessionStore(SessionBase):
                 self.model.expire_date > timezone.now()
             ).first()
         except Exception as e:
-            logger = logging.getLogger('anthill.application')
             logger.warning(str(e))
             self._session_key = None
 

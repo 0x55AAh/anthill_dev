@@ -18,7 +18,7 @@ class Session(AbstractBaseSession):
     the sessions documentation that is shipped with Anthill.
     """
 
-    __tablename__ = 'anthill_session'
+    __tablename__ = 'anthill_sessions'
 
     @classmethod
     def get_session_store_class(cls):

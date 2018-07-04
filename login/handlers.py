@@ -1,1 +1,10 @@
-# Create your handlers here.
+class LoginHandler:
+    pass
+
+
+class LogoutHandler:
+    pass
+
+
+class RegisterHandler:
+    pass

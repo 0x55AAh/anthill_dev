@@ -6,11 +6,9 @@ UserModel = get_user_model()
 
 
 class ModelBackend:
-    """
-    Authenticates against settings.AUTH_USER_MODEL.
-    """
+    """Authenticates against settings.AUTH_USER_MODEL."""
 
-    def authenticate(self, request, username=None, password=None, **kwargs):
+    async def authenticate(self, request, username=None, password=None, **kwargs):
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)
         user = UserModel.query.filter_by(username=username).first()
@@ -63,7 +61,7 @@ class ModelBackend:
     def has_perm(self, user, perm, obj=None):
         return user.is_active and perm in self.get_all_permissions(user, obj)
 
-    def get_user(self, user_id):
+    async def get_user(self, user_id):
         user = UserModel.query.get(user_id)
         if user is None:
             raise ObjectDoesNotExist('User does not exist.')
