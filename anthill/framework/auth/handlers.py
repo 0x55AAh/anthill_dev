@@ -12,7 +12,7 @@ from anthill.framework.conf import settings
 
 
 class UserHandlerMixin:
-    async def load_user(self):
+    async def get_user(self):
         """
         Return the user model instance associated with the given session.
         If no user is retrieved, return an instance of `AnonymousUser`.
@@ -42,7 +42,7 @@ class UserHandlerMixin:
 
     # noinspection PyAttributeOutsideInit
     async def setup_user(self):
-        self.current_user = await self.load_user()
+        self.current_user = await self.get_user()
 
 
 class LoginHandlerMixin:
