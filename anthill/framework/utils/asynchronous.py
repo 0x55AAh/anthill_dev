@@ -9,7 +9,7 @@ __all__ = ['ThreadPoolExecution', 'thread_pool_exec']
 
 
 class ThreadPoolExecution:
-    """Tiny wrapper around ThreadPoolExecutor"""
+    """Tiny wrapper around ThreadPoolExecutor."""
 
     def __init__(self, max_workers=None):
         self._max_workers = max_workers or (multiprocessing.cpu_count() or 1) * 5

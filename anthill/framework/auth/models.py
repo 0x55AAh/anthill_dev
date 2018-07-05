@@ -2,7 +2,7 @@ from anthill.framework.auth.hashers import make_password, check_password
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
 from anthill.framework.utils.crypto import salted_hmac
-from . import password_validation
+from anthill.framework.auth import password_validation
 
 
 class AbstractUser(db.Model):
@@ -18,7 +18,7 @@ class AbstractUser(db.Model):
     _password = None
 
     def get_username(self):
-        """Return the identifying username for this User"""
+        """Return the identifying username for this User."""
         return getattr(self, self.USERNAME_FIELD)
 
     def __str__(self):
@@ -59,15 +59,14 @@ class AbstractUser(db.Model):
             self._password = None
 
     def get_session_auth_hash(self):
-        """
-        Return an HMAC of the password field.
-        """
+        """Return an HMAC of the password field."""
         key_salt = "anthill.framework.auth.models.AbstractUser.get_session_auth_hash"
         return salted_hmac(key_salt, self.password).hexdigest()
 
 
 class User(AbstractUser):
     """Default User model."""
+
     __tablename__ = 'users'
 
     username = db.Column(db.String(128), nullable=False, unique=True)
@@ -80,11 +79,28 @@ class User(AbstractUser):
 
     @classmethod
     def __declare_last__(cls):
-        """Validation must be here"""
+        """Validation must be here."""
 
     @property
     def is_authenticated(self):
         return True
+
+
+class Profile(db.Model):
+    """Extra fields for User model."""
+
+    __tablename__ = 'profiles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.relationship(
+        'User',
+        backref=db.backref('profile', lazy='joined'),
+        uselist=False
+    )
+
+    @classmethod
+    def __declare_last__(cls):
+        """Validation must be here."""
 
 
 class AnonymousUser:
@@ -123,21 +139,3 @@ class AnonymousUser:
 
     def get_username(self):
         return self.username
-
-
-class Profile(db.Model):
-    """
-    Extra fields for User model
-    """
-    __tablename__ = 'profiles'
-
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.relationship(
-        'User',
-        backref=db.backref('profile', lazy='joined'),
-        uselist=False
-    )
-
-    @classmethod
-    def __declare_last__(cls):
-        """Validation must be here"""
