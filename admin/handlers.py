@@ -29,6 +29,7 @@ class HomeHandler(TemplateHandler):
             service_cards = []
             for name in services.keys():
                 if name == self.application.name:
+                    # Skip current application
                     continue
                 try:
                     metadata = await self.internal_request(name, method='get_service_metadata')
