@@ -17,7 +17,7 @@ ADMINS = (
 # SQLALCHEMY_DATABASE_URI = 'mysql://user:pass@localhost/db_name'
 SQLALCHEMY_DATABASE_URI = ''
 
-LOCATION = 'http://{{ server_host_name }}:{{ server_port }}'
+LOCATION = 'http://{{ server_hostname }}:{{ server_port }}'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = '{{ app_name }}.routes'
