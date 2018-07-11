@@ -56,6 +56,11 @@ class Application:
 
     @property
     @lru_cache()
+    def https_enabled(self):
+        return self.protocol == 'https'
+
+    @property
+    @lru_cache()
     def version(self):
         mod = importlib.import_module(self.name)
         return getattr(mod, 'version', None)

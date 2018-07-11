@@ -90,6 +90,11 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
     def on_finish(self):
         """Called after the end of a request."""
 
+    def set_default_headers(self):
+        """
+        Override this to set HTTP headers at the beginning of the request.
+        """
+
 
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, CommonRequestHandlerMixin,
                        BaseWebSocketHandler):

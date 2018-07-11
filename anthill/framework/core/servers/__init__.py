@@ -13,6 +13,7 @@ logger = logging.getLogger('anthill.application')
 
 class BaseService(TornadoWebApplication):
     server_class = HTTPServer
+    signals = ('SIGTERM', 'SIGHUP', 'SIGINT')
 
     def __init__(self, handlers=None, default_host=None, transforms=None, app=None, **kwargs):
         kwargs.update(debug=app.debug)
@@ -33,7 +34,6 @@ class BaseService(TornadoWebApplication):
         # Override `io_loop.handle_callback_exception` method to catch exceptions globally.
         self.io_loop.handle_callback_exception = self.__io_loop_handle_callback_exception__
 
-        """Setup server variables"""
         self.add_handlers(self.app.host_regex, self.app.routes)
 
         self.settings.update(cookie_secret=self.app.settings.SECRET_KEY)
@@ -49,9 +49,6 @@ class BaseService(TornadoWebApplication):
 
     def __sig_handler__(self, sig, frame):
         self.io_loop.add_callback(self.on_stop)
-
-    def __sigpipe_handler__(self, sig, frame):
-        pass
 
     # noinspection PyMethodMayBeStatic
     def __io_loop_handle_callback_exception__(self, callback):
@@ -89,16 +86,15 @@ class BaseService(TornadoWebApplication):
 
         # HTTPS supporting
         https_config = getattr(self.config, 'HTTPS', None)
-        if https_config is not None:
+        if self.app.https_enabled and https_config is not None:
             import ssl
-            key_file = https_config.get('key_file')
-            crt_file = https_config.get('crt_file')
-            if key_file is None:
+            if 'key_file' in https_config and https_config['key_file']:
                 raise ImproperlyConfigured('Key file not configured')
-            if crt_file is None:
+            if 'crt_file' in https_config and https_config['crt_file']:
                 raise ImproperlyConfigured('Crt file not configured')
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-            ssl_ctx.load_cert_chain(crt_file, key_file)
+            ssl_ctx.load_cert_chain(
+                https_config['crt_file'], https_config['key_file'])
             kwargs.update(ssl_options=ssl_ctx)
             logger.debug('HTTPS is ON.')
         else:
@@ -109,10 +105,8 @@ class BaseService(TornadoWebApplication):
     def setup_server(self, **kwargs):
         self.server.listen(self.app.port, self.app.host)
 
-        signal.signal(signal.SIGPIPE, self.__sigpipe_handler__)
-        signal.signal(signal.SIGTERM, self.__sig_handler__)
-        signal.signal(signal.SIGHUP, self.__sig_handler__)
-        signal.signal(signal.SIGINT, self.__sig_handler__)
+        for s in self.signals:
+            signal.signal(getattr(signal, s), self.__sig_handler__)
 
     def start(self, **kwargs):
         """Start server"""
