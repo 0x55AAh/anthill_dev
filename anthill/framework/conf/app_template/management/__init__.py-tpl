@@ -1,4 +1,4 @@
-#class YourCommand(Command):
+# class YourCommand(Command):
 #     help = 'Some help text here.'
 #     name = None
 #

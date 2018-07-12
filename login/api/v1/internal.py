@@ -9,3 +9,10 @@ Example:
     >>>    ...
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
+from login.models import User
+
+
+@as_internal()
+async def get_user(api: InternalAPI, user_id: str) -> User:
+    user = User.query.filter_by(id=user_id).first()
+    return user

@@ -14,6 +14,7 @@ from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestExcep
 from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
 from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
+import inspect
 import json
 
 
@@ -70,12 +71,20 @@ class InternalAPI(Singleton):
         """Decorator marks function as an internal api method."""
 
         def decorator(func):
-            @wraps(func)
-            async def wrapper(api_, *args, **kwargs):
-                try:
-                    return await func(api_, *args, **kwargs)
-                except Exception as e:
-                    return {'error': {'message': str(e)}}
+            if inspect.iscoroutinefunction(func):
+                @wraps(func)
+                async def wrapper(api_, *args, **kwargs):
+                    try:
+                        return await func(api_, *args, **kwargs)
+                    except Exception as e:
+                        return {'error': {'message': str(e)}}
+            else:
+                @wraps(func)
+                def wrapper(api_, *args, **kwargs):
+                    try:
+                        return func(api_, *args, **kwargs)
+                    except Exception as e:
+                        return {'error': {'message': str(e)}}
             self.add_method(wrapper)
             return wrapper
 
@@ -87,21 +96,22 @@ as_internal = api.as_internal
 
 
 # ## Predefined API methods ###
-async def test(api_: InternalAPI):
+def test(api_: InternalAPI):
     return {'method': 'test', 'service': api_.service.name}
 
 
-async def ping(api_: InternalAPI):
+def ping(api_: InternalAPI):
     return {'message': 'pong', 'service': api_.service.name}
 
 
-async def get_service_metadata(api_: InternalAPI):
+def get_service_metadata(api_: InternalAPI):
     return {
         'title': settings.APPLICATION_VERBOSE_NAME,
         'icon_class': settings.APPLICATION_ICON_CLASS,
         'description': settings.APPLICATION_DESCRIPTION,
         'color': settings.APPLICATION_COLOR
     }
+
 
 api.add_methods([test, ping, get_service_metadata])
 # ## /Predefined API methods ###

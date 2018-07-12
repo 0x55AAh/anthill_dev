@@ -1,6 +1,7 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
+from anthill.platform.utils.internal_api import internal_request
 
 
 class Profile(db.Model):
@@ -14,3 +15,6 @@ class Profile(db.Model):
     @classmethod
     def __declare_last__(cls):
         """Validation must be here."""
+
+    async def get_user(self):
+        return await internal_request('login', 'get_user', user_id=self.user_id)
