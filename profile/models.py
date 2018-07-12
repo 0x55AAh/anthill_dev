@@ -5,12 +5,11 @@ from anthill.framework.db import db
 
 class Profile(db.Model):
     """Extra fields for User model."""
-
     __tablename__ = 'profiles'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    payload = db.Column(db.JSON)
+    user_id = db.Column(db.Integer, nullable=False, unique=True)
+    payload = db.Column(db.JSON, nullable=False, default={})
 
     @classmethod
     def __declare_last__(cls):

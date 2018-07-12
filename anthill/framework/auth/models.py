@@ -66,7 +66,6 @@ class AbstractUser(db.Model):
 
 class User(AbstractUser):
     """Default User model."""
-
     __tablename__ = 'users'
 
     username = db.Column(db.String(128), nullable=False, unique=True)
@@ -84,23 +83,6 @@ class User(AbstractUser):
     @property
     def is_authenticated(self):
         return True
-
-
-class Profile(db.Model):
-    """Extra fields for User model."""
-
-    __tablename__ = 'profiles'
-
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.relationship(
-        'User',
-        backref=db.backref('profile', lazy='joined'),
-        uselist=False
-    )
-
-    @classmethod
-    def __declare_last__(cls):
-        """Validation must be here."""
 
 
 class AnonymousUser:
