@@ -18,5 +18,3 @@ class Profile(db.Model):
     async def get_user(self):
         from anthill.platform.utils.internal_api import internal_request
         return await internal_request('login', 'get_user', user_id=self.user_id)
-
-

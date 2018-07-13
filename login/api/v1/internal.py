@@ -13,6 +13,9 @@ from login.models import User
 
 
 @as_internal()
-async def get_user(api: InternalAPI, user_id: str) -> User:
+async def get_user(api: InternalAPI, user_id: str) -> dict:
     user = User.query.filter_by(id=user_id).first()
-    return user
+    try:
+        return user.dump.data
+    except AttributeError:
+        pass

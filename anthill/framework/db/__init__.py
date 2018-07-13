@@ -23,6 +23,7 @@ class Model(DefaultModel):
         db.session.delete(self)
         db.session.commit()
 
+    @property
     def dump(self):
         """Marshmallow data dump."""
         if not getattr(self, 'schema', None):
@@ -34,6 +35,10 @@ class Model(DefaultModel):
         return self.schema.dump(self)
 
 
-db = SQLAlchemy(app, model_class=declarative_base(cls=Model, metaclass=DefaultMeta, name='Model'))
+db = SQLAlchemy(
+    app,
+    model_class=declarative_base(
+        cls=Model, metaclass=DefaultMeta, name='Model')
+)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
