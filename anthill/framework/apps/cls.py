@@ -4,7 +4,7 @@ from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
 from anthill.platform.api.internal import api as internal_api
 from urllib.parse import urlparse, urljoin
-from functools import lru_cache
+from functools import lru_cache, wraps
 from _thread import get_ident
 import importlib
 import re
@@ -185,9 +185,22 @@ class Application:
             usr_modules = ()
         return sys_modules + usr_modules
 
+    def update_models(self):
+        from anthill.framework.db import ma
+
+        def add_schema(cls):
+            class Schema(ma.ModelSchema):
+                class Meta:
+                    model = cls
+            cls.Schema = Schema
+
+        for model in self.get_models():
+            add_schema(model)
+
     def setup_models(self):
         for module in self.get_models_modules():
             importlib.import_module(module)
+        self.update_models()
 
     def setup(self):
         """Setup application"""

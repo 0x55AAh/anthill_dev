@@ -39,6 +39,11 @@ REGISTERED_SERVICES = {
         'external': 'http://localhost:9507',
         'broker': 'amqp://guest:guest@localhost:5672'
     },
+    'profile': {
+        'internal': 'http://localhost:9508',
+        'external': 'http://localhost:9508',
+        'broker': 'amqp://guest:guest@localhost:5672'
+    }
 }
 
 REGISTERED_SERVICES_EXTERNAL = os.path.join(BASE_DIR, 'registry.json')
