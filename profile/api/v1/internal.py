@@ -15,7 +15,5 @@ from profile.models import Profile
 @as_internal()
 async def get_profile(api: InternalAPI, user_id: str) -> dict:
     profile = Profile.query.filter_by(user_id=user_id).first()
-    try:
-        return profile.dump.data
-    except AttributeError:
-        pass
+    if profile is not None:
+        return profile.dump().data

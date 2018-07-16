@@ -23,7 +23,6 @@ class Model(DefaultModel):
         db.session.delete(self)
         db.session.commit()
 
-    @property
     def dump(self):
         """Marshmallow data dump."""
         if not getattr(self, 'schema', None):
