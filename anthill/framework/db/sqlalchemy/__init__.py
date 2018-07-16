@@ -23,7 +23,7 @@ from sqlalchemy.engine.url import make_url
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm.exc import UnmappedClassError
 from sqlalchemy.orm.session import Session as SessionBase
-from tornado.web import HTTPError
+from anthill.framework.http import Http404
 
 from anthill.framework.apps.builder import app
 from anthill.framework.core.signals import Namespace
@@ -232,9 +232,10 @@ class _SessionSignalEvents:
 
 
 class Pagination:
-    """Internal helper class returned by :meth:`BaseQuery.paginate`.  You
+    """
+    Internal helper class returned by :meth:`BaseQuery.paginate`. You
     can also construct it from any other SQLAlchemy query object if you are
-    working with other libraries.  Additionally it is possible to pass `None`
+    working with other libraries. Additionally it is possible to pass `None`
     as query object in which case the :meth:`prev` and :meth:`next` will
     no longer work.
     """
@@ -254,7 +255,7 @@ class Pagination:
 
     @property
     def pages(self):
-        """The total number of pages"""
+        """The total number of pages."""
         if self.per_page == 0:
             pages = 0
         else:
@@ -276,7 +277,7 @@ class Pagination:
 
     @property
     def has_prev(self):
-        """True if a previous page exists"""
+        """True if a previous page exists."""
         return self.page > 1
 
     def next(self, error_out=False):
@@ -292,42 +293,21 @@ class Pagination:
 
     @property
     def next_num(self):
-        """Number of the next page"""
+        """Number of the next page."""
         if not self.has_next:
             return None
         return self.page + 1
 
-    def iter_pages(self, left_edge=2, left_current=2,
-                   right_current=5, right_edge=2):
-        """Iterates over the page numbers in the pagination.  The four
+    def iter_pages(self, left_edge=2, left_current=2, right_current=5, right_edge=2):
+        """
+        Iterates over the page numbers in the pagination. The four
         parameters control the thresholds how many numbers should be produced
-        from the sides.  Skipped page numbers are represented as `None`.
-        This is how you could render such a pagination in the templates:
-
-        .. sourcecode:: html+jinja
-
-            {% macro render_pagination(pagination, endpoint) %}
-              <div class=pagination>
-              {%- for page in pagination.iter_pages() %}
-                {% if page %}
-                  {% if page != pagination.page %}
-                    <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
-                  {% else %}
-                    <strong>{{ page }}</strong>
-                  {% endif %}
-                {% else %}
-                  <span class=ellipsis>…</span>
-                {% endif %}
-              {%- endfor %}
-              </div>
-            {% endmacro %}
+        from the sides. Skipped page numbers are represented as `None`.
         """
         last = 0
         for num in range(1, self.pages + 1):
-            if num <= left_edge or \
-                    (num > self.page - left_current - 1 and \
-                     num < self.page + right_current) or \
-                    num > self.pages - right_edge:
+            if num <= left_edge or (self.page + right_current > num > self.page - left_current - 1) \
+                    or num > self.pages - right_edge:
                 if last + 1 != num:
                     yield None
                 yield num
@@ -335,30 +315,37 @@ class Pagination:
 
 
 class BaseQuery(orm.Query):
-    """SQLAlchemy :class:`~sqlalchemy.orm.query.Query` subclass with convenience methods for querying in a web application.
+    """
+    SQLAlchemy :class:`~sqlalchemy.orm.query.Query` subclass
+    with convenience methods for querying in a web application.
 
-    This is the default :attr:`~Model.query` object used for models, and exposed as :attr:`~SQLAlchemy.Query`.
-    Override the query class for an individual model by subclassing this and setting :attr:`~Model.query_class`.
+    This is the default :attr:`~Model.query` object used for models,
+    and exposed as :attr:`~SQLAlchemy.Query`.
+    Override the query class for an individual model by subclassing this
+    and setting :attr:`~Model.query_class`.
     """
 
     def get_or_404(self, ident):
-        """Like :meth:`get` but aborts with 404 if not found instead of returning ``None``."""
-
+        """
+        Like :meth:`get` but aborts with 404 if not found instead of returning ``None``.
+        """
         rv = self.get(ident)
         if rv is None:
-            HTTPError(404)
+            raise Http404
         return rv
 
     def first_or_404(self):
-        """Like :meth:`first` but aborts with 404 if not found instead of returning ``None``."""
-
+        """
+        Like :meth:`first` but aborts with 404 if not found instead of returning ``None``.
+        """
         rv = self.first()
         if rv is None:
-            HTTPError(404)
+            raise Http404
         return rv
 
     def paginate(self, request, page=None, per_page=None, error_out=True, max_per_page=None):
-        """Returns ``per_page`` items from page ``page``.
+        """
+        Returns ``per_page`` items from page ``page``.
 
         If ``page`` or ``per_page`` are ``None``, they will be retrieved from
         the request query. If ``max_per_page`` is specified, ``per_page`` will
@@ -381,20 +368,18 @@ class BaseQuery(orm.Query):
         if request:
             if page is None:
                 try:
-                    page = int(request.args.get('page', 1))
-                except (TypeError, ValueError):
+                    page = int(request.arguments.get('page', [1])[0])
+                except (TypeError, ValueError, IndexError):
                     if error_out:
-                        HTTPError(404)
-
+                        raise Http404
                     page = 1
 
             if per_page is None:
                 try:
-                    per_page = int(request.args.get('per_page', 20))
-                except (TypeError, ValueError):
+                    per_page = int(request.arguments.get('per_page', [20])[0])
+                except (TypeError, ValueError, IndexError):
                     if error_out:
-                        HTTPError(404)
-
+                        raise Http404
                     per_page = 20
         else:
             if page is None:
@@ -408,20 +393,20 @@ class BaseQuery(orm.Query):
 
         if page < 1:
             if error_out:
-                HTTPError(404)
+                raise Http404
             else:
                 page = 1
 
         if per_page < 0:
             if error_out:
-                HTTPError(404)
+                raise Http404
             else:
                 per_page = 20
 
         items = self.limit(per_page).offset((page - 1) * per_page).all()
 
         if not items and page != 1 and error_out:
-            HTTPError(404)
+            raise Http404
 
         # No need to count if we're on the first page and there are fewer
         # items than we expected.
@@ -487,13 +472,13 @@ class _EngineConnector(object):
                 options['echo'] = echo
             self._engine = rv = sqlalchemy.create_engine(info, **options)
             if _record_queries(self._app):
-                ...
+                pass
             self._connected_for = (uri, echo)
             return rv
 
 
 def get_state(app):
-    """Gets the state for the application"""
+    """Gets the state for the application."""
     assert 'sqlalchemy' in app.extensions, \
         'The sqlalchemy extension was not registered to the current ' \
         'application.  Please make sure to call init_app() first.'
@@ -509,7 +494,8 @@ class _SQLAlchemyState(object):
 
 
 class SQLAlchemy(object):
-    """This class is used to control the SQLAlchemy integration to one
+    """
+    This class is used to control the SQLAlchemy integration to one
     or more Flask applications.  Depending on how you initialize the
     object it is usable right away or will attach as needed to a
     Flask application.
@@ -566,29 +552,8 @@ class SQLAlchemy(object):
        `Table` interface, but is a function which allows omission of metadata.
 
     The ``session_options`` parameter, if provided, is a dict of parameters
-    to be passed to the session constructor.  See :class:`~sqlalchemy.orm.session.Session`
+    to be passed to the session constructor. See :class:`~sqlalchemy.orm.session.Session`
     for the standard options.
-
-    .. versionadded:: 0.10
-       The `session_options` parameter was added.
-
-    .. versionadded:: 0.16
-       `scopefunc` is now accepted on `session_options`. It allows specifying
-        a custom function which will define the SQLAlchemy session's scoping.
-
-    .. versionadded:: 2.1
-       The `metadata` parameter was added. This allows for setting custom
-       naming conventions among other, non-trivial things.
-
-    .. versionadded:: 3.0
-       The `query_class` parameter was added, to allow customisation
-       of the query class, in place of the default of :class:`BaseQuery`.
-
-       The `model_class` parameter was added, which allows a custom model
-       class to be used in place of :class:`Model`.
-
-    .. versionchanged:: 3.0
-       Utilise the same query class across `session`, `Model.query` and `Query`.
     """
 
     #: Default query class used by :attr:`Model.query` and other queries.
@@ -605,6 +570,7 @@ class SQLAlchemy(object):
         self.Model = self.make_declarative_base(model_class, metadata)
         self._engine_lock = Lock()
         self.app = app
+
         _include_sqlalchemy(self, query_class)
 
         if app is not None:
@@ -617,7 +583,8 @@ class SQLAlchemy(object):
         return self.Model.metadata
 
     def create_scoped_session(self, options=None):
-        """Create a :class:`~sqlalchemy.orm.scoping.scoped_session`
+        """
+        Create a :class:`~sqlalchemy.orm.scoping.scoped_session`
         on the factory from :meth:`create_session`.
 
         An extra key ``'scopefunc'`` can be set on the ``options`` dict to
@@ -638,7 +605,8 @@ class SQLAlchemy(object):
         return orm.scoped_session(self.create_session(options), scopefunc=scopefunc)
 
     def create_session(self, options):
-        """Create the session factory used by :meth:`create_scoped_session`.
+        """
+        Create the session factory used by :meth:`create_scoped_session`.
 
         The factory **must** return an object that SQLAlchemy recognizes as a session,
         or registering session events may raise an exception.
@@ -654,7 +622,8 @@ class SQLAlchemy(object):
         return orm.sessionmaker(class_=SignallingSession, db=self, **options)
 
     def make_declarative_base(self, model, metadata=None):
-        """Creates the declarative base that all models will inherit from.
+        """
+        Creates the declarative base that all models will inherit from.
 
         :param model: base model class (or a tuple of base classes) to pass
             to :func:`~sqlalchemy.ext.declarative.declarative_base`. Or a class
@@ -662,10 +631,6 @@ class SQLAlchemy(object):
             is not created.
         :param: metadata: :class:`~sqlalchemy.MetaData` instance to use, or
             none to use SQLAlchemy's default.
-
-        .. versionchanged 2.3.0::
-            ``model`` can be an existing declarative base in order to support
-            complex customization such as changing the metaclass.
         """
         if not isinstance(model, DeclarativeMeta):
             model = declarative_base(
@@ -687,7 +652,8 @@ class SQLAlchemy(object):
         return model
 
     def init_app(self, app):
-        """This callback can be used to initialize an application for the
+        """
+        This callback can be used to initialize an application for the
         use with this database setup. Never use a database in the context
         of an application not initialized that way or connections will leak.
         """
@@ -728,13 +694,14 @@ class SQLAlchemy(object):
         _setdefault('max_overflow', 'SQLALCHEMY_MAX_OVERFLOW')
 
     def apply_driver_hacks(self, app, info, options):
-        """This method is called before engine creation and used to inject
-        driver specific hacks into the options.  The `options` parameter is
+        """
+        This method is called before engine creation and used to inject
+        driver specific hacks into the options. The `options` parameter is
         a dictionary of keyword arguments that will then be used to call
         the :func:`sqlalchemy.create_engine` function.
 
         The default implementation provides some saner defaults for things
-        like pool sizes for MySQL and sqlite.  Also it injects the setting of
+        like pool sizes for MySQL and sqlite. Also it injects the setting of
         `SQLALCHEMY_NATIVE_UNICODE`.
         """
         if info.drivername.startswith('mysql'):
@@ -778,7 +745,8 @@ class SQLAlchemy(object):
 
     @property
     def engine(self):
-        """Gives access to the engine.  If the database configuration is bound
+        """
+        Gives access to the engine. If the database configuration is bound
         to a specific application (initialized with an application) this will
         always return a database connection.  If however the current application
         is used this might raise a :exc:`RuntimeError` if no application is
@@ -806,7 +774,9 @@ class SQLAlchemy(object):
             return connector.get_engine()
 
     def get_app(self, reference_app=None):
-        """Helper method that implements the logic to look up an application."""
+        """
+        Helper method that implements the logic to look up an application.
+        """
 
         if reference_app is not None:
             return reference_app
@@ -818,7 +788,8 @@ class SQLAlchemy(object):
             return self.app
 
         raise RuntimeError(
-            'No application found. Either work inside a view function or push an application context.'
+            'No application found. '
+            'Either work inside a view function or push an application context.'
         )
 
     def get_tables_for_bind(self, bind=None):
@@ -830,7 +801,8 @@ class SQLAlchemy(object):
         return result
 
     def get_binds(self, app=None):
-        """Returns a dictionary with a table->engine mapping.
+        """
+        Returns a dictionary with a table->engine mapping.
 
         This is suitable for use of sessionmaker(binds=db.get_binds(app)).
         """
@@ -862,27 +834,15 @@ class SQLAlchemy(object):
             op(bind=self.get_engine(app, bind), **extra)
 
     def create_all(self, bind='__all__', app=None):
-        """Creates all tables.
-
-        .. versionchanged:: 0.12
-           Parameters were added
-        """
+        """Creates all tables."""
         self._execute_for_all_tables(app, bind, 'create_all')
 
     def drop_all(self, bind='__all__', app=None):
-        """Drops all tables.
-
-        .. versionchanged:: 0.12
-           Parameters were added
-        """
+        """Drops all tables."""
         self._execute_for_all_tables(app, bind, 'drop_all')
 
     def reflect(self, bind='__all__', app=None):
-        """Reflects tables from the database.
-
-        .. versionchanged:: 0.12
-           Parameters were added
-        """
+        """Reflects tables from the database."""
         self._execute_for_all_tables(app, bind, 'reflect', skip_tables=True)
 
     def __repr__(self):

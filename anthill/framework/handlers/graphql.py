@@ -345,4 +345,5 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             context = {}
         if isinstance(context, dict) and 'request' not in context:
             context.update({'request': self.request})
+        context.update({'handler': self})
         return context
