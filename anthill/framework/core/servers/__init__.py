@@ -65,7 +65,7 @@ class BaseService(TornadoWebApplication):
 
     @property
     def server(self):
-        """Returns an instance of server class ``self.server_class``"""
+        """Returns an instance of server class ``self.server_class``."""
         return self.server_class(self, **self.get_server_kwargs())
 
     def get_server_kwargs(self):
@@ -87,11 +87,13 @@ class BaseService(TornadoWebApplication):
         # HTTPS supporting
         https_config = getattr(self.config, 'HTTPS', None)
         if self.app.https_enabled and https_config is not None:
-            import ssl
-            if 'key_file' in https_config and https_config['key_file']:
+            if not all(['key_file' in https_config, https_config['key_file']]):
                 raise ImproperlyConfigured('Key file not configured')
-            if 'crt_file' in https_config and https_config['crt_file']:
+            if not all(['crt_file' in https_config, https_config['crt_file']]):
                 raise ImproperlyConfigured('Crt file not configured')
+
+            import ssl
+
             ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
             ssl_ctx.load_cert_chain(
                 https_config['crt_file'], https_config['key_file'])
@@ -109,13 +111,13 @@ class BaseService(TornadoWebApplication):
             signal.signal(getattr(signal, s), self.__sig_handler__)
 
     def start(self, **kwargs):
-        """Start server"""
+        """Start server."""
         self.setup_server(**kwargs)
         self.io_loop.add_callback(self.on_start)
         self.io_loop.start()
 
     def stop(self):
-        """Stop server"""
+        """Stop server."""
         if self.server:
             self.io_loop.add_callback(self.on_stop)
             self.server.stop()

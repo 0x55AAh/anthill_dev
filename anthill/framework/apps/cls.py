@@ -8,6 +8,7 @@ from functools import lru_cache, wraps
 from _thread import get_ident
 import importlib
 import re
+import os
 
 
 class CommandNamesDuplicatedError(Exception):
@@ -35,7 +36,6 @@ class Application:
         self.models_conf = self._get_default('MODELS_CONF', '%s.models' % self.name)
         self.ui_module = self._get_default('UI_MODULE', '%s.ui' % self.name)
 
-        self.internal_api_module = settings.INTERNAL_API_CONF
         self.internal = internal_api
 
         self.protocol, self.host, self.port = self.split_location()
@@ -76,7 +76,7 @@ class Application:
         return entry
 
     def get_extension(self, name):
-        """Returns an extension by name or raise an exception"""
+        """Returns an extension by name or raise an exception."""
         if name not in self.extensions:
             raise ApplicationExtensionNotRegistered(name)
         return self.extensions[name]
@@ -159,11 +159,12 @@ class Application:
     @property
     @lru_cache()
     def routes(self):
-        """Returns routes map"""
+        """Returns routes map."""
         routes_mod = importlib.import_module(self.routes_conf)
         routes_list = getattr(routes_mod, 'route_patterns', [])
-        # for route in routes_list[:]:
-        #     pass
+        for route in routes_list:
+            if route.name is None:
+                route.name = '.'.join([route.target.__module__, route.target.__name__])
         return routes_list
 
     @property
@@ -171,7 +172,7 @@ class Application:
     def ui_modules(self):
         """
         Returns module object with UIModule subclasses and plain functions.
-        Use for ``service.ui_modules`` and ``service.ui_methods`` initialising.
+        Use for ``service.ui_modules`` and ``service.ui_methods`` initializing.
         """
         return importlib.import_module('%s.modules' % self.ui_module)
 
@@ -203,59 +204,31 @@ class Application:
         self.update_models()
 
     def setup(self):
-        """Setup application"""
+        """Setup application."""
         self.setup_models()
         self.setup_internal_api()
 
     def setup_internal_api(self):
-        importlib.import_module(self.internal_api_module)
+        importlib.import_module(settings.INTERNAL_API_CONF)
         internal_api.service = self.service
 
     @property
     @lru_cache()
     def service(self):
-        """Returns an instance of service class ``self.service_class``"""
+        """Returns an instance of service class ``self.service_class``."""
         service_class = import_string(self.service_class)
         service_instance = service_class(app=self)
         return service_instance
 
     def reverse_url(self, name, *args, external=False):
-        """Returns a URL path for handler named ``name``"""
+        """
+        Returns a URL path for handler named ``name``.
+        """
         url = self.service.reverse_url(name, *args)
         if external:
             return urljoin(self.settings.LOCATION, url)
         return url
 
-    # noinspection PyProtectedMember
-    def resolve_url(self, path):
-        """Returns a route attributes dict for path ``path``"""
-        from tornado.web import url
-        from tornado.routing import _unquote_or_none
-        for r in self.routes:
-            if isinstance(r, (list, tuple)):
-                r = url(*r)
-            if isinstance(r, url):
-                match = r.regex.match(path)
-                if match is not None:
-                    path_args, path_kwargs = [], {}
-                    # Pass matched groups to the handler. Since
-                    # match.groups() includes both named and
-                    # unnamed groups, we want to use either groups
-                    # or groupdict but not both.
-                    if r.regex.groupindex:
-                        path_kwargs = dict(
-                            (str(k), _unquote_or_none(v))
-                            for (k, v) in match.groupdict().items())
-                    else:
-                        path_args = [_unquote_or_none(s) for s in match.groups()]
-
-                    return dict(
-                        name=r.name,
-                        handler=r.target,
-                        args=path_args,
-                        kwargs=path_kwargs
-                    )
-
     def run(self, **kwargs):
-        """Run server"""
+        """Run server."""
         self.service.start(**kwargs)

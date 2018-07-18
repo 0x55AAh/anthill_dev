@@ -7,47 +7,28 @@
     See the `marshmallow.fields` module for the list of all fields
     available from the marshmallow library.
 """
-import re
-from marshmallow import fields
+from anthill.framework.utils.urls import reverse as url_for
 from marshmallow.compat import iteritems
-from marshmallow import missing
-from .compat import get_value
-
-
-_tpl_pattern = re.compile(r'\s*<\s*(\S*)\s*>\s*')
+from marshmallow import fields
 
 __all__ = [
     'URLFor',
-    'UrlFor',
     'AbsoluteURLFor',
-    'AbsoluteUrlFor',
     'Hyperlinks',
 ]
 
 
-def _tpl(val):
-    """Return value within ``< >`` if possible, else return ``None``."""
-    match = _tpl_pattern.match(val)
-    if match:
-        return match.groups()[0]
-    return None
-
-
 class URLFor(fields.Field):
     """
-    Field that outputs the URL for an endpoint. Acts identically to
-    Flask's ``url_for`` function, except that arguments can be pulled from the
-    object to be serialized.
+    Field that outputs the URL for an endpoint.
 
     Usage: ::
 
-        url = URLFor('author_get', id='<id>')
-        https_url = URLFor('author_get', id='<id>', _scheme='https', _external=True)
+        url = URLFor('author_get', id='15')
+        external_url = URLFor('author_get', id='15', external=True)
 
     :param str endpoint: Endpoint name.
-    :param kwargs: Same keyword arguments as Flask's url_for, except string
-        arguments enclosed in `< >` will be interpreted as attributes to pull
-        from the object.
+    :param kwargs: Keyword arguments.
     """
     _CHECK_ATTRIBUTE = False
 
@@ -63,38 +44,18 @@ class URLFor(fields.Field):
         """
         Output the URL for the endpoint, given the kwargs passed to ``__init__``.
         """
-        param_values = {}
-        for name, attr_tpl in iteritems(self.params):
-            attr_name = _tpl(str(attr_tpl))
-            if attr_name:
-                attribute_value = get_value(obj, attr_name, default=missing)
-                if attribute_value is not missing:
-                    param_values[name] = attribute_value
-                else:
-                    raise AttributeError(
-                        '{attr_name!r} is not a valid '
-                        'attribute of {obj!r}'.format(attr_name=attr_name, obj=obj)
-                    )
-            else:
-                param_values[name] = attr_tpl
-        return url_for(self.endpoint, **param_values)
-
-
-UrlFor = URLFor
+        return url_for(self.endpoint, **self.params)
 
 
 class AbsoluteURLFor(URLFor):
     """Field that outputs the absolute URL for an endpoint."""
 
     def __init__(self, endpoint, **kwargs):
-        kwargs['_external'] = True
+        kwargs['external'] = True
         URLFor.__init__(self, endpoint=endpoint, **kwargs)
 
     def _format(self, val):
         return val
-
-
-AbsoluteUrlFor = AbsoluteURLFor
 
 
 def _rapply(d, func, *args, **kwargs):

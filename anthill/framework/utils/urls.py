@@ -8,9 +8,4 @@ def reverse(name, *args, **kwargs):
     return url.rstrip('?')
 
 
-def resolve(path):
-    """Returns a route attributes dict for path ``path``"""
-    return app.resolve_url(path)
-
-
 reverse_lazy = lazy(reverse, str)
