@@ -24,8 +24,8 @@ class LazySettings(LazyObject):
     """
     def _setup(self, name=None):
         """
-        Load the settings module pointed to by the environment variable. This
-        is used the first time settings are needed, if the user hasn't
+        Load the settings module pointed to by the environment variable.
+        This is used the first time settings are needed, if the user hasn't
         configured settings manually.
         """
         settings_module = os.environ.get(ENVIRONMENT_VARIABLE)

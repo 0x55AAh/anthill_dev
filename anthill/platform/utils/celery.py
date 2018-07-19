@@ -18,8 +18,8 @@ class CeleryMixin:
     @staticmethod
     def start_celery():
         if CELERY_ENABLE:
-            logger.debug('Celery is enabled.')
+            logger.debug('Celery status: ENABLED.')
             with start_worker(app=celery_app, timezone=TIME_ZONE):
                 pass
         else:
-            logger.debug('Celery is disabled.')
+            logger.debug('Celery status: DISABLED.')

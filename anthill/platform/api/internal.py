@@ -16,12 +16,16 @@ from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
 import inspect
 import json
+import logging
 
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
     'InternalAPIError', 'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError'
 ]
+
+
+logger = logging.getLogger('anthill.application')
 
 
 def has_keys(d, keys):
@@ -156,10 +160,14 @@ class BaseInternalConnection(Singleton):
             self.channel_name = await self.channel_layer.new_channel(prefix=self.service.app.label)
             self.channel_receive = partial(self.channel_layer.receive, self.channel_name)
             await self.channel_layer.group_add(self.channel_group_name(), self.channel_name)
+            logger.debug('Internal api connection statatus: CONNECTED.')
+        else:
+            logger.debug('Internal api connection statatus: NOT_CONNECTED.')
 
     async def disconnect(self) -> None:
         await self.channel_layer.group_discard(
             self.channel_group_name(), self.channel_name)
+        logger.debug('Internal api connection statatus: DISCONNECTED.')
 
     async def send(self, service: str, message: dict) -> None:
         """Send message to service channel group."""

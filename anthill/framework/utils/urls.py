@@ -1,4 +1,4 @@
-from anthill.framework.apps import app
+from anthill.framework.apps.builder import app
 from .functional import lazy
 
 

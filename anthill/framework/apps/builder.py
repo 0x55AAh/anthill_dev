@@ -9,7 +9,7 @@ logger = logging.getLogger('anthill.application')
 class AppBuilder:
     default_application_class = Application
 
-    def get_class(self):
+    def get_app_class(self):
         application_class = self.default_application_class
         try:
             application_class = import_string(
@@ -21,15 +21,16 @@ class AppBuilder:
                 except ImportError as e:
                     logger.warning(str(e))
                     logger.warning(
-                        'Cannot import application class: %s. Default used.' % settings.APPLICATION_CLASS)
+                        'Cannot import application class: %s. '
+                        'Default used.' % settings.APPLICATION_CLASS)
         return application_class
 
-    def build(self):
-        application_class = self.get_class()
-        instance = application_class()
+    def create(self, **kwargs):
+        application_class = self.get_app_class()
+        instance = application_class(**kwargs)
         logger.info('Application `%s` loaded.' % instance.name)
         return instance
 
 
-app = AppBuilder().build()
+app = AppBuilder().create()
 app.setup()

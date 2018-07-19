@@ -275,7 +275,7 @@ class LazyObject:
     def __reduce__(self):
         if self._wrapped is empty:
             self._setup()
-        return (unpickle_lazyobject, (self._wrapped,))
+        return unpickle_lazyobject, (self._wrapped,)
 
     def __copy__(self):
         if self._wrapped is empty:
@@ -339,8 +339,7 @@ class SimpleLazyObject(LazyObject):
 
         If copies are made of the resulting SimpleLazyObject, which can happen
         in various circumstances within Anthill, then you must ensure that the
-        callable can be safely run more than once and will return the same
-        value.
+        callable can be safely run more than once and will return the same value.
         """
         self.__dict__['_setupfunc'] = func
         super().__init__()

@@ -7,8 +7,12 @@ from urllib.parse import urlparse, urljoin
 from functools import lru_cache, wraps
 from _thread import get_ident
 import importlib
+import logging
 import re
 import os
+
+
+logger = logging.getLogger('anthill.application')
 
 
 class CommandNamesDuplicatedError(Exception):
@@ -209,18 +213,23 @@ class Application:
             add_schema(model)
 
     def setup_models(self):
+        logger.debug('\_ Models loading started.')
         for module in self.get_models_modules():
             importlib.import_module(module)
+            logger.debug('  \_ Models from `%s` loaded.' % module)
         self.update_models()
 
     def setup(self):
         """Setup application."""
+        logger.debug('Appication setup started.')
         self.setup_models()
         self.setup_internal_api()
+        logger.debug('Appication setup finished.')
 
     def setup_internal_api(self):
         importlib.import_module(settings.INTERNAL_API_CONF)
         internal_api.service = self.service
+        logger.debug('\_ Internal api installed.')
 
     @property
     @lru_cache()
@@ -241,4 +250,5 @@ class Application:
 
     def run(self, **kwargs):
         """Run server."""
+        logger.debug('Go starting server...')
         self.service.start(**kwargs)

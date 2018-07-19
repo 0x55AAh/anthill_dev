@@ -35,14 +35,17 @@ class BaseService(TornadoWebApplication):
         self.io_loop.handle_callback_exception = self.__io_loop_handle_callback_exception__
 
         self.add_handlers(self.app.host_regex, self.app.routes)
+        logger.debug('Service routes installed.')
 
         self.settings.update(cookie_secret=self.app.settings.SECRET_KEY)
         self.settings.update(xsrf_cookies=self.app.settings.CSRF_COOKIES)
         self.settings.update(template_path=self.app.settings.TEMPLATE_PATH)
         self.settings.update(login_url=self.app.settings.LOGIN_URL)
+        logger.debug('Service settings updated.')
 
         self._load_ui_modules(self.app.ui_modules)
         self._load_ui_methods(self.app.ui_modules)
+        logger.debug('Service ui moduled loaded.')
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.app.name)
@@ -98,9 +101,9 @@ class BaseService(TornadoWebApplication):
             ssl_ctx.load_cert_chain(
                 https_config['crt_file'], https_config['key_file'])
             kwargs.update(ssl_options=ssl_ctx)
-            logger.debug('HTTPS is ON.')
+            logger.debug('HTTPS status: ON.')
         else:
-            logger.warning('HTTPS is OFF.')
+            logger.warning('HTTPS status: OFF.')
 
         return kwargs
 

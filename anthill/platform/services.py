@@ -23,7 +23,12 @@ class BaseService(CeleryMixin, _BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.internal_connection = self.internal_api_connection_class(service=self)
-        self.gis = GeoIP2() if getattr(self.config, 'GEOIP_PATH', None) else None
+        if getattr(self.config, 'GEOIP_PATH', None):
+            self.gis = GeoIP2()
+            logger.debug('Geo position tracking system status: ENABLED.')
+        else:
+            self.gis = None
+            logger.debug('Geo position tracking system status: DISABLED.')
 
     def setup(self) -> None:
         def url_pattern(_url, float_slash=True):
@@ -47,28 +52,29 @@ class BaseService(CeleryMixin, _BaseService):
             self.add_handlers(self.app.host_regex, [
                 url(url_pattern(log_streaming_url), handler_class, kwargs=handler_kwargs, name='log'),
             ])
+            logger.debug('Log streaming installed on %s.' % log_streaming_url)
 
         # Public API
         from anthill.framework.handlers import GraphQLHandler
         public_api_url = getattr(self.config, 'PUBLIC_API_URL', '/api/')
         self.add_handlers(self.app.host_regex, [
             url(url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
+        logger.debug('Public api installed on %s.' % public_api_url)
 
         super().setup()
 
     def get_server_kwargs(self) -> dict:
         kwargs = super().get_server_kwargs()
-        kwargs.update(xheaders=True)
         return kwargs
 
     async def on_start(self) -> None:
-        logger.info('Service `%s` started.' % self.name)
         await self.internal_connection.connect()
         self.start_celery()
+        logger.info('Service `%s` started.' % self.name)
 
     async def on_stop(self) -> None:
-        logger.info('Service `%s` stopped.' % self.name)
         await self.internal_connection.disconnect()
+        logger.info('Service `%s` stopped.' % self.name)
 
 
 class PlainService(BaseService):
@@ -90,6 +96,7 @@ class PlainService(BaseService):
 
     async def unregister_on_discovery(self) -> None:
         await self.discovery_request('remove_service', name=self.name)
+        logger.info('Disconnected from `discovery` service.')
 
     async def discover(self, name: str, network: str=None) -> dict:
         return await self.discovery_request('get_service', name=name, network=network)
