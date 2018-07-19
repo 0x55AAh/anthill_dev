@@ -162,9 +162,19 @@ class Application:
         """Returns routes map."""
         routes_mod = importlib.import_module(self.routes_conf)
         routes_list = getattr(routes_mod, 'route_patterns', [])
+        from tornado.web import URLSpec
         for route in routes_list:
-            if route.name is None:
-                route.name = '.'.join([route.target.__module__, route.target.__name__])
+            if isinstance(route, URLSpec) and route.name is None:
+                default_target_name = '.'.join([route.target.__module__, route.target.__name__])
+                route.name = default_target_name
+            elif isinstance(route, (list, tuple)):
+                default_target_name = '.'.join([route[1].__module__, route[1].__name__])
+                if len(route) == 2:
+                    route += (None, default_target_name)
+                elif len(route) == 3:
+                    route += (default_target_name,)
+                elif len(route) == 4 and route[3] is None:
+                    route[3] = default_target_name
         return routes_list
 
     @property
