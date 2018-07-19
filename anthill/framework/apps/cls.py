@@ -221,10 +221,10 @@ class Application:
 
     def setup(self):
         """Setup application."""
-        logger.debug('Appication setup started.')
+        logger.debug('Application setup started.')
         self.setup_models()
         self.setup_internal_api()
-        logger.debug('Appication setup finished.')
+        logger.debug('Application setup finished.')
 
     def setup_internal_api(self):
         importlib.import_module(settings.INTERNAL_API_CONF)

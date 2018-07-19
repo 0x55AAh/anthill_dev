@@ -6,6 +6,9 @@ import logging
 logger = logging.getLogger('anthill.application')
 
 
+__all__ = ['app']
+
+
 class AppBuilder:
     default_application_class = Application
 
@@ -29,8 +32,10 @@ class AppBuilder:
         application_class = self.get_app_class()
         instance = application_class(**kwargs)
         logger.info('Application `%s` loaded.' % instance.name)
+        logger.info('Application version `%s`.' % instance.version)
         return instance
 
 
-app = AppBuilder().create()
+builder = AppBuilder()
+app = builder.create()
 app.setup()

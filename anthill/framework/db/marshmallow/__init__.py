@@ -5,11 +5,10 @@
     Integrates the marshmallow serialization/deserialization library
     with application.
 """
-import warnings
-
 from marshmallow import fields as base_fields, exceptions, pprint
 from . import fields, sqla
 from .schema import Schema
+import logging
 
 __all__ = [
     'EXTENSION_NAME',
@@ -19,6 +18,9 @@ __all__ = [
     'exceptions',
     'pprint'
 ]
+
+
+logger = logging.getLogger('anthill.application')
 
 EXTENSION_NAME = 'marshmallow'
 
@@ -35,7 +37,7 @@ def _attach_fields(obj):
         setattr(obj, attr, getattr(fields, attr))
 
 
-class Marshmallow(object):
+class Marshmallow:
     """
     Wrapper class that integrates Marshmallow with an application.
 
@@ -96,3 +98,4 @@ class Marshmallow(object):
         db = sqlalchemy_ext.db
         self.ModelSchema.OPTIONS_CLASS.session = db.session
         app.extensions[EXTENSION_NAME] = self
+        logger.debug('Marshmallow ext installed.')

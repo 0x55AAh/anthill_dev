@@ -41,11 +41,10 @@ class BaseService(TornadoWebApplication):
         self.settings.update(xsrf_cookies=self.app.settings.CSRF_COOKIES)
         self.settings.update(template_path=self.app.settings.TEMPLATE_PATH)
         self.settings.update(login_url=self.app.settings.LOGIN_URL)
-        logger.debug('Service settings updated.')
 
         self._load_ui_modules(self.app.ui_modules)
         self._load_ui_methods(self.app.ui_modules)
-        logger.debug('Service ui moduled loaded.')
+        logger.debug('Service ui modules loaded.')
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.app.name)

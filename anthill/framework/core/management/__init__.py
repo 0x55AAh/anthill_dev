@@ -1,16 +1,16 @@
+from collections import OrderedDict
+from .commands import (
+    Group, Option, Command, Server, Shell, Version,
+    StartApplication, ApplicationChooser, SendTestEmail
+)
+import argparse
 import os
 import re
 import sys
 import types
 import warnings
-from collections import OrderedDict
+import logging
 
-import argparse
-
-from .commands import (
-    Group, Option, Command, Server, Shell, Version,
-    StartApplication, ApplicationChooser, SendTestEmail
-)
 
 __all__ = [
     "Command", "Shell", "Server", "Group", "Option", "Version", "add_help",
@@ -29,6 +29,9 @@ safe_actions = (
 
 
 iteritems = lambda d: iter(d.items())
+
+logger = logging.getLogger('anthill.application')
+
 
 try:
     import argcomplete
@@ -405,7 +408,7 @@ class BaseManager:
 
 
 class Manager(BaseManager):
-    """Application context manager"""
+    """Application context manager."""
 
     def add_default_commands(self):
         if "shell" not in self._commands:
@@ -417,9 +420,14 @@ class Manager(BaseManager):
         if "db" not in self._commands:
             from anthill.framework.db.management import MigrateCommand
             self.add_command("db", MigrateCommand)
+
         super(Manager, self).add_default_commands()
+
         if self.app.commands is not None:
             self._commands.update(self.app.commands)
+
+        logger.debug('Manager installed.')
+        logger.debug('Enabled commands: %s.' % ', '.join(self._commands.keys()))
 
     def __call__(self, app=None, **kwargs):
         if app is None:
@@ -427,7 +435,7 @@ class Manager(BaseManager):
             if app is None:
                 raise Exception("There is no app here. This is unlikely to work.")
 
-        from anthill.framework.apps.cls import Application
+        from anthill.framework.apps import Application
 
         if isinstance(app, Application):
             if kwargs:
@@ -440,7 +448,7 @@ class Manager(BaseManager):
 
 
 class EmptyManager(BaseManager):
-    """Manager with no application context"""
+    """Manager with no application context."""
 
     def __init__(self, base_dir, config_mod=None, **kwargs):
         self.base_dir = base_dir

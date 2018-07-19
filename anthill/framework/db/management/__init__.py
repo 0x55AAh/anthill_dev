@@ -5,6 +5,10 @@ from anthill.framework.apps.builder import app
 from alembic import __version__ as __alembic_version__
 from alembic.config import Config as AlembicConfig
 from alembic import command
+import logging
+
+
+logger = logging.getLogger('anthill.application')
 
 
 alembic_version = tuple([int(v) for v in __alembic_version__.split('.')[0:3]])
@@ -48,6 +52,7 @@ class Migrate:
         if not hasattr(app, 'extensions'):
             app.extensions = {}
         app.extensions['migrate'] = _MigrateConfig(self, self.db, **self.alembic_ctx_kwargs)
+        logger.debug('Migration ext installed.')
 
     def configure(self, f):
         self.configure_callbacks.append(f)

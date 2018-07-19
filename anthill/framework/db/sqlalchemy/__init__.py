@@ -31,7 +31,9 @@ from anthill.framework.core.signals import Namespace
 from .model import Model
 from six import string_types
 from .model import DefaultMeta
-from tornado.escape import to_basestring
+import logging
+
+logger = logging.getLogger('anthill.application')
 
 __version__ = '2.3.2'
 
@@ -496,11 +498,11 @@ class _SQLAlchemyState(object):
 class SQLAlchemy(object):
     """
     This class is used to control the SQLAlchemy integration to one
-    or more Flask applications.  Depending on how you initialize the
+    or more Flask applications. Depending on how you initialize the
     object it is usable right away or will attach as needed to a
     Flask application.
 
-    There are two usage modes which work very similarly.  One is binding
+    There are two usage modes which work very similarly. One is binding
     the instance to a very specific Flask application::
 
         app = Flask(__name__)
@@ -522,7 +524,7 @@ class SQLAlchemy(object):
 
     By default Flask-SQLAlchemy will apply some backend-specific settings
     to improve your experience with them.  As of SQLAlchemy 0.6 SQLAlchemy
-    will probe the library for native unicode support.  If it detects
+    will probe the library for native unicode support. If it detects
     unicode it will let the library handle that, otherwise do that itself.
     Sometimes this detection can fail in which case you might want to set
     ``use_native_unicode`` (or the ``SQLALCHEMY_NATIVE_UNICODE`` configuration
@@ -530,7 +532,7 @@ class SQLAlchemy(object):
     value you pass to the constructor.
 
     This class also provides access to all the SQLAlchemy functions and classes
-    from the :mod:`sqlalchemy` and :mod:`sqlalchemy.orm` modules.  So you can
+    from the :mod:`sqlalchemy` and :mod:`sqlalchemy.orm` modules. So you can
     declare models like this::
 
         class User(db.Model):
@@ -541,7 +543,7 @@ class SQLAlchemy(object):
     note that Flask-SQLAlchemy customizations are available only through an
     instance of this :class:`SQLAlchemy` class.  Query classes default to
     :class:`BaseQuery` for `db.Query`, `db.Model.query_class`, and the default
-    query_class for `db.relationship` and `db.backref`.  If you use these
+    query_class for `db.relationship` and `db.backref`. If you use these
     interfaces through :mod:`sqlalchemy` and :mod:`sqlalchemy.orm` directly,
     the default query class will be that of :mod:`sqlalchemy`.
 
@@ -674,6 +676,7 @@ class SQLAlchemy(object):
             )
 
         app.extensions['sqlalchemy'] = _SQLAlchemyState(self)
+        logger.debug('SQLAlchemy ext installed.')
 
         def shutdown_session(response_or_exc):
             if getattr(app.config, 'SQLALCHEMY_COMMIT_ON_TEARDOWN', None):

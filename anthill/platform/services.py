@@ -90,7 +90,10 @@ class PlainService(BaseService):
                                 logger.fatal('Service `discovery` is unreachable.'),
                             exception_types=(RequestTimeoutError,)))
     async def register_on_discovery(self) -> None:
-        kwargs = {'name': self.name, 'networks': self.app.registry_entry}
+        kwargs = {
+            'name': self.name,
+            'networks': self.app.registry_entry
+        }
         await self.discovery_request('set_service_bulk', **kwargs)
         logger.info('Connected to `discovery` service.')
 
