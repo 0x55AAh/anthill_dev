@@ -52,12 +52,13 @@ class UploadFileStreamHandler(TemplateHandler):
     async def post(self):
         """
         Example:
-        >>> from anthill.framework.core.files.storage import default_storage
-        >>>
-        >>> for files in self.request.files.values():
-        >>>    for f in files:
-        >>>        default_storage.save(f.name, f.file)
-        >>>        f.close()
+
+        from anthill.framework.core.files.storage import default_storage
+
+        for files in self.request.files.values():
+            for f in files:
+                default_storage.save(f.name, f.file)
+                f.close()
         """
         # Finalize uploading
         await self.mp.complete()

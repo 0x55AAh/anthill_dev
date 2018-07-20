@@ -241,3 +241,9 @@ def _format_lazy(format_string, *args, **kwargs):
 
 
 format_lazy = lazy(_format_lazy, str)
+
+
+def class_name(cls, path=True):
+    if path:
+        return '.'.join([cls.__module__, cls.__name__])
+    return cls.__name__

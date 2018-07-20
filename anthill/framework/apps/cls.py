@@ -3,6 +3,7 @@ from anthill.framework.utils.text import slugify, camel_case_to_spaces
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
 from anthill.platform.api.internal import api as internal_api
+from anthill.framework.utils.text import class_name
 from urllib.parse import urlparse, urljoin
 from functools import lru_cache, wraps
 from _thread import get_ident
@@ -169,10 +170,9 @@ class Application:
         from tornado.web import URLSpec
         for route in routes_list:
             if isinstance(route, URLSpec) and route.name is None:
-                default_target_name = '.'.join([route.target.__module__, route.target.__name__])
-                route.name = default_target_name
+                route.name = class_name(route.target)
             elif isinstance(route, (list, tuple)):
-                default_target_name = '.'.join([route[1].__module__, route[1].__name__])
+                default_target_name = class_name(route[1])
                 if len(route) == 2:
                     route += (None, default_target_name)
                 elif len(route) == 3:
@@ -209,14 +209,17 @@ class Application:
                     model = cls
             cls.Schema = Schema
 
+        logger.debug('Adding marshmallow schema to models...')
         for model in self.get_models():
             add_schema(model)
+            logger.debug('\_ Model %s.' % class_name(model))
 
     def setup_models(self):
         logger.debug('\_ Models loading started.')
         for module in self.get_models_modules():
             importlib.import_module(module)
-            logger.debug('  \_ Models from `%s` loaded.' % module)
+            logger.debug('__\_ Models from `%s` loaded.' % module)
+        logger.debug('Installed models: %s.' % ', '.join(map(class_name, self.get_models())))
         self.update_models()
 
     def setup(self):
