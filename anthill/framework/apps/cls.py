@@ -35,11 +35,11 @@ class Application:
         self.description = settings.APPLICATION_DESCRIPTION
         self.icon_class = settings.APPLICATION_ICON_CLASS
 
-        self.routes_conf = self._get_default('ROUTES_CONF', '%s.routes' % self.name)
-        self.service_class = self._get_default('SERVICE_CLASS', '%s.services.Service' % self.name)
-        self.management_conf = self._get_default('MANAGEMENT_CONF', '%s.management' % self.name)
-        self.models_conf = self._get_default('MODELS_CONF', '%s.models' % self.name)
-        self.ui_module = self._get_default('UI_MODULE', '%s.ui' % self.name)
+        self.routes_conf = self.getdefault('ROUTES_CONF', '.'.join([self.name, 'routes']))
+        self.service_class = self.getdefault('SERVICE_CLASS', '.'.join([self.name, 'services.Service']))
+        self.management_conf = self.getdefault('MANAGEMENT_CONF', '.'.join([self.name, 'management']))
+        self.models_conf = self.getdefault('MODELS_CONF', '.'.join([self.name, 'models']))
+        self.ui_module = self.getdefault('UI_MODULE', '.'.join([self.name, 'ui']))
 
         self.internal = internal_api
 
@@ -52,7 +52,7 @@ class Application:
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.label)
 
-    def _get_default(self, key, default=None):
+    def getdefault(self, key, default=None):
         return getattr(self.settings, key, None) or default
 
     def split_location(self):
