@@ -218,8 +218,11 @@ class Application:
         logger.debug('\_ Models loading started.')
         for module in self.get_models_modules():
             importlib.import_module(module)
-            logger.debug('__\_ Models from `%s` loaded.' % module)
-        logger.debug('Installed models: %s.' % ', '.join(map(class_name, self.get_models())))
+            logger.debug('  \_ Models from `%s` loaded.' % module)
+
+        logger.debug('\_ Installed models:')
+        for model in self.get_models():
+            logger.debug('  \_ Model %s.' % class_name(model))
         self.update_models()
 
     def setup(self):
@@ -237,7 +240,9 @@ class Application:
     @property
     @lru_cache()
     def service(self):
-        """Returns an instance of service class ``self.service_class``."""
+        """
+        Returns an instance of service class ``self.service_class``.
+        """
         service_class = import_string(self.service_class)
         service_instance = service_class(app=self)
         return service_instance

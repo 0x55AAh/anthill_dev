@@ -1,12 +1,14 @@
 NETWORKS = ['internal', 'external']
 
+BROKER = 'amqp://guest:guest@localhost:5672'
+
 EMAIL_SUBJECT_PREFIX = '[Anthill] '
 
 RESOLVERS = {
     "default": {
         'internal': 'http://localhost:9502',
         'external': 'http://localhost:9502',
-        'broker': 'amqp://guest:guest@localhost:5672'
+        'broker': BROKER
     }
 }
 
@@ -42,11 +44,13 @@ HTTPS = None
 # All celery configuration options:
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
 CELERY_SETTINGS = {
-    'broker_url': 'amqp://guest:guest@localhost:5672',
+    'broker_url': BROKER,
     'broker_transport_options': {},
     'broker_connection_timeout': 4,
 
     'result_backend': 'redis://',
+    'result_serializer': 'json',
+    'result_compression': None,
     'redis_max_connections': 150,
 
     'worker_concurrency': None,
@@ -54,7 +58,6 @@ CELERY_SETTINGS = {
 
     'task_serializer': 'json',
     'task_compression': None,
-    'task_routes': {},
 }
 
 CELERY_ENABLE = False
