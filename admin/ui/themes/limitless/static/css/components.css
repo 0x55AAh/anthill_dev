@@ -3844,7 +3844,7 @@ select.selectpicker {
   bottom: 0;
   left: 50%;
   display: block!important;
-  width: .5px!important;
+  width: 0.5px !important;
   height: 100%!important;
   padding: 0!important;
   opacity: 0!important;
@@ -6562,7 +6562,7 @@ legend.alpaca-container-label {
   padding: 0;
 }
 .picker__weekday {
-  width: 14.285714286%;
+  width: 14.28571429%;
   font-size: 12px;
   text-align: center;
   padding-bottom: 10px;
@@ -7812,7 +7812,7 @@ body > .ui-pnotify {
   transition: opacity .4s linear, left .5s ease, top .5s ease, right .5s ease, bottom .5s ease;
 }
 .ui-pnotify.ui-pnotify-fade-fast {
-  transition: opacity .2s linear;
+  transition: opacity 0.2s linear;
   -webkit-transition: opacity linear 0.2s;
   -o-transition: opacity linear 0.2s;
   transition: opacity linear 0.2s;
@@ -16696,7 +16696,7 @@ thead .htCollapseButton:after {
 .pika-prev.is-disabled,
 .pika-next.is-disabled {
   cursor: default;
-  opacity: .2;
+  opacity: 0.2;
 }
 .pika-prev {
   float: left;
@@ -17155,11 +17155,11 @@ thead .htCollapseButton:after {
 .datatable-scroll-lg,
 .datatable-scroll,
 .datatable-scroll-sm {
-  min-height: .01%;
+  min-height: 0.01%;
 }
 .datatable-scroll-wrap {
   width: 100%;
-  min-height: .01%;
+  min-height: 0.01%;
   overflow-x: auto;
 }
 @media (max-width: 768px) {
@@ -18091,10 +18091,10 @@ thead .htCollapseButton:after {
 }
 .c3-region {
   fill: #546E7A;
-  fill-opacity: .1;
+  fill-opacity: 0.1;
 }
 .c3-brush .extent {
-  fill-opacity: .1;
+  fill-opacity: 0.1;
 }
 .c3-legend-item {
   font-size: 12px;

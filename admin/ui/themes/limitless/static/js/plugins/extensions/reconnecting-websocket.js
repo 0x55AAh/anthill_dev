@@ -1,0 +1,1 @@
+window.ReconnectingWebSocket = require('reconnecting-websocket');

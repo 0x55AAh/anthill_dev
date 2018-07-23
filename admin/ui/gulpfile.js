@@ -15,7 +15,6 @@ var gulp = require('gulp');
 
 
 // Include our plugins
-var browserify = require('browserify');
 var jshint = require('gulp-jshint');
 var less = require('gulp-less');
 var minifyCss = require('gulp-clean-css');
@@ -23,29 +22,60 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var transform = require('vinyl-transform');
+var through2 = require('through2');
+
+
+var ui_theme_dir = 'themes/limitless/';
+
 
 // Lint task
 gulp.task('lint', function() {
     return gulp
-        .src('static/js/core/app.js')                 // lint core JS file. Or specify another path
+        .src(ui_theme_dir + 'static/js/core/app.js')                 // lint core JS file. Or specify another path
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
+});
+
+
+// Browserify task
+gulp.task('browserify', function() {
+    var browserified = through2.obj(function (file, enc, next){
+            browserify(file.path)
+                .bundle(function(err, res){
+                    file.contents = res;
+                    next(null, file);
+                });
+        });
+  return gulp.src([
+      ui_theme_dir + 'static/js/plugins/extensions/reconnecting-websocket.js',
+      ui_theme_dir + 'static/js/plugins/extensions/kurento-jsonrpc.js'
+  ])
+  .pipe(browserified)
+  .pipe(rename({
+        suffix: ".min"
+  }))
+  .pipe(uglify())
+  .pipe(gulp.dest(ui_theme_dir + 'static/js/plugins/extensions'));
 });
 
 
 // Compile less files of a full version
 gulp.task('less_full', function() {
     return gulp
-        .src('static/less/_main_full/*.less')         // locate /less/ folder root to grab 4 main files
+        .src(ui_theme_dir + 'static/less/_main_full/*.less')         // locate /less/ folder root to grab 4 main files
         .pipe(less())                                 // compile
-        .pipe(gulp.dest('static/css'))                // destination path for normal CSS
+        .pipe(gulp.dest(ui_theme_dir + 'static/css'))                // destination path for normal CSS
         .pipe(minifyCss({                             // minify CSS
             keepSpecialComments: 0                    // remove all comments
         }))
         .pipe(rename({                                // rename file
             suffix: ".min"                            // add *.min suffix
         }))
-        .pipe(gulp.dest('static/css'));               // destination path for minified CSS
+        .pipe(gulp.dest(ui_theme_dir + 'static/css'));               // destination path for minified CSS
 });
 
 
@@ -66,23 +96,23 @@ gulp.task('less_full', function() {
 // Minify template's core JS file
 gulp.task('minify_core', function() {
     return gulp
-        .src('static/js/core/app.js')                 // path to app.js file
+        .src(ui_theme_dir + 'static/js/core/app.js')                 // path to app.js file
         .pipe(uglify())                               // compress JS
         .pipe(rename({                                // rename file
             suffix: ".min"                            // add *.min suffix
         }))
-        .pipe(gulp.dest('static/js/core/'));          // destination path for minified file
+        .pipe(gulp.dest(ui_theme_dir + 'static/js/core/'));          // destination path for minified file
 });
 
 
 // Watch files for changes
 gulp.task('watch', function() {
-    gulp.watch('static/js/core/app.js', [             // listen for changes in app.js file and automatically compress
+    gulp.watch(ui_theme_dir + 'static/js/core/app.js', [             // listen for changes in app.js file and automatically compress
         'lint',                                       // lint
         //'concatenate',                              // concatenate & minify JS files (uncomment if in use)
         'minify_core'                                 // compress app.js
     ]); 
-    gulp.watch('static/less/**/*.less', ['less_full', 'less_starters']);    // listen for changes in all LESS files and automatically re-compile
+    gulp.watch(ui_theme_dir + 'static/less/**/*.less', ['less_full']);    // listen for changes in all LESS files and automatically re-compile
 });
 
 

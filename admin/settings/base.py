@@ -26,8 +26,10 @@ APPLICATION_VERBOSE_NAME = 'Admin'
 
 # SERVICE_CLASS = 'admin.services.Service'
 
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+UI_THEME = 'limitless'
+
+STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
 
 STATIC_URL = '/static/'
 
