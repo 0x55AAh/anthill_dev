@@ -5,12 +5,11 @@ from anthill.framework.utils.module_loading import import_string
 from anthill.platform.api.internal import api as internal_api
 from anthill.framework.utils.text import class_name
 from urllib.parse import urlparse, urljoin
-from functools import lru_cache, wraps
+from functools import lru_cache
 from _thread import get_ident
 import importlib
 import logging
 import re
-import os
 
 
 logger = logging.getLogger('anthill.application')
