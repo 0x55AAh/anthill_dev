@@ -1,6 +1,6 @@
 {
   "name": "limitless",
-  "version": "1.2.0",
+  "version": "1.6.0",
   "description": "Limitless - responsive web application kit",
   "main": "index.js",
   "scripts": {
@@ -22,8 +22,7 @@
     "kurento-jsonrpc": "^5.1.4",
     "vinyl-source-stream": "^2.0.0",
     "vinyl-buffer": "^1.0.1",
-    "vinyl-transform": "^1.0.0",
-    "tsify": "^4.0.0"
+    "vinyl-transform": "^1.0.0"
   },
   "dependencies": {}
 }

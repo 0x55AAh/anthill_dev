@@ -1,5 +1,5 @@
 from anthill.framework.handlers.base import (
-    RequestHandler,
+    RequestHandler, StaticFileHandler,
     WebSocketHandler, JsonWebSocketHandler,
     RedirectHandler, JSONHandler, JSONHandlerMixin,
     TemplateHandler, TemplateMixin
@@ -13,7 +13,7 @@ from anthill.framework.handlers.graphql import GraphQLHandler
 
 __all__ = [
     'RequestHandler', 'TemplateHandler', 'RedirectHandler',
-    'TemplateMixin',
+    'TemplateMixin', 'StaticFileHandler',
     'WebSocketHandler', 'JsonWebSocketHandler',
     'WebSocketJSONRPCHandler', 'JSONRPCMixin',
     'JSONHandler', 'JSONHandlerMixin',

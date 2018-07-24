@@ -36,6 +36,7 @@
 	<!-- /theme JS files -->
 
     {% block js %}{% end %}
+	{% block js_header %}{% end %}
 </head>
 
 <body class="{% block body-class %}navbar-top{% end %}">
@@ -84,6 +85,8 @@
 
 </div>
 <!-- /page container -->
+
+{% block js_footer %}{% end %}
 
 </body>
 </html>

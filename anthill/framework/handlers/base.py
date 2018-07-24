@@ -7,6 +7,7 @@ from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.conf import settings
+from tornado.web import StaticFileHandler as BaseStaticFileHandler
 # noinspection PyProtectedMember
 from tornado.httputil import _parse_header
 import json
@@ -290,3 +291,20 @@ class JSONHandler(JSONHandlerMixin, RequestHandler):
 
     def write(self, data):
         super().write(self.dumps(data))
+
+
+class StaticFileHandler(BaseStaticFileHandler):
+    def __init__(self, application, request, **kwargs):
+        super().__init__(application, request, **kwargs)
+        self.root = None
+        self.default_filename = None
+
+    def initialize(self, path, default_filename=None):
+        self.root = self.get_path() or path
+        self.default_filename = default_filename
+
+    def get_path(self):
+        """Returns static path root retrieved from cookies or from session storage."""
+
+    def data_received(self, chunk):
+        pass

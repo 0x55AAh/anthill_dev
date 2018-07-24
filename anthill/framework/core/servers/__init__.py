@@ -16,10 +16,13 @@ class BaseService(TornadoWebApplication):
     signals = ('SIGTERM', 'SIGHUP', 'SIGINT')
 
     def __init__(self, handlers=None, default_host=None, transforms=None, app=None, **kwargs):
+        static_handler_class = getattr(app.settings, 'STATIC_HANDLER_CLASS', 'tornado.web.StaticFileHandler')
+
         kwargs.update(debug=app.debug)
         kwargs.update(compress_response=app.settings.COMPRESS_RESPONSE)
         kwargs.update(static_path=app.settings.STATIC_PATH)
         kwargs.update(static_url_prefix=app.settings.STATIC_URL)
+        kwargs.update(static_handler_class=import_string(static_handler_class))
 
         transforms = transforms or list(map(import_string, app.settings.OUTPUT_TRANSFORMS or []))
         super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)

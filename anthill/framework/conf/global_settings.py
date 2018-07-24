@@ -212,6 +212,7 @@ AUTH_PASSWORD_VALIDATORS = []
 
 STATIC_PATH = None
 STATIC_URL = '/static/'
+STATIC_HANDLER_CLASS = 'anthill.framework.handlers.StaticFileHandler'
 
 TEMPLATE_PATH = None
 
