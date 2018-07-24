@@ -1,4 +1,7 @@
-from tornado.web import RequestHandler as BaseRequestHandler
+from tornado.web import (
+    RequestHandler as BaseRequestHandler,
+    StaticFileHandler as BaseStaticFileHandler
+)
 from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
@@ -7,7 +10,6 @@ from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.conf import settings
-from tornado.web import StaticFileHandler as BaseStaticFileHandler
 # noinspection PyProtectedMember
 from tornado.httputil import _parse_header
 import json
@@ -293,18 +295,29 @@ class JSONHandler(JSONHandlerMixin, RequestHandler):
         super().write(self.dumps(data))
 
 
-class StaticFileHandler(BaseStaticFileHandler):
+class StaticFileHandler(SessionHandlerMixin, BaseStaticFileHandler):
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
-        self.root = None
-        self.default_filename = None
+        self.init_session()
 
-    def initialize(self, path, default_filename=None):
-        self.root = self.get_path() or path
-        self.default_filename = default_filename
+    async def prepare(self):
+        self.setup_session()
+        # noinspection PyAttributeOutsideInit
+        self.root = self.get_path(default=self.root)
 
-    def get_path(self):
-        """Returns static path root retrieved from cookies or from session storage."""
+    def get_path(self, default=None):
+        """
+        Returns static path dinamically retrieved from session storage.
+        Adding ability to change ui theme directly from admin interface.
+        """
+        return self.session.get('static_path', default)
 
     def data_received(self, chunk):
         pass
+
+
+class Handler404(TemplateHandler):
+    template_name = 'errors/404.html'
+
+    def prepare(self):
+        self.set_status(404)

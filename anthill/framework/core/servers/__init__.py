@@ -13,16 +13,16 @@ logger = logging.getLogger('anthill.application')
 
 class BaseService(TornadoWebApplication):
     server_class = HTTPServer
-    signals = ('SIGTERM', 'SIGHUP', 'SIGINT')
 
     def __init__(self, handlers=None, default_host=None, transforms=None, app=None, **kwargs):
-        static_handler_class = getattr(app.settings, 'STATIC_HANDLER_CLASS', 'tornado.web.StaticFileHandler')
-
         kwargs.update(debug=app.debug)
         kwargs.update(compress_response=app.settings.COMPRESS_RESPONSE)
         kwargs.update(static_path=app.settings.STATIC_PATH)
         kwargs.update(static_url_prefix=app.settings.STATIC_URL)
-        kwargs.update(static_handler_class=import_string(static_handler_class))
+
+        static_handler_class = getattr(app.settings, 'STATIC_HANDLER_CLASS', None)
+        if static_handler_class is not None:
+            kwargs.update(static_handler_class=import_string(static_handler_class))
 
         transforms = transforms or list(map(import_string, app.settings.OUTPUT_TRANSFORMS or []))
         super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
@@ -44,6 +44,12 @@ class BaseService(TornadoWebApplication):
         self.settings.update(xsrf_cookies=self.app.settings.CSRF_COOKIES)
         self.settings.update(template_path=self.app.settings.TEMPLATE_PATH)
         self.settings.update(login_url=self.app.settings.LOGIN_URL)
+
+        default_handler_class = getattr(self.app.settings, 'DEFAULT_HANDLER_CLASS', None)
+        if default_handler_class is not None:
+            self.settings.update(
+                default_handler_class=import_string(default_handler_class))
+            self.settings.update(default_handler_args=self.app.settings.DEFAULT_HANDLER_ARGS)
 
         self._load_ui_modules(self.app.ui_modules)
         self._load_ui_methods(self.app.ui_modules)
@@ -112,7 +118,7 @@ class BaseService(TornadoWebApplication):
     def setup_server(self, **kwargs):
         self.server.listen(self.app.port, self.app.host)
 
-        for s in self.signals:
+        for s in ('SIGTERM', 'SIGHUP', 'SIGINT'):
             signal.signal(getattr(signal, s), self.__sig_handler__)
 
     def start(self, **kwargs):

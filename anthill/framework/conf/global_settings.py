@@ -305,3 +305,7 @@ SESSION_SERIALIZER = 'anthill.framework.sessions.serializers.JSONSerializer'
 OUTPUT_TRANSFORMS = [
     'tornado.web.GZipContentEncoding',
 ]
+
+
+DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
+DEFAULT_HANDLER_ARGS = None

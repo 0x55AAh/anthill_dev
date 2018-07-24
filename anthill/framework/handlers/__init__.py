@@ -2,7 +2,7 @@ from anthill.framework.handlers.base import (
     RequestHandler, StaticFileHandler,
     WebSocketHandler, JsonWebSocketHandler,
     RedirectHandler, JSONHandler, JSONHandlerMixin,
-    TemplateHandler, TemplateMixin
+    TemplateHandler, TemplateMixin, Handler404
 )
 from anthill.framework.handlers.jsonrpc import WebSocketJSONRPCHandler, JSONRPCMixin
 from anthill.framework.handlers.streaming.watchfile import (
@@ -13,7 +13,7 @@ from anthill.framework.handlers.graphql import GraphQLHandler
 
 __all__ = [
     'RequestHandler', 'TemplateHandler', 'RedirectHandler',
-    'TemplateMixin', 'StaticFileHandler',
+    'TemplateMixin', 'StaticFileHandler', 'Handler404',
     'WebSocketHandler', 'JsonWebSocketHandler',
     'WebSocketJSONRPCHandler', 'JSONRPCMixin',
     'JSONHandler', 'JSONHandlerMixin',
