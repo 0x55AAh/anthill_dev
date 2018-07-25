@@ -215,6 +215,7 @@ STATIC_URL = '/static/'
 STATIC_HANDLER_CLASS = 'anthill.framework.handlers.StaticFileHandler'
 
 TEMPLATE_PATH = None
+TEMPLATE_LOADER_CLASS = 'anthill.framework.core.template.Loader'
 
 COMPRESS_RESPONSE = False
 

@@ -20,9 +20,9 @@ class BaseService(TornadoWebApplication):
         kwargs.update(static_path=app.settings.STATIC_PATH)
         kwargs.update(static_url_prefix=app.settings.STATIC_URL)
 
-        static_handler_class = getattr(app.settings, 'STATIC_HANDLER_CLASS', None)
-        if static_handler_class is not None:
-            kwargs.update(static_handler_class=import_string(static_handler_class))
+        static_handler_class = getattr(
+            app.settings, 'STATIC_HANDLER_CLASS', 'anthill.framework.handlers.StaticFileHandler')
+        kwargs.update(static_handler_class=import_string(static_handler_class))
 
         transforms = transforms or list(map(import_string, app.settings.OUTPUT_TRANSFORMS or []))
         super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
@@ -45,11 +45,24 @@ class BaseService(TornadoWebApplication):
         self.settings.update(template_path=self.app.settings.TEMPLATE_PATH)
         self.settings.update(login_url=self.app.settings.LOGIN_URL)
 
-        default_handler_class = getattr(self.app.settings, 'DEFAULT_HANDLER_CLASS', None)
-        if default_handler_class is not None:
-            self.settings.update(
-                default_handler_class=import_string(default_handler_class))
-            self.settings.update(default_handler_args=self.app.settings.DEFAULT_HANDLER_ARGS)
+        default_handler_class = getattr(
+            self.app.settings, 'DEFAULT_HANDLER_CLASS', 'anthill.framework.handlers.Handler404')
+        self.settings.update(default_handler_class=import_string(default_handler_class))
+        self.settings.update(default_handler_args=self.app.settings.DEFAULT_HANDLER_ARGS)
+
+        # template_loader_class = getattr(
+        #     self.app.settings, 'TEMPLATE_LOADER_CLASS', 'anthill.framework.core.template.Loader')
+        # template_loader_kwargs = dict()
+        # if "autoescape" in self.settings:
+        #     # autoescape=None means "no escaping", so we have to be sure
+        #     # to only pass this kwarg if the user asked for it.
+        #     template_loader_kwargs["autoescape"] = self.settings["autoescape"]
+        # if "template_whitespace" in self.settings:
+        #     template_loader_kwargs["whitespace"] = self.settings["template_whitespace"]
+        # template_loader = import_string(template_loader_class)(
+        #     self.app.settings.TEMPLATE_PATH, **template_loader_kwargs)
+        # self.settings.update(template_loader=template_loader)
+        # logger.debug('Template loader `%s` installed.' % template_loader_class)
 
         self._load_ui_modules(self.app.ui_modules)
         self._load_ui_methods(self.app.ui_modules)

@@ -2,6 +2,7 @@ from tornado.web import (
     RequestHandler as BaseRequestHandler,
     StaticFileHandler as BaseStaticFileHandler
 )
+from anthill.framework.core import template
 from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
@@ -255,6 +256,28 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     async def get(self, *args, **kwargs):
         context = await self.get_context_data(**kwargs)
         self.render(**context)
+
+    def create_template_loader(self, template_path):
+        """
+        Returns a new template loader for the given path.
+
+        May be overridden by subclasses. By default returns a
+        directory-based loader on the given path, using the
+        ``autoescape`` and ``template_whitespace`` application
+        settings. If a ``template_loader`` application setting is
+        supplied, uses that instead.
+        """
+        settings = self.application.settings
+        if "template_loader" in settings:
+            return settings["template_loader"]
+        kwargs = {}
+        if "autoescape" in settings:
+            # autoescape=None means "no escaping", so we have to be sure
+            # to only pass this kwarg if the user asked for it.
+            kwargs["autoescape"] = settings["autoescape"]
+        if "template_whitespace" in settings:
+            kwargs["whitespace"] = settings["template_whitespace"]
+        return template.Loader(template_path, session=self.session, **kwargs)
 
     def write_error(self, status_code, **kwargs):
         """
