@@ -1,5 +1,4 @@
 from tornado.template import BaseLoader, Template
-from anthill.framework.utils.functional import cached_property
 import os
 
 
@@ -28,7 +27,7 @@ class Loader(BaseLoader):
             template = Template(f.read(), name=name, loader=self)
             return template
 
-    @cached_property
+    @property
     def root(self):
         if self.session is not None:
             root_directory = self.session.get('template_path', self._root_directory)

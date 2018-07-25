@@ -217,6 +217,9 @@ STATIC_HANDLER_CLASS = 'anthill.framework.handlers.StaticFileHandler'
 TEMPLATE_PATH = None
 TEMPLATE_LOADER_CLASS = 'anthill.framework.core.template.Loader'
 
+DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
+DEFAULT_HANDLER_ARGS = None
+
 COMPRESS_RESPONSE = False
 
 LOGIN_URL = None
@@ -306,7 +309,3 @@ SESSION_SERIALIZER = 'anthill.framework.sessions.serializers.JSONSerializer'
 OUTPUT_TRANSFORMS = [
     'tornado.web.GZipContentEncoding',
 ]
-
-
-DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
-DEFAULT_HANDLER_ARGS = None
