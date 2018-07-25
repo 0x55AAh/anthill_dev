@@ -6,6 +6,7 @@ from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
 from anthill.framework.sessions.handlers import SessionHandlerMixin
+from anthill.framework.utils.debug.report import ExceptionReporter
 from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
@@ -221,10 +222,10 @@ class TemplateMixin:
         if template_name is not None:
             self.template_name = template_name
 
-    def render(self, **kwargs):
-        template_name = self.get_template_name()
+    def render(self, template_name=None, **kwargs):
+        template_name = template_name or self.get_template_name()
         # noinspection PyUnresolvedReferences
-        return super().render(template_name, **kwargs)
+        super().render(template_name, **kwargs)
 
     def get_template_namespace(self):
         from anthill.framework.apps import app
@@ -253,7 +254,33 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     """
     async def get(self, *args, **kwargs):
         context = await self.get_context_data(**kwargs)
-        return self.render(**context)
+        self.render(**context)
+
+    def write_error(self, status_code, **kwargs):
+        """
+        Override to implement custom error pages.
+
+        ``write_error`` may call `write`, `render`, `set_header`, etc
+        to produce output as usual.
+
+        If this error was caused by an uncaught exception (including
+        HTTPError), an ``exc_info`` triple will be available as
+        ``kwargs["exc_info"]``. Note that this exception may not be
+        the "current" exception for purposes of methods like
+        ``sys.exc_info()`` or ``traceback.format_exc``.
+        """
+        if self.settings.get("serve_traceback") and "exc_info" in kwargs:
+            # in debug mode, try to send a traceback
+            self.set_header('Content-Type', 'text/plain')
+            reporter = ExceptionReporter(self, exc_info=kwargs["exc_info"])
+            self.finish(reporter.get_traceback_text())
+        else:
+            if status_code in range(500, 600):
+                self.render("errors/500.html")
+            elif status_code in range(400, 500):
+                self.render("errors/404.html")
+            else:
+                self.render("errors/500.html")
 
 
 class RedirectHandler(RedirectMixin, RequestHandler):
@@ -307,7 +334,7 @@ class StaticFileHandler(SessionHandlerMixin, BaseStaticFileHandler):
 
     def get_path(self, default=None):
         """
-        Returns static path dinamically retrieved from session storage.
+        Returns static path dynamically retrieved from session storage.
         Adding ability to change ui theme directly from admin interface.
         """
         return self.session.get('static_path', default)
@@ -321,3 +348,4 @@ class Handler404(TemplateHandler):
 
     def prepare(self):
         self.set_status(404)
+        self.render()
