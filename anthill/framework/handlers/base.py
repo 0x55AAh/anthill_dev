@@ -11,6 +11,7 @@ from anthill.framework.utils.debug.report import ExceptionReporter
 from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
 from anthill.framework.context_processors import build_context_from_context_processors
+from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
 # noinspection PyProtectedMember
 from tornado.httputil import _parse_header
@@ -267,17 +268,20 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
         settings. If a ``template_loader`` application setting is
         supplied, uses that instead.
         """
-        settings = self.application.settings
-        if "template_loader" in settings:
-            return settings["template_loader"]
+        if "template_loader" in self.settings:
+            return self.settings["template_loader"]
         kwargs = {}
-        if "autoescape" in settings:
+        if "autoescape" in self.settings:
             # autoescape=None means "no escaping", so we have to be sure
             # to only pass this kwarg if the user asked for it.
-            kwargs["autoescape"] = settings["autoescape"]
-        if "template_whitespace" in settings:
-            kwargs["whitespace"] = settings["template_whitespace"]
-        return template.Loader(template_path, session=self.session, **kwargs)
+            kwargs["autoescape"] = self.settings["autoescape"]
+        if "template_whitespace" in self.settings:
+            kwargs["whitespace"] = self.settings["template_whitespace"]
+        template_loader_class = getattr(
+            settings, "TEMPLATE_LOADER_CLASS", "anthill.framework.core.template.Loader")
+        # ``session`` used for caching special template root.
+        return import_string(template_loader_class)(
+            template_path, session=self.session, **kwargs)
 
     def write_error(self, status_code, **kwargs):
         """
