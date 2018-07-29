@@ -2,7 +2,6 @@ from tornado.web import (
     RequestHandler as BaseRequestHandler,
     StaticFileHandler as BaseStaticFileHandler
 )
-from anthill.framework.core import template
 from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
@@ -56,6 +55,11 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         super().__init__(application, request, **kwargs)
         self.internal_request = self.application.internal_connection.request
         self.init_session()
+
+    @property
+    def config(self):
+        """An alias for `self.application.config <Application.config>`."""
+        return self.application.config
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
@@ -239,9 +243,7 @@ class TemplateMixin:
         return namespace
 
     def get_template_name(self):
-        """
-        Return a template name to be used for the request.
-        """
+        """Return a template name to be used for the request."""
         if self.template_name is None:
             raise ImproperlyConfigured(
                 "TemplateMixin requires either a definition of "
@@ -357,14 +359,14 @@ class StaticFileHandler(SessionHandlerMixin, BaseStaticFileHandler):
     async def prepare(self):
         self.setup_session()
         # noinspection PyAttributeOutsideInit
-        self.root = self.get_path(default=self.root)
+        self.root = self.get_root()
 
-    def get_path(self, default=None):
+    def get_root(self):
         """
         Returns static path dynamically retrieved from session storage.
         Adding ability to change ui theme directly from admin interface.
         """
-        return self.session.get('static_path', default)
+        return self.session.get('static_path', self.root)
 
     def data_received(self, chunk):
         pass

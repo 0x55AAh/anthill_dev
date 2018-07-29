@@ -1,4 +1,5 @@
 from collections import defaultdict
+from tornado.web import URLSpec
 from anthill.framework.utils.text import slugify, camel_case_to_spaces
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
@@ -166,19 +167,15 @@ class Application:
         """Returns routes map."""
         routes_mod = importlib.import_module(self.routes_conf)
         routes_list = getattr(routes_mod, 'route_patterns', [])
-        from tornado.web import URLSpec
+        new_routes_list = []
         for route in routes_list:
-            if isinstance(route, URLSpec) and route.name is None:
-                route.name = class_name(route.target)
-            elif isinstance(route, (list, tuple)):
-                default_target_name = class_name(route[1])
-                if len(route) == 2:
-                    route += (None, default_target_name)
-                elif len(route) == 3:
-                    route += (default_target_name,)
-                elif len(route) == 4 and route[3] is None:
-                    route[3] = default_target_name
-        return routes_list
+            if isinstance(route, (list, tuple)):
+                assert len(route) in (2, 3, 4)
+                route = URLSpec(*route)
+                if route.name is None:
+                    route.name = class_name(route.target)
+            new_routes_list.append(route)
+        return new_routes_list
 
     @property
     @lru_cache()

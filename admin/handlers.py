@@ -21,12 +21,12 @@ class HomeHandler(TemplateHandler):
     template_name = 'index.html'
 
     async def get_context_data(self, **kwargs):
+        service_cards = []
         try:
             services = await self.internal_request('discovery', method='get_services')
         except RequestTimeoutError:
             pass
         else:
-            service_cards = []
             for name in services.keys():
                 if name == self.application.name:
                     # Skip current application
@@ -38,8 +38,7 @@ class HomeHandler(TemplateHandler):
                 except RequestTimeoutError:
                     pass
             service_cards.sort()
-            kwargs.update(service_cards=service_cards)
-
+        kwargs.update(service_cards=service_cards)
         context = await super().get_context_data(**kwargs)
         return context
 

@@ -155,8 +155,8 @@ class DiscoveryService(BaseService):
         try:
             response = await request('ping', timeout=self.ping_timeout)
             return response['message'] == 'pong'
-        except Exception:
-            logger.error('Service `%s` is unreachable.' % name)
+        except Exception as e:
+            logger.error('Service `%s` is unreachable. %s' % (name, str(e)))
             raise
 
     async def check_services(self):

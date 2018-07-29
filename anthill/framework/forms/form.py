@@ -1,7 +1,7 @@
 from anthill.framework.forms.i18n import Translations
 from anthill.framework.conf import settings
 from tornado.escape import to_unicode
-from wtforms import form
+from wtforms.form import Form as BaseForm
 from wtforms.meta import DefaultMeta
 
 
@@ -31,19 +31,19 @@ class TornadoInputWrapper:
             return []
 
 
-class Form(form.Form):
+class Form(BaseForm):
     """
     A :class:`~wtforms.form.Form` that uses the Anthill's I18N
     support for translations.
     """
-    _anthill_translations = Translations()
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):
         if formdata is not None and not hasattr(formdata, 'getlist'):
             formdata = TornadoInputWrapper(formdata)
-        super().process(formdata, obj, **kwargs)
+        super().process(formdata, obj, data, **kwargs)
 
-    def _get_translations(self):
-        if settings.USE_I18N:
-            return self._anthill_translations
-        return super()._get_translations()
+    class Meta(DefaultMeta):
+        def get_translations(self, form):
+            if settings.USE_I18N:
+                return Translations()
+            return super().get_translations(form)

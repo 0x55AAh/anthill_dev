@@ -21,17 +21,16 @@ class ServiceMetadata(graphene.ObjectType):
 class RootQuery(graphene.ObjectType):
     """Api root query."""
 
-    services_metadata = graphene.List(ServiceMetadata,
-                                      description='List of services metadata.')
+    services_metadata = graphene.List(ServiceMetadata, description='List of services metadata.')
 
     # noinspection PyMethodMayBeStatic
     async def resolve_services_metadata(self, info, **kwargs):
+        services_metadata = []
         try:
             services = await internal_request('discovery', method='get_services')
         except RequestTimeoutError:
-            return []
+            pass
         else:
-            services_metadata = []
             for name in services.keys():
                 if name == app.name:
                     # Skip current application
@@ -42,7 +41,7 @@ class RootQuery(graphene.ObjectType):
                 except RequestTimeoutError:
                     pass
             services_metadata.sort()
-            return services_metadata
+        return services_metadata
 
 
 class Mutation(graphene.ObjectType):
