@@ -1,10 +1,9 @@
 from collections import defaultdict
 from tornado.web import URLSpec
-from anthill.framework.utils.text import slugify, camel_case_to_spaces
-from anthill.framework.conf import settings
+from anthill.framework.utils.text import slugify, camel_case_to_spaces, class_name
 from anthill.framework.utils.module_loading import import_string
 from anthill.platform.api.internal import api as internal_api
-from anthill.framework.utils.text import class_name
+from anthill.framework.conf import settings
 from urllib.parse import urlparse, urljoin
 from functools import lru_cache
 from _thread import get_ident
@@ -165,15 +164,15 @@ class Application:
     @lru_cache()
     def routes(self):
         """Returns routes map."""
+        from anthill.framework.utils.urls import include, to_urlspec
         routes_mod = importlib.import_module(self.routes_conf)
         routes_list = getattr(routes_mod, 'route_patterns', [])
+        routes_list = include(routes_list)
         new_routes_list = []
         for route in routes_list:
-            if isinstance(route, (list, tuple)):
-                assert len(route) in (2, 3, 4)
-                route = URLSpec(*route)
-                if route.name is None:
-                    route.name = class_name(route.target)
+            route = to_urlspec(route)
+            if route.name is None:
+                route.name = class_name(route.target)
             new_routes_list.append(route)
         return new_routes_list
 
