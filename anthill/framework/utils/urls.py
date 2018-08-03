@@ -43,7 +43,7 @@ def include(routes: Union[str, list], namespace: str=None) -> list:
         if isinstance(route.target, (list, tuple)):  # Other include
             for r in route.target:
                 r = to_list(r)
-                if len(r) == 4 and namespace:
+                if len(r) == 4 and r[3] and namespace:
                     r[3] = ':'.join([namespace, r[3]])
                 r[0] = '/'.join([
                     route.regex.pattern.rstrip('/$'),

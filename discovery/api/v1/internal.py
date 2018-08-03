@@ -25,7 +25,7 @@ async def get_service(api: InternalAPI, name: str, network: str=None) -> dict:
 async def get_services(api: InternalAPI) -> dict:
     result = {}
     for name in await api.service.list_services():
-        result.update({name: await api.service.get_service(name)})
+        result[name] = await api.service.get_service(name)
     return result
 
 
