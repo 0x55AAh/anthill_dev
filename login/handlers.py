@@ -3,24 +3,23 @@ from anthill.framework.handlers import (
     LoginHandlerMixin,
     LogoutHandlerMixin,
     UserHandlerMixin,
-    AuthHandlerMixin
+    AuthHandlerMixin,
+    UserRequestHandler
 )
 from anthill.framework.auth import authenticate
 
 
-class UserRequestHandler(UserHandlerMixin, RequestHandler):
-    """User aware RequestHandler."""
-
-    async def prepare(self):
-        await super().prepare()
-        await self.setup_user()
-
-
 class LoginHandler(LoginHandlerMixin, UserRequestHandler):
     async def post(self, *args, **kwargs):
-        credentials = {}
+        credentials = self.get_credentials()
         user = await authenticate(self.request, **credentials)
         self.login(user=user)
+
+    def get_credentials(self):
+        return {
+            'username': self.get_argument('username'),
+            'password': self.get_argument('password')
+        }
 
 
 class LogoutHandler(LogoutHandlerMixin, UserRequestHandler):

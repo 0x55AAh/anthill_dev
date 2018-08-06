@@ -11,7 +11,8 @@ from anthill.framework.handlers.streaming.watchfile import (
 from anthill.framework.handlers.streaming.uploadfile import UploadFileStreamHandler
 from anthill.framework.handlers.graphql import GraphQLHandler
 from anthill.framework.auth.handlers import (
-    UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin, AuthHandlerMixin
+    UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin, AuthHandlerMixin,
+    UserRequestHandler
 )
 
 __all__ = [
@@ -23,5 +24,6 @@ __all__ = [
     'WatchFileHandler', 'WatchTextFileHandler', 'WatchLogFileHandler',
     'UploadFileStreamHandler',
     'GraphQLHandler',
-    'UserHandlerMixin', 'LoginHandlerMixin', 'LogoutHandlerMixin', 'AuthHandlerMixin'
+    'UserHandlerMixin', 'LoginHandlerMixin', 'LogoutHandlerMixin', 'AuthHandlerMixin',
+    'UserRequestHandler'
 ]

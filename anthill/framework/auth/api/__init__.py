@@ -1,20 +1,36 @@
 """
 Provides various authentication policies.
 """
-
-import base64
-import binascii
-import jwt
-
 from anthill.framework.auth import authenticate, get_user_model
+from anthill.framework.utils.translation import translate as _
+from anthill.framework.auth.api import exceptions
+import six
 
 
-class BaseAuthentication(object):
+# Header encoding (see RFC5987)
+HTTP_HEADER_ENCODING = 'iso-8859-1'
+
+# Default datetime input and output formats
+ISO_8601 = 'iso-8601'
+
+
+def get_authorization_header(request):
+    """
+    Return request's 'Authorization:' header, as a bytestring.
+    Hide some test client ickyness where the header can be unicode.
+    """
+    auth = request.headers.get('Authorization', b'')
+    if isinstance(auth, six.text_type):
+        auth = auth.encode(HTTP_HEADER_ENCODING)
+    return auth
+
+
+class BaseAuthentication:
     """
     All authentication classes should extend BaseAuthentication.
     """
 
-    def authenticate(self, request):
+    async def authenticate(self, request):
         """
         Authenticate the request and return a two-tuple of (user, token).
         """
@@ -28,24 +44,6 @@ class BaseAuthentication(object):
         """
 
 
-class BasicAuthentication(BaseAuthentication):
-    """
-    HTTP Basic authentication against username/password.
-    """
-
-    def authenticate(self, request):
-        pass
-
-
-class SessionAuthentication(BaseAuthentication):
-    """
-    Use Anthill's session framework for authentication.
-    """
-
-    def authenticate(self, request):
-        pass
-
-
 class TokenAuthentication(BaseAuthentication):
     """
     Simple token based authentication.
@@ -55,25 +53,54 @@ class TokenAuthentication(BaseAuthentication):
     For example:
         Authorization: Token 401f7ac837da42b97f613d789819ff93537bee6a
     """
+    keyword = 'Token'
+    model = None
 
-    def authenticate(self, request):
-        pass
+    def get_model(self):
+        if self.model is not None:
+            return self.model
+        from rest_framework.authtoken.models import Token
+        return Token
 
-
-class BaseJSONWebTokenAuthentication(BaseAuthentication):
     """
-    Token based authentication using the JSON Web Token standard.
+    A custom token model may be used, but must have the following properties.
+    
+    * key -- The string identifying the token
+    * user -- The user to which the token belongs
     """
 
-    def authenticate(self, request):
-        pass
+    async def authenticate(self, request):
+        auth = get_authorization_header(request).split()
 
+        if not auth or auth[0].lower() != self.keyword.lower().encode():
+            return None
 
-class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
-    """
-    Clients should authenticate by passing the token key in the "Authorization"
-    HTTP header, prepended with the prefix.
+        if len(auth) == 1:
+            msg = _('Invalid token header. No credentials provided.')
+            raise exceptions.AuthenticationFailed(msg)
+        elif len(auth) > 2:
+            msg = _('Invalid token header. Token string should not contain spaces.')
+            raise exceptions.AuthenticationFailed(msg)
 
-    For example:
-        Authorization: JWT eyJhbGciOiAiSFMyNTYiLCAidHlwIj
-    """
+        try:
+            token = auth[1].decode()
+        except UnicodeError:
+            msg = _('Invalid token header. Token string should not contain invalid characters.')
+            raise exceptions.AuthenticationFailed(msg)
+
+        return await self.authenticate_credentials(token)
+
+    async def authenticate_credentials(self, key):
+        model = self.get_model()
+        try:
+            token = model.objects.select_related('user').get(key=key)
+        except model.DoesNotExist:
+            raise exceptions.AuthenticationFailed(_('Invalid token.'))
+
+        if not token.user.is_active:
+            raise exceptions.AuthenticationFailed(_('User inactive or deleted.'))
+
+        return token.user, token
+
+    def authenticate_header(self, request):
+        return self.keyword

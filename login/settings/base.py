@@ -156,3 +156,11 @@ GRAPHENE = {
     'SCHEMA': 'login.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
+
+
+###############
+# SOCIAL AUTH #
+###############
+
+SOCIAL_AUTH_STRATEGY = 'anthill.framework.auth.social.strategy.TornadoStrategy'
+SOCIAL_AUTH_STORAGE = 'anthill.framework.auth.social.models.TornadoStorage'

@@ -7,6 +7,7 @@ from anthill.framework.auth import (
     SESSION_KEY,
     load_backend
 )
+from anthill.framework.handlers.base import RequestHandler
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.conf import settings
 
@@ -15,7 +16,8 @@ __all__ = [
     'UserHandlerMixin',
     'LoginHandlerMixin',
     'LogoutHandlerMixin',
-    'AuthHandlerMixin'
+    'AuthHandlerMixin',
+    'UserRequestHandler'
 ]
 
 
@@ -110,3 +112,11 @@ class LogoutHandlerMixin:
 
 class AuthHandlerMixin(UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin):
     pass
+
+
+class UserRequestHandler(UserHandlerMixin, RequestHandler):
+    """User aware RequestHandler."""
+
+    async def prepare(self):
+        await super().prepare()
+        await self.setup_user()
