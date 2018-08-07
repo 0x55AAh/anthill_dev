@@ -4,10 +4,13 @@ from anthill.framework.auth import (
     _get_backends,
     BACKEND_SESSION_KEY,
     HASH_SESSION_KEY,
+    REDIRECT_FIELD_NAME,
     SESSION_KEY,
     load_backend
 )
 from anthill.framework.handlers.base import RequestHandler
+from anthill.framework.handlers.edit import FormHandler
+from anthill.framework.auth.forms import AuthenticationForm
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.conf import settings
 
@@ -17,7 +20,8 @@ __all__ = [
     'LoginHandlerMixin',
     'LogoutHandlerMixin',
     'AuthHandlerMixin',
-    'UserRequestHandler'
+    'UserRequestHandler',
+    'LoginHandler'
 ]
 
 
@@ -120,3 +124,36 @@ class UserRequestHandler(UserHandlerMixin, RequestHandler):
     async def prepare(self):
         await super().prepare()
         await self.setup_user()
+
+
+class LoginHandler(LoginHandlerMixin, FormHandler):
+    """
+    Display the login form and handle the login action.
+    """
+
+    form_class = AuthenticationForm
+    authentication_form = None
+    redirect_field_name = REDIRECT_FIELD_NAME
+    template_name = 'login.html'
+    redirect_authenticated_user = False
+    extra_context = None
+
+    def get_success_url(self):
+        url = self.get_redirect_url()
+        return url or self.reverse(settings.LOGIN_REDIRECT_URL)
+
+    def get_redirect_url(self):
+        """Return the user-originating redirect URL."""
+        redirect_to = self.get_argument(
+            self.redirect_field_name,
+            self.get_query_argument(self.redirect_field_name, '')
+        )
+        return redirect_to
+
+    def get_form_class(self):
+        return self.authentication_form or self.form_class
+
+    def form_valid(self, form):
+        """Security check complete. Log the user in."""
+        self.login(form.get_user())
+        self.redirect(self.get_success_url())

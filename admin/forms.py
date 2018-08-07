@@ -13,14 +13,5 @@ class RegistrationForm(Form):
     accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
 
-class AuthenticationForm(Form):
-    """
-    Base class for authenticating users. Extend this to get a form that accepts
-    username/password logins.
-    """
-    username = StringField('Username', [validators.Length(min=4, max=25)])
-    password = PasswordField('Password', [validators.DataRequired()])
-
-
 class PasswordResetForm(Form):
     email = StringField('Email', [validators.Length(min=6, max=35)])

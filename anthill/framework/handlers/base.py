@@ -251,15 +251,6 @@ class TemplateMixin:
         else:
             return self.template_name
 
-
-class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
-    """
-    Render a template. Pass keyword arguments to the context.
-    """
-    async def get(self, *args, **kwargs):
-        context = await self.get_context_data(**kwargs)
-        self.render(**context)
-
     def create_template_loader(self, template_path):
         """
         Returns a new template loader for the given path.
@@ -310,6 +301,15 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
                 self.render("errors/404.html")
             else:
                 self.render("errors/500.html")
+
+
+class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
+    """
+    Render a template. Pass keyword arguments to the context.
+    """
+    async def get(self, *args, **kwargs):
+        context = await self.get_context_data(**kwargs)
+        self.render(**context)
 
 
 class RedirectHandler(RedirectMixin, RequestHandler):

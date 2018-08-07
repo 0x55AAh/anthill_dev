@@ -15,7 +15,7 @@ class FormMixin(ContextMixin):
 
     def get_prefix(self):
         """Return the prefix to use for forms."""
-        return self.prefix
+        return self.prefix or ''
 
     def get_form_class(self):
         """Return the form class to use."""
@@ -64,7 +64,8 @@ class ProcessFormHandler(RequestHandler):
 
     async def get(self, *args, **kwargs):
         """Handle GET requests: instantiate a blank version of the form."""
-        return self.render(await self.get_context_data())
+        context = await self.get_context_data(**kwargs)
+        self.render(**context)
 
     async def post(self, *args, **kwargs):
         """

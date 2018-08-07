@@ -1,4 +1,7 @@
-from anthill.framework.handlers import TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler
+from anthill.framework.handlers import (
+    TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler,
+    LoginHandler as BaseLoginHandler
+)
 from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError
@@ -43,15 +46,8 @@ class HomeHandler(TemplateHandler):
         return context
 
 
-class LoginHandler(TemplateHandler):
-    template_name = 'login.html'
-
-    async def post(self, *args, **kwargs):
-        pass
-
-    async def get_context_data(self, **kwargs):
-        context = await super().get_context_data(**kwargs)
-        return context
+class LoginHandler(BaseLoginHandler):
+    pass
 
 
 class LogoutHandler(AuthenticatedHandlerMixin, RedirectHandler):
