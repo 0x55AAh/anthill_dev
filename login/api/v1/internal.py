@@ -47,3 +47,13 @@ async def get_users(api: InternalAPI, request=None, include_profiles: bool=False
     return {
         'data': users_data
     }
+
+
+@as_internal()
+async def authenticate(api: InternalAPI, **credentials) -> str:
+    pass
+
+
+@as_internal()
+async def login(api: InternalAPI, token: str) -> str:
+    pass

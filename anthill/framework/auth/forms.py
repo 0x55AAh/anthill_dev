@@ -12,15 +12,20 @@ class AuthenticationForm(Form):
     password = PasswordField('Password', [validators.DataRequired()])
 
     async def authenticate(self, request):
-        username = self.username.data
-        password = self.password.data
-        user = await authenticate(request, username=username, password=password)
+        user = await authenticate(request, **self.get_credentials())
         if user is None:
             self.invalid_login_error()
         else:
             self.confirm_login_allowed(user)
         return user
 
+    def get_credentials(self):
+        return {
+            'username': self.username.data,
+            'password': self.password.data
+        }
+
+    # noinspection PyMethodMayBeStatic
     def confirm_login_allowed(self, user):
         """
         Controls whether the given User may log in. This is a policy setting,
