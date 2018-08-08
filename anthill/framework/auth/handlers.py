@@ -140,7 +140,7 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
 
     def get_success_url(self):
         url = self.get_redirect_url()
-        return url or self.reverse(settings.LOGIN_REDIRECT_URL)
+        return url or self.reverse_url(settings.LOGIN_REDIRECT_URL)
 
     def get_redirect_url(self):
         """Return the user-originating redirect URL."""
@@ -153,7 +153,8 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
     def get_form_class(self):
         return self.authentication_form or self.form_class
 
-    def form_valid(self, form):
+    async def form_valid(self, form):
         """Security check complete. Log the user in."""
-        self.login(form.get_user())
+        user = await form.authenticate(self.request)
+        self.login(user)
         self.redirect(self.get_success_url())

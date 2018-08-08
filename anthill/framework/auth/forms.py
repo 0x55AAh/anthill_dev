@@ -11,23 +11,15 @@ class AuthenticationForm(Form):
     username = StringField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField('Password', [validators.DataRequired()])
 
-    def __init__(self, request=None, formdata=None, obj=None, prefix='', data=None, meta=None, **kwargs):
-        super().__init__(formdata, obj, prefix, data, meta, **kwargs)
-        self.request = request
-        self._user = None
-
-    def process(self, formdata=None, obj=None, data=None, **kwargs):
-        super().process(formdata, obj, data, **kwargs)
-        self.authenticate()
-
-    async def authenticate(self):
+    async def authenticate(self, request):
         username = self.username.data
         password = self.password.data
-        self._user = await authenticate(self.request, username=username, password=password)
-        if self._user is None:
-            raise self.get_invalid_login_error()
+        user = await authenticate(request, username=username, password=password)
+        if user is None:
+            self.invalid_login_error()
         else:
-            self.confirm_login_allowed(self.user_cache)
+            self.confirm_login_allowed(user)
+        return user
 
     def confirm_login_allowed(self, user):
         """
@@ -35,23 +27,12 @@ class AuthenticationForm(Form):
         independent of end-user authentication. This default behavior is to
         allow login by active users, and reject login by inactive users.
 
-        If the given user cannot log in, this method should raise a
-        ``ValidationError``.
+        If the given user cannot log in, this method should raise a ``ValidationError``.
 
         If the given user may log in, this method should return None.
         """
         if not user.is_active:
-            raise ValidationError(
-                self.error_messages['inactive'],
-                code='inactive',
-            )
+            raise ValidationError('Inactive user.')
 
-    def get_invalid_login_error(self):
-        return ValidationError(
-            self.error_messages['invalid_login'],
-            code='invalid_login',
-            params={'username': self.username_field.verbose_name},
-        )
-
-    def get_user(self):
-        return self._user
+    def invalid_login_error(self):
+        raise ValidationError('Invalid user.')
