@@ -47,7 +47,7 @@ def include(routes: Union[str, list], namespace: str=None) -> list:
                     r[3] = ':'.join([namespace, r[3]])
                 r[0] = '/'.join([
                     route.regex.pattern.rstrip('/$'),
-                    re.sub(r'^(\^/)', '', r[0])
+                    re.sub(r'^(\^)?/', '', r[0])
                 ])
                 new_routes.append(URLSpec(*r))
         else:

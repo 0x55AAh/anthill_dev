@@ -1,5 +1,4 @@
 """Tornado SQLAlchemy ORM models for Social Auth."""
-
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from social_core.utils import setting_name, module_member
@@ -11,6 +10,7 @@ from social_sqlalchemy.storage import (
     SQLAlchemyPartialMixin,
     BaseSQLAlchemyStorage
 )
+from anthill.framework.db import db
 
 
 class TornadoStorage(BaseSQLAlchemyStorage):
@@ -21,23 +21,21 @@ class TornadoStorage(BaseSQLAlchemyStorage):
     partial = None
 
 
-def init_social(Base, session, settings):
+def init_social(settings):
     UID_LENGTH = settings.get(setting_name('UID_LENGTH'), 255)
-    User = module_member(settings[setting_name('USER_MODEL')])
-    app_session = session
+    # User = module_member(settings[setting_name('USER_MODEL')])
+    User = module_member('login.models.User')
 
-    class _AppSession(object):
+    class _AppSession:
         @classmethod
         def _session(cls):
-            return app_session
+            return db.session
 
-    class UserSocialAuth(_AppSession, Base, SQLAlchemyUserMixin):
-        """Social Auth association model"""
+    class UserSocialAuth(_AppSession, db.Model, SQLAlchemyUserMixin):
+        """Social Auth association model."""
         uid = Column(String(UID_LENGTH))
-        user_id = Column(User.id.type, ForeignKey(User.id),
-                         nullable=False, index=True)
-        user = relationship(User, backref=backref('social_auth',
-                                                  lazy='dynamic'))
+        user_id = Column(User.id.type, ForeignKey(User.id), nullable=False, index=True)
+        user = relationship(User, backref=backref('social_auth', lazy='dynamic'))
 
         @classmethod
         def username_max_length(cls):
@@ -47,21 +45,17 @@ def init_social(Base, session, settings):
         def user_model(cls):
             return User
 
-    class Nonce(_AppSession, Base, SQLAlchemyNonceMixin):
-        """One use numbers"""
-        pass
+    class Nonce(_AppSession, db.Model, SQLAlchemyNonceMixin):
+        """One use numbers."""
 
-    class Association(_AppSession, Base, SQLAlchemyAssociationMixin):
-        """OpenId account association"""
-        pass
+    class Association(_AppSession, db.Model, SQLAlchemyAssociationMixin):
+        """OpenId account association."""
 
-    class Code(_AppSession, Base, SQLAlchemyCodeMixin):
-        """Mail validation single one time use code"""
-        pass
+    class Code(_AppSession, db.Model, SQLAlchemyCodeMixin):
+        """Mail validation single one time use code."""
 
-    class Partial(_AppSession, Base, SQLAlchemyPartialMixin):
-        """Partial pipeline storage"""
-        pass
+    class Partial(_AppSession, db.Model, SQLAlchemyPartialMixin):
+        """Partial pipeline storage."""
 
     # Set the references in the storage class
     TornadoStorage.user = UserSocialAuth

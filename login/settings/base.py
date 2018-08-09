@@ -158,6 +158,29 @@ GRAPHENE = {
 }
 
 
+##################
+# AUTHENTICATION #
+##################
+
+AUTH_USER_MODEL = 'User'
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GooglePlusAuth',
+    'social_core.backends.google_openidconnect.GoogleOpenIdConnect',
+
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.facebook.FacebookAppOAuth2',
+
+    'social_core.backends.vk.VKontakteOpenAPI',
+    'social_core.backends.vk.VKAppOAuth2',
+    'social_core.backends.vk.VKOAuth2',
+
+    'anthill.framework.auth.backends.ModelBackend'
+]
+
 ###############
 # SOCIAL AUTH #
 ###############

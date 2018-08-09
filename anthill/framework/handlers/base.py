@@ -261,6 +261,7 @@ class TemplateMixin:
         settings. If a ``template_loader`` application setting is
         supplied, uses that instead.
         """
+        session = getattr(self, 'session', None)
         if "template_loader" in self.settings:
             return self.settings["template_loader"]
         kwargs = {}
@@ -274,7 +275,7 @@ class TemplateMixin:
             settings, "TEMPLATE_LOADER_CLASS", "anthill.framework.core.template.Loader")
         # ``session`` used for caching special template root.
         return import_string(template_loader_class)(
-            template_path, session=self.session, **kwargs)
+            template_path, session=session, **kwargs)
 
     def write_error(self, status_code, **kwargs):
         """

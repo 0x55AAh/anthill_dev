@@ -9,7 +9,7 @@ from anthill.framework.utils.urls import include
 
 route_patterns = [
     url(r'^/', include(rest_routes.route_patterns, namespace='api')),  # for compatibility only
-    url(r'^/social/', include(social_auth_routes.route_patterns, namespace='social')),
+    url(r'^/social/', include(social_auth_routes.route_patterns)),
     url(r'^/login/?$', handlers.LoginHandler, name='login'),
     url(r'^/logout/?$', handlers.LogoutHandler, name='logout'),
     url(r'^/register/?$', handlers.RegisterHandler, name='register'),

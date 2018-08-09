@@ -1,7 +1,7 @@
 from anthill.framework.handlers import (
-    TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler,
-    LoginHandler as BaseLoginHandler
+    TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler
 )
+from anthill.platform.auth.handlers import LoginHandler as BaseLoginHandler
 from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError

@@ -11,16 +11,16 @@ Example:
         ...
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
-from login.models import User
+from anthill.framework.auth import authenticate as _authenticate, get_user_model
+
+
+User = get_user_model()
 
 
 PAGINATED_BY = 50
 
 
-@as_internal()
-async def get_user(api: InternalAPI, user_id: str, include_profile: bool=False) -> dict:
-    # ToDo: async query
-    user = User.query.filter_by(id=user_id).first()
+async def _get_user_data(user: User, include_profile: bool=False) -> dict:
     if user is not None:
         data = user.dump().data
         if include_profile:
@@ -28,9 +28,14 @@ async def get_user(api: InternalAPI, user_id: str, include_profile: bool=False) 
         return data
 
 
-@as_internal()
-async def get_users(api: InternalAPI, request=None, include_profiles: bool=False,
-                    pagination: int=PAGINATED_BY, page: int=None) -> dict:
+async def _get_user(user_id: str, include_profile: bool=False) -> dict:
+    # ToDo: async query
+    user = User.query.filter_by(id=user_id).first()
+    return await _get_user_data(user, include_profile)
+
+
+async def _get_users(request=None, include_profiles: bool=False,
+                     pagination: int=PAGINATED_BY, page: int=None) -> dict:
     pagination_kwargs = {
         'page': page,
         'per_page': pagination,
@@ -50,10 +55,36 @@ async def get_users(api: InternalAPI, request=None, include_profiles: bool=False
 
 
 @as_internal()
-async def authenticate(api: InternalAPI, **credentials) -> str:
+async def get_user(api: InternalAPI, user_id: str, include_profile: bool=False) -> dict:
+    return await _get_user(user_id, include_profile)
+
+
+@as_internal()
+async def get_users(api: InternalAPI, request=None, include_profiles: bool=False,
+                    pagination: int=PAGINATED_BY, page: int=None) -> dict:
+    return await _get_users(request, include_profiles, pagination, page)
+
+
+@as_internal()
+async def authenticate(api: InternalAPI, **credentials) -> dict:
+    # user = await _authenticate(request=None, **credentials)
+    # data = await _get_user_data(user)
+    # return data
+    return {
+        'id': 1,
+        'username': 'woland',
+        'is_active': True,
+        'session_auth_hash': 'kukukuku',
+        'backend': 'anthill.framework.auth.backends.ModelBackend'
+    }
+
+
+@as_internal()
+async def login(api: InternalAPI, user_id: str) -> str:
+    return '5s4df6s5d4f6sd54fsd6f54s'
     pass
 
 
 @as_internal()
-async def login(api: InternalAPI, token: str) -> str:
+async def logout(api: InternalAPI, token: str) -> str:
     pass
