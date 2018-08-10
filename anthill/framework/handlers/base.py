@@ -104,6 +104,9 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         """
         Override this to set HTTP headers at the beginning of the request.
         """
+        # self.set_header('Access-Control-Allow-Origin', '*')
+        # self.set_header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type')
+        # self.set_header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
 
 
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, CommonRequestHandlerMixin,

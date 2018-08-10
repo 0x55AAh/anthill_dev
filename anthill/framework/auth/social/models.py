@@ -12,6 +12,7 @@ from social_sqlalchemy.storage import (
 )
 from anthill.framework.db import db
 from anthill.framework.auth import get_user_model
+from anthill.framework.conf import settings
 
 
 class TornadoStorage(BaseSQLAlchemyStorage):
@@ -22,8 +23,10 @@ class TornadoStorage(BaseSQLAlchemyStorage):
     partial = None
 
 
-def init_social(settings):
-    UID_LENGTH = settings.get(setting_name('UID_LENGTH'), 255)
+def init_social():
+    # noinspection PyPep8Naming
+    UID_LENGTH = getattr(settings, setting_name('UID_LENGTH'), 255)
+    # noinspection PyPep8Naming
     User = get_user_model()
 
     class _AppSession(db.Model):

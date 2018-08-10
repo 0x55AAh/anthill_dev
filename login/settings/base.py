@@ -167,7 +167,6 @@ AUTH_USER_MODEL = 'User'
 AUTHENTICATION_BACKENDS = [
     # GOOGLE
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GooglePlusAuth',
     'social_core.backends.google_openidconnect.GoogleOpenIdConnect',
 
@@ -179,6 +178,9 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.vk.VKontakteOpenAPI',
     'social_core.backends.vk.VKAppOAuth2',
     'social_core.backends.vk.VKOAuth2',
+
+    # MAILRU
+    'social_core.backends.mailru.MailruOAuth2',
 
     # STEAM
     'social_core.backends.steam.SteamOpenId',

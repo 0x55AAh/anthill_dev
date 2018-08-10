@@ -40,15 +40,15 @@ class BaseService(TornadoWebApplication):
         self.add_handlers(self.app.host_regex, self.app.routes)
         logger.debug('Service routes installed.')
 
-        self.settings.update(cookie_secret=self.app.settings.SECRET_KEY)
-        self.settings.update(xsrf_cookies=self.app.settings.CSRF_COOKIES)
-        self.settings.update(template_path=self.app.settings.TEMPLATE_PATH)
-        self.settings.update(login_url=self.app.settings.LOGIN_URL)
+        self.settings.update(cookie_secret=self.config.SECRET_KEY)
+        self.settings.update(xsrf_cookies=self.config.CSRF_COOKIES)
+        self.settings.update(template_path=self.config.TEMPLATE_PATH)
+        self.settings.update(login_url=self.config.LOGIN_URL)
 
         default_handler_class = getattr(
-            self.app.settings, 'DEFAULT_HANDLER_CLASS', 'anthill.framework.handlers.Handler404')
+            self.config, 'DEFAULT_HANDLER_CLASS', 'anthill.framework.handlers.Handler404')
         self.settings.update(default_handler_class=import_string(default_handler_class))
-        self.settings.update(default_handler_args=self.app.settings.DEFAULT_HANDLER_ARGS)
+        self.settings.update(default_handler_args=self.config.DEFAULT_HANDLER_ARGS)
 
         # template_loader_class = getattr(
         #     self.app.settings, 'TEMPLATE_LOADER_CLASS', 'anthill.framework.core.template.Loader')
