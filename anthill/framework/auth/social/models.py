@@ -1,7 +1,7 @@
 """Tornado SQLAlchemy ORM models for Social Auth."""
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from social_core.utils import setting_name, module_member
+from social_core.utils import setting_name
 from social_sqlalchemy.storage import (
     SQLAlchemyUserMixin,
     SQLAlchemyAssociationMixin,
@@ -11,6 +11,7 @@ from social_sqlalchemy.storage import (
     BaseSQLAlchemyStorage
 )
 from anthill.framework.db import db
+from anthill.framework.auth import get_user_model
 
 
 class TornadoStorage(BaseSQLAlchemyStorage):
@@ -23,15 +24,16 @@ class TornadoStorage(BaseSQLAlchemyStorage):
 
 def init_social(settings):
     UID_LENGTH = settings.get(setting_name('UID_LENGTH'), 255)
-    # User = module_member(settings[setting_name('USER_MODEL')])
-    User = module_member('login.models.User')
+    User = get_user_model()
 
-    class _AppSession:
+    class _AppSession(db.Model):
+        __abstract__ = True
+
         @classmethod
         def _session(cls):
             return db.session
 
-    class UserSocialAuth(_AppSession, db.Model, SQLAlchemyUserMixin):
+    class UserSocialAuth(_AppSession, SQLAlchemyUserMixin):
         """Social Auth association model."""
         uid = Column(String(UID_LENGTH))
         user_id = Column(User.id.type, ForeignKey(User.id), nullable=False, index=True)
@@ -45,16 +47,16 @@ def init_social(settings):
         def user_model(cls):
             return User
 
-    class Nonce(_AppSession, db.Model, SQLAlchemyNonceMixin):
+    class Nonce(_AppSession, SQLAlchemyNonceMixin):
         """One use numbers."""
 
-    class Association(_AppSession, db.Model, SQLAlchemyAssociationMixin):
+    class Association(_AppSession, SQLAlchemyAssociationMixin):
         """OpenId account association."""
 
-    class Code(_AppSession, db.Model, SQLAlchemyCodeMixin):
+    class Code(_AppSession, SQLAlchemyCodeMixin):
         """Mail validation single one time use code."""
 
-    class Partial(_AppSession, db.Model, SQLAlchemyPartialMixin):
+    class Partial(_AppSession, SQLAlchemyPartialMixin):
         """Partial pipeline storage."""
 
     # Set the references in the storage class

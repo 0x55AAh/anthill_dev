@@ -23,7 +23,7 @@ class AuthHandler(BaseHandler):
     def post(self, backend):
         self._auth(backend)
 
-    @psa('complete')
+    @psa('social:complete')
     def _auth(self, backend):
         do_auth(self.backend)
 
@@ -35,7 +35,7 @@ class CompleteHandler(BaseHandler):
     def post(self, backend):
         self._complete(backend)
 
-    @psa('complete')
+    @psa('social:complete')
     def _complete(self, backend):
         do_complete(
             self.backend,

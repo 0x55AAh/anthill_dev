@@ -140,7 +140,8 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
 
     def get_success_url(self):
         url = self.get_redirect_url()
-        return url or self.reverse_url(settings.LOGIN_REDIRECT_URL)
+        default_url = self.reverse_url(settings.LOGIN_REDIRECT_URL)
+        return url or default_url
 
     def get_redirect_url(self):
         """Return the user-originating redirect URL."""
