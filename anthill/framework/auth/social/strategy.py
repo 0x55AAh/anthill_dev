@@ -5,7 +5,6 @@ from anthill.framework.utils.crypto import get_random_string
 from anthill.framework.utils.encoding import force_text
 from anthill.framework.utils.functional import Promise
 from anthill.framework.conf import settings
-import json
 import six
 import os
 

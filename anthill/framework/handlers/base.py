@@ -17,6 +17,8 @@ from tornado.httputil import _parse_header
 import json
 import logging
 
+from anthill.framework.utils.urls import build_absolute_uri
+
 
 class TranslationHandlerMixin:
     # noinspection PyMethodMayBeStatic
@@ -243,6 +245,7 @@ class TemplateMixin:
         namespace.update(app_version=app.version)
         namespace.update(debug=app.debug)
         namespace.update(bytes2human=bytes2human)
+        namespace.update(build_absolute_uri=build_absolute_uri)
         return namespace
 
     def get_template_name(self):

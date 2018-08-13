@@ -1,6 +1,5 @@
 from anthill.framework.auth.forms import AuthenticationForm as BaseAuthenticationForm
-from wtforms import StringField, PasswordField, validators, ValidationError
-from anthill.framework.auth import authenticate
+from wtforms import ValidationError
 from functools import partial
 
 

@@ -55,3 +55,13 @@ def include(routes: Union[str, list], namespace: str=None) -> list:
                 route.name = ':'.join([namespace, route.name])
             new_routes.append(route)
     return new_routes
+
+
+def build_absolute_uri(host_url, path=None):
+    """Build absolute URI with given (optional) path."""
+    path = path or ''
+    if path.startswith('http://') or path.startswith('https://'):
+        return path
+    if host_url.endswith('/') and path.startswith('/'):
+        path = path[1:]
+    return host_url + path
