@@ -1,12 +1,12 @@
 {% extends 'layouts/fixed.html' %}
 
+{% block css %}
+<link href="{{ static_url('css/terminal/jquery.terminal.min.css') }}" rel="stylesheet"/>
+{% end %}
+
 {% block js %}
 <script src="{{ static_url('js/plugins/terminals/jquery.terminal/jquery.terminal.min.js') }}"></script>
 <script src="{{ static_url('js/pages/debug.js') }}"></script>
-{% end %}
-
-{% block css %}
-<link href="{{ static_url('css/terminal/jquery.terminal.min.css') }}" rel="stylesheet"/>
 {% end %}
 
 <!-- Main navbar -->

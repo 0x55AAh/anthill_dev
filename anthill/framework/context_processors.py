@@ -11,7 +11,7 @@ CONTEXT_PROCESSORS = getattr(settings, 'CONTEXT_PROCESSORS', [])
 
 
 async def build_context_from_context_processors(handler: RequestHandler) -> dict:
-    """Build extra context for current handler on every request"""
+    """Build extra context for current handler on every request."""
     ctx = {}
     for ctx_processor in CONTEXT_PROCESSORS:
         f = import_string(ctx_processor)
