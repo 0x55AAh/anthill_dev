@@ -4,6 +4,7 @@ from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 
 from anthill.framework.conf import settings
+from anthill.framework.test import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
@@ -238,6 +239,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             await self.send(service, message)
 
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
+        timer = ElapsedTime('request -> {0}@{1}', method, service)
         request_id = self.next_request_id()
         message = {
             'type': self.message_type,
@@ -260,6 +262,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             # return {'error': {'message': 'Service `%s` not responded for %s sec' % (service, timeout)}}
         finally:
             del self._responses[request_id]
+            logger.info(timer.done())
 
     async def push(self, service: str, method: str, **kwargs) -> None:
         message = {

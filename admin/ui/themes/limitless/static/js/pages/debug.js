@@ -1,5 +1,6 @@
-jQuery(function($, undefined) {
-    $('#console').terminal(function(command) {
+$(function() {
+
+	$('#console').terminal(function(command) {
         // if (command !== '') {
         //     var result = window.eval(command);
         //     if (result !== undefined) {
@@ -13,4 +14,5 @@ jQuery(function($, undefined) {
         width: 'auto',
         prompt: '> '
     });
+
 });
