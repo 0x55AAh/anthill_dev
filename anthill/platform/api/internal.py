@@ -239,30 +239,29 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             await self.send(service, message)
 
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
-        timer = ElapsedTime('request -> {0}@{1}', method, service)
-        request_id = self.next_request_id()
-        message = {
-            'type': self.message_type,
-            'service': self.service.name,
-            'payload': {
-                'jsonrpc': self.json_rpc_ver,
-                'method': method,
-                'params': kwargs,
-                'id': request_id
+        with ElapsedTime('request -> {0}@{1}', method, service):
+            request_id = self.next_request_id()
+            message = {
+                'type': self.message_type,
+                'service': self.service.name,
+                'payload': {
+                    'jsonrpc': self.json_rpc_ver,
+                    'method': method,
+                    'params': kwargs,
+                    'id': request_id
+                }
             }
-        }
-        self._responses[request_id] = future = Future()
-        await self.send(service, message)
-        timeout = timeout or self.request_timeout
-        try:
-            return await with_timeout(datetime.timedelta(seconds=timeout), future)
-        except TimeoutError:
-            raise RequestTimeoutError(
-                'Service `%s` not responded for %s sec' % (service, timeout))
-            # return {'error': {'message': 'Service `%s` not responded for %s sec' % (service, timeout)}}
-        finally:
-            del self._responses[request_id]
-            logger.info(timer.done())
+            self._responses[request_id] = future = Future()
+            await self.send(service, message)
+            timeout = timeout or self.request_timeout
+            try:
+                return await with_timeout(datetime.timedelta(seconds=timeout), future)
+            except TimeoutError:
+                raise RequestTimeoutError(
+                    'Service `%s` not responded for %s sec' % (service, timeout))
+                # return {'error': {'message': 'Service `%s` not responded for %s sec' % (service, timeout)}}
+            finally:
+                del self._responses[request_id]
 
     async def push(self, service: str, method: str, **kwargs) -> None:
         message = {
