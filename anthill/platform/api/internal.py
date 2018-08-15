@@ -4,7 +4,7 @@ from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 
 from anthill.framework.conf import settings
-from anthill.framework.test import ElapsedTime
+from anthill.framework.test.timing import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError
@@ -77,19 +77,18 @@ class InternalAPI(Singleton):
 
         def decorator(func):
             if inspect.iscoroutinefunction(func):
-                @wraps(func)
                 async def wrapper(api_, *args, **kwargs):
                     try:
                         return await func(api_, *args, **kwargs)
                     except Exception as e:
                         return {'error': {'message': str(e)}}
             else:
-                @wraps(func)
                 def wrapper(api_, *args, **kwargs):
                     try:
                         return func(api_, *args, **kwargs)
                     except Exception as e:
                         return {'error': {'message': str(e)}}
+            wrapper = wraps(func)(wrapper)
             self.add_method(wrapper)
             return wrapper
 
@@ -239,7 +238,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             await self.send(service, message)
 
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
-        with ElapsedTime('request -> {0}@{1}', method, service):
+        with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
             request_id = self.next_request_id()
             message = {
                 'type': self.message_type,

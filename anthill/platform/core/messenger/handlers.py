@@ -4,7 +4,6 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.platform.core.messenger.client import BaseClient
 from functools import wraps
 import json
-import six
 
 
 class NotAuthenticatedError(Exception):
@@ -50,8 +49,7 @@ class MessengerHandlerMeta(type):
         return handler
 
 
-@six.add_metaclass(MessengerHandlerMeta)
-class MessengerHandler(WebSocketChannelHandler):
+class MessengerHandler(WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
     groups = ['__messenger__']  # Global groups. Must starts with `__` for security reason
     client_class = None
     notification_on_net_status_changed = True
@@ -221,7 +219,7 @@ class MessengerHandler(WebSocketChannelHandler):
             message = json.loads(message)
             await self.message_handler(message)
         except Exception as e:
-            self.send({
+            await self.send({
                 'type': self.message_type,
                 'action': self.action_name,
                 'request_id': self.request_id,
@@ -306,7 +304,7 @@ class MessengerHandler(WebSocketChannelHandler):
         """
         await self.send_to_global_groups(message)  # Notify all user channels about the group deletion
         await self.client.delete_group(group)      # Finally delete the group from database
-        self.send({
+        await self.send({
             'request_id': self.request_id,
             'code': 200,
             'group': group,
@@ -330,7 +328,7 @@ class MessengerHandler(WebSocketChannelHandler):
         group_data = message['data']
         await self.client.update_group(group, group_data=group_data)  # Update group on database
         await self.send_to_group(group, message)
-        self.send({
+        await self.send({
             'request_id': self.request_id,
             'code': 200,
             'group': group,
