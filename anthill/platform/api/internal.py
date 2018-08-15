@@ -4,7 +4,7 @@ from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 
 from anthill.framework.conf import settings
-from anthill.framework.test.timing import ElapsedTime
+from anthill.framework.testing.timing import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
 from anthill.platform.core.messenger.channels.exceptions import InvalidChannelLayerError

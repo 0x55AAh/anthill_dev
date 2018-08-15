@@ -59,18 +59,19 @@ class Application:
         return loc.scheme, loc.hostname, loc.port
 
     @property
-    @lru_cache()
+    def db(self):
+        return self.get_extension('sqlalchemy').db
+
+    @property
     def https_enabled(self):
         return self.protocol == 'https'
 
     @property
-    @lru_cache()
     def version(self):
         mod = importlib.import_module(self.name)
         return getattr(mod, 'version', None)
 
     @property
-    @lru_cache()
     def registry_entry(self):
         entry = {
             network: self.settings.LOCATION
@@ -87,28 +88,25 @@ class Application:
 
     # noinspection PyProtectedMember,PyBroadException
     def get_models(self):
-        ext = self.get_extension('sqlalchemy')
         classes, models, table_names = [], [], []
-        for clazz in ext.db.Model._decl_class_registry.values():
+        for clazz in self.db.Model._decl_class_registry.values():
             try:
                 table_names.append(clazz.__tablename__)
                 classes.append(clazz)
             except Exception:
                 pass
-        for table in ext.db.metadata.tables.items():
+        for table in self.db.metadata.tables.items():
             if table[0] in table_names:
                 models.append(classes[table_names.index(table[0])])
         return models
 
     # noinspection PyProtectedMember
     def get_model(self, name):
-        ext = self.get_extension('sqlalchemy')
-        return ext.db.Model._decl_class_registry.get(name, None)
+        return self.db.Model._decl_class_registry.get(name, None)
 
     # noinspection PyProtectedMember
     def get_model_by_tablename(self, tablename):
-        ext = self.get_extension('sqlalchemy')
-        for clazz in ext.db.Model._decl_class_registry.values():
+        for clazz in self.db.Model._decl_class_registry.values():
             if hasattr(clazz, '__tablename__') and clazz.__tablename__ == tablename:
                 return clazz
 
@@ -177,7 +175,6 @@ class Application:
         return new_routes_list
 
     @property
-    @lru_cache()
     def ui_modules(self):
         """
         Returns module object with UIModule subclasses and plain functions.
@@ -218,6 +215,10 @@ class Application:
         logger.debug('\_ Installed models:')
         for model in self.get_models():
             logger.debug('  \_ Model %s.' % class_name(model))
+
+        # self.db.create_all()
+        logger.debug('All database tables created.')
+
         self.update_models()
 
     def setup(self):
