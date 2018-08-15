@@ -17,7 +17,7 @@ class BaseService(TornadoWebApplication):
     def __init__(self, handlers=None, default_host=None, transforms=None, app=None, **kwargs):
         kwargs.update(debug=app.debug)
         kwargs.update(compress_response=app.settings.COMPRESS_RESPONSE)
-        kwargs.update(static_path=app.settings.STATIC_PATH)
+        kwargs.update(static_path=app.settings.STATIC_PATH[0])
         kwargs.update(static_url_prefix=app.settings.STATIC_URL)
 
         static_handler_class = getattr(
