@@ -132,6 +132,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False
         },
+        'asyncio': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
     }
 }
 

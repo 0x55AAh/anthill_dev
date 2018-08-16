@@ -211,8 +211,11 @@ class JSONRPCInternalConnection(BaseInternalConnection):
                 del payload['error']['code']
                 result = {'error': payload['error']}
             request_id = payload.get('id')
-            future = self._responses[request_id]
-            future.set_result(result)
+            try:
+                future = self._responses[request_id]
+                future.set_result(result)
+            except KeyError:
+                pass
 
         elif 'method' in payload:
             payload = json.dumps(payload)
@@ -236,6 +239,9 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             }
 
             await self.send(service, message)
+
+        else:
+            raise ValueError('Invalid message: %s' % message)
 
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):

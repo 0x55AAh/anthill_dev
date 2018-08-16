@@ -24,6 +24,9 @@ class BaseAbstractUser(db.Model):
     def __str__(self):
         return self.get_username()
 
+    def __repr__(self):
+        return '<User(name=%r)>' % self.get_username()
+
     @property
     def is_active(self):
         return True

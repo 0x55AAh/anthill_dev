@@ -23,6 +23,25 @@ class AuthenticatedHandlerMixin:
 class HomeHandler(TemplateHandler):
     template_name = 'index.html'
 
+    def __init__(self, application, request, **kwargs):
+        super().__init__(application, request, **kwargs)
+        self.metadata = []
+
+    async def get_metadata(self, services):
+        res = []
+        for name in services.keys():
+            if name == self.application.name:
+                # Skip current application
+                continue
+            try:
+                metadata = await self.internal_request(name, method='get_service_metadata')
+            except RequestTimeoutError:
+                pass
+            else:
+                res.append(metadata)
+        res.sort(key=lambda x: x['title'])
+        return res
+
     async def get_context_data(self, **kwargs):
         service_cards = []
         try:
@@ -30,17 +49,10 @@ class HomeHandler(TemplateHandler):
         except RequestTimeoutError:
             pass
         else:
-            for name in services.keys():
-                if name == self.application.name:
-                    # Skip current application
-                    continue
-                try:
-                    metadata = await self.internal_request(name, method='get_service_metadata')
-                    card = ServiceCard.Entry(**metadata)
-                    service_cards.append(card)
-                except RequestTimeoutError:
-                    pass
-            service_cards.sort()
+            self.metadata = await self.get_metadata(services)
+            for metadata in self.metadata:
+                card = ServiceCard.Entry(**metadata)
+                service_cards.append(card)
         kwargs.update(service_cards=service_cards)
         context = await super().get_context_data(**kwargs)
         return context

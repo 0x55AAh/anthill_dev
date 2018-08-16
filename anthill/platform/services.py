@@ -151,9 +151,9 @@ class DiscoveryService(BaseService):
     @method_decorator(retry(max_retries=ping_max_retries, delay=0,
                             exception_types=(RequestTimeoutError, KeyError, TypeError)))
     async def is_service_alive(self, name):
-        request = partial(self.internal_connection.request, name)
+        internal_request = partial(self.internal_connection.request, name)
         try:
-            response = await request('ping', timeout=self.ping_timeout)
+            response = await internal_request('ping', timeout=self.ping_timeout)
             return response['message'] == 'pong'
         except Exception as e:
             logger.error('Service `%s` is unreachable. %s' % (name, str(e)))

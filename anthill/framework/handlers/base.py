@@ -62,6 +62,11 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         """An alias for `self.application.config <Application.config>`."""
         return self.application.config
 
+    @property
+    def db(self):
+        """An alias for `self.application.db <Application.db>`."""
+        return self.application.db
+
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
         return httputil._parse_header(content_type)
@@ -279,8 +284,7 @@ class TemplateMixin:
         template_loader_class = getattr(
             settings, "TEMPLATE_LOADER_CLASS", "anthill.framework.core.template.Loader")
         # ``session`` used for caching special template root.
-        return import_string(template_loader_class)(
-            template_path, session=session, **kwargs)
+        return import_string(template_loader_class)(template_path, session=session, **kwargs)
 
     def write_error(self, status_code, **kwargs):
         """
@@ -362,11 +366,6 @@ class StaticFileHandler(SessionHandlerMixin, BaseStaticFileHandler):
         super().__init__(application, request, **kwargs)
         self.init_session()
 
-    def initialize(self, path, default_filename=None, path_extra=None):
-        self.root = path
-        self.root_extra = path_extra or []
-        self.default_filename = default_filename
-
     async def prepare(self):
         self.setup_session()
         # noinspection PyAttributeOutsideInit
@@ -378,86 +377,6 @@ class StaticFileHandler(SessionHandlerMixin, BaseStaticFileHandler):
         Adding ability to change ui theme directly from admin interface.
         """
         return self.session.get('static_path', self.root)
-
-    def build_absolute_path(self):
-        for root in [self.root] + self.root_extra:
-            absolute_path = self.get_absolute_path(root, self.path)
-            self.absolute_path = self.validate_absolute_path(root, absolute_path)
-
-    async def get(self, path, include_body=True):
-        # Set up our path instance variables.
-        self.path = self.parse_url_path(path)
-        del path  # make sure we don't refer to path instead of self.path again
-
-        self.build_absolute_path()
-        if self.absolute_path is None:
-            return
-
-        self.modified = self.get_modified_time()
-        self.set_headers()
-
-        if self.should_return_304():
-            self.set_status(304)
-            return
-
-        request_range = None
-        range_header = self.request.headers.get("Range")
-        if range_header:
-            # As per RFC 2616 14.16, if an invalid Range header is specified,
-            # the request will be treated as if the header didn't exist.
-            # noinspection PyProtectedMember
-            request_range = httputil._parse_request_range(range_header)
-
-        size = self.get_content_size()
-        if request_range:
-            start, end = request_range
-            if (start is not None and start >= size) or end == 0:
-                # As per RFC 2616 14.35.1, a range is not satisfiable only: if
-                # the first requested byte is equal to or greater than the
-                # content, or when a suffix with length 0 is specified
-                self.set_status(416)  # Range Not Satisfiable
-                self.set_header("Content-Type", "text/plain")
-                self.set_header("Content-Range", "bytes */%s" % (size, ))
-                return
-            if start is not None and start < 0:
-                start += size
-            if end is not None and end > size:
-                # Clients sometimes blindly use a large range to limit their
-                # download size; cap the endpoint at the actual file size.
-                end = size
-            # Note: only return HTTP 206 if less than the entire range has been
-            # requested. Not only is this semantically correct, but Chrome
-            # refuses to play audio if it gets an HTTP 206 in response to
-            # ``Range: bytes=0-``.
-            if size != (end or size) - (start or 0):
-                self.set_status(206)  # Partial Content
-                # noinspection PyProtectedMember
-                self.set_header("Content-Range", httputil._get_content_range(start, end, size))
-        else:
-            start = end = None
-
-        if start is not None and end is not None:
-            content_length = end - start
-        elif end is not None:
-            content_length = end
-        elif start is not None:
-            content_length = size - start
-        else:
-            content_length = size
-        self.set_header("Content-Length", content_length)
-
-        if include_body:
-            content = self.get_content(self.absolute_path, start, end)
-            if isinstance(content, bytes):
-                content = [content]
-            for chunk in content:
-                try:
-                    self.write(chunk)
-                    await self.flush()
-                except iostream.StreamClosedError:
-                    return
-        else:
-            assert self.request.method == "HEAD"
 
     def data_received(self, chunk):
         pass
