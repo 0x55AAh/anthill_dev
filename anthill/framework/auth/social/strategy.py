@@ -27,8 +27,8 @@ class TornadoStrategy(BaseStrategy):
 
     def __init__(self, storage, request_handler, tpl=None):
         self.request_handler = request_handler
-        self.request = self.request_handler.request
-        self.session = self.request_handler.session
+        self.request = self.request_handler.request if self.request_handler else None
+        self.session = self.request_handler.session if self.request_handler else None
         super(TornadoStrategy, self).__init__(storage, tpl)
 
     def get_setting(self, name):
@@ -44,7 +44,12 @@ class TornadoStrategy(BaseStrategy):
     def request_data(self, merge=True):
         """Return current request data (POST or GET)."""
         # Multiple valued arguments not supported yet
-        return dict((key, val[0].decode()) for key, val in six.iteritems(self.request.arguments))
+        if not self.request:
+            return {}
+        return {
+            (key, val[0].decode()) for key, val
+            in six.iteritems(self.request.arguments)
+        }
 
     def request_host(self):
         """Return current host value."""
@@ -75,8 +80,11 @@ class TornadoStrategy(BaseStrategy):
         return self.session.setdefault(name, value)
 
     def build_absolute_uri(self, path=None):
-        return build_absolute_uri(
-            '{0}://{1}'.format(self.request.protocol, self.request.host), path)
+        if self.request:
+            return build_absolute_uri(
+                '{0}://{1}'.format(self.request.protocol, self.request.host), path)
+        else:
+            return path
 
     def authenticate(self, backend, *args, **kwargs):
         """

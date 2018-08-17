@@ -164,3 +164,6 @@ GRAPHENE = {
     'SCHEMA': 'admin.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
+
+
+LOGIN_REDIRECT_URL = 'index'

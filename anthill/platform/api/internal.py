@@ -213,9 +213,10 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             request_id = payload.get('id')
             try:
                 future = self._responses[request_id]
-                future.set_result(result)
             except KeyError:
                 pass
+            else:
+                future.set_result(result)
 
         elif 'method' in payload:
             payload = json.dumps(payload)

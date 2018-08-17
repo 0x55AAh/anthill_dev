@@ -67,21 +67,20 @@ async def get_users(api: InternalAPI, request=None, include_profiles: bool=False
 
 @as_internal()
 async def authenticate(api: InternalAPI, **credentials) -> dict:
-    # user = await _authenticate(request=None, **credentials)
-    # data = await _get_user_data(user)
-    # return data
-    return {
-        'id': 1,
-        'username': 'woland',
-        'is_active': True,
-        'session_auth_hash': 'kukukuku',
-        'backend': 'anthill.framework.auth.backends.ModelBackend'
-    }
+    user = await _authenticate(request=None, **credentials)
+    data = await _get_user_data(user)
+    return data
+    # return {
+    #     'id': 1,
+    #     'username': 'woland',
+    #     'is_active': True,
+    #     'session_auth_hash': 'kukukuku',
+    #     'backend': 'anthill.framework.auth.backends.ModelBackend'
+    # }
 
 
 @as_internal()
 async def login(api: InternalAPI, user_id: str) -> str:
-    return '5s4df6s5d4f6sd54fsd6f54s'
     pass
 
 

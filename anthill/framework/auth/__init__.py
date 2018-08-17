@@ -12,6 +12,7 @@ REDIRECT_FIELD_NAME = 'next'
 
 
 def load_backend(path):
+    from social_core.backends.base import BaseAuth
     return import_string(path)()
 
 
@@ -22,7 +23,7 @@ def _get_backends(return_tuples=False):
         backends.append((backend, backend_path) if return_tuples else backend)
     if not backends:
         raise ImproperlyConfigured(
-            'No authentication backends have been defined.'
+            'No authentication backends have been defined. '
             'Does AUTHENTICATION_BACKENDS contain anything?'
         )
     return backends
