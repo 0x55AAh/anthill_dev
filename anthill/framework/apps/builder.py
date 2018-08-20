@@ -17,15 +17,16 @@ class AppBuilder:
         try:
             application_class = import_string(
                 '%s.apps.AnthillApplication' % settings.APPLICATION_NAME)
-        except ImportError:
+        except ImportError as e1:
             if settings.APPLICATION_CLASS is not None:
                 try:
                     application_class = import_string(settings.APPLICATION_CLASS)
-                except ImportError as e:
-                    logger.warning(str(e))
+                except ImportError as e2:
+                    logger.warning(e2)
                     logger.warning(
                         'Cannot import application class: %s. '
-                        'Default used.' % settings.APPLICATION_CLASS)
+                        'Default used.' % settings.APPLICATION_CLASS
+                    )
         return application_class
 
     def create(self, **kwargs):

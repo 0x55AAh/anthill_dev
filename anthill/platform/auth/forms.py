@@ -7,7 +7,6 @@ class AuthenticationForm(BaseAuthenticationForm):
     async def authenticate(self, internal_request):
         do_authenticate = partial(internal_request, 'login', 'authenticate')
         user = await do_authenticate(**self.get_credentials())  # User data dict
-        print(user)
         if not user:
             self.invalid_login_error()
         else:

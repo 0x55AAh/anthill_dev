@@ -4,6 +4,7 @@ from tornado.template import Loader, Template
 from anthill.framework.utils.crypto import get_random_string
 from anthill.framework.utils.encoding import force_text
 from anthill.framework.utils.functional import Promise
+from anthill.framework.auth import authenticate
 from anthill.framework.conf import settings
 import six
 import os
@@ -28,8 +29,8 @@ class TornadoStrategy(BaseStrategy):
     def __init__(self, storage, request_handler, tpl=None):
         self.request_handler = request_handler
         self.request = self.request_handler.request if self.request_handler else None
-        self.session = self.request_handler.session if self.request_handler else None
-        super(TornadoStrategy, self).__init__(storage, tpl)
+        self.session = self.request_handler.session if self.request_handler else {}
+        super().__init__(storage, tpl)
 
     def get_setting(self, name):
         """Return value for given setting name."""

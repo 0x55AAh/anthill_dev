@@ -25,7 +25,7 @@ UI_THEME = 'limitless'
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
 
-# APPLICATION_CLASS = 'login.apps.AnthillApplication'
+APPLICATION_CLASS = 'login.apps.AnthillApplication'
 APPLICATION_NAME = 'login'
 APPLICATION_VERBOSE_NAME = 'Login'
 APPLICATION_DESCRIPTION = 'Manage user accounts, credentials and access tokens'
@@ -173,27 +173,26 @@ AUTH_USER_MODEL = 'User'
 
 AUTHENTICATION_BACKENDS = [
     # GOOGLE
-    'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.google.GooglePlusAuth',
-    'social_core.backends.google_openidconnect.GoogleOpenIdConnect',
+    'anthill.framework.auth.social.backends.google.GoogleOAuth2',
+    'anthill.framework.auth.social.backends.google.GooglePlusAuth',
 
     # FACEBOOK
-    'social_core.backends.facebook.FacebookOAuth2',
-    'social_core.backends.facebook.FacebookAppOAuth2',
+    'anthill.framework.auth.social.backends.facebook.FacebookOAuth2',
+    'anthill.framework.auth.social.backends.facebook.FacebookAppOAuth2',
 
     # VK
-    'social_core.backends.vk.VKontakteOpenAPI',
-    'social_core.backends.vk.VKAppOAuth2',
-    'social_core.backends.vk.VKOAuth2',
+    'anthill.framework.auth.social.backends.vk.VKontakteOpenAPI',
+    'anthill.framework.auth.social.backends.vk.VKAppOAuth2',
+    'anthill.framework.auth.social.backends.vk.VKOAuth2',
 
     # MAILRU
-    'social_core.backends.mailru.MailruOAuth2',
+    'anthill.framework.auth.social.backends.mailru.MailruOAuth2',
 
     # STEAM
-    'social_core.backends.steam.SteamOpenId',
+    'anthill.framework.auth.social.backends.steam.SteamOpenId',
 
     # GITHUB
-    'social_core.backends.github.GithubOAuth2',
+    'anthill.framework.auth.social.backends.github.GithubOAuth2',
 
     # LOGIN/PASSWORD
     'anthill.framework.auth.backends.ModelBackend'
