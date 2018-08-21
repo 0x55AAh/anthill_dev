@@ -1,6 +1,12 @@
 from anthill.framework.handlers import RequestHandler
-from social_core.actions import do_auth, do_complete, do_disconnect
+from anthill.framework.auth.social.core.actions import do_auth, do_complete, do_disconnect
+from anthill.framework.auth import REDIRECT_FIELD_NAME
+from anthill.framework.conf import settings
+from anthill.framework.auth.social.core.utils import setting_name
 from .utils import psa
+
+
+NAMESPACE = getattr(settings, setting_name('URL_NAMESPACE'), None) or 'social'
 
 
 class BaseHandler(RequestHandler):
@@ -23,27 +29,37 @@ class AuthHandler(BaseHandler):
     def post(self, backend):
         self._auth(backend)
 
-    @psa('social:complete')
+    @psa('{0}:complete'.format(NAMESPACE))
     def _auth(self, backend):
-        do_auth(self.backend)
+        do_auth(self.backend, redirect_name=REDIRECT_FIELD_NAME)
 
 
 class CompleteHandler(BaseHandler):
+    """Authentication complete handler."""
+
     def get(self, backend):
         self._complete(backend)
 
     def post(self, backend):
         self._complete(backend)
 
-    @psa('social:complete')
+    @psa('{0}:complete'.format(NAMESPACE))
     def _complete(self, backend):
         do_complete(
             self.backend,
             login=lambda backend, user, social_user: self.login_user(user),
-            user=self.get_current_user()
+            user=self.get_current_user(),
+            redirect_name=REDIRECT_FIELD_NAME
         )
 
 
 class DisconnectHandler(BaseHandler):
-    def post(self):
-        do_disconnect()
+    """Disconnects given backend from current logged in user."""
+
+    def post(self, backend, association_id=None):
+        do_disconnect(
+            self.backend,
+            user=self.get_current_user(),
+            association_id=association_id,
+            redirect_name=REDIRECT_FIELD_NAME
+        )

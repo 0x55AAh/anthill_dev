@@ -1,4 +1,4 @@
-from social_core.backends import oauth
+from anthill.framework.auth.social.core.backends import oauth
 
 
 # noinspection PyAbstractClass

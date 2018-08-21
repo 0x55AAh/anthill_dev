@@ -206,16 +206,21 @@ class Application:
             add_schema(model)
             logger.debug('\_ Model %s.' % class_name(model))
 
-    def setup_models_extra(self):
+    def pre_setup_models(self):
+        pass
+
+    def post_setup_models(self):
         pass
 
     def setup_models(self):
+        self.pre_setup_models()
+
         logger.debug('\_ Models loading started.')
         for module in self.get_models_modules():
             importlib.import_module(module)
             logger.debug('  \_ Models from `%s` loaded.' % module)
 
-        self.setup_models_extra()
+        self.post_setup_models()
 
         logger.debug('\_ Installed models:')
         for model in self.get_models():

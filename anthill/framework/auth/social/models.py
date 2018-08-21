@@ -2,7 +2,7 @@
 
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
-from social_core.utils import setting_name
+from anthill.framework.auth.social.core.utils import setting_name
 from social_sqlalchemy.storage import (
     SQLAlchemyUserMixin,
     SQLAlchemyAssociationMixin,

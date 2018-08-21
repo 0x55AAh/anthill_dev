@@ -1,5 +1,5 @@
-from social_core.utils import setting_name, get_strategy, module_member
-from social_core.backends.utils import get_backend
+from .core.utils import setting_name, get_strategy, module_member
+from .core.backends.utils import get_backend
 from anthill.framework.conf import settings
 from functools import wraps
 

@@ -7,6 +7,6 @@ logger = logging.getLogger('anthill.application')
 class AnthillApplication(BaseAnthillApplication):
     """Anthill default application."""
 
-    def setup_models_extra(self):
+    def post_setup_models(self):
         from anthill.framework.auth.social import models
         models.init_social()

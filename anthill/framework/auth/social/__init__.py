@@ -2,7 +2,7 @@
 __version__ = '1.0.0'
 
 
-from social_core.backends.base import BaseAuth
+from anthill.framework.auth.social.core.backends.base import BaseAuth
 
 # django.contrib.auth.load_backend() will import and instanciate the
 # authentication backend ignoring the possibility that it might

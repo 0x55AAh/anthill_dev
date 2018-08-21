@@ -14,14 +14,22 @@ class Model(DefaultModel):
         super().__init__(*args, **kwargs)
         self.schema = None
 
+    @property
+    def db(self):
+        return db
+
+    @property
+    def session(self):
+        return db.session
+
     def save(self, force_insert=False):
         if force_insert:
-            db.session.add(self)
-        db.session.commit()
+            self.session.add(self)
+        self.session.commit()
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        self.session.delete(self)
+        self.session.commit()
 
     def dump(self):
         """Marshmallow data dump."""

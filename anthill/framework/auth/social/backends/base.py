@@ -1,4 +1,4 @@
-from social_core.backends import base
+from anthill.framework.auth.social.core.backends import base
 
 
 # noinspection PyAbstractClass

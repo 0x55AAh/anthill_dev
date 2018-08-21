@@ -1,5 +1,5 @@
-from social_core.strategy import BaseStrategy, BaseTemplateStrategy
-from social_core.utils import build_absolute_uri
+from .core.strategy import BaseStrategy, BaseTemplateStrategy
+from .core.utils import build_absolute_uri
 from tornado.template import Loader, Template
 from anthill.framework.utils.crypto import get_random_string
 from anthill.framework.utils.encoding import force_text
