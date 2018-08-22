@@ -9,8 +9,8 @@ import logging
 import six
 import requests
 
-from six.moves.urllib_parse import urlparse, urlunparse, urlencode, \
-                                   parse_qs as battery_parse_qs
+from six.moves.urllib_parse import (
+    urlparse, urlunparse, urlencode, parse_qs as battery_parse_qs)
 
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
@@ -62,13 +62,13 @@ def module_member(name):
 
 
 def user_agent():
-    """Builds a simple User-Agent string to send in requests"""
+    """Builds a simple User-Agent string to send in requests."""
     import anthill.framework.auth.social.core as social_core
     return 'social-auth-' + social_core.__version__
 
 
 def url_add_parameters(url, params):
-    """Adds parameters to URL, parameter will be repeated if already present"""
+    """Adds parameters to URL, parameter will be repeated if already present."""
     if params:
         fragments = list(urlparse(url))
         value = parse_qs(fragments[4])
@@ -136,9 +136,11 @@ def user_is_active(user):
 
 # This slugify version was borrowed from django revision a61dbd6
 def slugify(value):
-    """Converts to lowercase, removes non-word characters (alphanumerics
+    """
+    Converts to lowercase, removes non-word characters (alphanumerics
     and underscores) and converts spaces to hyphens. Also strips leading
-    and trailing whitespace."""
+    and trailing whitespace.
+    """
     value = unicodedata.normalize('NFKD', six.text_type(value)) \
                        .encode('ascii', 'ignore') \
                        .decode('ascii')
@@ -147,14 +149,14 @@ def slugify(value):
 
 
 def first(func, items):
-    """Return the first item in the list for what func returns True"""
+    """Return the first item in the list for what func returns True."""
     for item in items:
         if func(item):
             return item
 
 
 def parse_qs(value):
-    """Like urlparse.parse_qs but transform list values to single items"""
+    """Like urlparse.parse_qs but transform list values to single items."""
     return drop_lists(battery_parse_qs(value))
 
 
@@ -170,12 +172,11 @@ def drop_lists(value):
     return out
 
 
-def partial_pipeline_data(backend, user=None, partial_token=None,
-                          *args, **kwargs):
+def partial_pipeline_data(backend, user=None, partial_token=None, *args, **kwargs):
     request_data = backend.strategy.request_data()
 
-    partial_argument_name = backend.setting('PARTIAL_PIPELINE_TOKEN_NAME',
-                                            'partial_token')
+    partial_argument_name = backend.setting(
+        'PARTIAL_PIPELINE_TOKEN_NAME', 'partial_token')
     partial_token = partial_token or \
         request_data.get(partial_argument_name) or \
         backend.strategy.session_get(PARTIAL_TOKEN_SESSION_NAME, None)
@@ -208,7 +209,7 @@ def partial_pipeline_data(backend, user=None, partial_token=None,
 
 
 def build_absolute_uri(host_url, path=None):
-    """Build absolute URI with given (optional) path"""
+    """Build absolute URI with given (optional) path."""
     path = path or ''
     if path.startswith('http://') or path.startswith('https://'):
         return path
@@ -270,7 +271,8 @@ def handle_http_errors(func):
 
 
 def append_slash(url):
-    """Make sure we append a slash at the end of the URL otherwise we
+    """
+    Make sure we append a slash at the end of the URL otherwise we
     have issues with urljoin Example:
     >>> urlparse.urljoin('http://www.example.com/api/v3', 'user/1/')
     'http://www.example.com/api/user/1/'

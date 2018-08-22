@@ -1,6 +1,5 @@
 class SocialAuthBaseException(ValueError):
     """Base class for pipeline exceptions."""
-    pass
 
 
 class WrongBackend(SocialAuthBaseException):
@@ -20,7 +19,6 @@ class MissingBackend(WrongBackend):
 
 class NotAllowedToDisconnect(SocialAuthBaseException):
     """User is not allowed to disconnect it's social account."""
-    pass
 
 
 class AuthException(SocialAuthBaseException):
@@ -89,8 +87,7 @@ class AuthStateForbidden(AuthException):
 
 
 class AuthAlreadyAssociated(AuthException):
-    """A different user has already associated the target social account"""
-    pass
+    """A different user has already associated the target social account."""
 
 
 class AuthTokenRevoked(AuthException):
@@ -100,13 +97,13 @@ class AuthTokenRevoked(AuthException):
 
 
 class AuthForbidden(AuthException):
-    """Authentication for this user is forbidden"""
+    """Authentication for this user is forbidden."""
     def __str__(self):
         return 'Your credentials aren\'t allowed'
 
 
 class AuthUnreachableProvider(AuthException):
-    """Cannot reach the provider"""
+    """Cannot reach the provider."""
     def __str__(self):
         return 'The authentication provider could not be reached'
 

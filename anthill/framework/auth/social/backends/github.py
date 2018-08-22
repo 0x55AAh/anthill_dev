@@ -3,15 +3,14 @@ Github OAuth2 backend, docs at:
     https://python-social-auth.readthedocs.io/en/latest/backends/github.html
 """
 from requests import HTTPError
-
 from six.moves.urllib.parse import urljoin
-
 from .oauth import BaseOAuth2
-from anthill.framework.auth.social.core.exceptions import AuthFailed
+from ..core.exceptions import AuthFailed
 
 
+# noinspection PyAbstractClass
 class GithubOAuth2(BaseOAuth2):
-    """Github OAuth authentication backend"""
+    """Github OAuth authentication backend."""
     name = 'github'
     API_URL = 'https://api.github.com/'
     AUTHORIZATION_URL = 'https://github.com/login/oauth/authorize'
@@ -28,7 +27,7 @@ class GithubOAuth2(BaseOAuth2):
         return self.API_URL
 
     def get_user_details(self, response):
-        """Return user details from Github account"""
+        """Return user details from Github account."""
         fullname, first_name, last_name = self.get_user_names(
             response.get('name')
         )
@@ -39,7 +38,7 @@ class GithubOAuth2(BaseOAuth2):
                 'last_name': last_name}
 
     def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
+        """Loads user data from service."""
         data = self._user_data(access_token)
         if not data.get('email'):
             try:
@@ -65,11 +64,12 @@ class GithubOAuth2(BaseOAuth2):
         return self.get_json(url, params={'access_token': access_token})
 
 
+# noinspection PyAbstractClass
 class GithubMemberOAuth2(GithubOAuth2):
     no_member_string = ''
 
     def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
+        """Loads user data from service."""
         user_data = super(GithubMemberOAuth2, self).user_data(
             access_token, *args, **kwargs
         )
@@ -81,16 +81,16 @@ class GithubMemberOAuth2(GithubOAuth2):
             # if the user is a member of the organization, response code
             # will be 204, see http://bit.ly/ZS6vFl
             if err.response.status_code != 204:
-                raise AuthFailed(self,
-                                 'User doesn\'t belong to the organization')
+                raise AuthFailed(self, 'User doesn\'t belong to the organization')
         return user_data
 
     def member_url(self, user_data):
         raise NotImplementedError('Implement in subclass')
 
 
+# noinspection PyAbstractClass
 class GithubOrganizationOAuth2(GithubMemberOAuth2):
-    """Github OAuth2 authentication backend for organizations"""
+    """Github OAuth2 authentication backend for organizations."""
     name = 'github-org'
     no_member_string = 'User doesn\'t belong to the organization'
 
@@ -104,8 +104,9 @@ class GithubOrganizationOAuth2(GithubMemberOAuth2):
         )
 
 
+# noinspection PyAbstractClass
 class GithubTeamOAuth2(GithubMemberOAuth2):
-    """Github OAuth2 authentication backend for teams"""
+    """Github OAuth2 authentication backend for teams."""
     name = 'github-team'
     no_member_string = 'User doesn\'t belong to the team'
 

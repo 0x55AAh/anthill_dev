@@ -22,8 +22,7 @@ def revoke_tokens(strategy, entries, *args, **kwargs):
         for entry in entries:
             if 'access_token' in entry.extra_data:
                 backend = entry.get_backend(strategy)(strategy)
-                backend.revoke_token(entry.extra_data['access_token'],
-                                     entry.uid)
+                backend.revoke_token(entry.extra_data['access_token'], entry.uid)
 
 
 def disconnect(strategy, entries, user_storage, *args, **kwargs):

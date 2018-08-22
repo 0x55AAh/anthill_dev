@@ -87,15 +87,13 @@ class TornadoStrategy(BaseStrategy):
         else:
             return path
 
-    def authenticate(self, backend, *args, **kwargs):
-        """
-        Trigger the authentication mechanism tied to the current framework.
-        """
+    async def authenticate(self, backend, *args, **kwargs):
+        """Trigger the authentication mechanism tied to the current framework."""
         kwargs['strategy'] = self
         kwargs['storage'] = self.storage
         kwargs['backend'] = backend
         args, kwargs = self.clean_authenticate_args(*args, **kwargs)
-        return backend.authenticate(*args, **kwargs)
+        return await backend.authenticate(*args, **kwargs)
 
     def get_language(self):
         """Return current language."""

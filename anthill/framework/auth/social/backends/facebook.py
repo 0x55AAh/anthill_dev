@@ -8,31 +8,25 @@ import json
 import base64
 import hashlib
 
-from anthill.framework.auth.social.core.utils import (
-    parse_qs, constant_time_compare, handle_http_errors)
+from ..core.utils import parse_qs, constant_time_compare, handle_http_errors
 from .oauth import BaseOAuth2
-from anthill.framework.auth.social.core.exceptions import (
-    AuthException,
-    AuthCanceled,
-    AuthUnknownError,
-    AuthMissingParameter
-)
+from ..core.exceptions import (
+    AuthException, AuthCanceled, AuthUnknownError, AuthMissingParameter)
 
 
 API_VERSION = 2.9
 
 
+# noinspection PyAbstractClass
 class FacebookOAuth2(BaseOAuth2):
-    """Facebook OAuth2 authentication backend"""
+    """Facebook OAuth2 authentication backend."""
     name = 'facebook'
     REDIRECT_STATE = False
     RESPONSE_TYPE = None
     SCOPE_SEPARATOR = ','
     AUTHORIZATION_URL = 'https://www.facebook.com/v{version}/dialog/oauth'
-    ACCESS_TOKEN_URL = \
-        'https://graph.facebook.com/v{version}/oauth/access_token'
-    REVOKE_TOKEN_URL = \
-        'https://graph.facebook.com/v{version}/{uid}/permissions'
+    ACCESS_TOKEN_URL = 'https://graph.facebook.com/v{version}/oauth/access_token'
+    REVOKE_TOKEN_URL = 'https://graph.facebook.com/v{version}/{uid}/permissions'
     REVOKE_TOKEN_METHOD = 'DELETE'
     USER_DATA_URL = 'https://graph.facebook.com/v{version}/me'
     EXTRA_DATA = [
@@ -56,7 +50,7 @@ class FacebookOAuth2(BaseOAuth2):
         return self.ACCESS_TOKEN_URL.format(version=version)
 
     def get_user_details(self, response):
-        """Return user details from Facebook account"""
+        """Return user details from Facebook account."""
         fullname, first_name, last_name = self.get_user_names(
             response.get('name', ''),
             response.get('first_name', ''),
@@ -69,7 +63,7 @@ class FacebookOAuth2(BaseOAuth2):
                 'last_name': last_name}
 
     def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
+        """Loads user data from service."""
         params = self.setting('PROFILE_EXTRA_PARAMS', {})
         params['access_token'] = access_token
 
@@ -89,11 +83,11 @@ class FacebookOAuth2(BaseOAuth2):
         super(FacebookOAuth2, self).process_error(data)
         if data.get('error_code'):
             raise AuthCanceled(self, data.get('error_message') or
-                                     data.get('error_code'))
+                               data.get('error_code'))
 
     @handle_http_errors
     def auth_complete(self, *args, **kwargs):
-        """Completes loging process, must return user instance"""
+        """Completes loging process, must return user instance."""
         self.process_error(self.data)
         if not self.data.get('code'):
             raise AuthMissingParameter(self, 'code')
@@ -130,7 +124,7 @@ class FacebookOAuth2(BaseOAuth2):
             'client_secret': client_secret
         }
 
-    def do_auth(self, access_token, response=None, *args, **kwargs):
+    async def do_auth(self, access_token, response=None, *args, **kwargs):
         response = response or {}
 
         data = self.user_data(access_token)
@@ -155,7 +149,7 @@ class FacebookOAuth2(BaseOAuth2):
             data['denied_scopes'] = self.data['denied_scopes'].split(',')
 
         kwargs.update({'backend': self, 'response': data})
-        return self.strategy.authenticate(*args, **kwargs)
+        return await self.strategy.authenticate(*args, **kwargs)
 
     def revoke_token_url(self, token, uid):
         version = self.setting('API_VERSION', API_VERSION)
@@ -171,7 +165,7 @@ class FacebookOAuth2(BaseOAuth2):
 
 
 class FacebookAppOAuth2(FacebookOAuth2):
-    """Facebook Application Authentication support"""
+    """Facebook Application Authentication support."""
     name = 'facebook-app'
 
     def uses_redirect(self):

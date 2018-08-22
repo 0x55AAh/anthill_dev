@@ -1,5 +1,7 @@
 from anthill.framework.handlers import RequestHandler
-from anthill.framework.auth.social.core.actions import do_auth, do_complete, do_disconnect
+from anthill.framework.auth.social.core.actions import (
+    do_auth, do_complete, do_disconnect
+)
 from anthill.framework.auth import REDIRECT_FIELD_NAME
 from anthill.framework.conf import settings
 from anthill.framework.auth.social.core.utils import setting_name
@@ -23,29 +25,28 @@ class BaseHandler(RequestHandler):
 
 
 class AuthHandler(BaseHandler):
-    def get(self, backend):
-        self._auth(backend)
+    async def get(self, backend):
+        await self._auth(backend)
 
-    def post(self, backend):
-        self._auth(backend)
+    async def post(self, backend):
+        await self._auth(backend)
 
     @psa('{0}:complete'.format(NAMESPACE))
-    def _auth(self, backend):
-        do_auth(self.backend, redirect_name=REDIRECT_FIELD_NAME)
+    async def _auth(self, backend):
+        await do_auth(self.backend, redirect_name=REDIRECT_FIELD_NAME)
 
 
 class CompleteHandler(BaseHandler):
     """Authentication complete handler."""
+    async def get(self, backend):
+        await self._complete(backend)
 
-    def get(self, backend):
-        self._complete(backend)
-
-    def post(self, backend):
-        self._complete(backend)
+    async def post(self, backend):
+        await self._complete(backend)
 
     @psa('{0}:complete'.format(NAMESPACE))
-    def _complete(self, backend):
-        do_complete(
+    async def _complete(self, backend):
+        await do_complete(
             self.backend,
             login=lambda backend, user, social_user: self.login_user(user),
             user=self.get_current_user(),
@@ -55,9 +56,8 @@ class CompleteHandler(BaseHandler):
 
 class DisconnectHandler(BaseHandler):
     """Disconnects given backend from current logged in user."""
-
-    def post(self, backend, association_id=None):
-        do_disconnect(
+    async def post(self, backend, association_id=None):
+        await do_disconnect(
             self.backend,
             user=self.get_current_user(),
             association_id=association_id,

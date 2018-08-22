@@ -2,22 +2,22 @@
 Google OpenId, OAuth2, OAuth1, Google+ Sign-in backends, docs at:
     https://python-social-auth.readthedocs.io/en/latest/backends/google.html
 """
-from anthill.framework.auth.social.core.utils import handle_http_errors
+from ..core.utils import handle_http_errors
 from .open_id import OpenIdAuth
 from .oauth import BaseOAuth2, BaseOAuth1
-from anthill.framework.auth.social.core.exceptions import AuthMissingParameter
+from ..core.exceptions import AuthMissingParameter
 
 
 class BaseGoogleAuth(object):
     def get_user_id(self, details, response):
-        """Use google email as unique id"""
+        """Use google email as unique id."""
         if self.setting('USE_UNIQUE_USER_ID', False):
             return response['id']
         else:
             return details['email']
 
     def get_user_details(self, response):
-        """Return user details from Google API account"""
+        """Return user details from Google API account."""
         if 'email' in response:
             email = response['email']
         elif 'emails' in response:
@@ -51,7 +51,7 @@ class BaseGoogleAuth(object):
 
 class BaseGoogleOAuth2API(BaseGoogleAuth):
     def user_data(self, access_token, *args, **kwargs):
-        """Return user data from Google API"""
+        """Return user data from Google API."""
         return self.get_json(
             'https://www.googleapis.com/plus/v1/people/me',
             params={
@@ -67,8 +67,9 @@ class BaseGoogleOAuth2API(BaseGoogleAuth):
         return {'Content-type': 'application/json'}
 
 
+# noinspection PyAbstractClass
 class GoogleOAuth2(BaseGoogleOAuth2API, BaseOAuth2):
-    """Google OAuth2 authentication backend"""
+    """Google OAuth2 authentication backend."""
     name = 'google-oauth2'
     REDIRECT_STATE = False
     AUTHORIZATION_URL = 'https://accounts.google.com/o/oauth2/auth'
@@ -85,6 +86,7 @@ class GoogleOAuth2(BaseGoogleOAuth2API, BaseOAuth2):
     ]
 
 
+# noinspection PyAbstractClass
 class GooglePlusAuth(BaseGoogleOAuth2API, BaseOAuth2):
     name = 'google-plus'
     REDIRECT_STATE = False
@@ -146,8 +148,9 @@ class GooglePlusAuth(BaseGoogleOAuth2API, BaseOAuth2):
             raise AuthMissingParameter(self, 'access_token, id_token, or code')
 
 
+# noinspection PyAbstractClass
 class GoogleOAuth(BaseGoogleAuth, BaseOAuth1):
-    """Google OAuth authorization mechanism"""
+    """Google OAuth authorization mechanism."""
     name = 'google-oauth'
     AUTHORIZATION_URL = 'https://www.google.com/accounts/OAuthAuthorizeToken'
     REQUEST_TOKEN_URL = 'https://www.google.com/accounts/OAuthGetRequestToken'

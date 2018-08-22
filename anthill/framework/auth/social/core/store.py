@@ -9,10 +9,11 @@ from openid.store.interface import OpenIDStore as BaseOpenIDStore
 from openid.store.nonce import SKEW
 
 
+# noinspection PyAbstractClass
 class OpenIdStore(BaseOpenIDStore):
-    """Storage class"""
+    """Storage class."""
     def __init__(self, strategy):
-        """Init method"""
+        """Init method."""
         super(OpenIdStore, self).__init__()
         self.strategy = strategy
         self.storage = strategy.storage
@@ -21,11 +22,11 @@ class OpenIdStore(BaseOpenIDStore):
         self.max_nonce_age = 6 * 60 * 60  # Six hours
 
     def storeAssociation(self, server_url, association):
-        """Store new assocition if doesn't exist"""
+        """Store new assocition if doesn't exist."""
         self.assoc.store(server_url, association)
 
     def removeAssociation(self, server_url, handle):
-        """Remove association"""
+        """Remove association."""
         associations_ids = list(dict(self.assoc.oids(server_url,
                                                      handle)).keys())
         if associations_ids:
@@ -38,7 +39,7 @@ class OpenIdStore(BaseOpenIDStore):
             return assoc.expiresIn
 
     def getAssociation(self, server_url, handle=None):
-        """Return stored assocition"""
+        """Return stored assocition."""
         associations, expired = [], []
         for assoc_id, association in self.assoc.oids(server_url, handle):
             expires = self.expiresIn(association)
@@ -54,7 +55,7 @@ class OpenIdStore(BaseOpenIDStore):
             return associations[0]
 
     def useNonce(self, server_url, timestamp, salt):
-        """Generate one use number and return *if* it was created"""
+        """Generate one use number and return *if* it was created."""
         if abs(timestamp - time.time()) > SKEW:
             return False
         return self.nonce.use(server_url, timestamp, salt)

@@ -5,7 +5,8 @@ from ..core.utils import PARTIAL_TOKEN_SESSION_NAME
 
 
 def partial_step(save_to_session):
-    """Wraps func to behave like a partial pipeline step, any output
+    """
+    Wraps func to behave like a partial pipeline step, any output
     that's not None or {} will be considered a response object and
     will be returned to user.
 
@@ -24,8 +25,8 @@ def partial_step(save_to_session):
     def decorator(func):
         @wraps(func)
         def wrapper(strategy, backend, pipeline_index, *args, **kwargs):
-            current_partial = partial_prepare(strategy, backend, pipeline_index,
-                                              *args, **kwargs)
+            current_partial = partial_prepare(
+                strategy, backend, pipeline_index, *args, **kwargs)
 
             out = func(strategy=strategy,
                        backend=backend,
@@ -36,8 +37,8 @@ def partial_step(save_to_session):
             if not isinstance(out, dict):
                 strategy.storage.partial.store(current_partial)
                 if save_to_session:
-                    strategy.session_set(PARTIAL_TOKEN_SESSION_NAME,
-                                         current_partial.token)
+                    strategy.session_set(
+                        PARTIAL_TOKEN_SESSION_NAME, current_partial.token)
             return out
         return wrapper
     return decorator

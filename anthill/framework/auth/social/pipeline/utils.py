@@ -7,11 +7,10 @@ SERIALIZABLE_TYPES = (dict, list, tuple, set, bool, type(None)) + \
 
 
 def is_dict_type(value):
-    """Treat any dict, MergeDict, MultiDict instance as dict type"""
+    """Treat any dict, MergeDict, MultiDict instance as dict type."""
     # Check by class name to avoid importing Django MergeDict or
     # Werkzeug MultiDict
-    return isinstance(value, dict) or \
-        value.__class__.__name__ in ('MergeDict', 'MultiDict')
+    return isinstance(value, dict) or value.__class__.__name__ in ('MergeDict', 'MultiDict')
 
 
 def partial_prepare(strategy, backend, next_step, user=None, social=None,
@@ -45,8 +44,7 @@ def partial_prepare(strategy, backend, next_step, user=None, social=None,
     })
 
 
-def partial_store(strategy, backend, next_step, user=None, social=None,
-                  *args, **kwargs):
+def partial_store(strategy, backend, next_step, user=None, social=None, *args, **kwargs):
     partial = partial_prepare(strategy, backend, next_step, user=user,
                               social=social, *args, **kwargs)
     return strategy.storage.partial.store(partial)
@@ -69,5 +67,5 @@ def partial_load(strategy, token):
 
         partial.args = [strategy.from_session_value(val) for val in args]
         partial.kwargs = dict((key, strategy.from_session_value(val))
-                            for key, val in kwargs.items())
+                              for key, val in kwargs.items())
     return partial

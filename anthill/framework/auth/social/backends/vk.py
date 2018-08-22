@@ -6,19 +6,20 @@ import json
 from time import time
 from hashlib import md5
 
-from anthill.framework.auth.social.core.utils import parse_qs
+from ..core.utils import parse_qs
 from .base import BaseAuth
 from .oauth import BaseOAuth2
-from anthill.framework.auth.social.core.exceptions import AuthTokenRevoked, AuthException
+from ..core.exceptions import AuthTokenRevoked, AuthException
 
 
+# noinspection PyAbstractClass
 class VKontakteOpenAPI(BaseAuth):
-    """VK.COM OpenAPI authentication backend"""
+    """VK.COM OpenAPI authentication backend."""
     name = 'vk-openapi'
     ID_KEY = 'id'
 
     def get_user_details(self, response):
-        """Return user details from VK.com request"""
+        """Return user details from VK.com request."""
         nickname = response.get('nickname') or ''
         fullname, first_name, last_name = self.get_user_names(
             first_name=response.get('first_name', [''])[0],
@@ -36,45 +37,54 @@ class VKontakteOpenAPI(BaseAuth):
         return self.data
 
     def auth_html(self):
-        """Returns local VK authentication page, not necessary for
+        """
+        Returns local VK authentication page, not necessary for
         VK to authenticate.
         """
-        ctx = {'VK_APP_ID': self.setting('APP_ID'),
-               'VK_COMPLETE_URL': self.redirect_uri}
+        ctx = {
+            'VK_APP_ID': self.setting('APP_ID'),
+            'VK_COMPLETE_URL': self.redirect_uri
+        }
         local_html = self.setting('LOCAL_HTML', 'vkontakte.html')
         return self.strategy.render_html(tpl=local_html, context=ctx)
 
-    def auth_complete(self, *args, **kwargs):
-        """Performs check of authentication in VKontakte, returns User if
-        succeeded"""
-        session_value = self.strategy.session_get(
-            'vk_app_' + self.setting('APP_ID')
-        )
+    async def auth_complete(self, *args, **kwargs):
+        """
+        Performs check of authentication in VKontakte,
+        returns User if succeeded.
+        """
+        session_value = self.strategy.session_get('vk_app_' + self.setting('APP_ID'))
         if 'id' not in self.data or not session_value:
             raise ValueError('VK.com authentication is not completed')
 
         mapping = parse_qs(session_value)
         check_str = ''.join(item + '=' + mapping[item]
-                                for item in ['expire', 'mid', 'secret', 'sid'])
+                            for item in ['expire', 'mid', 'secret', 'sid'])
 
         key, secret = self.get_key_and_secret()
         hash = md5((check_str + secret).encode('utf-8')).hexdigest()
         if hash != mapping['sig'] or int(mapping['expire']) < time():
             raise ValueError('VK.com authentication failed: Invalid Hash')
 
-        kwargs.update({'backend': self,
-                       'response': self.user_data(mapping['mid'])})
-        return self.strategy.authenticate(*args, **kwargs)
+        kwargs.update({
+            'backend': self,
+            'response': self.user_data(mapping['mid'])
+        })
+
+        return await self.strategy.authenticate(*args, **kwargs)
 
     def uses_redirect(self):
-        """VK.com does not require visiting server url in order
+        """
+        VK.com does not require visiting server url in order
         to do authentication, so auth_xxx methods are not needed to be called.
-        Their current implementation is just an example"""
+        Their current implementation is just an example.
+        """
         return False
 
 
+# noinspection PyAbstractClass
 class VKOAuth2(BaseOAuth2):
-    """VKOAuth2 authentication backend"""
+    """VKOAuth2 authentication backend."""
     name = 'vk-oauth2'
     ID_KEY = 'id'
     AUTHORIZATION_URL = 'http://oauth.vk.com/authorize'
@@ -86,21 +96,24 @@ class VKOAuth2(BaseOAuth2):
     ]
 
     def get_user_details(self, response):
-        """Return user details from VK.com account"""
+        """Return user details from VK.com account."""
         fullname, first_name, last_name = self.get_user_names(
             first_name=response.get('first_name'),
             last_name=response.get('last_name')
         )
-        return {'username': response.get('screen_name'),
-                'email': response.get('email', ''),
-                'fullname': fullname,
-                'first_name': first_name,
-                'last_name': last_name}
+        return {
+            'username': response.get('screen_name'),
+            'email': response.get('email', ''),
+            'fullname': fullname,
+            'first_name': first_name,
+            'last_name': last_name
+        }
 
     def user_data(self, access_token, *args, **kwargs):
-        """Loads user data from service"""
-        request_data = ['first_name', 'last_name', 'screen_name', 'nickname',
-                        'photo'] + self.setting('EXTRA_DATA', [])
+        """Loads user data from service."""
+        request_data = [
+            'first_name', 'last_name', 'screen_name', 'nickname', 'photo'
+        ] + self.setting('EXTRA_DATA', [])
 
         fields = ','.join(set(request_data))
         data = vk_api(self, 'users.get', {
@@ -122,13 +135,13 @@ class VKOAuth2(BaseOAuth2):
         return data or {}
 
 
+# noinspection PyAbstractClass
 class VKAppOAuth2(VKOAuth2):
-    """VK.com Application Authentication support"""
+    """VK.com Application Authentication support."""
     name = 'vk-app'
 
-    def auth_complete(self, *args, **kwargs):
-        required_params = ('is_app_user', 'viewer_id', 'access_token',
-                           'api_id')
+    async def auth_complete(self, *args, **kwargs):
+        required_params = ('is_app_user', 'viewer_id', 'access_token', 'api_id')
         if not all(param in self.data for param in required_params):
             return None
 
@@ -168,7 +181,7 @@ class VKAppOAuth2(VKOAuth2):
             }
         }
         auth_data['response'].update(json.loads(auth_data['request']['api_result'])['response'][0])
-        return self.strategy.authenticate(*args, **auth_data)
+        return await self.strategy.authenticate(*args, **auth_data)
 
 
 def vk_api(backend, method, data):
