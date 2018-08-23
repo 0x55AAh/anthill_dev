@@ -28,14 +28,14 @@ class GithubOAuth2(BaseOAuth2):
 
     def get_user_details(self, response):
         """Return user details from Github account."""
-        fullname, first_name, last_name = self.get_user_names(
-            response.get('name')
-        )
-        return {'username': response.get('login'),
-                'email': response.get('email') or '',
-                'fullname': fullname,
-                'first_name': first_name,
-                'last_name': last_name}
+        fullname, first_name, last_name = self.get_user_names(response.get('name'))
+        return {
+            'username': response.get('login'),
+            'email': response.get('email') or '',
+            'fullname': fullname,
+            'first_name': first_name,
+            'last_name': last_name
+        }
 
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service."""

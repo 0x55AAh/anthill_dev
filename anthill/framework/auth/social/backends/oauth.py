@@ -45,10 +45,8 @@ class OAuthAuth(BaseAuth):
         Return access_token and extra defined names to store in
         extra_data field.
         """
-        data = super(OAuthAuth, self).extra_data(user, uid, response, details,
-                                                 *args, **kwargs)
-        data['access_token'] = response.get('access_token', '') or \
-                               kwargs.get('access_token')
+        data = super(OAuthAuth, self).extra_data(user, uid, response, details, *args, **kwargs)
+        data['access_token'] = response.get('access_token', '') or kwargs.get('access_token')
         return data
 
     def state_token(self):
@@ -75,8 +73,7 @@ class OAuthAuth(BaseAuth):
         return self.strategy.session_get(self.name + '_state')
 
     def get_request_state(self):
-        request_state = self.data.get('state') or \
-                        self.data.get('redirect_state')
+        request_state = self.data.get('state') or self.data.get('redirect_state')
         if request_state and isinstance(request_state, list):
             request_state = request_state[0]
         return request_state
@@ -218,7 +215,7 @@ class BaseOAuth1(OAuthAuth):
                 utoken = parse_qs(utoken)
             if utoken.get(self.OAUTH_TOKEN_PARAMETER_NAME) == data_token:
                 self.strategy.session_set(
-                    name, list(set(unauthed_tokens) - set([orig_utoken])))
+                    name, list(set(unauthed_tokens) - {orig_utoken}))
                 token = utoken
                 break
         else:

@@ -134,7 +134,6 @@ def user_is_active(user):
     return is_active
 
 
-# This slugify version was borrowed from django revision a61dbd6
 def slugify(value):
     """
     Converts to lowercase, removes non-word characters (alphanumerics
@@ -175,10 +174,8 @@ def drop_lists(value):
 def partial_pipeline_data(backend, user=None, partial_token=None, *args, **kwargs):
     request_data = backend.strategy.request_data()
 
-    partial_argument_name = backend.setting(
-        'PARTIAL_PIPELINE_TOKEN_NAME', 'partial_token')
-    partial_token = partial_token or \
-        request_data.get(partial_argument_name) or \
+    partial_argument_name = backend.setting('PARTIAL_PIPELINE_TOKEN_NAME', 'partial_token')
+    partial_token = partial_token or request_data.get(partial_argument_name) or \
         backend.strategy.session_get(PARTIAL_TOKEN_SESSION_NAME, None)
 
     if partial_token:
@@ -222,7 +219,6 @@ def constant_time_compare(val1, val2):
     """
     Returns True if the two strings are equal, False otherwise.
     The time taken is independent of the number of characters that match.
-    This code was borrowed from Django 1.5.4-final
     """
     if len(val1) != len(val2):
         return False
@@ -288,7 +284,7 @@ def get_strategy(strategy, storage, *args, **kwargs):
     return Strategy(Storage, *args, **kwargs)
 
 
-class cache(object):
+class Cache:
     """
     Cache decorator that caches the return value of a method for a
     specified time.
@@ -313,9 +309,12 @@ class cache(object):
                 try:
                     cached_value = fn(this)
                     self.cache[this.__class__] = (now, cached_value)
-                except:
+                except Exception:
                     # Use previously cached value when call fails, if available
                     if not cached_value:
                         raise
             return cached_value
         return wrapped
+
+
+cache = Cache

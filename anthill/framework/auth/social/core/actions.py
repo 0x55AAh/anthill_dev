@@ -3,16 +3,22 @@ from .utils import (
     sanitize_redirect, user_is_authenticated,
     user_is_active, partial_pipeline_data, setting_url
 )
+from anthill.framework.utils.asynchronous import as_future
+import inspect
 
 
 async def do_auth(backend, redirect_name='next'):
     # Save any defined next value into session
     data = backend.strategy.request_data(merge=False)
 
+    session_set = backend.strategy.session_set
+    if not inspect.iscoroutinefunction(session_set):
+        session_set = as_future(session_set)
+
     # Save extra data into session.
     for field_name in backend.setting('FIELDS_STORED_IN_SESSION', []):
         if field_name in data:
-            backend.strategy.session_set(field_name, data[field_name])
+            await session_set(field_name, data[field_name])
 
     if redirect_name in data:
         # Check and sanitize a user-defined GET/POST next field value
@@ -21,9 +27,10 @@ async def do_auth(backend, redirect_name='next'):
             allowed_hosts = backend.setting('ALLOWED_REDIRECT_HOSTS', []) + \
                             [backend.strategy.request_host()]
             redirect_uri = sanitize_redirect(allowed_hosts, redirect_uri)
-        backend.strategy.session_set(
+        await session_set(
             redirect_name, redirect_uri or backend.setting('LOGIN_REDIRECT_URL'))
-    return backend.start()
+
+    return await backend.start()
 
 
 async def do_complete(backend, login, user=None, redirect_name='next', *args, **kwargs):

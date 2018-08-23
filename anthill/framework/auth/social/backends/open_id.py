@@ -10,9 +10,11 @@ from openid.extensions import sreg, ax, pape
 from ..core.utils import url_add_parameters, cache
 from .base import BaseAuth
 from .oauth import BaseOAuth2
-from ..core.exceptions import AuthException, AuthFailed, AuthCanceled, \
-                         AuthUnknownError, AuthMissingParameter, \
-                         AuthTokenError
+from ..core.exceptions import (
+    AuthException, AuthFailed, AuthCanceled,
+    AuthUnknownError, AuthMissingParameter, AuthTokenError
+)
+from anthill.framework.utils.asynchronous import as_future
 
 
 # OpenID configuration
@@ -148,13 +150,15 @@ class OpenIdAuth(BaseAuth):
         return_to = self.strategy.absolute_uri(self.redirect_uri)
         return openid_request.redirectURL(self.trust_root(), return_to)
 
+    @as_future
     def auth_html(self):
         """Return auth HTML returned by service."""
         openid_request = self.setup_request(self.auth_extra_arguments())
         return_to = self.strategy.absolute_uri(self.redirect_uri)
         form_tag = {'id': 'openid_message'}
-        return openid_request.htmlMarkup(self.trust_root(), return_to,
-                                         form_tag_attrs=form_tag)
+        html = openid_request.htmlMarkup(
+            self.trust_root(), return_to, form_tag_attrs=form_tag)
+        return html
 
     def trust_root(self):
         """Return trust-root option."""
@@ -199,8 +203,7 @@ class OpenIdAuth(BaseAuth):
                                               required=True))
         else:
             fetch_request = sreg.SRegRequest(
-                optional=list(dict(self.get_sreg_attributes()).keys())
-            )
+                optional=list(dict(self.get_sreg_attributes()).keys()))
         request.addExtension(fetch_request)
 
         # Add PAPE Extension for if configured
@@ -231,6 +234,7 @@ class OpenIdAuth(BaseAuth):
     def create_consumer(self, store=None):
         return Consumer(self.strategy.openid_session_dict(SESSION_NAME), store)
 
+    @as_future
     def uses_redirect(self):
         """
         Return true if openid request will be handled with redirect or

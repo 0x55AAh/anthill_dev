@@ -1,4 +1,5 @@
 from anthill.framework.auth.social.core.backends import base
+import inspect
 
 
 # noinspection PyAbstractClass
@@ -7,6 +8,12 @@ class BaseAuth(base.BaseAuth):
     A authentication backend that authenticates the user based on
     the provider response.
     """
+    async def start(self):
+        if await self.uses_redirect():
+            return self.strategy.redirect(self.auth_url())
+        else:
+            return self.strategy.html(await self.auth_html())
+
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance."""
         raise NotImplementedError('Implement in subclass')
@@ -36,10 +43,10 @@ class BaseAuth(base.BaseAuth):
         kwargs.setdefault('is_new', False)
         pipeline = self.strategy.get_pipeline(self)
         args, kwargs = self.strategy.clean_authenticate_args(*args, **kwargs)
-        return self.pipeline(pipeline, *args, **kwargs)
+        return await self.pipeline(pipeline, *args, **kwargs)
 
-    def pipeline(self, pipeline, pipeline_index=0, *args, **kwargs):
-        out = self.run_pipeline(pipeline, pipeline_index, *args, **kwargs)
+    async def pipeline(self, pipeline, pipeline_index=0, *args, **kwargs):
+        out = await self.run_pipeline(pipeline, pipeline_index, *args, **kwargs)
         if not isinstance(out, dict):
             return out
         user = out.get('user')
@@ -48,13 +55,13 @@ class BaseAuth(base.BaseAuth):
             user.is_new = out.get('is_new')
         return user
 
-    def disconnect(self, *args, **kwargs):
+    async def disconnect(self, *args, **kwargs):
         pipeline = self.strategy.get_disconnect_pipeline(self)
         kwargs['name'] = self.name
         kwargs['user_storage'] = self.strategy.storage.user
-        return self.run_pipeline(pipeline, *args, **kwargs)
+        return await self.run_pipeline(pipeline, *args, **kwargs)
 
-    def run_pipeline(self, pipeline, pipeline_index=0, *args, **kwargs):
+    async def run_pipeline(self, pipeline, pipeline_index=0, *args, **kwargs):
         out = kwargs.copy()
         out.setdefault('strategy', self.strategy)
         out.setdefault('backend', out.pop(self.name, None) or self)
@@ -68,17 +75,17 @@ class BaseAuth(base.BaseAuth):
         for idx, name in enumerate(pipeline[pipeline_index:]):
             out['pipeline_index'] = pipeline_index + idx
             func = module_member(name)
-            result = func(*args, **out) or {}
+            if inspect.iscoroutinefunction(func):
+                result = await func(*args, **out) or {}
+            else:
+                result = func(*args, **out) or {}
             if not isinstance(result, dict):
                 return result
             out.update(result)
         return out
 
     def get_user(self, user_id):
-        """
-        Return user with given ID from the User model used by this backend.
-        This is called by django.contrib.auth.middleware.
-        """
+        """Return user with given ID from the User model used by this backend."""
         return self.strategy.get_user(user_id)
 
     async def continue_pipeline(self, partial):

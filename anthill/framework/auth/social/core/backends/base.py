@@ -208,9 +208,11 @@ class BaseAuth(object):
                                if key in self.data)
         return extra_arguments
 
-    def uses_redirect(self):
-        """Return True if this provider uses redirect url method,
-        otherwise return false."""
+    async def uses_redirect(self):
+        """
+        Return True if this provider uses redirect url method,
+        otherwise return false.
+        """
         return True
 
     def request(self, url, method='GET', *args, **kwargs):

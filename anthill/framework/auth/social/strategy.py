@@ -6,6 +6,7 @@ from anthill.framework.utils.encoding import force_text
 from anthill.framework.utils.functional import Promise
 from anthill.framework.auth import authenticate
 from anthill.framework.conf import settings
+from anthill.framework.utils.asynchronous import as_future
 import six
 import os
 
