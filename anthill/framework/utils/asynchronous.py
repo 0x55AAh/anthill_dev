@@ -5,7 +5,7 @@ from functools import wraps
 import multiprocessing
 
 
-__all__ = ['ThreadPoolExecution', 'thread_pool_exec']
+__all__ = ['ThreadPoolExecution', 'thread_pool_exec', 'as_future']
 
 
 class ThreadPoolExecution:
@@ -38,3 +38,4 @@ class ThreadPoolExecution:
 
 
 thread_pool_exec = ThreadPoolExecution()
+as_future = thread_pool_exec.as_future

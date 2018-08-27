@@ -63,6 +63,10 @@ class Application:
         return self.get_extension('sqlalchemy').db
 
     @property
+    def ma(self):
+        return self.get_extension('marshmallow')
+
+    @property
     def https_enabled(self):
         return self.protocol == 'https'
 
@@ -193,10 +197,8 @@ class Application:
         return sys_modules + usr_modules
 
     def update_models(self):
-        from anthill.framework.db import ma
-
         def add_schema(cls):
-            class Schema(ma.ModelSchema):
+            class Schema(self.ma.ModelSchema):
                 class Meta:
                     model = cls
             cls.Schema = Schema
