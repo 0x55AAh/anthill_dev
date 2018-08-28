@@ -101,17 +101,23 @@ class Bundle(db.Model):
         newhash = {}
         with default_storage.open(self.filename) as fd:
             hasher = Hasher(fd.read())
-            for hash_type in self.group.hash_types:
+            for hash_type, hash_is_active in self.group.hash_types.items():
+                if not hash_is_active:
+                    # hash type not active, so skip
+                    continue
                 hash_type = hash_type.lower()
-                hasher_method = getattr(hasher, hash_type, None)
-                if callable(hasher_method):
-                    newhash[hash_type] = hasher_method()
+                hashing_method = getattr(hasher, hash_type, None)
+                if callable(hashing_method):
+                    newhash[hash_type] = hashing_method()
         self.hash = newhash
 
 
 @db.event.listens_for(Bundle.filename, 'set')
 @db.event.listens_for(BundlesGroup.hash_types, 'set')
 def refresh_hash(target, value, oldvalue, initiator):
+    if value == oldvalue:
+        # value not changed, so return
+        return
     if isinstance(target, Bundle):
         target.refresh_hash()
     elif isinstance(target, BundlesGroup):
