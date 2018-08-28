@@ -1,9 +1,10 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
-from sqlalchemy_jsonfield import JSONField
 from anthill.framework.core.files.storage import default_storage
 from anthill.framework.utils.text import class_name
+from sqlalchemy_jsonfield import JSONField
+from sqlalchemy.schema import UniqueConstraint
 import enum
 import hashlib
 import binascii
@@ -36,8 +37,55 @@ class Hasher:
         return pyhash.super_fast_hash()(self.data)
 
 
+class Application(db.Model):
+    __tablename__ = 'applications'
+    __table_args__ = ()
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(256), nullable=False)
+    deployment_method = db.Column(db.String(64), nullable=False)
+    deployment_data = db.Column(
+        JSONField(
+            enforce_string=True,
+            enforce_unicode=False
+        ),
+        nullable=False
+    )
+    filters_scheme = db.Column(
+        JSONField(
+            enforce_string=True,
+            enforce_unicode=False
+        ),
+        nullable=False
+    )
+    payload_scheme = db.Column(
+        JSONField(
+            enforce_string=True,
+            enforce_unicode=False
+        ),
+        nullable=False
+    )
+    versions = db.relationship(
+        'ApplicationVersion', backref=db.backref('application'), lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+
+
+class ApplicationVersion(db.Model):
+    __tablename__ = 'application_versions'
+    __table_args__ = ()
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    value = db.Column(db.String(128), nullable=False)
+    group_id = db.Column(
+        db.Integer, db.ForeignKey('bundle_groups.id'), nullable=False, index=True)
+    application_id = db.Column(
+        db.Integer, db.ForeignKey('applications.id'), nullable=False, index=True)
+
+
 class BundlesGroup(db.Model):
     __tablename__ = 'bundle_groups'
+    __table_args__ = ()
 
     class Statuses(enum.Enum):
         CREATED = 0
@@ -54,11 +102,19 @@ class BundlesGroup(db.Model):
         ),
         nullable=False
     )
-    bundles = db.relationship('Bundle', backref='group')
+    bundles = db.relationship(
+        'Bundle', backref=db.backref('group'), lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+    versions = db.relationship(
+        'ApplicationVersion', backref=db.backref('group'), lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
 
 
 class Bundle(db.Model):
     __tablename__ = 'bundles'
+    __table_args__ = ()
 
     class Statuses(enum.Enum):
         CREATED = 0
@@ -97,11 +153,13 @@ class Bundle(db.Model):
     def url(self):
         return default_storage.url(self.filename)
 
-    def refresh_hash(self):
+    def make_hash(self, filename=None, group=None):
         newhash = {}
-        with default_storage.open(self.filename) as fd:
+        group = group or self.group
+        filename = filename or self.filename
+        with default_storage.open(filename) as fd:
             hasher = Hasher(fd.read())
-            for hash_type, hash_is_active in self.group.hash_types.items():
+            for hash_type, hash_is_active in group.hash_types.items():
                 if not hash_is_active:
                     # hash type not active, so skip
                     continue
@@ -109,21 +167,27 @@ class Bundle(db.Model):
                 hashing_method = getattr(hasher, hash_type, None)
                 if callable(hashing_method):
                     newhash[hash_type] = hashing_method()
-        self.hash = newhash
+        return newhash
+
+    def update_hash(self):
+        self.hash = self.make_hash()
+
+
+@db.event.listens_for(Bundle, 'before_insert')
+def init_hash_on_bundle_create(mapper, connection, target):
+    target.update_hash()
 
 
 @db.event.listens_for(Bundle.filename, 'set')
+def update_hash_on_bundle_change(target, value, oldvalue, initiator):
+    if value != oldvalue:
+        target.update_hash()
+
+
 @db.event.listens_for(BundlesGroup.hash_types, 'set')
-def refresh_hash(target, value, oldvalue, initiator):
-    if value == oldvalue:
-        # value not changed, so return
-        return
-    if isinstance(target, Bundle):
-        target.refresh_hash()
-    elif isinstance(target, BundlesGroup):
-        for bundle in target.bundles:
+def update_hash_on_group_change(target, value, oldvalue, initiator):
+    if value != oldvalue:
+        bundles = target.bundles
+        for bundle in bundles:
             bundle.refresh_hash()
-    else:
-        raise ValueError(
-            'Invalid target class: %s' % class_name(target.__class__, path=False))
-    db.session.commit()
+        db.session.bulk_save_objects(bundles)

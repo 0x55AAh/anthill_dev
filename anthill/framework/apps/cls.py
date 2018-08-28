@@ -197,10 +197,22 @@ class Application:
         return sys_modules + usr_modules
 
     def update_models(self):
+        from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
+        from sqlalchemy_jsonfield import JSONField
+        from marshmallow import fields
+
+        class ModelConverter(BaseModelConverter):
+            """Anthill model converter for marshmallow model schema."""
+            SQLA_TYPE_MAPPING = dict(
+                list(BaseModelConverter.SQLA_TYPE_MAPPING.items()) +
+                [(JSONField, fields.Str)]
+            )
+
         def add_schema(cls):
             class Schema(self.ma.ModelSchema):
                 class Meta:
                     model = cls
+                    model_converter = ModelConverter
             cls.Schema = Schema
 
         logger.debug('Adding marshmallow schema to models...')

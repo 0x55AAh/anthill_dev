@@ -158,3 +158,12 @@ GRAPHENE = {
     'SCHEMA': 'dlc.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
+
+##############
+# DEPLOYMENT #
+##############
+
+DEPLOYMENT_METHODS = [
+    'dlc.deploy.LocalDeploymentMethod',
+    'dlc.deploy.KeyCDNDeploymentMethod'
+]
