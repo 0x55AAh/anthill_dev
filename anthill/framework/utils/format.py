@@ -6,9 +6,9 @@ SYMBOLS = {
 }
 
 
-def bytes2human(n, format='%(value).1f %(symbol)s', symbols='customary'):
+def bytes2human(n, fmt='%(value).1f %(symbol)s', symbols='customary'):
     """
-    Convert n bytes into a human readable string based on format.
+    Convert n bytes into a human readable string based on formatter fmt.
     symbols can be either "customary", "customary_ext", "iec" or "iec_ext",
     see: https://en.wikipedia.org/wiki/Binary_prefix
       >>> bytes2human(0)
@@ -36,7 +36,7 @@ def bytes2human(n, format='%(value).1f %(symbol)s', symbols='customary'):
       >>> bytes2human(10000, "%(value).1f %(symbol)s/sec")
       '9.8 K/sec'
       >>> # precision can be adjusted by playing with %f operator
-      >>> bytes2human(10000, format="%(value).5f %(symbol)s")
+      >>> bytes2human(10000, fmt="%(value).5f %(symbol)s")
       '9.76562 K'
     """
     n = int(n)
@@ -49,5 +49,5 @@ def bytes2human(n, format='%(value).1f %(symbol)s', symbols='customary'):
     for symbol in reversed(symbols[1:]):
         if n >= prefix[symbol]:
             value = float(n) / prefix[symbol]
-            return format % locals()
-    return format % dict(symbol=symbols[0], value=n)
+            return fmt % locals()
+    return fmt % dict(symbol=symbols[0], value=n)

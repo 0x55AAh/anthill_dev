@@ -12,6 +12,7 @@ Example:
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
 from anthill.framework.auth import authenticate as _authenticate, get_user_model
+from anthill.framework.utils.asynchronous import thread_pool_exec
 
 
 User = get_user_model()
@@ -29,8 +30,7 @@ async def _get_user_data(user: User, include_profile: bool=False) -> dict:
 
 
 async def _get_user(user_id: str, include_profile: bool=False) -> dict:
-    # ToDo: async query
-    user = User.query.filter_by(id=user_id).first()
+    user = await thread_pool_exec(User.query.get, user_id)
     return await _get_user_data(user, include_profile)
 
 
@@ -42,8 +42,7 @@ async def _get_users(request=None, include_profiles: bool=False,
         'per_page': pagination,
         'max_per_page': pagination
     }
-    # ToDo: async query
-    users = User.query.filter_by(**filter_by)
+    users = await thread_pool_exec(User.query.filter_by, **filter_by)
     users = users.paginate(request, **pagination_kwargs)
     users_data = User.Schema.dump(users.items).data
     if include_profiles:

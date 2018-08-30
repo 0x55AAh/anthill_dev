@@ -5,5 +5,5 @@ from . import handlers
 
 # Create your routes here.
 route_patterns = [
-    url(r'/bundle/?', handlers.BundleHandler, name='bundle')
+
 ]

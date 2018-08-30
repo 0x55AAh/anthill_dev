@@ -1,8 +1,9 @@
 from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.framework.utils.module_loading import import_string
 from tornado.web import Application as TornadoWebApplication
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
-from anthill.framework.utils.module_loading import import_string
+from tornado.netutil import bind_unix_socket
 import signal
 import logging
 import sys
@@ -131,8 +132,11 @@ class BaseService(TornadoWebApplication):
         return kwargs
 
     def setup_server(self, **kwargs):
-        self.server.listen(self.app.port, self.app.host)
-
+        if self.config.UNIX_SOCKET is not None:
+            socket = bind_unix_socket(self.config.UNIX_SOCKET)
+            server.add_socket(socket)
+        else:
+            self.server.listen(self.app.port, self.app.host)
         for s in ('SIGTERM', 'SIGHUP', 'SIGINT'):
             signal.signal(getattr(signal, s), self.__sig_handler__)
 

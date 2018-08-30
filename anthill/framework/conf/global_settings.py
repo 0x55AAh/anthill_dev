@@ -30,6 +30,7 @@ USE_I18N = False
 USE_L10N = False
 
 LOCATION = 'http://localhost:9500'
+UNIX_SOCKET = None
 
 ROUTES_CONF = None
 MODELS_CONF = None

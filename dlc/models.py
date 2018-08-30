@@ -5,6 +5,7 @@ from anthill.framework.core.files.storage import default_storage
 from anthill.framework.utils.text import class_name
 from sqlalchemy_jsonfield import JSONField
 from sqlalchemy.schema import UniqueConstraint
+from dlc.deploy import Deployment
 import enum
 import hashlib
 import binascii
@@ -37,20 +38,39 @@ class Hasher:
         return pyhash.super_fast_hash()(self.data)
 
 
-class Application(db.Model):
-    __tablename__ = 'applications'
+class DeploymentMethod(db.Model):
+    __tablename__ = 'deployment_methods'
     __table_args__ = ()
 
+    # noinspection PyArgumentList
+    Names = enum.Enum('Names', list(Deployment().methods_dict))
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(256), nullable=False)
-    deployment_method = db.Column(db.String(64), nullable=False)
-    deployment_data = db.Column(
+    name = db.Column(db.Enum(Names), nullable=False)
+    data = db.Column(
         JSONField(
             enforce_string=True,
             enforce_unicode=False
         ),
         nullable=False
     )
+    applications = db.relationship(
+        'Application', backref=db.backref('deployment_method'), lazy='dynamic',
+        cascade='all, delete-orphan')
+
+    def get_method(self):
+        cls = Deployment().get_method(self.name)
+        return cls(**self.data)
+
+
+class Application(db.Model):
+    __tablename__ = 'applications'
+    __table_args__ = ()
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(256), nullable=False)
+    deployment_method_id = db.Column(
+        db.Integer, db.ForeignKey('deployment_methods.id'), nullable=False, index=True)
     filters_scheme = db.Column(
         JSONField(
             enforce_string=True,
@@ -67,8 +87,7 @@ class Application(db.Model):
     )
     versions = db.relationship(
         'ApplicationVersion', backref=db.backref('application'), lazy='dynamic',
-        cascade='all, delete-orphan'
-    )
+        cascade='all, delete-orphan')
 
 
 class ApplicationVersion(db.Model):
@@ -77,16 +96,18 @@ class ApplicationVersion(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     value = db.Column(db.String(128), nullable=False)
-    group_id = db.Column(
-        db.Integer, db.ForeignKey('bundle_groups.id'), nullable=False, index=True)
     application_id = db.Column(
         db.Integer, db.ForeignKey('applications.id'), nullable=False, index=True)
+    groups = db.relationship(
+        'BundlesGroup', backref=db.backref('application_version'), lazy='dynamic',
+        cascade='all, delete-orphan')
 
 
 class BundlesGroup(db.Model):
     __tablename__ = 'bundle_groups'
     __table_args__ = ()
 
+    @enum.unique
     class Statuses(enum.Enum):
         CREATED = 0
         PUBLISHING = 1
@@ -104,18 +125,16 @@ class BundlesGroup(db.Model):
     )
     bundles = db.relationship(
         'Bundle', backref=db.backref('group'), lazy='dynamic',
-        cascade='all, delete-orphan'
-    )
-    versions = db.relationship(
-        'ApplicationVersion', backref=db.backref('group'), lazy='dynamic',
-        cascade='all, delete-orphan'
-    )
+        cascade='all, delete-orphan')
+    version_id = db.Column(
+        db.Integer, db.ForeignKey('application_versions.id'), nullable=False, index=True)
 
 
 class Bundle(db.Model):
     __tablename__ = 'bundles'
     __table_args__ = ()
 
+    @enum.unique
     class Statuses(enum.Enum):
         CREATED = 0
         UPLOADED = 1
@@ -146,12 +165,17 @@ class Bundle(db.Model):
         db.Integer, db.ForeignKey('bundle_groups.id'), nullable=False, index=True)
 
     @property
+    def deployment_method(self):
+        return self.group.application_version.application.deployment_method
+
+    @property
     def size(self):
         return default_storage.size(self.filename)
 
     @property
     def url(self):
-        return default_storage.url(self.filename)
+        deployment_method = self.deployment_method.get_method()
+        return deployment_method.url(self.filename)
 
     def make_hash(self, filename=None, group=None):
         newhash = {}

@@ -3,7 +3,9 @@
 from tornado.web import url
 from . import handlers
 
-# Create your routes here.
-route_patterns = [
 
+route_patterns = [
+    url(r'/bundle/(?P<bundle_id>\d*)/?', handlers.BundleHandler, name='bundle'),
+    url(r'/data/(?P<app_name>[a-z0-9_-]+)/(?P<app_version>[a-z0-9_\.-]+)/?',
+        handlers.BundlesHandler, name='bundles')
 ]

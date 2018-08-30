@@ -15,13 +15,8 @@ class Rsync:
     }
     cmd_context = dict()
 
-    def __init__(self, identity_file=None, hostname=None, username=None):
-        if identity_file is not None:
-            self.identity_file = identity_file
-        if hostname is not None:
-            self.hostname = hostname
-        if username is not None:
-            self.username = username
+    def __init__(self, **kwargs):
+        self.configure(**kwargs)
 
     def configure(self, **kwargs):
         self.cmd_context.update(kwargs)
