@@ -9,7 +9,7 @@ class BundlesHandler(JSONHandler):
         """Get bundles data by `app_name` and `app_version`."""
         bundles = await thread_pool_exec(Bundle.query.filter_by)
         data = Bundle.Schema.dump(bundles.items).data
-        self.write({'bundles': data})
+        self.write({'data': data})
 
 
 class BundleHandler(JSONHandler):
@@ -17,7 +17,7 @@ class BundleHandler(JSONHandler):
         """Get bundle data by `bundle_id`."""
         bundle = await thread_pool_exec(Bundle.query.get, bundle_id)
         data = bundle.dump().data
-        self.write({'bundle': data})
+        self.write({'data': data})
 
     async def post(self):
         """Create bundle."""
