@@ -2,7 +2,6 @@
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
 from anthill.framework.core.files.storage import default_storage
-from anthill.framework.utils.text import class_name
 from sqlalchemy_jsonfield import JSONField
 from sqlalchemy.schema import UniqueConstraint
 from dlc.deploy import Deployment
@@ -165,8 +164,16 @@ class Bundle(db.Model):
         db.Integer, db.ForeignKey('bundle_groups.id'), nullable=False, index=True)
 
     @property
+    def application_version(self):
+        return self.group.application_version
+
+    @property
+    def application(self):
+        return self.application_version.application
+
+    @property
     def deployment_method(self):
-        return self.group.application_version.application.deployment_method
+        return self.application.deployment_method
 
     @property
     def size(self):

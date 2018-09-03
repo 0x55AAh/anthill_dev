@@ -6,8 +6,7 @@ class HTTPError(GenericHTTPError):
     status_code = 500
 
     def __init__(self, log_message=None, *args, **kwargs):
-        super(HTTPError, self).__init__(
-            status_code=self.status_code, log_message=log_message, *args, **kwargs)
+        super().__init__(status_code=self.status_code, log_message=log_message, *args, **kwargs)
 
 
 class HttpBadRequestError(HTTPError):

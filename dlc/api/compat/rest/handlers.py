@@ -2,6 +2,7 @@ from anthill.framework.handlers import JSONHandler
 from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.framework.db import db
 from dlc.models import Bundle
+from .forms import BundleForm
 
 
 class BundlesHandler(JSONHandler):
@@ -24,6 +25,10 @@ class BundleHandler(JSONHandler):
 
     async def put(self, bundle_id):
         """Update bundle with `bundle_id`."""
+        bundle = await thread_pool_exec(Bundle.query.get, bundle_id)
 
     async def delete(self, bundle_id):
         """Delete bundle with `bundle_id`."""
+        bundle = await thread_pool_exec(Bundle.query.get, bundle_id)
+        db.session.delete(bundle)
+        db.session.commit()
