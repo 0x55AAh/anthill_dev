@@ -115,7 +115,7 @@ class ModelFormMixin(FormMixin, SingleObjectMixin):
                 # Try to get a queryset and extract the model class
                 # from that
                 queryset = self.get_queryset()
-                model = queryset.first().__class__
+                model = queryset.one().__class__
             return model_form(model, db_session=db.session)
 
     def get_form_kwargs(self):
