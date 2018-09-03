@@ -1,5 +1,9 @@
-from anthill.framework.handlers.base import ContextMixin, RequestHandler, TemplateMixin
+from anthill.framework.handlers.base import (
+    ContextMixin, RequestHandler, TemplateMixin)
 from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.framework.handlers.detail import SingleObjectMixin
+from anthill.framework.forms.orm import model_form
+from anthill.framework.db import db
 
 
 class FormMixin(ContextMixin):
@@ -90,3 +94,53 @@ class BaseFormHandler(FormMixin, ProcessFormHandler):
 
 class FormHandler(TemplateMixin, BaseFormHandler):
     """A handler for displaying a form and rendering a template response."""
+
+
+class ModelFormMixin(FormMixin, SingleObjectMixin):
+    """Provide a way to show and handle a ModelForm in a request."""
+
+    def get_form_class(self):
+        """Return the form class to use in this handler."""
+        if self.form_class:
+            return self.form_class
+        else:
+            if self.model is not None:
+                # If a model has been explicitly provided, use it
+                model = self.model
+            elif getattr(self, 'object', None) is not None:
+                # If this view is operating on a single object, use
+                # the class of that object
+                model = self.object.__class__
+            else:
+                # Try to get a queryset and extract the model class
+                # from that
+                queryset = self.get_queryset()
+                model = queryset.first().__class__
+            return model_form(model, db_session=db.session)
+
+    def get_form_kwargs(self):
+        """Return the keyword arguments for instantiating the form."""
+        kwargs = super().get_form_kwargs()
+        if hasattr(self, 'object'):
+            kwargs.update({'obj': self.object})
+        return kwargs
+
+    def get_success_url(self):
+        """Return the URL to redirect to after processing a valid form."""
+        if self.success_url:
+            url = self.success_url.format(**self.object.__dict__)
+        else:
+            try:
+                url = self.object.get_absolute_url()
+            except AttributeError:
+                raise ImproperlyConfigured(
+                    "No URL to redirect to. Either provide an url or define "
+                    "a get_absolute_url method on the Model.")
+        return url
+
+    async def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        # noinspection PyAttributeOutsideInit
+        form.populate_obj(self.object)
+        db.session.commit()
+        return await super().form_valid(form)
