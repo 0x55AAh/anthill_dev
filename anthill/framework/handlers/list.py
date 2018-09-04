@@ -1,5 +1,6 @@
 from anthill.framework.handlers.base import (
     ContextMixin, TemplateMixin, RequestHandler)
+from anthill.framework.core.paginator import Paginator
 
 
 class MultipleObjectMixin(ContextMixin):
@@ -24,7 +25,7 @@ class MultipleObjectTemplateMixin(TemplateMixin):
     template_name_suffix = '_list'
 
 
-class ListHandler(MultipleObjectTemplateResponseMixin, BaseListView):
+class ListHandler(MultipleObjectTemplateMixin, BaseListHandler):
     """
     Render some list of objects, set by `self.model` or `self.queryset`.
     `self.queryset` can actually be any iterable of items, not just a queryset.
