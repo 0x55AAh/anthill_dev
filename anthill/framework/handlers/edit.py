@@ -228,12 +228,10 @@ class DeletionMixin:
 class BaseDeleteHandler(DeletionMixin, DetailHandler):
     """
     Base handler for deleting an object.
-
-    Using this base class requires subclassing to provide a response mixin.
     """
 
 
-class DeleteHandler(SingleObjectTemplateMixin, BaseDeleteHandler):
+class DeleteHandler(BaseDeleteHandler):
     """
     Handler for deleting an object retrieved with self.get_object(), with a
     response rendered by a template.

@@ -1,6 +1,5 @@
 from anthill.framework.handlers.base import (
-    ContextMixin, RequestHandler, TemplateMixin, JSONHandler
-)
+    ContextMixin, RequestHandler, TemplateMixin)
 from anthill.framework.http import Http404
 from anthill.framework.utils.translation import translate as _
 from anthill.framework.utils.text import slugify
@@ -158,12 +157,3 @@ class DetailHandler(SingleObjectMixin, SingleObjectTemplateMixin, RequestHandler
         self.object = await self.get_object()
         context = await self.get_context_data(object=self.object)
         self.render(context)
-
-
-class DetailJSONHandler(SingleObjectMixin, JSONHandler):
-    """A base handler for displaying a single object in JSON format."""
-    async def get(self, *args, **kwargs):
-        # noinspection PyAttributeOutsideInit
-        self.object = await self.get_object()
-        context = await self.get_context_data(object=self.object)
-        self.write(context)

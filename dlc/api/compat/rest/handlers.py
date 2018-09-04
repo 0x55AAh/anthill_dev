@@ -1,5 +1,6 @@
 from anthill.framework.handlers import JSONHandler
 from anthill.framework.utils.asynchronous import thread_pool_exec
+from anthill.platform.api.rest.handlers.detail import DetailHandler
 from anthill.framework.db import db
 from dlc.models import Bundle
 from .forms import BundleForm
@@ -11,6 +12,10 @@ class BundlesHandler(JSONHandler):
         bundles = await thread_pool_exec(Bundle.query.filter_by)
         data = Bundle.Schema.dump(bundles.items).data
         self.write({'data': data})
+
+
+class BundleHandler(DetailHandler):
+    model = Bundle
 
 
 class BundleHandler(JSONHandler):
