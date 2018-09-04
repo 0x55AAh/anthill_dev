@@ -1,8 +1,10 @@
 from anthill.framework.handlers.base import (
     ContextMixin, RequestHandler, TemplateMixin)
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.handlers.detail import SingleObjectMixin
+from anthill.framework.handlers.detail import (
+    SingleObjectMixin, SingleObjectTemplateMixin, DetailHandler)
 from anthill.framework.forms.orm import model_form
+from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.framework.db import db
 
 
@@ -99,24 +101,26 @@ class FormHandler(TemplateMixin, BaseFormHandler):
 class ModelFormMixin(FormMixin, SingleObjectMixin):
     """Provide a way to show and handle a ModelForm in a request."""
 
+    def get_model(self):
+        if self.model is not None:
+            # If a model has been explicitly provided, use it
+            return self.model
+        elif getattr(self, 'object', None) is not None:
+            # If this handler is operating on a single object,
+            # use the class of that object
+            return self.object.__class__
+        else:
+            # Try to get a queryset and extract the model class
+            # from that
+            queryset = self.get_queryset()
+            return queryset.one().__class__
+
     def get_form_class(self):
         """Return the form class to use in this handler."""
         if self.form_class:
             return self.form_class
         else:
-            if self.model is not None:
-                # If a model has been explicitly provided, use it
-                model = self.model
-            elif getattr(self, 'object', None) is not None:
-                # If this view is operating on a single object, use
-                # the class of that object
-                model = self.object.__class__
-            else:
-                # Try to get a queryset and extract the model class
-                # from that
-                queryset = self.get_queryset()
-                model = queryset.one().__class__
-            return model_form(model, db_session=db.session)
+            return model_form(self.get_model(), db_session=db.session)
 
     def get_form_kwargs(self):
         """Return the keyword arguments for instantiating the form."""
@@ -140,7 +144,98 @@ class ModelFormMixin(FormMixin, SingleObjectMixin):
 
     async def form_valid(self, form):
         """If the form is valid, save the associated model."""
-        # noinspection PyAttributeOutsideInit
+        if self.object is None:
+            model = self.get_model()
+            # noinspection PyAttributeOutsideInit
+            self.object = model()
         form.populate_obj(self.object)
-        db.session.commit()
+        await thread_pool_exec(self.object.save)
         return await super().form_valid(form)
+
+
+class BaseCreateHandler(ModelFormMixin, ProcessFormHandler):
+    """
+    Base handler for creating a new object instance.
+
+    Using this base class requires subclassing to provide a response mixin.
+    """
+    async def get(self, *args, **kwargs):
+        # noinspection PyAttributeOutsideInit
+        self.object = None
+        await super().get(*args, **kwargs)
+
+    async def post(self, *args, **kwargs):
+        # noinspection PyAttributeOutsideInit
+        self.object = None
+        await super().post(*args, **kwargs)
+
+
+class CreateHandler(SingleObjectTemplateMixin, BaseCreateHandler):
+    """
+    Handler for creating a new object, with a response rendered by a template.
+    """
+    template_name_suffix = '_form'
+
+
+class BaseUpdateHandler(ModelFormMixin, ProcessFormHandler):
+    """
+    Base handler for updating an existing object.
+
+    Using this base class requires subclassing to provide a response mixin.
+    """
+    async def get(self, *args, **kwargs):
+        # noinspection PyAttributeOutsideInit
+        self.object = await self.get_object()
+        await super().get(*args, **kwargs)
+
+    async def post(self, *args, **kwargs):
+        # noinspection PyAttributeOutsideInit
+        self.object = await self.get_object()
+        await super().post(*args, **kwargs)
+
+
+class UpdateHandler(SingleObjectTemplateMixin, BaseUpdateHandler):
+    """Handler for updating an object, with a response rendered by a template."""
+    template_name_suffix = '_form'
+
+
+class DeletionMixin:
+    """Provide the ability to delete objects."""
+    success_url = None
+
+    async def delete(self, *args, **kwargs):
+        """
+        Call the delete() method on the fetched object and then redirect to the
+        success URL.
+        """
+        # noinspection PyAttributeOutsideInit
+        self.object = await self.get_object()
+        await thread_pool_exec(self.object.delete)
+        self.redirect(self.get_success_url())
+
+    # Add support for browsers which only accept GET and POST for now.
+    async def post(self, *args, **kwargs):
+        await self.delete(*args, **kwargs)
+
+    def get_success_url(self):
+        if self.success_url:
+            return self.success_url.format(**self.object.__dict__)
+        else:
+            raise ImproperlyConfigured(
+                "No URL to redirect to. Provide a success_url.")
+
+
+class BaseDeleteHandler(DeletionMixin, DetailHandler):
+    """
+    Base handler for deleting an object.
+
+    Using this base class requires subclassing to provide a response mixin.
+    """
+
+
+class DeleteHandler(SingleObjectTemplateMixin, BaseDeleteHandler):
+    """
+    Handler for deleting an object retrieved with self.get_object(), with a
+    response rendered by a template.
+    """
+    template_name_suffix = '_confirm_delete'

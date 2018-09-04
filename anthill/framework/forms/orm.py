@@ -1,10 +1,6 @@
-"""
-Tools for generating forms based on SQLAlchemy models.
-"""
 from wtforms_alchemy import model_form_factory, fields
-from anthill.framework.db import db
 from wtforms import validators, fields as f
-from wtforms.form import Form
+from anthill.framework.db import db
 from .form import Form
 import inspect
 

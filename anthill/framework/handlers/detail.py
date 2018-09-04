@@ -157,7 +157,7 @@ class DetailHandler(SingleObjectMixin, SingleObjectTemplateMixin, RequestHandler
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()
         context = await self.get_context_data(object=self.object)
-        return self.render(context)
+        self.render(context)
 
 
 class DetailJSONHandler(SingleObjectMixin, JSONHandler):
@@ -166,4 +166,4 @@ class DetailJSONHandler(SingleObjectMixin, JSONHandler):
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()
         context = await self.get_context_data(object=self.object)
-        return self.write(context)
+        self.write(context)
