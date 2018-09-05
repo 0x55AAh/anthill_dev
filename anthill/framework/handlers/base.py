@@ -1,7 +1,7 @@
 from tornado.web import (
     RequestHandler as BaseRequestHandler,
-    StaticFileHandler as BaseStaticFileHandler
-)
+    StaticFileHandler as BaseStaticFileHandler,
+    HTTPError)
 from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import HttpGoneError
@@ -17,6 +17,7 @@ import json
 import logging
 
 from anthill.framework.utils.urls import build_absolute_uri
+from anthill.platform.api.rest.encoders import AlchemyJSONEncoder
 
 
 class TranslationHandlerMixin:
@@ -163,13 +164,65 @@ class JsonWebSocketHandler(WebSocketHandler):
 class JSONHandlerMixin:
     extra_context = None
 
-    # noinspection PyUnresolvedReferences
     def set_default_headers(self):
         self.set_header('Content-Type', 'application/json')
 
+    def write_error(self, status_code: int, **kwargs) -> None:
+        """
+        Override to implement custom error pages.
+
+        ``write_error`` may call `write`, `render`, `set_header`, etc
+        to produce output as usual.
+
+        If this error was caused by an uncaught exception (including
+        HTTPError), an ``exc_info`` triple will be available as
+        ``kwargs["exc_info"]``. Note that this exception may not be
+        the "current" exception for purposes of methods like
+        ``sys.exc_info()`` or ``traceback.format_exc``.
+        """
+        if self.settings.get("serve_traceback") and "exc_info" in kwargs:
+            # in debug mode, try to send a traceback
+            self.set_header('Content-Type', 'text/plain')
+            reporter = ExceptionReporter(self, exc_info=kwargs["exc_info"])
+            self.finish(reporter.get_traceback_text())
+        else:
+            http_error = None
+            for line in kwargs["exc_info"]:
+                if isinstance(line, HTTPError):
+                    http_error = line
+                    break
+            error_message = ''
+            if http_error:
+                error_message = http_error.log_message
+            self.write_json(status_code=status_code, message=error_message)
+
+    def write_json(self, status_code: int=200, message: str=None, data: any=None) -> None:
+        """
+        Writes json response to client, decoding `data` to json with HTTP-header.
+
+        :param status_code: HTTP response code
+        :param message: status code message
+        :param data: data to pass to client
+        :return:
+        """
+        self.set_header('Content-Type', 'application/json')
+        self.set_status(status_code, message)
+        if status_code == 204:
+            # status code expects no body
+            self.finish()
+        else:
+            result = {
+                'meta': {
+                    'code': self._status_code,
+                    'message': self._reason,
+                },
+                'data': data,
+            } if status_code != 204 else None
+            self.finish(self.dumps(result))
+
     # noinspection PyMethodMayBeStatic
     def dumps(self, data):
-        return json.dumps(data)
+        return json.dumps(data, cls=AlchemyJSONEncoder).replace("</", "<\\/")
 
     async def get_context_data(self, **kwargs):
         if self.extra_context is not None:

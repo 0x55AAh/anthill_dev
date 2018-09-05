@@ -751,7 +751,7 @@ class SQLAlchemy(object):
         """
         Gives access to the engine. If the database configuration is bound
         to a specific application (initialized with an application) this will
-        always return a database connection.  If however the current application
+        always return a database connection. If however the current application
         is used this might raise a :exc:`RuntimeError` if no application is
         active at the moment.
         """
