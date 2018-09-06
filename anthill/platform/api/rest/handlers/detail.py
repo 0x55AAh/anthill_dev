@@ -1,8 +1,8 @@
-from anthill.framework.handlers import RequestHandler
+from anthill.framework.handlers import RequestHandler, JSONHandlerMixin
 from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.http import Http404
-from anthill.platform.api.rest.handlers.base import APIHandlerMixin
+from anthill.platform.api.rest.handlers.base import MarshmallowMixin
 
 
 class SingleObjectMixin:
@@ -76,24 +76,37 @@ class SingleObjectMixin:
         return self.slug_field
 
 
-class DetailMixin(SingleObjectMixin, APIHandlerMixin):
+class MarshmallowSingleObjectMixin(MarshmallowMixin):
+    def get_schema(self):
+        schema_class = self.get_schema_class()
+        return schema_class()
+
     def get_schema_class(self):
         if self.schema_class is None:
             try:
-                return self.object.schema.__class__
+                return self.object.__marshmallow__
+            except AttributeError:
+                raise ImproperlyConfigured(
+                    "No schema class for dumping data. Either provide a schema_class "
+                    "or define schema on the Model.")
+        return super().get_schema_class()
+
+
+class DetailMixin(SingleObjectMixin, MarshmallowSingleObjectMixin, JSONHandlerMixin):
+    def get_schema_class(self):
+        if self.schema_class is None:
+            try:
+                return self.object.__marshmallow__
             except AttributeError:
                 raise ImproperlyConfigured(
                     "No schema class for dumping data. Either provide a schema_class "
                     "or define schema on the Model.")
         return self.schema_class
 
-    def serialize_data(self, data):
-        return self.get_schema().dump(self.object).data
-
     async def get(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()
-        self.write_json(data=self.serialize_data(self.object))
+        self.write_json(data=self.serialize(self.object))
 
 
 class DetailHandler(DetailMixin, RequestHandler):

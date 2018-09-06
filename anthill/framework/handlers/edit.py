@@ -66,39 +66,6 @@ class FormMixin(ContextMixin):
         return await super().get_context_data(**kwargs)
 
 
-class ProcessFormHandler(RequestHandler):
-    """Render a form on GET and processes it on POST."""
-
-    async def get(self, *args, **kwargs):
-        """Handle GET requests: instantiate a blank version of the form."""
-        context = await self.get_context_data(**kwargs)
-        self.render(**context)
-
-    async def post(self, *args, **kwargs):
-        """
-        Handle POST requests: instantiate a form instance with the passed
-        POST variables and then check if it's valid.
-        """
-        form = self.get_form()
-        if form.validate():
-            await self.form_valid(form)
-        else:
-            await self.form_invalid(form)
-
-    # PUT is a valid HTTP verb for creating (with a known URL) or editing an
-    # object, note that browsers only support POST for now.
-    async def put(self, *args, **kwargs):
-        await self.post(*args, **kwargs)
-
-
-class BaseFormHandler(FormMixin, ProcessFormHandler):
-    """A base handler for displaying a form."""
-
-
-class FormHandler(TemplateMixin, BaseFormHandler):
-    """A handler for displaying a form and rendering a template response."""
-
-
 class ModelFormMixin(FormMixin, SingleObjectMixin):
     """Provide a way to show and handle a ModelForm in a request."""
 
@@ -154,7 +121,53 @@ class ModelFormMixin(FormMixin, SingleObjectMixin):
         await super().form_valid(form)
 
 
-class BaseCreateHandler(ModelFormMixin, ProcessFormHandler):
+class CreateModelFormMixin(ModelFormMixin):
+    pass
+
+
+class UpdateModelFormMixin(ModelFormMixin):
+    def get_form_class(self):
+        """Return the form class to use in this handler."""
+        form_class = super().get_form_class()
+        setattr(form_class.Meta, 'all_fields_optional', True)
+        setattr(form_class.Meta, 'assign_required', False)
+        return form_class
+
+
+class ProcessFormHandler(RequestHandler):
+    """Render a form on GET and processes it on POST."""
+
+    async def get(self, *args, **kwargs):
+        """Handle GET requests: instantiate a blank version of the form."""
+        context = await self.get_context_data(**kwargs)
+        self.render(**context)
+
+    async def post(self, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        form = self.get_form()
+        if form.validate():
+            await self.form_valid(form)
+        else:
+            await self.form_invalid(form)
+
+    # PUT is a valid HTTP verb for creating (with a known URL) or editing an
+    # object, note that browsers only support POST for now.
+    async def put(self, *args, **kwargs):
+        await self.post(*args, **kwargs)
+
+
+class BaseFormHandler(FormMixin, ProcessFormHandler):
+    """A base handler for displaying a form."""
+
+
+class FormHandler(TemplateMixin, BaseFormHandler):
+    """A handler for displaying a form and rendering a template response."""
+
+
+class BaseCreateHandler(CreateModelFormMixin, ProcessFormHandler):
     """
     Base handler for creating a new object instance.
 
@@ -178,7 +191,7 @@ class CreateHandler(SingleObjectTemplateMixin, BaseCreateHandler):
     template_name_suffix = '_form'
 
 
-class BaseUpdateHandler(ModelFormMixin, ProcessFormHandler):
+class BaseUpdateHandler(UpdateModelFormMixin, ProcessFormHandler):
     """
     Base handler for updating an existing object.
 

@@ -1,7 +1,7 @@
 from anthill.framework.handlers.base import RequestHandler
 from anthill.framework.handlers.detail import SingleObjectMixin, DetailHandler
-from anthill.framework.forms.orm import model_form
 from anthill.framework.utils.asynchronous import thread_pool_exec
+from anthill.framework.forms.orm import model_form
 from anthill.framework.db import db
 
 
@@ -48,30 +48,6 @@ class FormMixin:
         """If the form is invalid, render the invalid form."""
 
 
-class ProcessFormHandler(RequestHandler):
-    """Processes form on POST or PUT."""
-
-    async def post(self, *args, **kwargs):
-        """
-        Handle POST requests: instantiate a form instance with the passed
-        POST variables and then check if it's valid.
-        """
-        form = self.get_form()
-        if form.validate():
-            await self.form_valid(form)
-        else:
-            await self.form_invalid(form)
-
-    # PUT is a valid HTTP verb for creating (with a known URL) or editing an
-    # object, note that browsers only support POST for now.
-    async def put(self, *args, **kwargs):
-        await self.post(*args, **kwargs)
-
-
-class FormHandler(FormMixin, ProcessFormHandler):
-    """Handler for displaying a form."""
-
-
 class ModelFormMixin(FormMixin, SingleObjectMixin):
     """Provide a way to show and handle a ModelForm in a request."""
 
@@ -112,6 +88,47 @@ class ModelFormMixin(FormMixin, SingleObjectMixin):
         form.populate_obj(self.object)
         await thread_pool_exec(self.object.save)
         await super().form_valid(form)
+
+
+class CreateModelFormMixin(ModelFormMixin):
+    pass
+
+
+class UpdateModelFormMixin(ModelFormMixin):
+    def get_form_class(self):
+        """Return the form class to use in this handler."""
+        form_class = super().get_form_class()
+        setattr(form_class.Meta, 'all_fields_optional', True)
+        setattr(form_class.Meta, 'assign_required', False)
+        return form_class
+
+
+class ProcessFormHandler(RequestHandler):
+    """Processes form on POST or PUT."""
+
+    async def post(self, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+        form = self.get_form()
+        if form.validate():
+            await self.form_valid(form)
+        else:
+            await self.form_invalid(form)
+
+    # PUT is a valid HTTP verb for creating (with a known URL) or editing an
+    # object, note that browsers only support POST for now.
+    async def put(self, *args, **kwargs):
+        await self.post(*args, **kwargs)
+
+
+class FormHandler(FormMixin, ProcessFormHandler):
+    """Handler for displaying a form."""
+
+
+class ModelFormHandler(ModelFormMixin, ProcessFormHandler):
+    """Handler for displaying a single object form."""
 
 
 class CreatingMixin:

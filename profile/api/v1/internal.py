@@ -39,5 +39,5 @@ async def get_profiles(api: InternalAPI, user_ids: list=None,
     profiles = profiles_query.paginate(request, **pagination_kwargs)
 
     return {
-        'data': Profile.Schema.dump(profiles.items).data
+        'data': Profile.__marshmallow__(many=True).dump(profiles.items).data
     }

@@ -44,7 +44,7 @@ async def _get_users(request=None, include_profiles: bool=False,
     }
     users = await thread_pool_exec(User.query.filter_by, **filter_by)
     users = users.paginate(request, **pagination_kwargs)
-    users_data = User.Schema.dump(users.items).data
+    users_data = User.__marshmallow__(many=True).dump(users.items).data
     if include_profiles:
         profiles_data = await api.service.internal_connection.request(
             'profile', 'get_profiles', user_ids=[u['id'] for u in users_data])

@@ -198,6 +198,7 @@ class Application:
 
     def update_models(self):
         from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
+        from marshmallow_sqlalchemy import ModelConversionError, ModelSchema
         from sqlalchemy_jsonfield import JSONField
         from marshmallow import fields
 
@@ -209,11 +210,22 @@ class Application:
             )
 
         def add_schema(cls):
-            class Schema(self.ma.ModelSchema):
+            if hasattr(cls, '__tablename__'):
+                if cls.__name__.endswith('Schema'):
+                    raise ModelConversionError(
+                        "For safety, setup_schema can not be used when a "
+                        "Model class ends with 'Schema'")
+
                 class Meta:
                     model = cls
                     model_converter = ModelConverter
-            cls.Schema = Schema
+                    sqla_session = self.db.session
+
+                schema_class_name = '%sSchema' % cls.__name__
+
+                schema_class = type(schema_class_name, (ModelSchema,), {'Meta': Meta})
+
+                setattr(cls, '__marshmallow__', schema_class)
 
         logger.debug('Adding marshmallow schema to models...')
         for model in self.get_models():

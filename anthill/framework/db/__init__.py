@@ -19,14 +19,11 @@ class Model(ActiveRecord):
 
     def dump(self):
         """Marshmallow default schema data dump."""
-        if not getattr(self, 'schema', None):
-            try:
-                schema_class = getattr(self, 'Schema')
-            except AttributeError:
-                raise ImproperlyConfigured('Schema class is undefined')
-            # noinspection PyAttributeOutsideInit
-            self.schema = schema_class()
-        return self.schema.dump(self)
+        try:
+            schema_class = getattr(self, '__marshmallow__')
+        except AttributeError:
+            raise ImproperlyConfigured('Schema class is undefined')
+        return schema_class().dump(self)
 
 
 Base = declarative_base(cls=Model, metaclass=DefaultMeta, name='Model')

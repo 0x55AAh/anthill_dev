@@ -1,20 +1,34 @@
-from anthill.framework.handlers import JSONHandler
 from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.platform.api.rest.handlers.detail import DetailMixin
+from anthill.platform.api.rest.handlers.list import ListHandler
 from anthill.platform.api.rest.handlers.edit import (
-    FormHandler, CreatingMixin, UpdatingMixin, DeletionMixin)
+    CreatingMixin, UpdatingMixin, DeletionMixin, ModelFormHandler
+)
 from dlc.models import Bundle
 from .forms import BundleForm
 
 
-class BundlesHandler(JSONHandler):
-    async def get(self, app_name, app_version):
-        """Get bundles data by `app_name` and `app_version`."""
-        bundles = await thread_pool_exec(Bundle.query.filter_by)
-        data = Bundle.Schema.dump(bundles.items).data
-        self.write({'data': data})
+class BundlesHandler(ListHandler):
+    """Get list of bundles."""
+    model = Bundle
 
 
-class BundleHandler(CreatingMixin, UpdatingMixin, DeletionMixin, DetailMixin, FormHandler):
+class BundleHandler(CreatingMixin, UpdatingMixin, DeletionMixin, DetailMixin,
+                    ModelFormHandler):
+    """
+    Multiple operations with bundles:
+        fetching, creating, updating and deleting.
+    """
     model = Bundle
     form_class = BundleForm
+
+    def get_form_class(self):
+        """Return the form class to use in this handler."""
+        form_class = super().get_form_class()
+        if self.request.method in ('PUT',):  # Updating
+            # Patching form meta
+            class Meta(form_class.Meta):
+                all_fields_optional = True
+                assign_required = False
+            form_class.Meta = Meta
+        return form_class
