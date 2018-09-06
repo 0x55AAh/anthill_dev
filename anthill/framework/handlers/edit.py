@@ -10,6 +10,7 @@ from anthill.framework.db import db
 
 class FormMixin(ContextMixin):
     """Provide a way to show and handle a form in a request."""
+
     initial = {}
     form_class = None
     success_url = None
@@ -150,7 +151,7 @@ class ModelFormMixin(FormMixin, SingleObjectMixin):
             self.object = model()
         form.populate_obj(self.object)
         await thread_pool_exec(self.object.save)
-        return await super().form_valid(form)
+        await super().form_valid(form)
 
 
 class BaseCreateHandler(ModelFormMixin, ProcessFormHandler):
