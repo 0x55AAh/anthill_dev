@@ -3,6 +3,7 @@ from anthill.framework.utils.decorators import method_decorator, retry
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import JSONRPCInternalConnection, RequestTimeoutError
+from anthill.platform.atomic.manager import TransactionManager
 from anthill.framework.utils.geoip import GeoIP2
 from functools import partial
 from tornado.web import url
@@ -23,6 +24,7 @@ class BaseService(CeleryMixin, _BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.internal_connection = self.internal_api_connection_class(service=self)
+        self.transaction_manager = TransactionManager()
         if getattr(self.config, 'GEOIP_PATH', None):
             self.gis = GeoIP2()
             logger.debug('Geo position tracking system status: ENABLED.')

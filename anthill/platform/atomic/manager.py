@@ -1,23 +1,40 @@
-from anthill.platform.atomic.transaction import Transaction
 from anthill.framework.utils.singleton import Singleton
+from anthill.framework.utils.module_loading import import_string
+from anthill.framework.conf import settings
+from tornado.ioloop import IOLoop
+import logging
+
+logger = logging.getLogger('anthill.application')
 
 
-class TransactionManager(metaclass=Singleton):
-    def __init__(self, transactions=None):
-        self.transactions = transactions or []
+MANAGER_SETTINGS = getattr(settings, 'TRANSACTION_MANAGER', {})
+LOADER = MANAGER_SETTINGS.get('LOADER', 'anthill.platform.atomic.loaders.db.Loader')
 
-    @property
-    def _transactions_dict(self):
-        return {t.id: t for t in self.transactions}
 
-    def new_transaction(self, *args, **kwargs):
-        transaction = Transaction(*args, **kwargs)
-        transaction.manager = self
-        self.transactions.append(transaction)
+class TransactionManager(Singleton):
+    _loader_class = LOADER
+
+    def __init__(self):
+        self.loader = import_string(self._loader_class)()
+        IOLoop.current().add_callback(self.start)
+
+    async def size(self):
+        return await self.loader.size()
+
+    async def create_transaction(self, **kwargs):
+        transaction = await self.loader.create_object(**kwargs)
+        logger.info('Transaction created: %s' % transaction.id)
         return transaction
 
-    def get_transaction(self, id_):
-        return self._transactions_dict.get(id_)
+    async def delete_transaction(self, id_):
+        await self.loader.remove_object(id_)
+        logger.info('Transaction deleted: %s' % transaction.id)
 
-    def size(self):
-        return len(self.transactions)
+    async def get_transactions(self):
+        return await self.loader.get_objects()
+
+    async def get_transaction(self, id_):
+        return await self.loader.get_object(id_)
+
+    async def start(self):
+        logger.info('Transaction manager started.')

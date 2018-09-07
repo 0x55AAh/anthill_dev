@@ -1,7 +1,10 @@
-from anthill.platform.atomic.transaction import (
+from anthill.platform.atomic.exceptions import (
     TransactionTimeoutError, TransactionTaskTimeoutError)
 from anthill.platform.core.celery import app as celery_app
 from anthill.platform.atomic.manager import TransactionManager
+import logging
+
+logger = logging.getLogger('anthill.application')
 
 
 manager = TransactionManager()
@@ -11,7 +14,7 @@ manager = TransactionManager()
 def transaction_duration_control(transaction_id):
     transaction = manager.get_transaction(transaction_id)
     try:
-        transaction.check_duration()
+        transaction.check_timeout()
     except TransactionTimeoutError:
         transaction.rollback()
 
@@ -21,6 +24,6 @@ def transaction_task_duration_control(transaction_id, task_id):
     transaction = manager.get_transaction(transaction_id)
     task = transaction.get_task(task_id)
     try:
-        task.check_duration()
+        task.check_timeout()
     except TransactionTaskTimeoutError:
         transaction.rollback()
