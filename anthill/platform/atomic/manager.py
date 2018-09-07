@@ -1,12 +1,13 @@
-from anthill.platform.core.atomic.transaction import Transaction
+from anthill.platform.atomic.transaction import Transaction
+from anthill.framework.utils.singleton import Singleton
 
 
-class Manager:
-    def __init__(self, transactions):
+class TransactionManager(metaclass=Singleton):
+    def __init__(self, transactions=None):
         self.transactions = transactions or []
 
     @property
-    def transactions_dict(self):
+    def _transactions_dict(self):
         return {t.id: t for t in self.transactions}
 
     def new_transaction(self, *args, **kwargs):
@@ -15,5 +16,8 @@ class Manager:
         self.transactions.append(transaction)
         return transaction
 
-    def get_gransaction(self, id_):
-        return self.transactions_dict.get(id_)
+    def get_transaction(self, id_):
+        return self._transactions_dict.get(id_)
+
+    def size(self):
+        return len(self.transactions)

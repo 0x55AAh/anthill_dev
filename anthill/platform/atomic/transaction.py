@@ -1,6 +1,7 @@
 from tornado.queues import Queue
 from anthill.framework.utils import timezone
-from .tasks import commit_contoll
+from anthill.platform.atomic.tasks import (
+    transaction_duration_control, transaction_task_duration_control)
 import enum
 import uuid
 
@@ -9,7 +10,15 @@ class TransactionError(Exception):
     pass
 
 
+class TransactionTaskError(Exception):
+    pass
+
+
 class TransactionTimeoutError(Exception):
+    pass
+
+
+class TransactionTaskTimeoutError(Exception):
     pass
 
 
@@ -37,15 +46,17 @@ class TransactionTask:
         self.timeout = timeout
 
     def check_duration(self):
-        if all([self.started, self.finished, self.timeout]):
-            if self.finished - self.started > self.timeout:
-                raise TransactionTimeoutError
+        if self.finished is None:  # not finished yet
+            if timezone.now() - self.started > self.timeout:
+                raise TransactionTaskTimeoutError('Transaction task timeout: %s' % self.timeout)
 
     async def commit(self):
+        transaction_task_duration_control.apply_async(
+            (self.transaction.id, self.id), countdown=self.timeout)
         try:
             await self.func()
         except Exception as e:
-            raise TransactionError from e
+            raise TransactionTaskError from e
 
     async def rollback(self):
         pass
@@ -66,26 +77,34 @@ class Transaction:
         self.finished = finished
         self.timeout = timeout
 
+    @property
+    def _tasks_dict(self):
+        return {t.id: t for t in self.tasks}
+
+    def get_task(self, id_):
+        return self._tasks_dict.get(id_)
+
     def is_finished(self):
         return self.finished is not None
 
     def check_duration(self):
-        if all([self.started, self.finished, self.timeout]):
-            if self.finished - self.started > self.timeout:
-                raise TransactionTimeoutError
+        if self.finished is None:  # not finished yet
+            if timezone.now() - self.started > self.timeout:
+                raise TransactionTimeoutError('Transaction timeout: %s' % self.timeout)
 
     def add(self, task):
         task.transaction = self
         self.tasks.append(task)
 
-    def count(self):
+    def size(self):
         return len(self.tasks)
 
     async def commit(self):
         self.status = Status.STARTED
+        transaction_duration_control.apply_async(
+            (self.id,), countdown=self.timeout)
         for i, task in enumerate(self.tasks):
             try:
-                commit_contoll.apply_async((self.id,), countdown=task.timeout)
                 await task.commit()
             except TransactionError:
                 self.status = Status.FAILED

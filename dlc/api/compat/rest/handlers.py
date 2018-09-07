@@ -1,9 +1,7 @@
-from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.platform.api.rest.handlers.detail import DetailMixin
 from anthill.platform.api.rest.handlers.list import ListHandler
 from anthill.platform.api.rest.handlers.edit import (
-    CreatingMixin, UpdatingMixin, DeletionMixin, ModelFormHandler
-)
+    CreatingMixin, UpdatingMixin, DeletionMixin, ModelFormHandler)
 from dlc.models import Bundle
 from .forms import BundleForm
 
