@@ -46,8 +46,8 @@ class TransactionTask:
                 raise TransactionTaskTimeoutError('Transaction task timeout: %s' % self.timeout)
 
     async def commit(self):
-        from anthill.platform.atomic.tasks import transaction_task_duration_control
-        transaction_task_duration_control.apply_async(
+        from anthill.platform.atomic.tasks import transaction_task_control
+        transaction_task_control.apply_async(
             (self.transaction.id, self.id), countdown=self.timeout)
         try:
             await self.func()
@@ -128,8 +128,8 @@ class Transaction:
 
     def commit_start(self):
         self.status = Status.STARTED
-        from anthill.platform.atomic.tasks import transaction_duration_control
-        transaction_duration_control.apply_async((self.id,), countdown=self.timeout)
+        from anthill.platform.atomic.tasks import transaction_control
+        transaction_control.apply_async((self.id,), countdown=self.timeout)
 
     def commit_finish(self):
         self.status = Status.SUCCESSFUL

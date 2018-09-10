@@ -1,11 +1,11 @@
 from anthill.framework.utils.asynchronous import as_future
-from anthill.platform.atomic.loaders.base import BaseLoader
+from anthill.platform.atomic.storage.backends.base import BaseStorage
 import logging
 
 logger = logging.getLogger('anthill.application')
 
 
-class Loader(BaseLoader):
+class Storage(BaseStorage):
     _model = 'anthill.platform.atomic.models.Transaction'
 
     @as_future
@@ -29,9 +29,13 @@ class Loader(BaseLoader):
         return self.model.create(**kwargs)
 
     @as_future
-    def update_object(self, **kwargs):
-        return self.model.update(**kwargs)
+    def update_object_by_id(self, id_, **kwargs):
+        return self.model.find(id_).update(**kwargs)
+
+    @as_future
+    def update_object(self, obj, **kwargs):
+        return obj.update(**kwargs)
 
     @as_future
     def size(self):
-        self.model.count()
+        return self.model.count()

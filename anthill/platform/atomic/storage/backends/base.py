@@ -1,7 +1,7 @@
 from anthill.framework.utils.module_loading import import_string
 
 
-class BaseLoader:
+class BaseStorage:
     _model = None
 
     def __init__(self):
@@ -10,7 +10,7 @@ class BaseLoader:
         else:
             self.model = None
 
-    async def size(self):
+    async def size(self) -> int:
         raise NotImplementedError
 
     async def filter_objects(self, *criteria, **filters):
@@ -28,5 +28,8 @@ class BaseLoader:
     async def create_object(self, **kwargs):
         raise NotImplementedError
 
-    async def update_object(self, **kwargs):
+    async def update_object(self, obj, **kwargs):
+        raise NotImplementedError
+
+    async def update_object_by_id(self, id_, **kwargs):
         raise NotImplementedError

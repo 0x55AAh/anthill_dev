@@ -95,8 +95,8 @@ class Transaction(BaseTransaction):
 
     def commit_start(self):
         self.status = Status.STARTED
-        from anthill.platform.atomic.tasks import transaction_duration_control
-        transaction_duration_control.apply_async((self.id,), countdown=self.timeout)
+        from anthill.platform.atomic.tasks import transaction_control
+        transaction_control.apply_async((self.id,), countdown=self.timeout)
 
     def commit_finish(self):
         self.status = Status.SUCCESSFUL

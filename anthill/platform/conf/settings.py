@@ -187,6 +187,8 @@ COMPRESS_RESPONSE = True
 SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
 
 
-TRANSACTION_MANAGER = {
-    'LOADER': 'anthill.platform.atomic.loaders.db.Loader'
+TRANSACTION = {
+    'STORAGE': {
+        'BACKEND': 'anthill.platform.atomic.storage.backends.db.Storage'
+    }
 }
