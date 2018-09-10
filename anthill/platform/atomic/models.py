@@ -4,6 +4,7 @@ from anthill.platform.atomic.exceptions import (
     TransactionError, TransactionTaskError, TransactionTimeoutError,
     TransactionTaskTimeoutError
 )
+from anthill.platform.atomic.manager import TransactionManager
 import enum
 import logging
 
@@ -29,6 +30,10 @@ class BaseTransaction(db.Model):
     finished = db.Column(db.DateTime)
     status = db.Column(db.Enum(Status), nullable=False, default=Status.NEW)
     timeout = db.Column(db.Integer, nullable=False, default=0)
+
+    @property
+    def manager(self):
+        return TransactionManager()
 
     def is_finished(self):
         return self.finished is not None
