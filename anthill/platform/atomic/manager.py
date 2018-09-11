@@ -13,7 +13,7 @@ class TransactionManager(Singleton):
 
     def __init__(self):
         self.strategy = self.strategy_class()
-        self.data_manager = self.data_manager_class()
+        self.storage = self.data_manager_class()
         IOLoop.current().add_callback(self.start)
 
     async def on_start(self) -> None:

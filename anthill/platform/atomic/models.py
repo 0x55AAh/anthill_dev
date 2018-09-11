@@ -1,10 +1,10 @@
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
+from anthill.platform.atomic.manager import TransactionManager
 from anthill.platform.atomic.exceptions import (
     TransactionError, TransactionTaskError, TransactionTimeoutError,
     TransactionTaskTimeoutError
 )
-from anthill.platform.atomic.manager import TransactionManager
 import enum
 import logging
 
@@ -34,6 +34,10 @@ class BaseTransaction(db.Model):
     @property
     def manager(self):
         return TransactionManager()
+
+    @property
+    def strategy(self):
+        return self.manager.strategy
 
     def is_finished(self):
         return self.finished is not None
@@ -100,7 +104,7 @@ class Transaction(BaseTransaction):
 
     def commit_start(self):
         self.status = Status.STARTED
-        from anthill.platform.atomic.tasks import transaction_control
+        transaction_control = self.strategy.get_task('TRANSACTION')
         transaction_control.apply_async((self.id,), countdown=self.timeout)
 
     def commit_finish(self):
