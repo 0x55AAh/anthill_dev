@@ -40,10 +40,8 @@ class DataManager:
         logger.info('Transaction updated: %s' % transaction.id)
         return transaction
 
-    async def get_transactions(self) -> List[Transaction]:
-        transactions = await self.storage.get_objects()
-        return transactions
+    async def get_transactions(self, *criteria, **filters) -> List[Transaction]:
+        return await self.storage.filter_objects(*criteria, **filters)
 
     async def get_transaction(self, id_: int) -> Transaction:
-        transaction = await self.storage.get_object(id_)
-        return transaction
+        return await self.storage.get_object(id_)

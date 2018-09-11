@@ -1,12 +1,12 @@
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
 from anthill.platform.atomic.manager import TransactionManager
-from anthill.platform.atomic.exceptions import (
-    TransactionError, TransactionTaskError, TransactionTimeoutError,
-    TransactionTaskTimeoutError
-)
+from anthill.platform.atomic.exceptions import TransactionError, TransactionTimeoutError
+from tornado.gen import sleep
+from tornado.ioloop import IOLoop
 import enum
 import logging
+import inspect
 
 logger = logging.getLogger('anthill.application')
 
@@ -17,9 +17,10 @@ class Status(enum.Enum):
     STARTED = 1
     SUCCESSFUL = 2
     FAILED = 3
-    ROLLBACK_STARTED = 4
-    ROLLBACK_SUCCESSFUL = 5
-    ROLLBACK_FAILED = 6
+    RESUMED = 4
+    ROLLBACK_STARTED = 10
+    ROLLBACK_SUCCESSFUL = 11
+    ROLLBACK_FAILED = 12
 
 
 class BaseTransaction(db.Model):
@@ -30,6 +31,10 @@ class BaseTransaction(db.Model):
     finished = db.Column(db.DateTime)
     status = db.Column(db.Enum(Status), nullable=False, default=Status.NEW)
     timeout = db.Column(db.Integer, nullable=False, default=0)
+    is_commited = db.Column(db.Boolean, nullable=False, default=False)
+
+    PROCEED_RETRY_TIMEOUT = 1
+    PROCEED_RETRY_LIMIT = 3
 
     @property
     def manager(self):
@@ -42,11 +47,32 @@ class BaseTransaction(db.Model):
     def is_finished(self):
         return self.finished is not None
 
+    def check_timeout(self):
+        if not self.is_finished():
+            if timezone.now() - self.started > self.timeout:
+                raise TransactionTimeoutError('Transaction timeout: %s' % self.timeout)
+
+    def commit_finish(self):
+        self.status = Status.SUCCESSFUL
+        self.finished = timezone.now()
+        self.is_commited = True
+        self.save()  # TODO: async
+
+    def rollback_start(self):
+        self.status = Status.ROLLBACK_STARTED
+        self.save()  # TODO: async
+
+    def rollback_finish(self):
+        self.status = Status.ROLLBACK_SUCCESSFUL
+        self.finished = timezone.now()
+        self.is_commited = True
+        self.save()  # TODO: async
+
     async def commit(self):
-        pass
+        raise NotImplementedError
 
     async def rollback(self):
-        pass
+        raise NotImplementedError
 
 
 class Transaction(BaseTransaction):
@@ -57,11 +83,6 @@ class Transaction(BaseTransaction):
         'TransactionTask', backref=db.backref('transaction'), lazy='dynamic',
         cascade='all, delete-orphan')
     state = db.Column(db.Integer, nullable=False, default=0)
-
-    def check_timeout(self):
-        if not self.is_finished():
-            if timezone.now() - self.started > self.timeout:
-                raise TransactionTimeoutError('Transaction timeout: %s' % self.timeout)
 
     def get_tasks(self):
         return self.tasks.all()
@@ -84,68 +105,122 @@ class Transaction(BaseTransaction):
     def size(self):
         return self.tasks.count()
 
-    async def commit(self):
-        self.commit_start()
-        for task in self.tasks:
+    async def commit(self, resume=False):
+        self.commit_start(resume)
+        tasks = self.get_tasks()
+        for task in tasks[self.state:] if resume else tasks:
+            rr = range(self.PROCEED_RETRY_LIMIT)
             try:
-                await task.commit()
+                for i in rr:
+                    try:
+                        await task.commit()
+                        break
+                    except TransactionError:
+                        if i == rr[-1]:
+                            raise
+                        await sleep(self.PROCEED_RETRY_TIMEOUT)
             except TransactionError:
                 self.status = Status.FAILED
+                self.save()  # TODO: async
                 return
             else:
                 self.state_incr()
         self.commit_finish()
 
+    async def resume(self):
+        await self.commit(resume=True)
+
     def state_incr(self):
         self.state += 1
+        self.save()  # TODO: async
 
     def state_decr(self):
         self.state -= 1
+        self.save()  # TODO: async
 
-    def commit_start(self):
-        self.status = Status.STARTED
-        transaction_control = self.strategy.get_task('TRANSACTION')
-        transaction_control.apply_async((self.id,), countdown=self.timeout)
-
-    def commit_finish(self):
-        self.status = Status.SUCCESSFUL
-        self.finished = timezone.now()
-
-    @property
-    def tasks_for_rollback(self):
-        return self.get_tasks()[:self.state]
+    def commit_start(self, resume=False):
+        self.status = Status.RESUMED if resume else Status.STARTED
+        transaction_watcher = self.strategy.get_task('TRANSACTION')
+        transaction_watcher.apply_async((self.id,), countdown=self.timeout)
+        self.save()  # TODO: async
 
     async def rollback(self):
         self.rollback_start()
-        for task in self.tasks_for_rollback:
+        for task in self.get_tasks()[:self.state]:
+            rr = range(self.PROCEED_RETRY_LIMIT)
             try:
-                await task.rollback()
+                for i in rr:
+                    try:
+                        await task.rollback()
+                        break
+                    except TransactionError:
+                        if i == rr[-1]:
+                            raise
+                        await sleep(self.PROCEED_RETRY_TIMEOUT)
             except TransactionError:
                 self.status = Status.ROLLBACK_FAILED
+                self.save()  # TODO: async
                 return
             else:
                 self.state_decr()
         self.rollback_finish()
-
-    def rollback_start(self):
-        self.status = Status.ROLLBACK_STARTED
-
-    def rollback_finish(self):
-        self.status = Status.ROLLBACK_SUCCESSFUL
-        self.finished = timezone.now()
 
 
 class TransactionTask(BaseTransaction):
     __tablename__ = 'transaction_tasks'
     __table_args__ = ()
 
-    shared = db.Column(db.Boolean, nullable=False, default=False)
-    remote = db.Column(db.Boolean, nullable=False, default=False)
-
     transaction_id = db.Column(
         db.Integer, db.ForeignKey('transactions.id'), nullable=False, index=True)
 
-    def check_timeout(self):
-        if not self.is_finished():
-            if timezone.now() - self.started > self.timeout:
-                raise TransactionTaskTimeoutError('Transaction task timeout: %s' % self.timeout)
+    def commit_start(self):
+        self.status = Status.STARTED
+        transaction_watcher = self.strategy.get_task('TRANSACTION_TASK')
+        transaction_watcher.apply_async(
+            (self.transaction.id, self.id), countdown=self.timeout)
+
+    async def commit(self):
+        self.commit_start()
+        try:
+            # TODO
+            pass
+        except Exception as e:
+            raise TransactionError from e
+        self.commit_finish()
+
+    async def rollback(self):
+        self.rollback_start()
+        try:
+            # TODO
+            pass
+        except Exception as e:
+            raise TransactionError from e
+        self.rollback_finish()
+
+
+class ExecutableWrapper:
+    def __init__(self, field, func, *args, **kwargs):
+        self.field = field    # model.field
+        self.func = func      # function object
+        self.args = args
+        self.kwargs = kwargs
+        self.prepared = False
+        IOLoop.current().add_callback(self.prepare)
+
+    async def prepare(self):
+        """Save current value of `self.field`."""
+        self.prepared = True
+
+    async def upgrade(self):
+        """Set new value of `self.field`."""
+        if not self.prepared:
+            raise ValueError('Not prepared for upgrade.')
+        if inspect.iscoroutinefunction(self.func):
+            await self.func(*self.args, **self.kwargs)
+        else:
+            self.func(*self.args, **self.kwargs)
+
+    async def downgrade(self):
+        """Restore old value of `self.field`."""
+        if self.prepared:
+            pass

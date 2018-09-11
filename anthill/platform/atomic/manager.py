@@ -2,6 +2,7 @@ from anthill.framework.utils.singleton import Singleton
 from anthill.platform.atomic.storage.manager import DataManager
 from anthill.platform.atomic.strategy import rollback
 from tornado.ioloop import IOLoop
+from sqlalchemy import or_
 import logging
 
 logger = logging.getLogger('anthill.application')
@@ -17,7 +18,12 @@ class TransactionManager(Singleton):
         IOLoop.current().add_callback(self.start)
 
     async def on_start(self) -> None:
-        pass
+        from anthill.platform.atomic.models import Status
+        t_model = self.storage.storage.model
+        failed_transactions = await self.storage.get_transactions(
+            or_(t_model.status == Status.FAILED, t_model.status == Status.ROLLBACK_FAILED))
+        for transaction in failed_transactions:
+            await self.strategy.proceed(transaction)
 
     async def start(self) -> None:
         await self.on_start()

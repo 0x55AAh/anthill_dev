@@ -8,14 +8,5 @@ Transaction = TypeVar('Transaction')
 class Strategy(BaseStrategy):
     tasks_module = tasks
 
-    def __init__(self):
-        super().__init__()
-
-    async def apply_one(self, transaction: Transaction) -> bool:
-        return await transaction.rollback()
-
-    def start(self) -> None:
-        pass
-
-    def finish(self) -> None:
-        pass
+    async def proceed(self, transaction: Transaction) -> None:
+        await transaction.rollback()

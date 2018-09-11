@@ -327,6 +327,11 @@ class BaseQuery(orm.Query):
     and setting :attr:`~Model.query_class`.
     """
 
+    def to_sql(self):
+        """Return a literal SQL representation of the query."""
+        dialect = self.session.bind.dialect
+        return str(self.statement.compile(dialect=dialect))
+
     def get_or_404(self, ident):
         """
         Like :meth:`get` but aborts with 404 if not found instead of returning ``None``.

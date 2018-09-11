@@ -22,17 +22,7 @@ class BaseStrategy:
         target = getattr(self, target, None)
         return self.tasks.get(target)
 
-    async def apply_many(self, transactions: List[Transaction]):
-        for transaction in transactions:
-            await self.apply_one(transaction)
-
-    async def apply_one(self, transaction: Transaction) -> bool:
-        raise NotImplementedError
-
-    def start(self) -> None:
-        raise NotImplementedError
-
-    def finish(self) -> None:
+    async def proceed(self, transaction: Transaction) -> None:
         raise NotImplementedError
 
 
