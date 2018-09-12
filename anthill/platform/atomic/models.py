@@ -26,7 +26,7 @@ class Status(enum.Enum):
 class BaseTransaction(db.Model):
     __abstract__ = True
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # TODO: UUID type
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     started = db.Column(db.DateTime, nullable=False, default=timezone.now)
     finished = db.Column(db.DateTime)
     status = db.Column(db.Enum(Status), nullable=False, default=Status.NEW)
@@ -198,29 +198,35 @@ class TransactionTask(BaseTransaction):
         self.rollback_finish()
 
 
-class ExecutableWrapper:
-    def __init__(self, field, func, *args, **kwargs):
-        self.field = field    # model.field
-        self.func = func      # function object
+class Executable:
+    def __init__(self, obj, func, *args, **kwargs):
+        self.obj = obj
+        self.func = func
         self.args = args
         self.kwargs = kwargs
         self.prepared = False
+        self.obj_version = None
+
         IOLoop.current().add_callback(self.prepare)
 
     async def prepare(self):
-        """Save current value of `self.field`."""
+        """Save current object version."""
+        self.obj_version = self.obj.versions[-1]
         self.prepared = True
 
-    async def upgrade(self):
-        """Set new value of `self.field`."""
+    async def run(self):
+        """Update object."""
         if not self.prepared:
-            raise ValueError('Not prepared for upgrade.')
+            raise ValueError('Not prepared for running.')
+        if not callable(self.func):
+            raise ValueError('func must be callable.')
         if inspect.iscoroutinefunction(self.func):
             await self.func(*self.args, **self.kwargs)
         else:
             self.func(*self.args, **self.kwargs)
 
-    async def downgrade(self):
-        """Restore old value of `self.field`."""
-        if self.prepared:
-            pass
+    async def restore(self):
+        """Restore object."""
+        if not self.prepared:
+            raise ValueError('Not prepared for restoring.')
+        self.obj_version.revert()
