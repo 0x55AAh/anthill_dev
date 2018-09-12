@@ -5,13 +5,8 @@ from anthill.framework.utils.module_loading import import_string
 from anthill.platform.api.internal import api as internal_api
 from anthill.framework.conf import settings
 from urllib.parse import urlparse, urljoin
-from sqlalchemy_continuum import make_versioned
-from sqlalchemy_continuum.plugins.property_mod_tracker import PropertyModTrackerPlugin
-from sqlalchemy_continuum.plugins.transaction_changes import TransactionChangesPlugin
-from sqlalchemy_continuum.plugins.activity import ActivityPlugin
 from functools import lru_cache
 from _thread import get_ident
-import sqlalchemy as sa
 import importlib
 import logging
 import re
@@ -241,6 +236,10 @@ class Application:
     def pre_setup_models(self):
         # Add versions supporting.
         # __versioned__ = {} must be added to all models that are to be versioned.
+        from sqlalchemy_continuum.plugins.property_mod_tracker import PropertyModTrackerPlugin
+        from sqlalchemy_continuum.plugins.transaction_changes import TransactionChangesPlugin
+        from sqlalchemy_continuum.plugins.activity import ActivityPlugin
+        from sqlalchemy_continuum import make_versioned
         plugins = (
             PropertyModTrackerPlugin(),
             TransactionChangesPlugin(),
@@ -249,6 +248,7 @@ class Application:
         make_versioned(user_cls=None, plugins=plugins)
 
     def post_setup_models(self):
+        import sqlalchemy as sa
         sa.orm.configure_mappers()
 
     def setup_models(self):
