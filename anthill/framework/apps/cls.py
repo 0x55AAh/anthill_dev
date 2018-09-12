@@ -244,7 +244,7 @@ class Application:
         plugins = (
             PropertyModTrackerPlugin(),
             TransactionChangesPlugin(),
-            ActivityPlugin()
+            # ActivityPlugin()
         )
         make_versioned(user_cls=None, plugins=plugins)
 
