@@ -14,16 +14,17 @@ class TransactionManager(Singleton):
 
     def __init__(self):
         self.strategy = self.strategy_class()
-        self.storage = self.data_manager_class()
+        self.data_manager = self.data_manager_class()
         IOLoop.current().add_callback(self.start)
 
     async def on_start(self) -> None:
         from anthill.platform.atomic.models import Status
-        t_model = self.storage.storage.model
-        failed_transactions = await self.storage.get_transactions(
+        t_model = self.data_manager.storage.model
+        failed_transactions = await self.data_manager.get_transactions(
             or_(t_model.status == Status.FAILED, t_model.status == Status.ROLLBACK_FAILED))
         for transaction in failed_transactions:
             await self.strategy.proceed(transaction)
+        logger.info('%s transactions loaded for restore.' % len(failed_transactions))
 
     async def start(self) -> None:
         await self.on_start()

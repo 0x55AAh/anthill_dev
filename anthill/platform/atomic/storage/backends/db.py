@@ -13,7 +13,7 @@ class Storage(BaseStorage):
 
     @as_future
     def filter_objects(self, *criteria, **filters) -> List[Transaction]:
-        return self.model.find_by(*criteria, **filters)
+        return self.model.where(*criteria, **filters).all()
 
     @as_future
     def get_objects(self) -> List[Transaction]:

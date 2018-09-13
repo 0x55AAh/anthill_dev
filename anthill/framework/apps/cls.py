@@ -236,14 +236,12 @@ class Application:
     def pre_setup_models(self):
         # Add versions supporting.
         # __versioned__ = {} must be added to all models that are to be versioned.
-        from sqlalchemy_continuum.plugins.property_mod_tracker import PropertyModTrackerPlugin
-        from sqlalchemy_continuum.plugins.transaction_changes import TransactionChangesPlugin
-        from sqlalchemy_continuum.plugins.activity import ActivityPlugin
+        from sqlalchemy_continuum.plugins import property_mod_tracker, transaction_changes, activity
         from sqlalchemy_continuum import make_versioned
         plugins = (
-            PropertyModTrackerPlugin(),
-            TransactionChangesPlugin(),
-            # ActivityPlugin()
+            property_mod_tracker.PropertyModTrackerPlugin(),
+            transaction_changes.TransactionChangesPlugin(),
+            # activity.ActivityPlugin()
         )
         make_versioned(user_cls=None, plugins=plugins)
 
@@ -265,7 +263,7 @@ class Application:
         for model in self.get_models():
             logger.debug('  \_ Model %s.' % class_name(model))
 
-        # self.db.create_all()
+        self.db.create_all()
         logger.debug('All database tables created.')
 
         self.update_models()
