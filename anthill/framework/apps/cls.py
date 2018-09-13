@@ -197,12 +197,12 @@ class Application:
         return sys_modules + usr_modules
 
     def update_models(self):
-        from marshmallow_sqlalchemy.convert import ModelConverter as BaseModelConverter
-        from marshmallow_sqlalchemy import ModelConversionError, ModelSchema
+        from marshmallow_sqlalchemy import (
+            ModelConversionError, ModelSchema, convert)
         from sqlalchemy_jsonfield import JSONField
         from marshmallow import fields
 
-        class ModelConverter(BaseModelConverter):
+        class ModelConverter(convert.ModelConverter):
             """Anthill model converter for marshmallow model schema."""
             SQLA_TYPE_MAPPING = dict(
                 list(BaseModelConverter.SQLA_TYPE_MAPPING.items()) +
@@ -236,7 +236,8 @@ class Application:
     def pre_setup_models(self):
         # Add versions supporting.
         # __versioned__ = {} must be added to all models that are to be versioned.
-        from sqlalchemy_continuum.plugins import property_mod_tracker, transaction_changes, activity
+        from sqlalchemy_continuum.plugins import (
+            property_mod_tracker, transaction_changes, activity)
         from sqlalchemy_continuum import make_versioned
         plugins = (
             property_mod_tracker.PropertyModTrackerPlugin(),

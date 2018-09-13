@@ -1,7 +1,10 @@
 from anthill.framework.db import db
+from sqlalchemy.types import VARCHAR
 from anthill.framework.utils import timezone
+from anthill.framework.utils.module_loading import import_string
 from anthill.platform.atomic.manager import TransactionManager
 from anthill.platform.atomic.exceptions import TransactionError, TransactionTimeoutError
+from sqlalchemy_jsonfield import JSONField
 from tornado.gen import sleep
 from tornado.ioloop import IOLoop
 import enum
@@ -166,9 +169,33 @@ class Transaction(BaseTransaction):
         self.rollback_finish()
 
 
+class FunctionType(db.TypeDecorator):
+    impl = VARCHAR
+
+    # noinspection PyMethodMayBeStatic
+    def process_bind_param(self, value, dialect):
+        if callable(value):
+            return '.'.join([value.__module__, value.__name__])
+        return value
+
+    # noinspection PyMethodMayBeStatic
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            return import_string(value)
+        return value
+
+
 class TransactionTask(BaseTransaction):
     __tablename__ = 'transaction_tasks'
     __table_args__ = ()
+
+    func = db.Column(FunctionType, nullable=False)
+    func_args = db.Column(JSONField)
+    func_kwargs = db.Column(JSONField)
+
+    obj_model_name = db.Column(db.String(512), nullable=False)
+    obj_id = db.Column(db.Integer, nullable=False)
+    obj_ver = db.Column(db.Integer)
 
     transaction_id = db.Column(
         db.Integer, db.ForeignKey('transactions.id'), nullable=False, index=True)
@@ -179,47 +206,59 @@ class TransactionTask(BaseTransaction):
         transaction_watcher.apply_async(
             (self.transaction.id, self.id), countdown=self.timeout)
 
+    async def executable(self):
+        from anthill.framework.apps import app
+
+        model = app.get_model(self.obj_model_name)
+        obj = model.query.get(self.obj_id)  # TODO: async
+
+        return Executable(
+            obj, self.func, obj_version=self.obj_ver,
+            *self.func_args, **self.func_kwargs)
+
     async def commit(self):
         self.commit_start()
+        executable = await self.executable()
         try:
-            # TODO
-            pass
+            await executable.run()
         except Exception as e:
             raise TransactionError from e
+        self.obj_ver = executable.obj_version.index
         self.commit_finish()
 
     async def rollback(self):
         self.rollback_start()
+        executable = await self.executable()
         try:
-            # TODO
-            pass
+            await executable.restore()
         except Exception as e:
             raise TransactionError from e
+        self.obj_ver = executable.obj_version.index
         self.rollback_finish()
 
 
 class Executable:
-    def __init__(self, obj, func, *args, **kwargs):
+    def __init__(self, obj, func, obj_version=None, *args, **kwargs):
         self.obj = obj
         self.func = func
         self.args = args
         self.kwargs = kwargs
-        self.prepared = False
-        self.obj_version = None
-
+        self.obj_version = obj_version
         IOLoop.current().add_callback(self.prepare)
 
     async def prepare(self):
         """Save current object version."""
-        self.obj_version = self.obj.versions[-1]
-        self.prepared = True
+        if not callable(self.func):
+            raise ValueError('func must be callable.')
+        if self.obj_version is None:
+            self.obj_version = self.obj.versions[-1]
+        else:
+            self.obj_version = self.obj.versions[self.obj_version]
 
     async def run(self):
         """Update object."""
-        if not self.prepared:
-            raise ValueError('Not prepared for running.')
-        if not callable(self.func):
-            raise ValueError('func must be callable.')
+        if self.obj_version is None:
+            raise ValueError('Has no object version.')
         if inspect.iscoroutinefunction(self.func):
             await self.func(*self.args, **self.kwargs)
         else:
@@ -227,6 +266,6 @@ class Executable:
 
     async def restore(self):
         """Restore object."""
-        if not self.prepared:
-            raise ValueError('Not prepared for restoring.')
+        if self.obj_version is None:
+            raise ValueError('Has no object version.')
         self.obj_version.revert()

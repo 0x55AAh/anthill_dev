@@ -21,7 +21,12 @@ class TransactionManager(Singleton):
         from anthill.platform.atomic.models import Status
         t_model = self.data_manager.storage.model
         failed_transactions = await self.data_manager.get_transactions(
-            or_(t_model.status == Status.FAILED, t_model.status == Status.ROLLBACK_FAILED))
+            or_(
+                t_model.status == Status.FAILED,
+                t_model.status == Status.ROLLBACK_FAILED,
+                not t_model.is_commited
+            )
+        )
         for transaction in failed_transactions:
             await self.strategy.proceed(transaction)
         logger.info('%s transactions loaded for restore.' % len(failed_transactions))
