@@ -199,15 +199,9 @@ class Application:
     def update_models(self):
         from marshmallow_sqlalchemy import (
             ModelConversionError, ModelSchema, convert)
-        from sqlalchemy_jsonfield import JSONField
-        from marshmallow import fields
 
         class ModelConverter(convert.ModelConverter):
             """Anthill model converter for marshmallow model schema."""
-            SQLA_TYPE_MAPPING = dict(
-                list(BaseModelConverter.SQLA_TYPE_MAPPING.items()) +
-                [(JSONField, fields.Str)]
-            )
 
         def add_schema(cls):
             if hasattr(cls, '__tablename__'):

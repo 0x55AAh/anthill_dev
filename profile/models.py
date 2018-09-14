@@ -1,7 +1,7 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
-from sqlalchemy_jsonfield import JSONField
+from sqlalchemy_utils.types.json import JSONType
 
 
 class Profile(db.Model):
@@ -10,7 +10,7 @@ class Profile(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False, unique=True)
-    payload = db.Column(db.JSON, nullable=False, default={})
+    payload = db.Column(JSONType, nullable=False, default={})
 
     @classmethod
     def __declare_last__(cls):

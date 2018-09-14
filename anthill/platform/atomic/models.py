@@ -4,7 +4,8 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.module_loading import import_string
 from anthill.platform.atomic.manager import TransactionManager
 from anthill.platform.atomic.exceptions import TransactionError, TransactionTimeoutError
-from sqlalchemy_jsonfield import JSONField
+from sqlalchemy_utils.types.uuid import UUIDType
+from sqlalchemy_utils.types.json import JSONType
 from tornado.gen import sleep
 from tornado.ioloop import IOLoop
 import enum
@@ -29,7 +30,7 @@ class Status(enum.Enum):
 class BaseTransaction(db.Model):
     __abstract__ = True
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(UUIDType(binary=False), primary_key=True)
     started = db.Column(db.DateTime, nullable=False, default=timezone.now)
     finished = db.Column(db.DateTime)
     status = db.Column(db.Enum(Status), nullable=False, default=Status.NEW)
@@ -190,8 +191,8 @@ class TransactionTask(BaseTransaction):
     __table_args__ = ()
 
     func = db.Column(FunctionType, nullable=False)
-    func_args = db.Column(JSONField)
-    func_kwargs = db.Column(JSONField)
+    func_args = db.Column(JSONType)
+    func_kwargs = db.Column(JSONType)
 
     obj_model_name = db.Column(db.String(512), nullable=False)
     obj_id = db.Column(db.Integer, nullable=False)
@@ -210,7 +211,7 @@ class TransactionTask(BaseTransaction):
         from anthill.framework.apps import app
 
         model = app.get_model(self.obj_model_name)
-        obj = model.query.get(self.obj_id)  # TODO: async
+        obj = model.find(self.obj_id)  # TODO: async
 
         return Executable(
             obj, self.func, obj_version=self.obj_ver,

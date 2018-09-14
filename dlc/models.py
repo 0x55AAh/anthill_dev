@@ -2,7 +2,7 @@
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
 from anthill.framework.core.files.storage import default_storage
-from sqlalchemy_jsonfield import JSONField
+from sqlalchemy_utils.types.json import JSONType
 from sqlalchemy.schema import UniqueConstraint
 from dlc.deploy import Deployment
 import enum
@@ -46,13 +46,7 @@ class DeploymentMethod(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Enum(Names), nullable=False)
-    data = db.Column(
-        JSONField(
-            enforce_string=True,
-            enforce_unicode=False
-        ),
-        nullable=False
-    )
+    data = db.Column(JSONType, nullable=False)
     applications = db.relationship(
         'Application', backref=db.backref('deployment_method'), lazy='dynamic',
         cascade='all, delete-orphan')
@@ -70,20 +64,8 @@ class Application(db.Model):
     name = db.Column(db.String(256), nullable=False)
     deployment_method_id = db.Column(
         db.Integer, db.ForeignKey('deployment_methods.id'), nullable=False, index=True)
-    filters_scheme = db.Column(
-        JSONField(
-            enforce_string=True,
-            enforce_unicode=False
-        ),
-        nullable=False
-    )
-    payload_scheme = db.Column(
-        JSONField(
-            enforce_string=True,
-            enforce_unicode=False
-        ),
-        nullable=False
-    )
+    filters_scheme = db.Column(JSONType, nullable=False)
+    payload_scheme = db.Column(JSONType, nullable=False)
     versions = db.relationship(
         'ApplicationVersion', backref=db.backref('application'), lazy='dynamic',
         cascade='all, delete-orphan')
@@ -115,13 +97,7 @@ class BundlesGroup(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.Enum(Statuses), nullable=False, default=Statuses.CREATED)
-    hash_types = db.Column(
-        JSONField(
-            enforce_string=True,
-            enforce_unicode=False
-        ),
-        nullable=False
-    )
+    hash_types = db.Column(JSONType, nullable=False)
     bundles = db.relationship(
         'Bundle', backref=db.backref('group'), lazy='dynamic',
         cascade='all, delete-orphan')
@@ -145,20 +121,8 @@ class Bundle(db.Model):
     name = db.Column(db.String(128), nullable=False)
     key = db.Column(db.String(64), nullable=False)
     filename = db.Column(db.String(128), nullable=False, unique=True)
-    hash = db.Column(
-        JSONField(
-            enforce_string=True,
-            enforce_unicode=False
-        ),
-        nullable=False
-    )
-    filter = db.Column(
-        JSONField(
-            enforce_string=True,
-            enforce_unicode=False
-        ),
-        nullable=False
-    )
+    hash = db.Column(JSONType, nullable=False)
+    filter = db.Column(JSONType, nullable=False)
     status = db.Column(db.Enum(Statuses), nullable=False, default=Statuses.CREATED)
     group_id = db.Column(
         db.Integer, db.ForeignKey('bundle_groups.id'), nullable=False, index=True)
