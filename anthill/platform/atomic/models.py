@@ -8,6 +8,7 @@ from sqlalchemy_utils.types.uuid import UUIDType
 from sqlalchemy_utils.types.json import JSONType
 from tornado.gen import sleep
 from tornado.ioloop import IOLoop
+from functools import partial
 import enum
 import logging
 import inspect
@@ -48,8 +49,14 @@ class BaseTransaction(db.Model):
     def strategy(self):
         return self.manager.strategy
 
+    @property
     def is_finished(self):
         return self.finished is not None
+
+    @property
+    def internal_request(self):
+        from anthill.platform.utils.internal_api import internal_request
+        return internal_request
 
     def check_timeout(self):
         if not self.is_finished():
@@ -88,6 +95,9 @@ class Transaction(BaseTransaction):
         cascade='all, delete-orphan')
     state = db.Column(db.Integer, nullable=False, default=0)
 
+    async def request_transaction(self, service):
+        return await self.internal_request(service, 'get_transaction', self.id)
+
     def get_tasks(self):
         return self.tasks.all()
 
@@ -109,11 +119,13 @@ class Transaction(BaseTransaction):
     def size(self):
         return self.tasks.count()
 
-    async def commit(self, resume=False):
+    async def commit(self, resume=False, retries=3, retry_timeout=1):
         self.commit_start(resume)
         tasks = self.get_tasks()
+        retries = retries or self.PROCEED_RETRY_LIMIT
+        retry_timeout = retry_timeout or self.PROCEED_RETRY_TIMEOUT
         for task in tasks[self.state:] if resume else tasks:
-            rr = range(self.PROCEED_RETRY_LIMIT)
+            rr = range(retries)
             try:
                 for i in rr:
                     try:
@@ -122,7 +134,7 @@ class Transaction(BaseTransaction):
                     except TransactionError:
                         if i == rr[-1]:
                             raise
-                        await sleep(self.PROCEED_RETRY_TIMEOUT)
+                        await sleep(retry_timeout)
             except TransactionError:
                 self.status = Status.FAILED
                 self.save()  # TODO: async
@@ -131,8 +143,9 @@ class Transaction(BaseTransaction):
                 self.state_incr()
         self.commit_finish()
 
-    async def resume(self):
-        await self.commit(resume=True)
+    async def resume(self, retries=3, retry_timeout=1):
+        await self.commit(
+            resume=True, retries=retries, retry_timeout=retry_timeout)
 
     def state_incr(self):
         self.state += 1
@@ -190,6 +203,15 @@ class TransactionTask(BaseTransaction):
     __tablename__ = 'transaction_tasks'
     __table_args__ = ()
 
+    @enum.unique
+    class Rank(enum.Enum):
+        MASTER = 0
+        SLAVE = 1
+
+    rank = db.Column(db.Enum(Rank), nullable=False, default=Rank.MASTER)
+    master = db.Column(db.String(128))  # Name of master service if rank is SLAVE
+    slave = db.Column(db.String(128))   # Name of slave service if rank is MASTER
+
     func = db.Column(FunctionType, nullable=False)
     func_args = db.Column(JSONType)
     func_kwargs = db.Column(JSONType)
@@ -199,13 +221,23 @@ class TransactionTask(BaseTransaction):
     obj_ver = db.Column(db.Integer)
 
     transaction_id = db.Column(
-        db.Integer, db.ForeignKey('transactions.id'), nullable=False, index=True)
+        UUIDType, db.ForeignKey('transactions.id'), nullable=False, index=True)
 
     def commit_start(self):
         self.status = Status.STARTED
         transaction_watcher = self.strategy.get_task('TRANSACTION_TASK')
         transaction_watcher.apply_async(
             (self.transaction.id, self.id), countdown=self.timeout)
+
+    async def _request_task(self, service):
+        return await self.internal_request(
+            service, 'get_transaction_task', self.transaction_id, self.id)
+
+    async def request_master(self):
+        return await self._request_task(self.master)
+
+    async def request_slave(self):
+        return await self._request_task(self.slave)
 
     async def executable(self):
         from anthill.framework.apps import app

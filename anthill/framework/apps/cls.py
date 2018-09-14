@@ -2,7 +2,6 @@ from collections import defaultdict
 from tornado.web import URLSpec
 from anthill.framework.utils.text import slugify, camel_case_to_spaces, class_name
 from anthill.framework.utils.module_loading import import_string
-from anthill.platform.api.internal import api as internal_api
 from anthill.framework.conf import settings
 from urllib.parse import urlparse, urljoin
 from functools import lru_cache
@@ -39,8 +38,6 @@ class Application:
         self.management_conf = self.getdefault('MANAGEMENT_CONF', '.'.join([self.name, 'management']))
         self.models_conf = self.getdefault('MODELS_CONF', '.'.join([self.name, 'models']))
         self.ui_module = self.getdefault('UI_MODULE', '.'.join([self.name, 'ui']))
-
-        self.internal = internal_api
 
         self.protocol, self.host, self.port = self.split_location()
         self.host_regex = r'^(%s)$' % re.escape(self.host)
@@ -258,22 +255,24 @@ class Application:
         for model in self.get_models():
             logger.debug('  \_ Model %s.' % class_name(model))
 
-        self.db.create_all()
+        # self.db.create_all()
         logger.debug('All database tables created.')
 
         self.update_models()
 
+    def pre_setup(self):
+        pass
+
+    def post_setup(self):
+        pass
+
     def setup(self):
         """Setup application."""
         logger.debug('Application setup started.')
+        self.pre_setup()
         self.setup_models()
-        self.setup_internal_api()
+        self.post_setup()
         logger.debug('Application setup finished.')
-
-    def setup_internal_api(self):
-        importlib.import_module(settings.INTERNAL_API_CONF)
-        internal_api.service = self.service
-        logger.debug('\_ Internal api installed.')
 
     @property
     @lru_cache()

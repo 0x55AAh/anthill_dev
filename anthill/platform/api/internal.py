@@ -75,15 +75,26 @@ class InternalAPI(Singleton):
     def as_internal(self):
         """Decorator marks function as an internal api method."""
 
+        from anthill.platform.atomic.manager import TransactionManager
+        transaction_manager = TransactionManager()
+
+        def transaction_processor(api_, func, *args, **kwargs):
+            transaction_options = kwargs.pop('transaction', {})
+            if transaction_options:
+                pass
+            logger.fatal('Transaction parsing')
+
         def decorator(func):
             if inspect.iscoroutinefunction(func):
                 async def wrapper(api_, *args, **kwargs):
+                    transaction_processor(api_, func, *args, **kwargs)
                     try:
                         return await func(api_, *args, **kwargs)
                     except Exception as e:
                         return {'error': {'message': str(e)}}
             else:
                 def wrapper(api_, *args, **kwargs):
+                    transaction_processor(api_, func, *args, **kwargs)
                     try:
                         return func(api_, *args, **kwargs)
                     except Exception as e:

@@ -32,5 +32,5 @@ class TransactionManager(Singleton):
         logger.info('%s transactions loaded for restore.' % len(failed_transactions))
 
     async def start(self) -> None:
-        await self.on_start()
+        # await self.on_start()
         logger.info('Transaction manager started.')
