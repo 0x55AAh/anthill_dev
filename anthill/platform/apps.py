@@ -17,13 +17,12 @@ class BaseAnthillApplication(Application):
 
     def get_models_modules(self):
         models_modules = super().get_models_modules()
-        return ('anthill.platform.atomic.models', ) + models_modules
+        return models_modules
 
     # noinspection PyMethodMayBeStatic
     def get_internal_api_modules(self):
         api_modules = (
-            'anthill.platform.atomic.internal_api',
-            settings.INTERNAL_API_CONF
+            settings.INTERNAL_API_CONF,
         )
         return api_modules
 
