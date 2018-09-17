@@ -7,6 +7,10 @@ from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
+import logging
+
+
+logger = logging.getLogger('anthill.application')
 
 
 class AuthenticatedHandlerMixin:
@@ -49,10 +53,13 @@ class HomeHandler(TemplateHandler):
         except RequestTimeoutError:
             pass
         else:
-            self.metadata = await self.get_metadata(services)
-            for metadata in self.metadata:
-                card = ServiceCard.Entry(**metadata)
-                service_cards.append(card)
+            if 'error' in services:
+                logger.error(services['error']['message'])
+            else:
+                self.metadata = await self.get_metadata(services)
+                for metadata in self.metadata:
+                    card = ServiceCard.Entry(**metadata)
+                    service_cards.append(card)
         kwargs.update(service_cards=service_cards)
         context = await super().get_context_data(**kwargs)
         return context

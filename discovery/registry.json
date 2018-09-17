@@ -28,5 +28,10 @@
         "internal": "http://localhost:9508",
         "external": "http://localhost:9508",
         "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "message": {
+        "internal": "http://localhost:9509",
+        "external": "http://localhost:9509",
+        "broker": "amqp://guest:guest@localhost:5672"
     }
 }

@@ -5,7 +5,7 @@ from anthill.platform.conf.settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '09m0q%d0d1l*1y@4awc&y@z&3*5#v!=-yvmx^+eoa2so33t_55'
+SECRET_KEY = 'f!+1fl_+1r6ccwt)asua4yum&amp;1i(!$b617&amp;gibfng5hq#8aq)9'
 
 DEBUG = False
 
@@ -13,72 +13,39 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-REGISTERED_SERVICES = {
-    'admin': {
-        'internal': 'http://localhost:9500',
-        'external': 'http://localhost:9500',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    },
-    'discovery': {
-        'internal': 'http://localhost:9502',
-        'external': 'http://localhost:9502',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    },
-    'dlc': {
-        'internal': 'http://localhost:9505',
-        'external': 'http://localhost:9505',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    },
-    'event': {
-        'internal': 'http://localhost:9506',
-        'external': 'http://localhost:9506',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    },
-    'login': {
-        'internal': 'http://localhost:9507',
-        'external': 'http://localhost:9507',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    },
-    'profile': {
-        'internal': 'http://localhost:9508',
-        'external': 'http://localhost:9508',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    },
-    'message': {
-        'internal': 'http://localhost:9509',
-        'external': 'http://localhost:9509',
-        'broker': 'amqp://guest:guest@localhost:5672'
-    }
-}
+# Database uri example:
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_message@/anthill_message'
 
-REGISTERED_SERVICES_EXTERNAL = os.path.join(BASE_DIR, 'registry.json')
-
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_discovery@/anthill_discovery'
-
-LOCATION = 'http://localhost:9502'
+LOCATION = 'http://localhost:9509'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-# ROUTES_CONF = 'discovery.routes'
-
-# APPLICATION_CLASS = 'discovery.apps.AnthillApplication'
-APPLICATION_NAME = 'discovery'
-APPLICATION_VERBOSE_NAME = 'Discovery'
-APPLICATION_DESCRIPTION = 'Map each service location dynamically'
-APPLICATION_ICON_CLASS = 'icon-direction'
-APPLICATION_COLOR = 'danger'
-
-# SERVICE_CLASS = 'discovery.services.Service'
+# ROUTES_CONF = 'message.routes'
 
 UI_THEME = 'limitless'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
 
+# APPLICATION_CLASS = 'message.apps.AnthillApplication'
+APPLICATION_NAME = 'message'
+APPLICATION_VERBOSE_NAME = 'Message'
+APPLICATION_DESCRIPTION = 'Implements messaging system'
+APPLICATION_ICON_CLASS = 'icon-envelope'
+APPLICATION_COLOR = 'green'
+
+# SERVICE_CLASS = 'message.services.Service'
+
 STATIC_URL = '/static/'
 
-# UI_MODULE = 'discovery.ui'
+# UI_MODULE = 'message.ui'
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/3"
+CONTEXT_PROCESSORS = [
+
+]
+
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
+
+EMAIL_SUBJECT_PREFIX = '[Anthill: message] '
 
 LOGGING = {
     'version': 1,
@@ -109,9 +76,9 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '../discovery.log',
+            'filename': '/var/log/anthill/message.log',
             'formatter': 'anthill.server',
-            'maxBytes': 100 * 1024 * 1024,
+            'maxBytes': 100 * 1000 * 1000,
             'backupCount': 10
         },
         'mail_admins': {
@@ -180,7 +147,6 @@ LOGGING = {
 
 GEOIP_PATH = os.path.join(BASE_DIR, '../')
 
-
 #########
 # HTTPS #
 #########
@@ -197,6 +163,6 @@ HTTPS = None
 ############
 
 GRAPHENE = {
-    'SCHEMA': 'discovery.api.v1.public.schema',
+    'SCHEMA': 'message.api.v1.public.schema',
     'MIDDLEWARE': ()
 }

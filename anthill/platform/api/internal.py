@@ -100,14 +100,22 @@ as_internal = api.as_internal
 
 
 # ## Predefined API methods ###
+@as_internal()
 def test(api_: InternalAPI):
     return {'method': 'test', 'service': api_.service.name}
 
 
+@as_internal()
 def ping(api_: InternalAPI):
     return {'message': 'pong', 'service': api_.service.name}
 
 
+@as_internal()
+def doc(api_: InternalAPI):
+    return {'methods': api_.methods}
+
+
+@as_internal()
 def get_service_metadata(api_: InternalAPI):
     return {
         'title': settings.APPLICATION_VERBOSE_NAME,
@@ -115,9 +123,6 @@ def get_service_metadata(api_: InternalAPI):
         'description': settings.APPLICATION_DESCRIPTION,
         'color': settings.APPLICATION_COLOR
     }
-
-
-api.add_methods([test, ping, get_service_metadata])
 # ## /Predefined API methods ###
 
 
