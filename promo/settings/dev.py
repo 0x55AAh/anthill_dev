@@ -1,52 +1,7 @@
-import os
-from anthill.platform.conf.settings import *
+from .base import *
 
-# Build paths inside the application like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0*1bdv_c*jja%mxmrb6#tmssr3prnbg9#+*(ew8!*lg2_0+h6q'
-
-DEBUG = False
-
-ADMINS = (
-    ('Lysenko Vladimir', 'wofkin@gmail.com'),
-)
-
-# Database uri example:
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_profile@/anthill_profile'
-
-LOCATION = 'http://localhost:9508'
-BROKER = 'amqp://guest:guest@localhost:5672'
-
-# ROUTES_CONF = 'profile.routes'
-
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# APPLICATION_CLASS = 'profile.apps.AnthillApplication'
-APPLICATION_NAME = 'profile'
-APPLICATION_VERBOSE_NAME = 'Profile'
-APPLICATION_DESCRIPTION = 'Manage the user profiles'
-APPLICATION_ICON_CLASS = 'icon-user'
-APPLICATION_COLOR = 'orange'
-
-# SERVICE_CLASS = 'profile.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'profile.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
-
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
-
-EMAIL_SUBJECT_PREFIX = '[Anthill: profile] '
+DEBUG = True
+EMAIL_BACKEND = 'anthill.framework.core.mail.backends.console.EmailBackend'
 
 LOGGING = {
     'version': 1,
@@ -64,7 +19,7 @@ LOGGING = {
             '()': 'anthill.framework.utils.log.ServerFormatter',
             'fmt': '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S',
-            'color': False,
+            'color': True,
         }
     },
     'handlers': {
@@ -76,11 +31,8 @@ LOGGING = {
         },
         'anthill.server': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/anthill/profile.log',
+            'class': 'logging.StreamHandler',
             'formatter': 'anthill.server',
-            'maxBytes': 100 * 1000 * 1000,
-            'backupCount': 10
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -95,42 +47,42 @@ LOGGING = {
         },
         'anthill.application': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'tornado.access': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'tornado.application': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'tornado.general': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'celery': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'celery.worker': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'celery.task': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'celery.redirected': {
             'handlers': ['anthill.server'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False
         },
         'asyncio': {
@@ -139,31 +91,4 @@ LOGGING = {
             'propagate': False
         },
     }
-}
-
-
-#########
-# GEOIP #
-#########
-
-GEOIP_PATH = os.path.join(BASE_DIR, '../')
-
-#########
-# HTTPS #
-#########
-
-# HTTPS = {
-#     'key_file': os.path.join(BASE_DIR, '../server.key'),
-#     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
-# }
-HTTPS = None
-
-
-############
-# GRAPHENE #
-############
-
-GRAPHENE = {
-    'SCHEMA': 'profile.api.v1.public.schema',
-    'MIDDLEWARE': ()
 }

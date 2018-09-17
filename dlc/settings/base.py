@@ -25,7 +25,7 @@ APPLICATION_NAME = 'dlc'
 APPLICATION_VERBOSE_NAME = 'DLC'
 APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
 APPLICATION_ICON_CLASS = 'icon-cloud-download2'
-APPLICATION_COLOR = 'primary'
+APPLICATION_COLOR = 'warning'
 
 # SERVICE_CLASS = 'dlc.services.Service'
 
@@ -33,6 +33,7 @@ UI_THEME = 'limitless'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = '/static/'

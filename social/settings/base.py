@@ -5,7 +5,7 @@ from anthill.platform.conf.settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0*1bdv_c*jja%mxmrb6#tmssr3prnbg9#+*(ew8!*lg2_0+h6q'
+SECRET_KEY = 'vepuga)b4^&amp;_6m5v1$xog_qcppb8r@2mj9(ew)khni#010(7xi'
 
 DEBUG = False
 
@@ -14,39 +14,38 @@ ADMINS = (
 )
 
 # Database uri example:
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_profile@/anthill_profile'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_social@/anthill_social'
 
-LOCATION = 'http://localhost:9508'
+LOCATION = 'http://localhost:9514'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-# ROUTES_CONF = 'profile.routes'
+# ROUTES_CONF = 'social.routes'
 
 UI_THEME = 'limitless'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# APPLICATION_CLASS = 'profile.apps.AnthillApplication'
-APPLICATION_NAME = 'profile'
-APPLICATION_VERBOSE_NAME = 'Profile'
-APPLICATION_DESCRIPTION = 'Manage the user profiles'
-APPLICATION_ICON_CLASS = 'icon-user'
-APPLICATION_COLOR = 'orange'
+# APPLICATION_CLASS = 'social.apps.AnthillApplication'
+APPLICATION_NAME = 'social'
+APPLICATION_VERBOSE_NAME = 'Social'
+APPLICATION_DESCRIPTION = 'Manage social networks, groups and friend connections'
+APPLICATION_ICON_CLASS = 'icon-share3'
+APPLICATION_COLOR = 'slate'
 
-# SERVICE_CLASS = 'profile.services.Service'
+# SERVICE_CLASS = 'social.services.Service'
 
 STATIC_URL = '/static/'
 
-# UI_MODULE = 'profile.ui'
+# UI_MODULE = 'social.ui'
 
 CONTEXT_PROCESSORS = [
 
 ]
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
+EMAIL_SUBJECT_PREFIX = '[Anthill: social] '
 
-EMAIL_SUBJECT_PREFIX = '[Anthill: profile] '
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/14"
 
 LOGGING = {
     'version': 1,
@@ -77,7 +76,7 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/anthill/profile.log',
+            'filename': '/var/log/anthill/social.log',
             'formatter': 'anthill.server',
             'maxBytes': 100 * 1000 * 1000,
             'backupCount': 10
@@ -164,6 +163,6 @@ HTTPS = None
 ############
 
 GRAPHENE = {
-    'SCHEMA': 'profile.api.v1.public.schema',
+    'SCHEMA': 'social.api.v1.public.schema',
     'MIDDLEWARE': ()
 }

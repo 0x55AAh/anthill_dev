@@ -5,7 +5,7 @@ from anthill.platform.conf.settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0*1bdv_c*jja%mxmrb6#tmssr3prnbg9#+*(ew8!*lg2_0+h6q'
+SECRET_KEY = 'qwc-)lqxrygnx!lx!t5ex3^tbk3$&amp;pwk^cp!r-1f%w7_2-s4_q'
 
 DEBUG = False
 
@@ -14,39 +14,38 @@ ADMINS = (
 )
 
 # Database uri example:
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_profile@/anthill_profile'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_config@/anthill_config'
 
-LOCATION = 'http://localhost:9508'
+LOCATION = 'http://localhost:9511'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-# ROUTES_CONF = 'profile.routes'
+# ROUTES_CONF = 'config.routes'
 
 UI_THEME = 'limitless'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# APPLICATION_CLASS = 'profile.apps.AnthillApplication'
-APPLICATION_NAME = 'profile'
-APPLICATION_VERBOSE_NAME = 'Profile'
-APPLICATION_DESCRIPTION = 'Manage the user profiles'
-APPLICATION_ICON_CLASS = 'icon-user'
-APPLICATION_COLOR = 'orange'
+# APPLICATION_CLASS = 'config.apps.AnthillApplication'
+APPLICATION_NAME = 'config'
+APPLICATION_VERBOSE_NAME = 'Configuration'
+APPLICATION_DESCRIPTION = 'Configure your application dynamically'
+APPLICATION_ICON_CLASS = 'icon-gear'
+APPLICATION_COLOR = 'primary'
 
-# SERVICE_CLASS = 'profile.services.Service'
+# SERVICE_CLASS = 'config.services.Service'
 
 STATIC_URL = '/static/'
 
-# UI_MODULE = 'profile.ui'
+# UI_MODULE = 'config.ui'
 
 CONTEXT_PROCESSORS = [
 
 ]
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
+EMAIL_SUBJECT_PREFIX = '[Anthill: config] '
 
-EMAIL_SUBJECT_PREFIX = '[Anthill: profile] '
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/11"
 
 LOGGING = {
     'version': 1,
@@ -77,7 +76,7 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/anthill/profile.log',
+            'filename': '/var/log/anthill/config.log',
             'formatter': 'anthill.server',
             'maxBytes': 100 * 1000 * 1000,
             'backupCount': 10
@@ -164,6 +163,6 @@ HTTPS = None
 ############
 
 GRAPHENE = {
-    'SCHEMA': 'profile.api.v1.public.schema',
+    'SCHEMA': 'config.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
