@@ -4,7 +4,7 @@ from anthill.framework.handlers import (
 from anthill.platform.auth.handlers import LoginHandler as BaseLoginHandler
 from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
-from anthill.platform.api.internal import RequestTimeoutError
+from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
 import logging
@@ -53,9 +53,7 @@ class HomeHandler(TemplateHandler):
         except RequestTimeoutError:
             pass
         else:
-            if 'error' in services:
-                logger.error(services['error']['message'])
-            else:
+            if is_response_valid(services):
                 self.metadata = await self.get_metadata(services)
                 for metadata in self.metadata:
                     card = ServiceCard.Entry(**metadata)

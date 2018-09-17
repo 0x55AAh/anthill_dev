@@ -87,7 +87,7 @@ LOGGING = {
         },
         'asyncio': {
             'handlers': ['anthill.server'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False
         },
     }

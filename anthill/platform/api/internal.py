@@ -22,7 +22,8 @@ import logging
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
-    'InternalAPIError', 'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError'
+    'InternalAPIError', 'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError',
+    'is_response_valid'
 ]
 
 
@@ -99,7 +100,6 @@ api = InternalAPI()
 as_internal = api.as_internal
 
 
-# ## Predefined API methods ###
 @as_internal()
 def test(api_: InternalAPI):
     return {'method': 'test', 'service': api_.service.name}
@@ -112,7 +112,7 @@ def ping(api_: InternalAPI):
 
 @as_internal()
 def doc(api_: InternalAPI):
-    return {'methods': api_.methods}
+    return {'methods': ', '.join(api_.methods)}
 
 
 @as_internal()
@@ -123,7 +123,13 @@ def get_service_metadata(api_: InternalAPI):
         'description': settings.APPLICATION_DESCRIPTION,
         'color': settings.APPLICATION_COLOR
     }
-# ## /Predefined API methods ###
+
+
+def is_response_valid(response):
+    if 'error' in response:
+        logger.error(response['error']['message'])
+        return False
+    return True
 
 
 class BaseInternalConnection(Singleton):
