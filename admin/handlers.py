@@ -7,6 +7,7 @@ from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
+from anthill.framework.utils.cache import cached_method
 import logging
 
 
@@ -30,6 +31,10 @@ class HomeHandler(TemplateHandler):
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self.metadata = []
+
+    # @cached_method(timeout=300)
+    async def get(self, *args, **kwargs):
+        await super().get(*args, **kwargs)
 
     async def get_metadata(self, services):
         res = []
