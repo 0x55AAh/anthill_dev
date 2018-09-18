@@ -121,7 +121,8 @@ def get_service_metadata(api_: InternalAPI):
         'title': settings.APPLICATION_VERBOSE_NAME,
         'icon_class': settings.APPLICATION_ICON_CLASS,
         'description': settings.APPLICATION_DESCRIPTION,
-        'color': settings.APPLICATION_COLOR
+        'color': settings.APPLICATION_COLOR,
+        'version': api_.service.version
     }
 
 

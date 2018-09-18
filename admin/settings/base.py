@@ -40,7 +40,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CONTEXT_PROCESSORS = [
     'anthill.framework.context_processors.datetime',
     'admin.context_processors.main_sidebar',
-    'admin.context_processors.main_sidebar_state',
 ]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/2"

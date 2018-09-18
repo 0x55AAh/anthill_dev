@@ -117,11 +117,12 @@ class ServiceCard(TemplateModule):
     template_name = 'modules/service-card.html'
 
     class Entry:
-        def __init__(self, title, description='', icon_class='', color=''):
+        def __init__(self, title, description='', icon_class='', color='', version=''):
             self.title = title
             self.description = description
             self.icon_class = icon_class
             self.color = color
+            self.version = version
 
         def __repr__(self):
             return 'ServiceCard(title="%s")' % self.title

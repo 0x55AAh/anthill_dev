@@ -7,6 +7,7 @@ from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
+from anthill.framework.http.errors import HttpBadRequestError
 import logging
 
 
@@ -87,10 +88,19 @@ class DebugHandler(TemplateHandler):
         return context
 
 
+class DebugSessionHandler(WebSocketJSONRPCHandler):
+    pass
+
+
 class SidebarMainToggle(RequestHandler):
+    """Save main sidebar state expanded or closed."""
+
     async def get(self):
-        expanded = self.session.get('sidebar-main-expanded', True)
-        self.session['sidebar-main-expanded'] = not expanded
+        if self.is_ajax():
+            expanded = self.session.get('sidebar-main-expanded', True)
+            self.session['sidebar-main-expanded'] = not expanded
+        else:
+            raise HttpBadRequestError
 
     async def post(self):
         await self.get()

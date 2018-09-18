@@ -33,6 +33,7 @@ class BaseService(TornadoWebApplication):
         self.config = app.settings
         self.name = app.label
         self.db = app.db
+        self.version = app.version
 
         self.setup()
 

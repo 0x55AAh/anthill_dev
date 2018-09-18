@@ -1,0 +1,14 @@
+-r anthill/framework/requirements.txt
+-r anthill/platform/requirements.txt
+-r admin/requirements.txt
+-r config/requirements.txt
+-r discovery/requirements.txt
+-r dlc/requirements.txt
+-r event/requirements.txt
+-r exec/requirements.txt
+-r login/requirements.txt
+-r message/requirements.txt
+-r profile/requirements.txt
+-r promo/requirements.txt
+-r social/requirements.txt
+-r store/requirements.txt

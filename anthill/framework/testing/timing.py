@@ -23,7 +23,7 @@ class ElapsedTime:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.logger.info(self.done())
+        self.logger.debug(self.done())
 
     def __str__(self):
         if self.elapsed:

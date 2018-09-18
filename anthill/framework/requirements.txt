@@ -7,7 +7,7 @@ WTForms==2.2.1
 WTForms-Alchemy==0.16.7
 WTForms-Components==0.10.3
 marshmallow==2.15.4
-marshmallow-sqlalchemy==0.14.0
+marshmallow-sqlalchemy==0.14.1
 six==1.11.0
 social-auth-core==1.7.0
 social-auth-storage-sqlalchemy==1.1.0
