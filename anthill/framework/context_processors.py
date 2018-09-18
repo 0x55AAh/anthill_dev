@@ -23,7 +23,9 @@ async def build_context_from_context_processors(handler: RequestHandler) -> dict
                 'but need `RequestHandler`' % (f.__name__, handler.__class__.__name__)
             )
         if not isinstance(result, dict):
-            raise ImproperlyConfigured('Context processor `%s` must return dict object' % f.__name__)
+            raise ImproperlyConfigured(
+                'Context processor `%s` must return dict object, '
+                'but `%s` returned' % (f.__name__, type(result)))
         if not result:
             logging.warning('Empty result for context processor `%s`' % f.__name__)
         ctx.update(result)

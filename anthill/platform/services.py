@@ -121,7 +121,7 @@ class AdminService(PlainService):
 
 class DiscoveryService(BaseService):
     cleanup_storage_on_stop = True
-    cleanup_services_period = 1
+    cleanup_services_period = 5
     ping_services = True
     ping_max_retries = 1
     ping_timeout = 1
