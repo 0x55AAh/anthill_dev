@@ -35,3 +35,9 @@ async def main_sidebar(handler):
             main_sidebar_entries.sort()
 
     return {'main_sidebar_entries': main_sidebar_entries}
+
+
+async def main_sidebar_state(handler):
+    return {
+        'main_sidebar_expanded': handler.session.get('sidebar-main-expanded', True)
+    }

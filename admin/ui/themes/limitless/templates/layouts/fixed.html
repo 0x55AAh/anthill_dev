@@ -39,7 +39,7 @@
 	{% block js_header %}{% end %}
 </head>
 
-<body class="{% block body-class %}navbar-top{% end %}">
+<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}">
 
 <!-- Main navbar -->
 {% block main-navbar %}

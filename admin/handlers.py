@@ -1,5 +1,5 @@
 from anthill.framework.handlers import (
-    TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler
+    TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler, RequestHandler
 )
 from anthill.platform.auth.handlers import LoginHandler as BaseLoginHandler
 from anthill.platform.core.messenger.handlers import MessengerHandler
@@ -7,7 +7,6 @@ from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
-from anthill.framework.utils.cache import cached_method
 import logging
 
 
@@ -32,10 +31,6 @@ class HomeHandler(TemplateHandler):
         super().__init__(application, request, **kwargs)
         self.metadata = []
 
-    # @cached_method(timeout=300)
-    async def get(self, *args, **kwargs):
-        await super().get(*args, **kwargs)
-
     async def get_metadata(self, services):
         res = []
         for name in services.keys():
@@ -51,7 +46,7 @@ class HomeHandler(TemplateHandler):
         res.sort(key=lambda x: x['title'])
         return res
 
-    async def get_context_data(self, **kwargs):
+    async def get_service_cards(self):
         service_cards = []
         try:
             services = await self.internal_request('discovery', method='get_services')
@@ -63,6 +58,10 @@ class HomeHandler(TemplateHandler):
                 for metadata in self.metadata:
                     card = ServiceCard.Entry(**metadata)
                     service_cards.append(card)
+        return service_cards
+
+    async def get_context_data(self, **kwargs):
+        service_cards = await self.get_service_cards()
         kwargs.update(service_cards=service_cards)
         context = await super().get_context_data(**kwargs)
         return context
@@ -86,6 +85,15 @@ class DebugHandler(TemplateHandler):
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
         return context
+
+
+class SidebarMainToggle(RequestHandler):
+    async def get(self):
+        expanded = self.session.get('sidebar-main-expanded', True)
+        self.session['sidebar-main-expanded'] = not expanded
+
+    async def post(self):
+        await self.get()
 
 
 class User:

@@ -8,7 +8,8 @@ route_patterns = [
     url(r'^/?$', handlers.HomeHandler, name='index'),
     url(r'^/login/?$', handlers.LoginHandler, name='login'),
     url(r'^/logout/?$', handlers.LogoutHandler, name='logout'),
-    url(r'^/debug/?$', handlers.DebugHandler, name='debug')
+    url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
+    url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
 ]
 
 route_patterns += [

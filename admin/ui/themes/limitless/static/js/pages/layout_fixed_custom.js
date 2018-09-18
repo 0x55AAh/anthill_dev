@@ -39,10 +39,11 @@ $(function() {
 
 
     // Toggle mini sidebar
-    $('.sidebar-main-toggle').on('click', function (e) {
-
-        // Initialize mini sidebar 
-        miniSidebar();
+    $('.sidebar-main-toggle').on('click', function(e) {
+        $.get('/sidebar-main-toggle/', function(data, status) {
+            // Initialize mini sidebar
+            miniSidebar();
+        });
     });
 
 
@@ -76,7 +77,6 @@ $(function() {
 
     // Initialize
     initScroll();
-
 
 
     // Remove scrollbar on mobile
