@@ -8,6 +8,7 @@ from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
 from anthill.framework.http.errors import HttpBadRequestError
+from functools import wraps
 import logging
 
 
@@ -88,8 +89,45 @@ class DebugHandler(TemplateHandler):
         return context
 
 
+def jsonrpc_method(**kwargs):
+    def decorator(func):
+        func.jsonrpc_method = True
+        func.kwargs = kwargs
+        return func
+    return decorator
+
+
 class DebugSessionHandler(WebSocketJSONRPCHandler):
-    pass
+    """Defines json-rpc methods for debugging."""
+
+    def __init__(self, application, request, dispatcher=None, **kwargs):
+        super().__init__(application, request, dispatcher, **kwargs)
+        self._setup_methods()
+
+    def _setup_methods(self):
+        for method_name in self.__class__.__dict__:
+            attr = getattr(self, method_name)
+            is_jsonrpc_method = getattr(attr, 'jsonrpc_method', False)
+            if is_jsonrpc_method:
+                kwargs = getattr(attr, 'kwargs', {})
+                name = kwargs.get('name', method_name)
+                self.dispatcher.add_method(attr, name)
+
+    @jsonrpc_method(name='test')
+    def test(self):
+        """Just return test string."""
+        return 'Hello, this is test!'
+
+    @jsonrpc_method(name='help')
+    def help(self):
+        """Shows supported commands."""
+        import inspect
+        annotations = inspect.getfullargspec(self.help).annotations
+        res = ''
+        for i, f in enumerate(self.dispatcher.values(), 1):
+            res += '%s) %s (%s) => %s\n' % (
+                i, f.__name__, str(annotations).strip('{}'), f.__doc__)
+        return res.rstrip()
 
 
 class SidebarMainToggle(RequestHandler):
