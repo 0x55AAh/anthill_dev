@@ -5,9 +5,10 @@ from anthill.platform.auth.handlers import LoginHandler as BaseLoginHandler
 from anthill.platform.core.messenger.handlers import MessengerHandler
 from anthill.platform.core.messenger.client import BaseClient
 from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
-from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
 from anthill.framework.http.errors import HttpBadRequestError
+from admin.ui.modules import ServiceCard
+from typing import Optional
 import logging
 import inspect
 
@@ -103,31 +104,50 @@ class DebugSessionHandler(WebSocketJSONRPCHandler):
 
     def __init__(self, application, request, dispatcher=None, **kwargs):
         super().__init__(application, request, dispatcher, **kwargs)
+        self._context = {'service': None}  # used by context-based methods
         self._setup_methods()
 
     def _setup_methods(self):
         for method_name in self.__class__.__dict__:
             attr = getattr(self, method_name)
-            is_jsonrpc_method = getattr(attr, 'jsonrpc_method', False)
-            if is_jsonrpc_method:
+            if getattr(attr, 'jsonrpc_method', False):
                 kwargs = getattr(attr, 'kwargs', {})
                 name = kwargs.get('name', method_name)
                 self.dispatcher.add_method(attr, name)
 
-    @jsonrpc_method(name='test')
-    def test(self):
-        """Just shows test string."""
-        return 'Hello, this is test!'
+    def _set_context(self, name: str, value: Optional[str]):
+        if name in self._context:
+            self._context[name] = value
 
     @jsonrpc_method(name='help')
     def help(self):
         """Shows supported commands."""
         res = ''
-        annotations = inspect.getfullargspec(self.help).annotations
         for i, f in enumerate(self.dispatcher.values(), 1):
+            if f.kwargs.get('system', False):
+                continue
+            anno = inspect.getfullargspec(f).annotations
             res += '%s) %s (%s) => %s\n' % (
-                i, f.__name__, str(annotations).strip('{}'), f.__doc__)
+                i, f.__name__, str(anno).strip('{}'), f.__doc__)
         return res.rstrip()
+
+    @jsonrpc_method(name='get_context')
+    def get_context(self, name: str=''):
+        """Get context variables."""
+        if name in self._context:
+            return 'Current context %s: %s' % (name, self._context[name] or '--')
+        else:
+            return 'No such context, (%s) available.' % ', '.join(self._context.keys())
+
+    @jsonrpc_method(name='set_context')
+    def set_context(self, name: str, value: Optional[str]):
+        """Set context variable."""
+        self._set_context(name, value)
+
+    @jsonrpc_method(name='clear_context')
+    def clear_context(self, name: str):
+        """Clear context variable."""
+        self._set_context(name, None)
 
 
 class SidebarMainToggle(RequestHandler):

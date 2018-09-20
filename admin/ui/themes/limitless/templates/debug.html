@@ -1,7 +1,34 @@
 {% extends 'layouts/fixed.html' %}
 
 {% block css %}
-<link href="{{ static_url('css/terminal/jquery.terminal.min.css') }}" rel="stylesheet"/>
+<link href="{{ static_url('css/terminal/jquery.terminal.css') }}" rel="stylesheet"/>
+<style>
+    @supports (--css: variables) {
+        .console.ubuntu.terminal {
+            --background: #300924;
+        }
+        .console.osx.terminal {
+            --background: #222;
+        }
+        .console.light.terminal {
+            --background: white;
+            --color: black;
+        }
+        /*
+        * windows and custom are the last ones so
+        * they don't get overwritten by light
+        */
+        .console.windows.terminal {
+            --background: black;
+            --color: white;
+            --animation: terminal-underline;
+        }
+        .console.custom.terminal {
+            --background: #222d32;
+            --color: #aaa;
+        }
+    }
+</style>
 {% end %}
 
 {% block js %}
@@ -21,5 +48,5 @@
 {% end %}
 
 {% block content %}
-<div id="console"></div>
+<div class="console custom"></div>
 {% end %}
