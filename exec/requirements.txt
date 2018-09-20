@@ -1,1 +1,1 @@
-# Write your pip requirements here.
+v8py==0.9.14

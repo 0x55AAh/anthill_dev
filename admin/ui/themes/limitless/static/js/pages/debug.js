@@ -8,15 +8,24 @@ $(function() {
         ws: {
             uri: url,
             useSockJS: false,
-            onconnected: null,
-            ondisconnect: null,
-            onreconnecting: null,
-            onreconnected: null
+            onconnected: function() {
+                
+            },
+            ondisconnect: function() {
+                
+            },
+            onreconnecting: function() {
+                
+            },
+            onreconnected: function() {
+                
+            },
+            onerror: function(error) {
+
+            }
         },
         rpc: {
-            requestTimeout: 15000,
-            treeStopped: null,
-            iceCandidate: null
+            requestTimeout: 15000
         }
     };
 

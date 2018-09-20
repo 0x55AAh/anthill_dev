@@ -8,8 +8,8 @@ from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from admin.ui.modules import ServiceCard
 from anthill.framework.handlers import UploadFileStreamHandler
 from anthill.framework.http.errors import HttpBadRequestError
-from functools import wraps
 import logging
+import inspect
 
 
 logger = logging.getLogger('anthill.application')
@@ -90,6 +90,7 @@ class DebugHandler(TemplateHandler):
 
 
 def jsonrpc_method(**kwargs):
+    """Marks debug session handler method as json-rpc method."""
     def decorator(func):
         func.jsonrpc_method = True
         func.kwargs = kwargs
@@ -115,15 +116,14 @@ class DebugSessionHandler(WebSocketJSONRPCHandler):
 
     @jsonrpc_method(name='test')
     def test(self):
-        """Just return test string."""
+        """Just shows test string."""
         return 'Hello, this is test!'
 
     @jsonrpc_method(name='help')
     def help(self):
         """Shows supported commands."""
-        import inspect
-        annotations = inspect.getfullargspec(self.help).annotations
         res = ''
+        annotations = inspect.getfullargspec(self.help).annotations
         for i, f in enumerate(self.dispatcher.values(), 1):
             res += '%s) %s (%s) => %s\n' % (
                 i, f.__name__, str(annotations).strip('{}'), f.__doc__)
