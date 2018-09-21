@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import os
 from anthill.framework.core.management import EmptyManager
+import os
 
 if __name__ == '__main__':
     manager = EmptyManager(

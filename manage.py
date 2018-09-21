@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-import os
-import sys
-import importlib
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.core.management import Manager, EmptyManager
+import importlib
+import os
+import sys
 
 
 def get_settings_module(default=''):
