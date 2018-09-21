@@ -41,23 +41,6 @@ class LogExceptionHandlerMixin:
 
 
 class CommonRequestHandlerMixin:
-    def clear(self):
-        """Resets all headers and content for this response."""
-        super().clear()
-        if settings.HIDE_SERVER_VERSION:
-            self.clear_header('Server')
-
-    def is_secure(self):
-        pass
-
-
-class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
-                     CommonRequestHandlerMixin, BaseRequestHandler):
-    def __init__(self, application, request, **kwargs):
-        super().__init__(application, request, **kwargs)
-        self.internal_request = self.application.internal_connection.request
-        self.init_session()
-
     @property
     def config(self):
         """An alias for `self.application.config <Application.config>`."""
@@ -67,6 +50,26 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
     def db(self):
         """An alias for `self.application.db <Application.db>`."""
         return self.application.db
+
+    @property
+    def internal_request(self):
+        return self.application.internal_connection.request
+
+    def clear(self):
+        """Resets all headers and content for this response."""
+        super().clear()
+        if settings.HIDE_SERVER_VERSION:
+            self.clear_header('Server')
+
+    def is_secure(self):
+        return self.request.protocol in ('https',)
+
+
+class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
+                     CommonRequestHandlerMixin, BaseRequestHandler):
+    def __init__(self, application, request, **kwargs):
+        super().__init__(application, request, **kwargs)
+        self.init_session()
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
@@ -88,9 +91,6 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         Implement this method to handle streamed request data.
         Requires the `.stream_request_body` decorator.
         """
-
-    def is_secure(self):
-        return self.request.protocol in ('https',)
 
     def is_ajax(self):
         return self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
