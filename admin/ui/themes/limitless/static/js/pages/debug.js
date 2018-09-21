@@ -51,7 +51,7 @@ $(function() {
         name: 'debug',
         height: 522,
         width: 'auto',
-        prompt: 'user@host:~ '
+        prompt: 'anthill:~ '
     });
 
 });
