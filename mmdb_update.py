@@ -5,17 +5,17 @@ import requests
 import tarfile
 import os
 
+__all__ = ['run']
 
 products = ['City', 'Country']
 link_tpl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-%(product)s.tar.gz'
 links = [link_tpl % {'product': product} for product in products]
 
-
-CHUNCK_SIZE = 1024
+CHUNK_SIZE = 1024
 PROGRESS_WIDTH = 30
 
 
-def progress(message, width=PROGRESS_WIDTH):
+def _progress(message, width=PROGRESS_WIDTH):
     def decorator(func):
         def wrapper(*args_, **kwargs_):
             dots = width - len(message) - 7
@@ -26,7 +26,7 @@ def progress(message, width=PROGRESS_WIDTH):
     return decorator
 
 
-def get_names(link, base):
+def _get_names(link, base):
     arc_name = link.rpartition('/')[-1]
     db_name = arc_name.partition('.')[0] + '.mmdb'
 
@@ -36,20 +36,20 @@ def get_names(link, base):
     )
 
 
-def main(base):
+def run(base):
     for link in links:
-        arc_name, db_name = get_names(link, base)
+        arc_name, db_name = _get_names(link, base)
 
         print('* %s' % link)
 
-        @progress('Downloading')
+        @_progress('Downloading')
         def download():
             resp = requests.get(link, stream=True)
             with open(arc_name, 'wb') as af:
-                for chunk in resp.iter_content(chunk_size=CHUNCK_SIZE):
+                for chunk in resp.iter_content(chunk_size=CHUNK_SIZE):
                     af.write(chunk)
 
-        @progress('Extracting')
+        @_progress('Extracting')
         def extract():
             arc = tarfile.open(arc_name)
             for m in arc.getmembers():
@@ -58,7 +58,7 @@ def main(base):
                         f.write(arc.extractfile(m).read())
             arc.close()
 
-        @progress('Cleanup')
+        @_progress('Cleanup')
         def cleanup():
             os.unlink(arc_name)
 
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--path', dest='path', default='', help='Path where files to save', type=str)
     args = parser.parse_args()
-    main(base=args.path)
+    run(base=args.path)

@@ -99,12 +99,11 @@ def jsonrpc_method(**kwargs):
     return decorator
 
 
-class DebugSessionHandler(WebSocketJSONRPCHandler):
-    """Defines json-rpc methods for debugging."""
+class MessagesSessionHandler(WebSocketJSONRPCHandler):
+    """Json-rpc session channel."""
 
     def __init__(self, application, request, dispatcher=None, **kwargs):
         super().__init__(application, request, dispatcher, **kwargs)
-        self._context = {'service': None}  # used by context-based methods
         self._setup_methods()
 
     def _setup_methods(self):
@@ -114,6 +113,14 @@ class DebugSessionHandler(WebSocketJSONRPCHandler):
                 kwargs = getattr(attr, 'kwargs', {})
                 name = kwargs.get('name', method_name)
                 self.dispatcher.add_method(attr, name)
+
+
+class DebugSessionHandler(MessagesSessionHandler):
+    """Defines json-rpc methods for debugging."""
+
+    def __init__(self, application, request, dispatcher=None, **kwargs):
+        super().__init__(application, request, dispatcher, **kwargs)
+        self._context = {'service': None}  # used by context-based methods
 
     def _set_context(self, name: str, value: Optional[str]):
         if name in self._context:
