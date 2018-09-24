@@ -33,13 +33,14 @@
 	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/reconnecting-websocket.min.js') }}"></script>
 
 	<script type="text/javascript" src="{{ static_url('js/pages/layout_fixed_custom.js') }}"></script>
+	<script type="text/javascript" src="{{ static_url('js/pages/general.js') }}"></script>
 	<!-- /theme JS files -->
 
     {% block js %}{% end %}
 	{% block js_header %}{% end %}
 </head>
 
-<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}">
+<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}" {% block page-id %}{% end %}>
 
 <!-- Main navbar -->
 {% block main-navbar %}

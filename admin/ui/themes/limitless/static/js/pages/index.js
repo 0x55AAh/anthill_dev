@@ -1,4 +1,15 @@
+/* ------------------------------------------------------------------------------
+*
+*  # Index page
+*
+*  Version: 1.0
+*
+* ---------------------------------------------------------------------------- */
+
+
 $(function() {
+
+    var AJAX_INTERVAL = 10;
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -29,9 +40,9 @@ $(function() {
             headers: {'Content-Type': 'application/json'},
             data: JSON.stringify({query: services_metadata_query}),
             success: function (result) {
-                // Build services cards.
                 var new_html_card_data = '', new_html_card_entry;
-                $.each(result.data.servicesMetadata, function (index, entry) {
+                var entries = result.data['servicesMetadata'];
+                $.each(entries, function (index, entry) {
                     new_html_card_entry = '' +
                         '<div class="col-lg-2 col-md-3 col-sm-6">' +
                         '    <div class="panel" style="height: 320px;">' +
@@ -48,6 +59,7 @@ $(function() {
                     new_html_card_data += new_html_card_entry;
                 });
                 $('.content-wrapper .content .row').html(new_html_card_data);
+                $('.page-header .page-title span.badge-warning').text(entries.length);
             },
             error: function (jqXHR, textStatus, errorThrown) {
 
@@ -55,6 +67,6 @@ $(function() {
         });
     }
 
-    setInterval(update_services_registry, 10 * 1000);
+    setInterval(update_services_registry, AJAX_INTERVAL * 1000);
 
 });
