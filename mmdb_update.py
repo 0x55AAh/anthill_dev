@@ -8,7 +8,8 @@ import os
 __all__ = ['run']
 
 products = ['City', 'Country']
-link_tpl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-%(product)s.tar.gz'
+link_base = 'http://geolite.maxmind.com/download/geoip/database/'
+link_tpl = link_base + 'GeoLite2-%(product)s.tar.gz'
 links = [link_tpl % {'product': product} for product in products]
 
 CHUNK_SIZE = 1024
