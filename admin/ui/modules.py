@@ -155,7 +155,7 @@ class DropZoneUploader(TemplateModule):
         self.options = self.options_default.copy()
 
     # noinspection PyMethodOverriding
-    def render(self, dropzone_id, **options):
+    def render(self, dropzone_id='dropzone', **options):
         self.dropzone_id = dropzone_id
         if options:
             self.options.update(options)

@@ -12,16 +12,20 @@ link_tpl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-%(produc
 links = [link_tpl % {'product': product} for product in products]
 
 CHUNK_SIZE = 1024
-PROGRESS_WIDTH = 30
+PROGRESS_WIDTH = 50
 
 
-def _progress(message, width=PROGRESS_WIDTH):
+def _progress(message, width=PROGRESS_WIDTH, logger=None):
     def decorator(func):
         def wrapper(*args_, **kwargs_):
             dots = width - len(message) - 7
-            print('  \_ %s %s' % (message, '.' * dots), end=' ')
+            if logger is None:
+                print('  \_ %s %s' % (message, '.' * dots), end=' ')
             func(*args_, **kwargs_)
-            print('OK')
+            if logger is None:
+                print('OK')
+            else:
+                logger.info('  \_ %s %s OK' % (message, '.' * dots))
         return wrapper
     return decorator
 
@@ -36,20 +40,23 @@ def _get_names(link, base):
     )
 
 
-def run(base):
+def run(base, logger=None):
     for link in links:
         arc_name, db_name = _get_names(link, base)
 
-        print('* %s' % link)
+        if logger is not None:
+            logger.info('* %s' % link)
+        else:
+            print('* %s' % link)
 
-        @_progress('Downloading')
+        @_progress('Downloading', logger=logger)
         def download():
             resp = requests.get(link, stream=True)
             with open(arc_name, 'wb') as af:
                 for chunk in resp.iter_content(chunk_size=CHUNK_SIZE):
                     af.write(chunk)
 
-        @_progress('Extracting')
+        @_progress('Extracting', logger=logger)
         def extract():
             arc = tarfile.open(arc_name)
             for m in arc.getmembers():
@@ -58,7 +65,7 @@ def run(base):
                         f.write(arc.extractfile(m).read())
             arc.close()
 
-        @_progress('Cleanup')
+        @_progress('Cleanup', logger=logger)
         def cleanup():
             os.unlink(arc_name)
 
@@ -71,4 +78,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--path', dest='path', default='', help='Path where files to save', type=str)
     args = parser.parse_args()
-    run(base=args.path)
+    run(base=args.path, logger=None)

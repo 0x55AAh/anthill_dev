@@ -12,6 +12,10 @@ $(function() {
         }
     });
 
+    function page_match(pageId) {
+        return page_id !== undefined && pageId === page_id;
+    }
+
     // Build main sidebar services section.
     function update_services_registry() {
         var services_metadata_query = " \
@@ -32,8 +36,9 @@ $(function() {
                 var html_sidebar_data = '', html_sidebar_entry;
                 var entries = result.data['servicesMetadata'];
                 $.each(entries, function(index, entry) {
+                    var active = page_match(entry.name) ? 'active' : '';
                     html_sidebar_entry = '' +
-                        '<li class="navigation-service" data-name="' + entry.name +'">' +
+                        '<li class="navigation-service ' + active + '" data-name="' + entry.name +'">' +
                         '    <a href="#"><i class="' + entry.iconClass + '"></i> <span>' + entry.title + '</span></a>' +
                         '</li>';
                     html_sidebar_data += html_sidebar_entry;
