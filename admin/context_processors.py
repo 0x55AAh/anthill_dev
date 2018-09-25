@@ -33,7 +33,8 @@ async def main_sidebar(handler):
                     make_entry(metadata)
                 except RequestTimeoutError:
                     pass
-            main_sidebar_entries.sort()
+
+    main_sidebar_entries.sort()
 
     return {
         'main_sidebar_entries': main_sidebar_entries,

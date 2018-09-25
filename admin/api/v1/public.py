@@ -17,7 +17,7 @@ class ServiceMetadata(graphene.ObjectType):
     version = graphene.String()
 
     def __lt__(self, other):
-        return self.title < other.title
+        return self.name < other.name
 
 
 class RootQuery(graphene.ObjectType):

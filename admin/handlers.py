@@ -46,7 +46,6 @@ class HomeHandler(TemplateHandler):
                 pass
             else:
                 res.append(metadata)
-        res.sort(key=lambda x: x['title'])
         return res
 
     async def get_service_cards(self):
@@ -61,6 +60,7 @@ class HomeHandler(TemplateHandler):
                 for metadata in self.metadata:
                     card = ServiceCard.Entry(**metadata)
                     service_cards.append(card)
+        service_cards.sort()
         return service_cards
 
     async def get_context_data(self, **kwargs):
