@@ -8,7 +8,8 @@ async def main_sidebar(handler):
     def make_entry(meta):
         kwargs = {
             'title': meta['title'],
-            'icon_class': meta['icon_class']
+            'icon_class': meta['icon_class'],
+            'name': meta['name'],
         }
         entry = MainSidebar.Entry(**kwargs)
         main_sidebar_entries.append(entry)

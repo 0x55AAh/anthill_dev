@@ -25,26 +25,26 @@ $(function() {
         var services_metadata_query = " \
             query {                     \
                 servicesMetadata {      \
+                  name,                 \
                   title,                \
                   description,          \
                   iconClass,            \
                   color,                \
                   version               \
                 }                       \
-            }                           \
-        ";
+            }";
         $.ajax({
             url: '/api/',
             type: 'POST',
             dataType: 'json',
             headers: {'Content-Type': 'application/json'},
             data: JSON.stringify({query: services_metadata_query}),
-            success: function (result) {
-                var new_html_card_data = '', new_html_card_entry;
+            success: function(result) {
+                var html_card_data = '', html_card_entry;
                 var entries = result.data['servicesMetadata'];
-                $.each(entries, function (index, entry) {
-                    new_html_card_entry = '' +
-                        '<div class="col-lg-2 col-md-3 col-sm-6">' +
+                $.each(entries, function(index, entry) {
+                    html_card_entry = '' +
+                        '<div class="col-lg-2 col-md-3 col-sm-6" data-name="' + entry.name +'">' +
                         '    <div class="panel" style="height: 320px;">' +
                         '        <div class="panel-body text-center">' +
                         '            <a href="#" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
@@ -56,12 +56,12 @@ $(function() {
                         '        </div>' +
                         '    </div>' +
                         '</div>';
-                    new_html_card_data += new_html_card_entry;
+                    html_card_data += html_card_entry;
                 });
-                $('.content-wrapper .content .row').html(new_html_card_data);
+                $('.content-wrapper .content .row').html(html_card_data);
                 $('.page-header .page-title span.badge-warning').text(entries.length);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: function(jqXHR, textStatus, errorThrown) {
 
             }
         });

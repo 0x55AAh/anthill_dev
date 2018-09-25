@@ -3,9 +3,11 @@
         <div class="sidebar-category sidebar-category-visible">
             <div class="category-content no-padding">
                 <ul class="navigation navigation-main navigation-accordion">
-                    <li class="navigation-header"><span>Services</span> <i class="icon-menu" title="" data-original-title=""></i></li>
-                    {% for entry in entries%}
-                    <li class="{% if current == entry.title %}active{% end %} navigation-service">
+                    <li class="navigation-header">
+                        <span>Services</span> <i class="icon-menu" title="" data-original-title=""></i>
+                    </li>
+                    {% for entry in entries %}
+                    <li class="{% if current == entry.title %}active{% end %} navigation-service" data-name="{{ entry.name }}">
                         <a href="#"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
                     </li>
                     {% end %}

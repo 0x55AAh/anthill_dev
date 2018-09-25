@@ -12,36 +12,36 @@ $(function() {
         }
     });
 
-    // Build services cards and main sidebar services section.
+    // Build main sidebar services section.
     function update_services_registry() {
         var services_metadata_query = " \
             query {                     \
                 servicesMetadata {      \
+                  name,                 \
                   title,                \
-                  iconClass,            \
+                  iconClass             \
                 }                       \
-            }                           \
-        ";
+            }";
         $.ajax({
             url: '/api/',
             type: 'POST',
             dataType: 'json',
             headers: {'Content-Type': 'application/json'},
             data: JSON.stringify({query: services_metadata_query}),
-            success: function (result) {
-                var new_html_sidebar_data = '', new_html_sidebar_entry;
+            success: function(result) {
+                var html_sidebar_data = '', html_sidebar_entry;
                 var entries = result.data['servicesMetadata'];
-                $.each(entries, function (index, entry) {
-                    new_html_sidebar_entry = '' +
-                        '<li class="navigation-service">' +
+                $.each(entries, function(index, entry) {
+                    html_sidebar_entry = '' +
+                        '<li class="navigation-service" data-name="' + entry.name +'">' +
                         '    <a href="#"><i class="' + entry.iconClass + '"></i> <span>' + entry.title + '</span></a>' +
                         '</li>';
-                    new_html_sidebar_data += new_html_sidebar_entry;
+                    html_sidebar_data += html_sidebar_entry;
                 });
                 $('.sidebar-main ul.navigation-main li.navigation-service').remove();
-                $('.sidebar-main ul.navigation-main li.navigation-header').after(new_html_sidebar_data);
+                $('.sidebar-main ul.navigation-main li.navigation-header').after(html_sidebar_data);
             },
-            error: function (jqXHR, textStatus, errorThrown) {
+            error: function(jqXHR, textStatus, errorThrown) {
 
             }
         });

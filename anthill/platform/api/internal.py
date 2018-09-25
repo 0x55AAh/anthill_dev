@@ -118,6 +118,7 @@ def doc(api_: InternalAPI):
 @as_internal()
 def get_service_metadata(api_: InternalAPI):
     return {
+        'name': settings.APPLICATION_NAME,
         'title': settings.APPLICATION_VERBOSE_NAME,
         'icon_class': settings.APPLICATION_ICON_CLASS,
         'description': settings.APPLICATION_DESCRIPTION,
@@ -134,9 +135,7 @@ def is_response_valid(response):
 
 
 class BaseInternalConnection(Singleton):
-    """
-    Implements communications between services.
-    """
+    """Implements communications between services."""
     message_type = 'internal'
     channel_alias = 'internal'
     channel_group_name_prefix = 'internal'
@@ -172,14 +171,14 @@ class BaseInternalConnection(Singleton):
             self.channel_name = await self.channel_layer.new_channel(prefix=self.service.app.label)
             self.channel_receive = partial(self.channel_layer.receive, self.channel_name)
             await self.channel_layer.group_add(self.channel_group_name(), self.channel_name)
-            logger.debug('Internal api connection statatus: CONNECTED.')
+            logger.debug('Internal api connection status: CONNECTED.')
         else:
-            logger.debug('Internal api connection statatus: NOT_CONNECTED.')
+            logger.debug('Internal api connection status: NOT_CONNECTED.')
 
     async def disconnect(self) -> None:
         await self.channel_layer.group_discard(
             self.channel_group_name(), self.channel_name)
-        logger.debug('Internal api connection statatus: DISCONNECTED.')
+        logger.debug('Internal api connection status: DISCONNECTED.')
 
     async def send(self, service: str, message: dict) -> None:
         """Send message to service channel group."""

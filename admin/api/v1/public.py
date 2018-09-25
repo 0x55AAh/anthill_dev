@@ -9,6 +9,7 @@ import graphene
 class ServiceMetadata(graphene.ObjectType):
     """Service metadata entry."""
 
+    name = graphene.String()
     title = graphene.String()
     description = graphene.String()
     icon_class = graphene.String()

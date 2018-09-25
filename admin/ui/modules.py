@@ -95,15 +95,16 @@ class MainSidebar(TemplateModule):
     template_name = 'modules/main-sidebar.html'
 
     class Entry:
-        def __init__(self, title, icon_class=''):
+        def __init__(self, name, title, icon_class=''):
+            self.name = name
             self.title = title
             self.icon_class = icon_class
 
         def __repr__(self):
-            return 'MainSidebarEntry(title="%s")' % self.title
+            return 'MainSidebarEntry(name="%s", title="%s")' % (self.name, self.title)
 
         def __lt__(self, other):
-            return self.title < other.title
+            return self.name < other.name
 
     # noinspection PyMethodOverriding
     def render(self, entries, current=None):
@@ -117,7 +118,8 @@ class ServiceCard(TemplateModule):
     template_name = 'modules/service-card.html'
 
     class Entry:
-        def __init__(self, title, description='', icon_class='', color='', version=''):
+        def __init__(self, name, title, description='', icon_class='', color='', version=''):
+            self.name = name
             self.title = title
             self.description = description
             self.icon_class = icon_class
@@ -125,10 +127,10 @@ class ServiceCard(TemplateModule):
             self.version = version
 
         def __repr__(self):
-            return 'ServiceCard(title="%s")' % self.title
+            return 'ServiceCard(name="%s", title="%s")' % (self.name, self.title)
 
         def __lt__(self, other):
-            return self.title < other.title
+            return self.name < other.name
 
     # noinspection PyMethodOverriding
     def render(self, entry):
