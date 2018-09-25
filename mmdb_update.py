@@ -8,8 +8,8 @@ import os
 __all__ = ['run']
 
 products = ['City', 'Country']
-link_base = 'http://geolite.maxmind.com/download/geoip/database/'
-link_tpl = link_base + 'GeoLite2-%(product)s.tar.gz'
+link_base = 'http://geolite.maxmind.com/download/geoip/database'
+link_tpl = '/'.join([link_base, 'GeoLite2-%(product)s.tar.gz'])
 links = [link_tpl % {'product': product} for product in products]
 
 CHUNK_SIZE = 1024
@@ -41,7 +41,7 @@ def _get_names(link, base):
     )
 
 
-def run(base, logger=None):
+def update(base, logger=None):
     for link in links:
         arc_name, db_name = _get_names(link, base)
 
@@ -79,4 +79,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--path', dest='path', default='', help='Path where files to save', type=str)
     args = parser.parse_args()
-    run(base=args.path, logger=None)
+    update(base=args.path, logger=None)
