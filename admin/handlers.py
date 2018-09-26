@@ -171,6 +171,11 @@ class SidebarMainToggle(RequestHandler):
         await self.get()
 
 
+class ServiceRequestHandler(TemplateHandler):
+    def get_template_name(self):
+        return self.template_name
+
+
 class User:
     def __init__(self, _id):
         self.id = _id

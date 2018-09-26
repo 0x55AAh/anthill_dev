@@ -11,6 +11,7 @@ route_patterns = [
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
+    url(r'^/service/(?P<name>[^/]+)/?$', handlers.ServiceRequestHandler, name='service'),
 ]
 
 route_patterns += [
