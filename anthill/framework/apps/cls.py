@@ -181,7 +181,10 @@ class Application:
         Returns module object with UIModule subclasses and plain functions.
         Use for ``service.ui_modules`` and ``service.ui_methods`` initializing.
         """
-        return importlib.import_module('.'.join([self.ui_module, 'modules']))
+        try:
+            return importlib.import_module('.'.join([self.ui_module, 'modules']))
+        except ModuleNotFoundError:
+            return {}
 
     def get_models_modules(self):
         sys_modules = ('anthill.framework.sessions.models',)

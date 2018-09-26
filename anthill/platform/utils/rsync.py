@@ -5,15 +5,18 @@ class Rsync:
     hostname = None
     username = None
     identity_file = None
+    chmod = '640'
+
     cmd_context_defaults = {
         'identity_file': identity_file,
         'username': username,
         'hostname': hostname,
+        'chmod': chmod,
+    }
+    cmd_context = {
         'src_path': None,
         'dst_path': None,
-        'chmod': '640',
     }
-    cmd_context = dict()
 
     def __init__(self, **kwargs):
         self.configure(**kwargs)
@@ -42,16 +45,20 @@ class Rsync:
         ]
         return ' '.join(cmd)
 
-    @property
-    def upload_cmd(self):
+    def upload_cmd(self, src_path, dst_path):
+        cmd_context['src_path'] = src_path
+        cmd_context['dst_path'] = dst_path
         return self.upload_cmd_template.format(**self.get_cmd_context())
 
-    @property
-    def download_cmd(self):
+    def download_cmd(self, src_path, dst_path):
+        cmd_context['src_path'] = src_path
+        cmd_context['dst_path'] = dst_path
         return self.download_cmd_template.format(**self.get_cmd_context())
 
-    async def upload(self):
-        return await call_subprocess(self.upload_cmd)
+    async def upload(self, src_path, dst_path):
+        upload_cmd = self.upload_cmd(src_path, dst_path)
+        return await call_subprocess(upload_cmd)
 
-    async def download(self):
-        return await call_subprocess(self.download_cmd)
+    async def download(self, src_path, dst_path):
+        download_cmd = self.download_cmd(src_path, dst_path)
+        return await call_subprocess(download_cmd)

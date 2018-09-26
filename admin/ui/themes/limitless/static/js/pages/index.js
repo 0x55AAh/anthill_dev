@@ -20,19 +20,20 @@ $(function() {
         }
     });
 
+    var services_metadata_query = " \
+        query {                     \
+            servicesMetadata {      \
+              name,                 \
+              title,                \
+              description,          \
+              iconClass,            \
+              color,                \
+              version               \
+            }                       \
+        }";
+
     // Build services cards and main sidebar services section.
     function update_services_registry() {
-        var services_metadata_query = " \
-            query {                     \
-                servicesMetadata {      \
-                  name,                 \
-                  title,                \
-                  description,          \
-                  iconClass,            \
-                  color,                \
-                  version               \
-                }                       \
-            }";
         $.ajax({
             url: '/api/',
             type: 'POST',

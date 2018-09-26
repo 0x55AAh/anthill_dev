@@ -184,5 +184,5 @@ def update_hash_on_group_change(target, value, oldvalue, initiator):
     if value != oldvalue:
         bundles = target.bundles
         for bundle in bundles:
-            bundle.refresh_hash()
+            bundle.update_hash()
         db.session.bulk_save_objects(bundles)

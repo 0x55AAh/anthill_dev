@@ -80,12 +80,10 @@ class KeyCDNDeploymentMethod(DeploymentMethod):
             kwargs = {
                 'identity_file': key_file,
                 'hostname': self.hostname,
-                'username': self.username,
-                'src_path': src,
-                'dst_path': dst
+                'username': self.username
             }
             rsync = Rsync(**kwargs)
-            code, _, error = await rsync.upload()
+            code, _, error = await rsync.upload(src, dst)
 
             if code != 0:
                 raise DeploymentError(code, to_unicode(error))
