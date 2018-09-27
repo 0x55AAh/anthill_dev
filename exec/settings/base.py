@@ -21,11 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'exec.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 # APPLICATION_CLASS = 'exec.apps.AnthillApplication'
 APPLICATION_NAME = 'exec'
 APPLICATION_VERBOSE_NAME = 'Exec'
@@ -34,14 +29,6 @@ APPLICATION_ICON_CLASS = 'icon-circle-code'
 APPLICATION_COLOR = 'violet'
 
 # SERVICE_CLASS = 'exec.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'exec.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: exec] '
 

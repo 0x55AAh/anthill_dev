@@ -21,11 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'social.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 # APPLICATION_CLASS = 'social.apps.AnthillApplication'
 APPLICATION_NAME = 'social'
 APPLICATION_VERBOSE_NAME = 'Social'
@@ -34,14 +29,6 @@ APPLICATION_ICON_CLASS = 'icon-share3'
 APPLICATION_COLOR = 'slate'
 
 # SERVICE_CLASS = 'social.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'social.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: social] '
 

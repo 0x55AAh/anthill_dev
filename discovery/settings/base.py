@@ -94,15 +94,6 @@ APPLICATION_COLOR = 'danger'
 
 # SERVICE_CLASS = 'discovery.services.Service'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'discovery.ui'
-
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/3"
 
 LOGGING = {

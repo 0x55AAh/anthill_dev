@@ -29,16 +29,7 @@ APPLICATION_COLOR = 'warning'
 
 # SERVICE_CLASS = 'dlc.services.Service'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'dlc.ui'
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/4"
 

@@ -21,11 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'config.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 # APPLICATION_CLASS = 'config.apps.AnthillApplication'
 APPLICATION_NAME = 'config'
 APPLICATION_VERBOSE_NAME = 'Configuration'
@@ -34,14 +29,6 @@ APPLICATION_ICON_CLASS = 'icon-gear'
 APPLICATION_COLOR = 'primary'
 
 # SERVICE_CLASS = 'config.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'config.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: config] '
 

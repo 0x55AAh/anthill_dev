@@ -7,8 +7,8 @@
                         <span>Services</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     {% for entry in entries %}
-                    <li class="{% if current == entry.name %}active{% end %} navigation-service" data-name="{{ entry.name }}">
-                        <a href="#"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
+                    <li class="{% if current == entry.name %}active{% end %} navigation-service {{ current }}" data-name="{{ entry.name }}">
+                        <a href="{{ reverse_url('service', entry.name) }}"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
                     </li>
                     {% end %}
                 </ul>

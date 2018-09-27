@@ -21,10 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'profile.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # APPLICATION_CLASS = 'profile.apps.AnthillApplication'
@@ -35,14 +31,6 @@ APPLICATION_ICON_CLASS = 'icon-user'
 APPLICATION_COLOR = 'orange'
 
 # SERVICE_CLASS = 'profile.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'profile.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
 

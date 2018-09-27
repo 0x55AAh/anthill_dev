@@ -48,7 +48,7 @@ $(function() {
                         '<div class="col-lg-2 col-md-3 col-sm-6" data-name="' + entry.name +'">' +
                         '    <div class="panel" style="height: 320px;">' +
                         '        <div class="panel-body text-center">' +
-                        '            <a href="#" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
+                        '            <a href="/services/' + entry.name + '/" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
                         '                <i class="' + entry.iconClass + '"></i>' +
                         '            </a>' +
                         '            <h5 class="text-semibold">' + entry.title + '</h5>' +

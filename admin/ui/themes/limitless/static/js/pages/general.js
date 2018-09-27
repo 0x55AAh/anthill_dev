@@ -1,7 +1,7 @@
 $(function() {
 
     var AJAX_INTERVAL = 10;
-    var current_service_name = $('body').data('service-id');
+    var current_service_name = $('body').data('service-name');
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -41,7 +41,7 @@ $(function() {
                     var active = service_match(entry.name) ? 'active' : '';
                     html_sidebar_entry = '' +
                         '<li class="navigation-service ' + active + '" data-name="' + entry.name +'">' +
-                        '    <a href="#"><i class="' + entry.iconClass + '"></i> <span>' + entry.title + '</span></a>' +
+                        '    <a href="/services/' + entry.name + '/"><i class="' + entry.iconClass + '"></i> <span>' + entry.title + '</span></a>' +
                         '</li>';
                     html_sidebar_data += html_sidebar_entry;
                 });

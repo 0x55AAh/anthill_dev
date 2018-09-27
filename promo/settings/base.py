@@ -21,11 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'promo.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 # APPLICATION_CLASS = 'promo.apps.AnthillApplication'
 APPLICATION_NAME = 'promo'
 APPLICATION_VERBOSE_NAME = 'Promo'
@@ -34,14 +29,6 @@ APPLICATION_ICON_CLASS = 'icon-gift'
 APPLICATION_COLOR = 'brown'
 
 # SERVICE_CLASS = 'promo.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'promo.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: promo] '
 

@@ -21,11 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'store.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 # APPLICATION_CLASS = 'store.apps.AnthillApplication'
 APPLICATION_NAME = 'store'
 APPLICATION_VERBOSE_NAME = 'Store'
@@ -34,14 +29,6 @@ APPLICATION_ICON_CLASS = 'icon-cart'
 APPLICATION_COLOR = 'primary'
 
 # SERVICE_CLASS = 'store.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'store.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: store] '
 

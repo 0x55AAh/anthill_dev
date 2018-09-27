@@ -21,11 +21,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'message.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 # APPLICATION_CLASS = 'message.apps.AnthillApplication'
 APPLICATION_NAME = 'message'
 APPLICATION_VERBOSE_NAME = 'Message'
@@ -34,14 +29,6 @@ APPLICATION_ICON_CLASS = 'icon-envelope'
 APPLICATION_COLOR = 'green'
 
 # SERVICE_CLASS = 'message.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'message.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
 

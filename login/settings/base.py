@@ -20,11 +20,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'login.routes'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 APPLICATION_CLASS = 'login.apps.AnthillApplication'
 APPLICATION_NAME = 'login'
 APPLICATION_VERBOSE_NAME = 'Login'
@@ -33,14 +28,6 @@ APPLICATION_ICON_CLASS = 'icon-key'
 APPLICATION_COLOR = 'pink'
 
 # SERVICE_CLASS = 'login.services.Service'
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'login.ui'
-
-CONTEXT_PROCESSORS = [
-
-]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/7"
 

@@ -29,15 +29,6 @@ APPLICATION_COLOR = 'success'
 
 # SERVICE_CLASS = 'event.services.Service'
 
-UI_THEME = 'limitless'
-
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'event.ui'
-
 CELERY_ENABLE = True
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/5"
