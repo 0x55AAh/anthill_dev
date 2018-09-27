@@ -170,7 +170,7 @@ class SidebarMainToggle(RequestHandler):
 
 
 class ServiceRequestHandler(TemplateHandler):
-    """Shows service index page."""
+    """Shows individual service index page."""
 
     def get_template_name(self, default=False):
         if default:
