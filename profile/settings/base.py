@@ -21,6 +21,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'profile.routes'
 
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # APPLICATION_CLASS = 'profile.apps.AnthillApplication'

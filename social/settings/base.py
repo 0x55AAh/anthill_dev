@@ -30,6 +30,8 @@ APPLICATION_COLOR = 'slate'
 
 # SERVICE_CLASS = 'social.services.Service'
 
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
 EMAIL_SUBJECT_PREFIX = '[Anthill: social] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/14"

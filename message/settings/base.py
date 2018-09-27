@@ -30,6 +30,8 @@ APPLICATION_COLOR = 'green'
 
 # SERVICE_CLASS = 'message.services.Service'
 
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: message] '

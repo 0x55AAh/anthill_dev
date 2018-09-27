@@ -27,7 +27,11 @@ APPLICATION_DESCRIPTION = 'Compete players with time-limited events'
 APPLICATION_ICON_CLASS = 'icon-calendar'
 APPLICATION_COLOR = 'success'
 
+EMAIL_SUBJECT_PREFIX = '[Anthill: event] '
+
 # SERVICE_CLASS = 'event.services.Service'
+
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 CELERY_ENABLE = True
 

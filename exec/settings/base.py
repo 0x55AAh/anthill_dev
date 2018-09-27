@@ -30,6 +30,8 @@ APPLICATION_COLOR = 'violet'
 
 # SERVICE_CLASS = 'exec.services.Service'
 
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
 EMAIL_SUBJECT_PREFIX = '[Anthill: exec] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/10"

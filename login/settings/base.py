@@ -27,7 +27,11 @@ APPLICATION_DESCRIPTION = 'Manage user accounts, credentials and access tokens'
 APPLICATION_ICON_CLASS = 'icon-key'
 APPLICATION_COLOR = 'pink'
 
+EMAIL_SUBJECT_PREFIX = '[Anthill: login] '
+
 # SERVICE_CLASS = 'login.services.Service'
+
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/7"
 

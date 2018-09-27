@@ -29,6 +29,7 @@ APPLICATION_ICON_CLASS = 'icon-gift'
 APPLICATION_COLOR = 'brown'
 
 # SERVICE_CLASS = 'promo.services.Service'
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: promo] '
 

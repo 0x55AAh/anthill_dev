@@ -94,6 +94,10 @@ APPLICATION_COLOR = 'danger'
 
 # SERVICE_CLASS = 'discovery.services.Service'
 
+EMAIL_SUBJECT_PREFIX = '[Anthill: discovery] '
+
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/3"
 
 LOGGING = {

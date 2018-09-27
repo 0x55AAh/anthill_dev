@@ -27,7 +27,11 @@ APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
 APPLICATION_ICON_CLASS = 'icon-cloud-download2'
 APPLICATION_COLOR = 'warning'
 
+EMAIL_SUBJECT_PREFIX = '[Anthill: dlc] '
+
 # SERVICE_CLASS = 'dlc.services.Service'
+
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

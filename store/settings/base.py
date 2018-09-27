@@ -29,6 +29,7 @@ APPLICATION_ICON_CLASS = 'icon-cart'
 APPLICATION_COLOR = 'primary'
 
 # SERVICE_CLASS = 'store.services.Service'
+TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: store] '
 
