@@ -183,3 +183,7 @@ class ServiceRequestHandler(TemplateHandler):
         except FileNotFoundError:
             template_name = self.get_template_name(default=True)
             super().render(template_name, **kwargs)
+
+
+class SettingsRequestHandler(TemplateHandler):
+    template_name = 'settings.html'
