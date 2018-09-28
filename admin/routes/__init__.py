@@ -17,6 +17,7 @@ route_patterns = [
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
     url(r'^/services/(?P<name>[^/]+)/?$', handlers.ServiceRequestHandler, name='service'),
+    url(r'^/services/(?P<name>[^/]+)/log/?$', handlers.LogRequestHandler, name='service-log'),
 ]
 
 for mod in (

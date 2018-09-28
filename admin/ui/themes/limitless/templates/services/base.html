@@ -5,3 +5,47 @@
 {% block main-sidebar %}
 {% module MainSidebar(main_sidebar_entries, current=name) %}
 {% end %}
+
+{% block header %}
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-title">
+            <h4>
+                <i class="icon-arrow-left52 position-left"></i>
+                <span class="text-semibold">Service</span> - {{ metadata.get('title', 'Undefined') }}
+                <small class="display-block">{{ metadata.get('description', 'Undefined') }}</small>
+            </h4>
+        </div>
+        <div class="heading-elements">
+            <div class="heading-btn-group">
+                <a href="{{ reverse_url('service-log', name) }}" class="btn bg-primary btn-icon btn-sm heading-btn"><i class="icon-clipboard6"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="page-header page-header-default page-header-lg">-->
+    <!--<div class="page-header-content">-->
+        <!--<div class="page-title">-->
+            <!--<h4>-->
+                <!--<i class="icon-arrow-left52 position-left"></i>-->
+                <!--<span class="text-semibold">Service</span> - {{ metadata.get('title', 'Undefined') }}-->
+                <!--<small class="display-block">{{ metadata.get('description', 'Undefined') }}</small>-->
+            <!--</h4>-->
+            <!--<a class="heading-elements-toggle"><i class="icon-more"></i></a></div>-->
+
+        <!--<div class="heading-elements">-->
+            <!--<div class="heading-btn-group">-->
+                <!--<a href="{{ reverse_url('service-log', name) }}" class="btn bg-primary btn-icon btn-sm heading-btn"><i class="icon-clipboard6"></i></a>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="breadcrumb-line"><a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>-->
+        <!--<ul class="breadcrumb">-->
+            <!--<li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> Services</a></li>-->
+            <!--<li class="active">{{ metadata.get('title', 'Undefined') }}</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+<!--</div>-->
+{% end %}

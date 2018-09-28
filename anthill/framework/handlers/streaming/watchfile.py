@@ -2,9 +2,13 @@ from anthill.framework.handlers import WebSocketHandler
 from tornado.process import Subprocess
 from anthill.framework.conf import settings
 from tornado.escape import to_unicode
+import logging
 
 
 __all__ = ['WatchFileHandler', 'WatchTextFileHandler', 'WatchLogFileHandler']
+
+
+logger = logging.getLogger('anthill.application')
 
 
 class WatchFileHandler(WebSocketHandler):
@@ -30,12 +34,13 @@ class WatchFileHandler(WebSocketHandler):
 
     def open(self):
         cmd = ['tail']
-        cmd += ['-n', self.last_lines_limit]
+        cmd += ['-n', str(self.last_lines_limit)]
         cmd += self.extra_args
         try:
             cmd += ['-f', self.get_filename()]
             self._process = Subprocess(cmd, stdout=Subprocess.STREAM, bufsize=1)
         except Exception as e:
+            logger.error(str(e))
             self.close(reason=str(e))
         else:
             self._process.set_exit_callback(self._close)
@@ -45,8 +50,9 @@ class WatchFileHandler(WebSocketHandler):
         self.close(reason=self.streaming_finished_message)
 
     def on_close(self, *args, **kwargs):
-        self._process.proc.terminate()
-        self._process.proc.wait()
+        if self._process is not None:
+            self._process.proc.terminate()
+            self._process.proc.wait()
 
     def transform_output_data(self, data: bytes) -> bytes:
         return data

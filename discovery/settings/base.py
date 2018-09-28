@@ -73,6 +73,11 @@ REGISTERED_SERVICES = {
         'internal': 'http://localhost:9514',
         'external': 'http://localhost:9514',
         'broker': 'amqp://guest:guest@localhost:5672'
+    },
+    'media': {
+        'internal': 'http://localhost:9515',
+        'external': 'http://localhost:9515',
+        'broker': 'amqp://guest:guest@localhost:5672'
     }
 }
 

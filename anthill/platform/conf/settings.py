@@ -80,7 +80,7 @@ CSRF_COOKIES = True
 LOG_STREAMING = {
     'handler': {
         'class': 'anthill.framework.handlers.WatchLogFileHandler',
-        'kwargs': {'handler_name': 'anthill'}
+        'kwargs': {'handler_name': 'anthill.server'}
     },
     'path': '/log/',
 }

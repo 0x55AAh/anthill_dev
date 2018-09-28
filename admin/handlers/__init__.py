@@ -169,7 +169,19 @@ class SidebarMainToggle(RequestHandler):
         await self.get()
 
 
-class ServiceRequestHandler(TemplateHandler):
+class ServiceContextMixin:
+    async def get_context_data(self, **kwargs):
+        context = await super().get_context_data(**kwargs)
+        try:
+            metadata = await self.internal_request(
+                self.path_kwargs['name'], method='get_service_metadata')
+        except RequestTimeoutError:
+            metadata = {}
+        context.update(metadata=metadata)
+        return context
+
+
+class ServiceRequestHandler(ServiceContextMixin, TemplateHandler):
     """Shows individual service index page."""
 
     def get_template_name(self, default=False):
@@ -187,3 +199,7 @@ class ServiceRequestHandler(TemplateHandler):
 
 class SettingsRequestHandler(TemplateHandler):
     template_name = 'settings.html'
+
+
+class LogRequestHandler(ServiceContextMixin, TemplateHandler):
+    template_name = 'log.html'

@@ -5,7 +5,7 @@ from anthill.platform.conf.settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0*1bdv_c*jja%mxmrb6#tmssr3prnbg9#+*(ew8!*lg2_0+h6q'
+SECRET_KEY = 'nrc_!b1_n4!7cx!4!^&amp;hfu^5axl3_fhki)rbyavnh@mthrk@op'
 
 DEBUG = False
 
@@ -13,30 +13,30 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-# Database uri example:
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_profile@/anthill_profile'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_media@/anthill_media'
 
-LOCATION = 'http://localhost:9508'
+LOCATION = 'http://localhost:9515'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-# ROUTES_CONF = 'profile.routes'
+# ROUTES_CONF = 'media.routes'
 
+STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# APPLICATION_CLASS = 'media.apps.AnthillApplication'
+APPLICATION_NAME = 'media'
+APPLICATION_VERBOSE_NAME = 'Media'
+APPLICATION_DESCRIPTION = 'Manage user uploaded files'
+APPLICATION_ICON_CLASS = 'icon-file-media'
+APPLICATION_COLOR = 'teal'
 
-# APPLICATION_CLASS = 'profile.apps.AnthillApplication'
-APPLICATION_NAME = 'profile'
-APPLICATION_VERBOSE_NAME = 'Profile'
-APPLICATION_DESCRIPTION = 'Manage user profiles'
-APPLICATION_ICON_CLASS = 'icon-user'
-APPLICATION_COLOR = 'orange'
+# SERVICE_CLASS = 'media.services.Service'
 
-# SERVICE_CLASS = 'profile.services.Service'
+STATIC_URL = '/static/'
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
+# UI_MODULE = 'media.ui'
 
-EMAIL_SUBJECT_PREFIX = '[Anthill: profile] '
+EMAIL_SUBJECT_PREFIX = '[Anthill: media] '
 
 LOGGING = {
     'version': 1,
@@ -67,7 +67,7 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/anthill/profile.log',
+            'filename': '/var/log/anthill/media.log',
             'formatter': 'anthill.server',
             'maxBytes': 100 * 1000 * 1000,
             'backupCount': 10
@@ -154,6 +154,6 @@ HTTPS = None
 ############
 
 GRAPHENE = {
-    'SCHEMA': 'profile.api.v1.public.schema',
+    'SCHEMA': 'media.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
