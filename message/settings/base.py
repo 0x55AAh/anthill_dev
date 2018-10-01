@@ -32,7 +32,7 @@ APPLICATION_COLOR = 'green'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/19"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: message] '
 

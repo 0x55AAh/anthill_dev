@@ -1,21 +1,14 @@
 from tornado.web import stream_request_body
 from anthill.framework.conf import settings
 from anthill.framework.core.files.uploadhandler import load_handler
-from anthill.framework.handlers import TemplateHandler
+from anthill.framework.handlers import RequestHandler
 from anthill.framework.handlers.streaming.multipartparser import StreamingMultiPartParser
 
 
-@stream_request_body
-class UploadFileStreamHandler(TemplateHandler):
+# noinspection PyAttributeOutsideInit
+class UploadFileStreamHandlerMixin:
     max_upload_size = settings.FILE_UPLOAD_MAX_BODY_SIZE
     multipart_parser_class = StreamingMultiPartParser
-    template_name = None
-
-    def __init__(self, application, request, **kwargs):
-        super().__init__(application, request, **kwargs)
-        self.mp = None
-        self._upload_handlers = None
-        self._content_type = None
 
     async def prepare(self):
         await super().prepare()
@@ -37,7 +30,7 @@ class UploadFileStreamHandler(TemplateHandler):
 
     @property
     def upload_handlers(self):
-        if not self._upload_handlers:
+        if not getattr(self, '_upload_handlers', None):
             # If there are no upload handlers defined, initialize them from settings.
             self._initialize_handlers()
         return self._upload_handlers
@@ -62,3 +55,8 @@ class UploadFileStreamHandler(TemplateHandler):
         """
         # Finalize uploading
         await self.mp.complete()
+
+
+@stream_request_body
+class UploadFileStreamHandler(UploadFileStreamHandlerMixin, RequestHandler):
+    pass

@@ -56,6 +56,11 @@ class CommonRequestHandlerMixin:
         """An alias for `self.application.internal_connection.request <InternalConnection.request>`."""
         return self.application.internal_connection.request
 
+    @property
+    def debug(self):
+        """An alias for `self.application.debug <Application.debug>`."""
+        return self.application.debug
+
     def clear(self):
         """Resets all headers and content for this response."""
         super().clear()

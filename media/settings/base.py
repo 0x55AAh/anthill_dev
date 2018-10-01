@@ -20,8 +20,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'media.routes'
 
-STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
-TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # APPLICATION_CLASS = 'media.apps.AnthillApplication'
 APPLICATION_NAME = 'media'
@@ -32,9 +32,7 @@ APPLICATION_COLOR = 'teal'
 
 # SERVICE_CLASS = 'media.services.Service'
 
-STATIC_URL = '/static/'
-
-# UI_MODULE = 'media.ui'
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/25"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: media] '
 

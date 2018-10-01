@@ -35,8 +35,6 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # UI_MODULE = 'admin.ui'
 
 CONTEXT_PROCESSORS = [
@@ -44,7 +42,7 @@ CONTEXT_PROCESSORS = [
     'admin.context_processors.main_sidebar',
 ]
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/2"
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/10"
 
 
 LOGGING = {

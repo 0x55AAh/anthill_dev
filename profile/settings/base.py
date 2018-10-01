@@ -34,7 +34,7 @@ APPLICATION_COLOR = 'orange'
 
 # SERVICE_CLASS = 'profile.services.Service'
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/8"
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/18"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: profile] '
 

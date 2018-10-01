@@ -35,7 +35,7 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 CELERY_ENABLE = True
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/5"
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/16"
 
 LOGGING = {
     'version': 1,

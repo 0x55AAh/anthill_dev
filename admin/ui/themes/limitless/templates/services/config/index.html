@@ -9,4 +9,28 @@
 {% end %}
 
 {% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-flat">
+            <div class="panel-body">
+                <div class="tabbable">
+                    <ul class="nav nav-tabs nav-tabs-component">
+                        <li class=""><a href="#basic-rounded-tab1" data-toggle="tab" aria-expanded="false">Active</a></li>
+                        <li class="active"><a href="#basic-rounded-tab2" data-toggle="tab" aria-expanded="true">Inactive</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane" id="basic-rounded-tab1">
+                            Use <code>.nav-tabs-component</code> class to round corners if the tabs are a separate component.
+                        </div>
+
+                        <div class="tab-pane active" id="basic-rounded-tab2">
+                            Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid laeggin.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% end %}

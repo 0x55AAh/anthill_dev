@@ -15,6 +15,7 @@ class ServiceMetadata(graphene.ObjectType):
     icon_class = graphene.String()
     color = graphene.String()
     version = graphene.String()
+    debug = graphene.Boolean()
 
     def __lt__(self, other):
         return self.name < other.name

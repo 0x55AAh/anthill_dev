@@ -35,7 +35,7 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/4"
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/15"
 
 LOGGING = {
     'version': 1,

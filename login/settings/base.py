@@ -33,7 +33,7 @@ EMAIL_SUBJECT_PREFIX = '[Anthill: login] '
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/7"
+CACHES["default"]["LOCATION"] = "redis://localhost:6379/17"
 
 LOGGING = {
     'version': 1,

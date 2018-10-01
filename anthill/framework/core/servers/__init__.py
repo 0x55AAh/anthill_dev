@@ -18,24 +18,30 @@ class BaseService(TornadoWebApplication):
     def __init__(self, handlers=None, default_host=None, transforms=None, app=None, **kwargs):
         kwargs.update(debug=app.debug)
         kwargs.update(compress_response=app.settings.COMPRESS_RESPONSE)
-        kwargs.update(static_path=app.settings.STATIC_PATH)
-        kwargs.update(static_url_prefix=app.settings.STATIC_URL)
+
+        self.setup_static(app, kwargs)
 
         static_handler_class = getattr(
             app.settings, 'STATIC_HANDLER_CLASS', 'anthill.framework.handlers.StaticFileHandler')
         kwargs.update(static_handler_class=import_string(static_handler_class))
 
         transforms = transforms or list(map(import_string, app.settings.OUTPUT_TRANSFORMS or []))
-        super(BaseService, self).__init__(handlers, default_host, transforms, **kwargs)
+        super().__init__(handlers, default_host, transforms, **kwargs)
 
         self.io_loop = IOLoop.current()
         self.app = app
+
         self.config = app.settings
         self.name = app.label
         self.db = app.db
         self.version = app.version
+        self.debug = app.debug
 
         self.setup()
+
+    def setup_static(self, app, kwargs):
+        kwargs.update(static_path=app.settings.STATIC_PATH)
+        kwargs.update(static_url_prefix=app.settings.STATIC_URL)
 
     def setup(self):
         # Override `io_loop.handle_callback_exception` method to catch exceptions globally.
@@ -135,7 +141,7 @@ class BaseService(TornadoWebApplication):
     def setup_server(self, **kwargs):
         if self.config.UNIX_SOCKET is not None:
             socket = bind_unix_socket(self.config.UNIX_SOCKET)
-            server.add_socket(socket)
+            self.server.add_socket(socket)
         else:
             self.server.listen(self.app.port, self.app.host)
         for s in ('SIGTERM', 'SIGHUP', 'SIGINT'):
