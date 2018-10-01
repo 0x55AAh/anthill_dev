@@ -39,6 +39,7 @@ class BaseService(TornadoWebApplication):
 
         self.setup()
 
+    # noinspection PyMethodMayBeStatic
     def setup_static(self, app, kwargs):
         kwargs.update(static_path=app.settings.STATIC_PATH)
         kwargs.update(static_url_prefix=app.settings.STATIC_URL)

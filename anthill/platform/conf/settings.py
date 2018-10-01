@@ -4,6 +4,9 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill] '
 
+FILE_UPLOAD_PERMISSIONS = 0o755
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o644
+
 RESOLVERS = {
     "default": {
         'internal': 'http://localhost:9502',

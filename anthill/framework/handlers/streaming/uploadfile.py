@@ -1,5 +1,6 @@
 from tornado.web import stream_request_body
 from anthill.framework.conf import settings
+from anthill.framework.core.files.storage import default_storage
 from anthill.framework.core.files.uploadhandler import load_handler
 from anthill.framework.handlers import RequestHandler
 from anthill.framework.handlers.streaming.multipartparser import StreamingMultiPartParser
@@ -42,18 +43,20 @@ class UploadFileStreamHandlerMixin:
                 "You cannot set the upload handlers after the upload has been processed.")
         self._upload_handlers = upload_handlers
 
-    async def post(self):
-        """
-        Example:
+    # noinspection PyMethodMayBeStatic
+    def filename_transform(self, name):
+        return name
 
-        from anthill.framework.core.files.storage import default_storage
-
+    async def process_files(self):
         for files in self.request.files.values():
             for f in files:
-                default_storage.save(f.name, f.file)
+                f_name = self.filename_transform(f.name)
+                default_storage.save(f_name, f.file)
                 f.close()
-        """
+
+    async def post(self):
         # Finalize uploading
+        await self.process_files()
         await self.mp.complete()
 
 
