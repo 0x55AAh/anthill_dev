@@ -58,8 +58,9 @@ class BaseService(TornadoWebApplication):
 
         default_handler_class = getattr(
             self.config, 'DEFAULT_HANDLER_CLASS', 'anthill.framework.handlers.Handler404')
-        self.settings.update(default_handler_class=import_string(default_handler_class))
-        self.settings.update(default_handler_args=self.config.DEFAULT_HANDLER_ARGS)
+        if default_handler_class is not None:
+            self.settings.update(default_handler_class=import_string(default_handler_class))
+            self.settings.update(default_handler_args=self.config.DEFAULT_HANDLER_ARGS)
 
         # template_loader_class = getattr(
         #     self.app.settings, 'TEMPLATE_LOADER_CLASS', 'anthill.framework.core.template.Loader')

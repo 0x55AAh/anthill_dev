@@ -1,5 +1,4 @@
 from anthill.framework.handlers import UploadFileStreamHandler, StaticFileHandler
-from media.thumbnailer import thumbnail
 
 
 class UploadHandler(UploadFileStreamHandler):

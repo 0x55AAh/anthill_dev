@@ -1,12 +1,9 @@
 from anthill.framework.conf import settings
-from moar import Thumbnailer, WandEngine
-import os
+from moar import Thumbnailer, WandEngine, Storage
 
+THUMBNAILS_DIR = getattr(settings, 'THUMBNAILS_DIR', 'thumbs')
 
-THUMBNAILS_BASE_PATH = os.path.join(settings.MEDIA_ROOT, 'thumbnails')
-THUMBNAILS_URL = settings.MEDIA_URL
-
-OPTIONS = {
+options = {
     'resize': 'fill',
     'upscale': True,
     'format': None,
@@ -16,11 +13,19 @@ OPTIONS = {
     'optimize': False,
 }
 
+default_storage = Storage(
+    base_path=settings.MEDIA_ROOT,
+    base_url=settings.MEDIA_URL,
+    thumbsdir=THUMBNAILS_DIR
+)
+
 thumbnail = Thumbnailer(
-    base_path=THUMBNAILS_BASE_PATH,
-    base_url=THUMBNAILS_URL,
+    source_storage=default_storage,
+    thumbs_storage=default_storage,
     engine=WandEngine,
     filters=None,
     echo=settings.DEBUG,
-    **OPTIONS
+    **options
 )
+
+# t = thumbnail('ZzN6KuF5zfQ.jpg', '200x100', ('crop', 50, 50))

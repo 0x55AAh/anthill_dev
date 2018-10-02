@@ -24,6 +24,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 APPLICATION_NAME = 'admin'
 APPLICATION_VERBOSE_NAME = 'Admin'
 
+DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
+
 # SERVICE_CLASS = 'admin.services.Service'
 
 UI_THEME = 'limitless'
