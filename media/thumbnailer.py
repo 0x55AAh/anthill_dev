@@ -1,9 +1,16 @@
+"""
+Usage:
+    thumbnail(source, geometry, *filters, **options)
+"""
 from anthill.framework.conf import settings
+from anthill.framework.utils.asynchronous import as_future
 from moar import Thumbnailer, WandEngine, Storage
 
-THUMBNAILS_DIR = getattr(settings, 'THUMBNAILS_DIR', 'thumbs')
+__all__ = ['thumbnail', 'load_alias']
 
-options = {
+THUMBNAIL_DIR = getattr(settings, 'THUMBNAIL_DIR', 'thumbs')
+
+default_options = {
     'resize': 'fill',
     'upscale': True,
     'format': None,
@@ -12,11 +19,14 @@ options = {
     'orientation': True,
     'optimize': False,
 }
+THUMBNAIL_DEFAULT_OPTIONS = getattr(
+    settings, 'THUMBNAIL_DEFAULT_OPTIONS', default_options)
+THUMBNAIL_ALIASES = getattr(settings, 'THUMBNAIL_ALIASES', {})
 
 default_storage = Storage(
     base_path=settings.MEDIA_ROOT,
     base_url=settings.MEDIA_URL,
-    thumbsdir=THUMBNAILS_DIR
+    thumbsdir=THUMBNAIL_DIR
 )
 
 thumbnail = Thumbnailer(
@@ -25,7 +35,15 @@ thumbnail = Thumbnailer(
     engine=WandEngine,
     filters=None,
     echo=settings.DEBUG,
-    **options
+    **THUMBNAIL_DEFAULT_OPTIONS
 )
+thumbnail = as_future(thumbnail)
 
-# t = thumbnail('ZzN6KuF5zfQ.jpg', '200x100', ('crop', 50, 50))
+
+def load_alias(alias):
+    conf = THUMBNAIL_ALIASES.get(alias, None)
+    if conf is not None:
+        geometry = conf.get('geometry', None)
+        filters = conf.get('filters', [])
+        options = conf.get('options', {})
+        return geometry, filters, options

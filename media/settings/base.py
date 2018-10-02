@@ -155,3 +155,20 @@ GRAPHENE = {
     'SCHEMA': 'media.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
+
+
+#############
+# THUMBNAIL #
+#############
+
+THUMBNAIL_DEFAULT_OPTIONS = {
+    'resize': 'fill',
+    'upscale': True,
+    'format': None,
+    'quality': 90,
+    'progressive': True,
+    'orientation': True,
+    'optimize': False,
+}
+THUMBNAIL_ALIASES = None
+THUMBNAIL_DIR = 'thumbs'
