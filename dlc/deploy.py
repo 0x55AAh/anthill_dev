@@ -1,13 +1,16 @@
 from anthill.framework.conf import settings
+from anthill.framework.utils.http_client import upload
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.utils.urls import build_absolute_uri
-from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.utils.asynchronous import as_future
+from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.core.files.storage import default_storage
 from anthill.platform.utils.ssh import PrivateSSHKeyContext
+from anthill.platform.utils.internal_api import internal_request
 from anthill.platform.utils.rsync import Rsync
-from dlc.exceptions import DeploymentError
 from tornado.escape import to_unicode
+from tornado.ioloop import IOLoop
+from dlc.exceptions import DeploymentError
 
 
 METHODS = getattr(settings, 'DEPLOYMENT_METHODS', [])
@@ -19,6 +22,11 @@ class DeploymentMethod:
     def __init__(self):
         if self.name is None:
             raise ImproperlyConfigured('Deployment method name is required')
+
+    @property
+    def app(self):
+        from anthill.framework.apps import app
+        return app
 
     async def deploy(self, src: str, dst: str) -> str:
         raise NotImplementedError(
@@ -51,6 +59,30 @@ class LocalDeploymentMethod(DeploymentMethod):
     def url(self, path: str) -> str:
         path = default_storage.url(path)
         return build_absolute_uri(self.base_url, path)
+
+    def configure(self, **kwargs):
+        pass
+
+
+class MediaDeploymentMethod(DeploymentMethod):
+    """Stores files on anthill media server."""
+
+    name = 'media'
+
+    def __init__(self):
+        super().__init__()
+        self.upload_url = None
+        IOLoop.current().add_callback(set_upload_url)
+
+    async def set_upload_url(self):
+        self.upload_url = await internal_request('media', 'get_upload_url')
+
+    async def deploy(self, src: str, dst: str) -> str:
+        await upload([src], self.upload_url)
+        return self.url(dst)
+
+    def url(self, path: str) -> str:
+        return build_absolute_uri(self.upload_url, path)
 
     def configure(self, **kwargs):
         pass
