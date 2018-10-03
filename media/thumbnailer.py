@@ -11,16 +11,15 @@ __all__ = ['thumbnail', 'load_alias']
 THUMBNAIL_DIR = getattr(settings, 'THUMBNAIL_DIR', 'thumbs')
 
 default_options = {
-    'resize': 'fill',
+    'resize': 'fill',     # 'fill', 'fit', 'stretch'
     'upscale': True,
-    'format': None,
+    'format': None,       # 'JPEG', 'PNG'
     'quality': 90,
     'progressive': True,
     'orientation': True,
     'optimize': False,
 }
-THUMBNAIL_DEFAULT_OPTIONS = getattr(
-    settings, 'THUMBNAIL_DEFAULT_OPTIONS', default_options)
+THUMBNAIL_DEFAULT_OPTIONS = getattr(settings, 'THUMBNAIL_DEFAULT_OPTIONS', default_options)
 THUMBNAIL_ALIASES = getattr(settings, 'THUMBNAIL_ALIASES', {})
 
 default_storage = Storage(
@@ -34,7 +33,7 @@ thumbnail = Thumbnailer(
     thumbs_storage=default_storage,
     engine=WandEngine,
     filters=None,
-    echo=settings.DEBUG,
+    echo=False,
     **THUMBNAIL_DEFAULT_OPTIONS
 )
 thumbnail = as_future(thumbnail)

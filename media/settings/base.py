@@ -162,13 +162,19 @@ GRAPHENE = {
 #############
 
 THUMBNAIL_DEFAULT_OPTIONS = {
-    'resize': 'fill',
+    'resize': 'fill',     # 'fill', 'fit', 'stretch'
     'upscale': True,
-    'format': None,
+    'format': None,       # 'JPEG', 'PNG'
     'quality': 90,
     'progressive': True,
     'orientation': True,
     'optimize': False,
 }
-THUMBNAIL_ALIASES = None
+THUMBNAIL_ALIASES = {
+    'test': {
+        'geometry': '250x250',
+        'filters': [('crop', '250x250', 'center', 'center')],
+        'options': {'optimize': True, 'quality': 90, 'format': 'PNG'}
+    }
+}
 THUMBNAIL_DIR = 'thumbs'
