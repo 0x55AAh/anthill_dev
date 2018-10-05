@@ -1,13 +1,17 @@
-from anthill.platform.core.messenger.handlers import MessengerHandler
-from anthill.platform.core.messenger.client import BaseClient
+from anthill.platform.core.messenger import client, handlers
+from anthill.platform.auth import RemoteUser
 
 
-class User:
-    def __init__(self, _id):
-        self.id = _id
+class Client(client.BaseClient):
+    async def authenticate(self, user=None) -> None:
+        """
+        While authentication process we need to update `self.user`.
+        Raise AuthenticationFailedError if failed.
+        """
+        if user is not None:
+            # noinspection PyAttributeOutsideInit
+            self.user = user
 
-
-class Client(BaseClient):
     def get_user_serialized(self):
         pass
 
@@ -54,8 +58,17 @@ class Client(BaseClient):
         pass
 
 
-class TestMessengerHandler(MessengerHandler):
+class MessengerHandler(handlers.MessengerHandler):
     client_class = Client
 
     def get_client_instance(self):
-        return self.client_class(user=User(1))
+        from datetime import datetime
+        return self.client_class(
+            user=RemoteUser(
+                '1',
+                username='test',
+                password='1234',
+                created=datetime.now(),
+                last_login=datetime.now()
+            )
+        )

@@ -5,5 +5,5 @@ from message import handlers
 
 
 route_patterns = [
-    url(r'^/chat/?$', handlers.TestMessengerHandler, name='chat'),  # Test
+    url(r'^/messenger/?$', handlers.MessengerHandler, name='messenger'),
 ]

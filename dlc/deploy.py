@@ -6,7 +6,6 @@ from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.core.files.storage import default_storage
 from anthill.platform.utils.ssh import PrivateSSHKeyContext
-from anthill.platform.utils.internal_api import internal_request
 from anthill.platform.utils.rsync import Rsync
 from tornado.escape import to_unicode
 from tornado.ioloop import IOLoop
@@ -27,6 +26,11 @@ class DeploymentMethod:
     def app(self):
         from anthill.framework.apps import app
         return app
+
+    @property
+    def internal_request(self):
+        from anthill.platform.utils.internal_api import internal_request
+        return internal_request
 
     async def deploy(self, src: str, dst: str) -> str:
         raise NotImplementedError(
@@ -75,7 +79,7 @@ class MediaDeploymentMethod(DeploymentMethod):
         IOLoop.current().add_callback(set_upload_url)
 
     async def set_upload_url(self):
-        self.upload_url = await internal_request('media', 'get_upload_url')
+        self.upload_url = await self.internal_request('media', 'get_upload_url')
 
     async def deploy(self, src: str, dst: str) -> str:
         await upload([src], self.upload_url)
