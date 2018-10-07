@@ -12,11 +12,11 @@ Example:
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
 from anthill.framework.utils.urls import reverse, build_absolute_uri
-from anthill.framework.conf import settings
 from tornado.websocket import websocket_connect
 
 
-async def send_message(api: InternalAPI, message, **kwargs):
+@as_internal()
+async def send_message(api: InternalAPI, message):
     """Send message via local messenger."""
 
     path = reverse('messenger')
