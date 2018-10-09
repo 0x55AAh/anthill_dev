@@ -28,4 +28,41 @@ class RootQuery(graphene.ObjectType):
         return items
 
 
-schema = graphene.Schema(query=RootQuery)
+class CreateProfile(graphene.Mutation):
+    """Create profile."""
+    profile = graphene.Field(Profile)
+
+    class Arguments:
+        user_id = graphene.String(required=True)
+        payload = graphene.String(required=True)
+
+    def mutate(self, info, user_id, payload):
+        profile = models.Profile(user_id=user_id, payload=payload)
+        profile.save()
+
+        return CreateProfile(profile=profile)
+
+
+class UpdateProfile(graphene.Mutation):
+    """Update profile."""
+    profile = graphene.Field(Profile)
+
+    class Arguments:
+        user_id = graphene.ID()
+        payload = graphene.String()
+
+    def mutate(self, info, user_id, payload=None):
+        profile = models.Profile.query.filter_by(user_id=user_id).first()
+        if payload is not None:
+            profile.payload = payload
+        profile.save()
+
+        return UpdateProfile(profile=profile)
+
+
+class Mutation(graphene.ObjectType):
+    create_profile = CreateProfile.Field()
+    update_profile = UpdateProfile.Field()
+
+
+schema = graphene.Schema(query=RootQuery, mutation=Mutation)

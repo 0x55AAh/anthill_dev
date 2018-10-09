@@ -166,6 +166,8 @@ class Application:
         from anthill.framework.utils.urls import include, to_urlspec
         routes_mod = importlib.import_module(self.routes_conf)
         routes_list = getattr(routes_mod, 'route_patterns', [])
+        if callable(routes_list):
+            routes_list = routes_list()
         routes_list = include(routes_list)
         new_routes_list = []
         for route in routes_list:

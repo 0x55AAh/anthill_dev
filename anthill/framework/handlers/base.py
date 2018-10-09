@@ -122,16 +122,20 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         # self.set_header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
 
 
-class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, CommonRequestHandlerMixin,
-                       BaseWebSocketHandler):
+class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
+                       CommonRequestHandlerMixin, BaseWebSocketHandler):
+    ws_clients = []
+
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
         self.settings.update(websocket_ping_interval=settings.WEBSOCKET_PING_INTERVAL)
         self.settings.update(websocket_ping_timeout=settings.WEBSOCKET_PING_TIMEOUT)
         self.settings.update(websocket_max_message_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE)
+        self.init_session()
 
     def on_message(self, message):
         """Handle incoming messages on the WebSocket."""
+        self.update_session()
         raise NotImplementedError
 
     def data_received(self, chunk):
@@ -139,9 +143,12 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Common
 
     def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
+        self.setup_session()
+        self.ws_clients.append(self)
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
+        self.ws_clients.remove(self)
 
     def on_ping(self, data):
         """Invoked when the a ping frame is received."""

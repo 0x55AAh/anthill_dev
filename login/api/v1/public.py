@@ -28,4 +28,45 @@ class RootQuery(graphene.ObjectType):
         return items
 
 
-schema = graphene.Schema(query=RootQuery)
+class CreateUser(graphene.Mutation):
+    """Create user."""
+    user = graphene.Field(User)
+
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    def mutate(self, info, username, password):
+        user = models.User(username=username)
+        user.set_password(password)
+        user.save()
+
+        return CreateUser(user=user)
+
+
+class UpdateUser(graphene.Mutation):
+    """Update user."""
+    user = graphene.Field(User)
+
+    class Arguments:
+        id = graphene.ID()
+        username = graphene.String()
+        password = graphene.String()
+
+    def mutate(self, info, id, username=None, password=None):
+        user = models.User.query.get(id)
+        if username is not None:
+            user.username = username
+        if password is not None:
+            user.set_password(password)
+        user.save()
+
+        return UpdateUser(user=user)
+
+
+class Mutation(graphene.ObjectType):
+    create_user = CreateUser.Field()
+    update_user = UpdateUser.Field()
+
+
+schema = graphene.Schema(query=RootQuery, mutation=Mutation)
