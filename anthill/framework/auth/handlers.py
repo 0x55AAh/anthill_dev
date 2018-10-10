@@ -127,9 +127,7 @@ class UserRequestHandler(UserHandlerMixin, RequestHandler):
 
 
 class LoginHandler(LoginHandlerMixin, FormHandler):
-    """
-    Display the login form and handle the login action.
-    """
+    """Display the login form and handle the login action."""
 
     form_class = AuthenticationForm
     authentication_form = None

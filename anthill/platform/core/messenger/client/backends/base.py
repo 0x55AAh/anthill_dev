@@ -1,17 +1,18 @@
 from anthill.framework.auth.models import AnonymousUser
+from anthill.platform.auth import RemoteUser
+from typing import Optional
 
 
 class BaseClient:
     user_id_key = 'id'
     personal_group_prefix = '__user'  # Must starts with `__` for security reason
 
-    def __init__(self, user=None):
+    def __init__(self, user: Optional[RemoteUser]=None):
         self.user = user or AnonymousUser()
 
-    async def authenticate(self, user=None) -> None:
+    async def authenticate(self, user: Optional[RemoteUser]=None) -> None:
         """
         While authentication process we need to update `self.user`.
-        Raise AuthenticationFailedError if failed.
         """
         if user is not None:
             self.user = user

@@ -16,6 +16,7 @@ class WebSocketChannelHandler(ChannelHandlerMixin, WebSocketHandler):
 
     async def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
+        await super().open(*args, **kwargs)
         IOLoop.current().add_callback(self.channel_receive_callback)
         # Initialize channel layer
         self.channel_layer = get_channel_layer()

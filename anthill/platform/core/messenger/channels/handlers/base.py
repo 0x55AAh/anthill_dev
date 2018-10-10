@@ -20,6 +20,7 @@ class ChannelHandlerMixin:
 
     async def on_message(self, message: str) -> None:
         """Receives message from client."""
+        await super().on_message(message)
 
     async def send_to_channel(self, channel: str, message: dict) -> None:
         """Sends the given message to the given channel."""

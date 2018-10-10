@@ -133,15 +133,14 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
         self.settings.update(websocket_max_message_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE)
         self.init_session()
 
-    def on_message(self, message):
+    async def on_message(self, message):
         """Handle incoming messages on the WebSocket."""
         self.update_session()
-        raise NotImplementedError
 
     def data_received(self, chunk):
         """Implement this method to handle streamed request data."""
 
-    def open(self, *args, **kwargs):
+    async def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
         self.setup_session()
         self.ws_clients.append(self)
@@ -169,9 +168,9 @@ class JsonWebSocketHandler(WebSocketHandler):
     def set_default_headers(self):
         self.set_header('Content-Type', 'application/json')
 
-    def on_message(self, message):
+    async def on_message(self, message):
         """Handle incoming messages on the WebSocket."""
-        raise NotImplementedError
+        await super().on_message(message)
 
 
 class JSONHandlerMixin:

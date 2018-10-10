@@ -1,15 +1,14 @@
 from anthill.framework.conf import settings
+from anthill.framework.handlers.base import RequestHandler
 from anthill.platform.auth.forms import AuthenticationForm
+from anthill.platform.auth import RemoteUser
 from anthill.framework.handlers.edit import FormHandler
 from anthill.framework.utils.crypto import constant_time_compare
 from anthill.framework.auth import (
     _get_user_session_key,
-    _get_backends,
-    BACKEND_SESSION_KEY,
     HASH_SESSION_KEY,
     REDIRECT_FIELD_NAME,
-    SESSION_KEY,
-    load_backend
+    SESSION_KEY
 )
 from functools import partial
 
@@ -18,11 +17,49 @@ class InvalidLoginError(Exception):
     pass
 
 
+USER_DATA_KEY = '_auth_user_data'
+
+
+def _get_user_data(handler):
+    return handler.session[USER_DATA_KEY]
+
+
+class UserHandlerMixin:
+    async def get_user(self):
+        """
+        Return the user model instance associated with the given session.
+        If no user is retrieved, return an instance of `AnonymousUser`.
+        """
+        user = None
+        try:
+            user_id = _get_user_session_key(self)
+            user_data = _get_user_data(self)
+        except KeyError:
+            pass
+        else:
+            user = RemoteUser(id=user_id, **user_data)
+            # Verify the session
+            if hasattr(user, 'get_session_auth_hash'):
+                session_hash = self.session.get(HASH_SESSION_KEY)
+                session_hash_verified = session_hash and constant_time_compare(
+                    session_hash,
+                    user.get_session_auth_hash()
+                )
+                if not session_hash_verified:
+                    self.session.flush()
+                    user = None
+
+        return user or AnonymousUser()
+
+    # noinspection PyAttributeOutsideInit
+    async def setup_user(self):
+        self.current_user = await self.get_user()
+
+
 class LoginHandlerMixin:
     # access_token_key = 'access_token'
 
-    # noinspection PyAttributeOutsideInit
-    def _login(self, user, backend=None):
+    def _login(self, user: RemoteUser):
         """
         Persist a user id and a backend in the request. This way a user doesn't
         have to reauthenticate on every request. Note that data set during
@@ -31,11 +68,11 @@ class LoginHandlerMixin:
         session_auth_hash = ''
         if user is None:
             user = self.current_user
-        if 'session_auth_hash' in user:
-            session_auth_hash = user['session_auth_hash']
+        if hasattr(user, 'get_session_auth_hash'):
+            session_auth_hash = user.get_session_auth_hash()
 
         if SESSION_KEY in self.session:
-            if _get_user_session_key(self) != user['id'] or (
+            if _get_user_session_key(self) != user.id or (
                     session_auth_hash and
                     not constant_time_compare(self.session.get(HASH_SESSION_KEY, ''), session_auth_hash)):
                 # To avoid reusing another user's session, create a new, empty
@@ -45,32 +82,16 @@ class LoginHandlerMixin:
         else:
             self.session.cycle_key()
 
-        try:
-            backend = backend or user['backend']
-        except AttributeError:
-            backends = _get_backends(return_tuples=True)
-            if len(backends) == 1:
-                _, backend = backends[0]
-            else:
-                raise ValueError(
-                    'You have multiple authentication backends configured and '
-                    'therefore must provide the `backend` argument or set the '
-                    '`backend` attribute on the user.'
-                )
-        else:
-            if not isinstance(backend, str):
-                raise TypeError('backend must be a dotted import path string (got %r).' % backend)
-
-        self.session[SESSION_KEY] = user['id']
-        self.session[BACKEND_SESSION_KEY] = backend
+        self.session[SESSION_KEY] = user.id
         self.session[HASH_SESSION_KEY] = session_auth_hash
+        self.session[USER_DATA_KEY] = user.to_dict(exclude=['id'])
         self.current_user = user
 
-    async def login(self, user, backend=None):
+    async def login(self, user: RemoteUser):
         do_login = partial(self.internal_request, 'login', 'login')
-        token = await do_login(user_id=user['id'])
+        token = await do_login(user_id=user.id)
         if token:
-            self._login(user, backend)
+            self._login(user)
         else:
             self.invalid_login_error()
 
@@ -78,10 +99,28 @@ class LoginHandlerMixin:
         raise InvalidLoginError('Invalid token.')
 
 
+class LogoutHandlerMixin:
+    # noinspection PyAttributeOutsideInit
+    def logout(self):
+        if not isinstance(self.current_user, (AnonymousUser, type(None))):
+            self.session.flush()
+            self.current_user = AnonymousUser()
+
+
+class AuthHandlerMixin(UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin):
+    pass
+
+
+class UserRequestHandler(UserHandlerMixin, RequestHandler):
+    """User aware RequestHandler."""
+
+    async def prepare(self):
+        await super().prepare()
+        await self.setup_user()
+
+
 class LoginHandler(LoginHandlerMixin, FormHandler):
-    """
-    Display the login form and handle the login action.
-    """
+    """Display the login form and handle the login action."""
 
     form_class = AuthenticationForm
     authentication_form = None
@@ -107,7 +146,7 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
 
     async def form_valid(self, form):
         """Security check complete. Log the user in."""
-        user = await form.authenticate(self.internal_request)
+        user = await form.authenticate()
         try:
             await self.login(user=user)
             self.redirect(self.get_success_url())

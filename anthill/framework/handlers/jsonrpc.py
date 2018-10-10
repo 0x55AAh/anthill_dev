@@ -47,6 +47,7 @@ class WebSocketJSONRPCHandler(JSONRPCMixin, JsonWebSocketHandler):
 
     async def on_message(self, message):
         """Handle incoming messages on the WebSocket."""
+        await super().on_message(message)
         result = await self.json_rpc(message)
         if result is not None:
             self.write_message(result)

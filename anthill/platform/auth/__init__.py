@@ -1,5 +1,12 @@
 from datetime import datetime
 from typing import Optional
+from functools import partial
+
+
+def filter_dict(data, exclude=None):
+    if exclude:
+        return dict(filter(lambda x: x[0] not in exclude, data.items()))
+    return data
 
 
 class RemoteUser:
@@ -11,10 +18,10 @@ class RemoteUser:
     """
     USERNAME_FIELD = 'username'
 
-    def __init__(self, id_: str, username: str, password: str,
+    def __init__(self, id: str, username: str, password: str,
                  created: datetime, last_login: datetime,
                  profile: Optional["RemoteProfile"]=None):
-        self.id = id_
+        self.id = id
         self.username = username
         self.created = created
         self.last_login = last_login
@@ -26,6 +33,17 @@ class RemoteUser:
 
     def __repr__(self):
         return '<RemoteUser(name=%r)>' % self.get_username()
+
+    def to_dict(self, exclude=None):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'created': self.created,
+            'last_login': self.last_login,
+            'password': self.password,
+            'profile': self.profile
+        }
+        return filter_dict(data, exclude)
 
     @property
     def is_active(self):
@@ -66,7 +84,37 @@ class RemoteProfile:
     we need to get user profile info from remote service to use it locally.
     That's why the RemoteProfile need.
     """
-    def __init__(self, id_: str, user: "RemoteUser", payload: dict):
-        self.id = id_
+    def __init__(self, id: str, user: "RemoteUser", payload: dict):
+        self.id = id
         self.user = user
         self.payload = payload
+
+    def __str__(self):
+        return self.user.get_username()
+
+    def __repr__(self):
+        return '<RemoteProfile(name=%r)>' % self.user.get_username()
+
+    def to_dict(self, exclude=None):
+        data = {
+            'id': self.id,
+            'user': self.user,
+            'payload': self.payload
+        }
+        return filter_dict(data, exclude)
+
+
+async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:
+    if internal_request is None:
+        from anthill.platform.utils.internal_api import internal_request
+    do_authenticate = partial(internal_request, 'login', 'authenticate')
+    kwargs = await do_authenticate(**credentials)  # User data dict
+    return RemoteUser(**kwargs)
+
+
+async def internal_login(user_id, internal_request=None) -> str:
+    if internal_request is None:
+        from anthill.platform.utils.internal_api import internal_request
+    do_login = partial(internal_request, 'login', 'login')
+    token = await do_login(user_id)
+    return token

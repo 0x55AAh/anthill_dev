@@ -1,7 +1,6 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.platform.core.messenger.client import BaseClient
 from functools import wraps
 import json
 
@@ -18,7 +17,7 @@ def auth_required(func):
     @wraps(func)
     async def wrapper(self, *args, **kwargs):
         user = self.client.user
-        if user is None or isinstance(user, AnonymousUser):
+        if isinstance(user, (type(None), AnonymousUser)):
             raise NotAuthenticatedError('Authentication required')
         return await func(self, *args, **kwargs)
     return wrapper
@@ -64,10 +63,15 @@ class MessengerHandler(WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
 
     def __init__(self, *args, **kwargs):
         super(MessengerHandler, self).__init__(*args, **kwargs)
-        self.client = self.get_client_instance()
+        self.client = None
         self.request_id = None
         self.action_name = None
         self.message_type = None
+
+    def initialize(self, client_class=None):
+        if client_class is not None:
+            self.client_class = client_class
+        self.client = self.get_client_instance()
 
     @property
     def client_handlers(self):
@@ -140,11 +144,11 @@ class MessengerHandler(WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
     async def open(self, *args, **kwargs) -> None:
         """Invoked when a new connection is opened."""
         if self.same_clients_limit and len(self.client_handlers) > self.same_clients_limit:
-            self.close(
-                code=None,
-                reason='Cannot open new connection because of limit (%s) exceeded' % len(self.client_handlers))
+            self.close(code=None,
+                       reason='Cannot open new connection '
+                              'because of limit (%s) exceeded' % len(self.client_handlers))
         await super(MessengerHandler, self).open(*args, **kwargs)
-        await self.client.authenticate()
+        await self.client.authenticate(user=self.current_user)
         if self.notification_on_net_status_changed:
             await self.send_net_status(self.NET_STATUS_ONLINE)
         self._clients.setdefault(self.client.get_user_id(), []).append(self)
@@ -215,6 +219,7 @@ class MessengerHandler(WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
     @auth_required
     async def on_message(self, message: str) -> None:
         """Receives message from client."""
+        await super().on_message(message)
         try:
             message = json.loads(message)
             await self.message_handler(message)
