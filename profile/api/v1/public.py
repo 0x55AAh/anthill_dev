@@ -36,7 +36,8 @@ class CreateProfile(graphene.Mutation):
         user_id = graphene.String(required=True)
         payload = graphene.String(required=True)
 
-    def mutate(self, info, user_id, payload):
+    @staticmethod
+    def mutate(root, info, user_id, payload):
         profile = models.Profile(user_id=user_id, payload=payload)
         profile.save()
 
@@ -51,7 +52,8 @@ class UpdateProfile(graphene.Mutation):
         user_id = graphene.ID()
         payload = graphene.String()
 
-    def mutate(self, info, user_id, payload=None):
+    @staticmethod
+    def mutate(root, info, user_id, payload=None):
         profile = models.Profile.query.filter_by(user_id=user_id).first()
         if payload is not None:
             profile.payload = payload

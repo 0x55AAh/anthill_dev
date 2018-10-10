@@ -18,7 +18,7 @@ class RootQuery(graphene.ObjectType):
 
     def resolve_users(self, info, page=None, **kwargs):
         request = info.context['request']
-        query = user.get_query(info)
+        query = User.get_query(info)
         pagination_kwargs = {
             'page': page,
             'per_page': PAGINATED_BY,
@@ -36,7 +36,8 @@ class CreateUser(graphene.Mutation):
         username = graphene.String(required=True)
         password = graphene.String(required=True)
 
-    def mutate(self, info, username, password):
+    @staticmethod
+    def mutate(root, info, username, password):
         user = models.User(username=username)
         user.set_password(password)
         user.save()
@@ -53,7 +54,8 @@ class UpdateUser(graphene.Mutation):
         username = graphene.String()
         password = graphene.String()
 
-    def mutate(self, info, id, username=None, password=None):
+    @staticmethod
+    def mutate(root, info, id, username=None, password=None):
         user = models.User.query.get(id)
         if username is not None:
             user.username = username
