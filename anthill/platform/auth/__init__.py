@@ -41,8 +41,11 @@ class RemoteUser:
             'created': self.created,
             'last_login': self.last_login,
             'password': self.password,
-            'profile': self.profile
         }
+        if isinstance(self.profile, RemoteProfile):
+            data['profile'] = self.profile.to_dict()
+        else:
+            data['profile'] = self.profile
         return filter_dict(data, exclude)
 
     @property

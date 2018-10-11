@@ -2,8 +2,9 @@ from anthill.platform.core.messenger.client.backends.base import BaseClient
 
 
 class Client(BaseClient):
-    def get_user_serialized(self):
-        pass
+    def get_user_serialized(self) -> dict:
+        """Returns user as dict object."""
+        return self.user.to_dict()
 
     async def get_friends(self, id_only=False):
         pass
