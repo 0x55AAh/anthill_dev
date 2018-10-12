@@ -1,6 +1,7 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.platform.auth.handlers import UserHandlerMixin
 from functools import wraps
 import json
 
@@ -48,7 +49,7 @@ class MessengerHandlerMeta(type):
         return handler
 
 
-class MessengerHandler(WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
+class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
     groups = ['__messenger__']  # Global groups. Must starts with `__` for security reason
     client_class = None
     notification_on_net_status_changed = True
@@ -72,6 +73,10 @@ class MessengerHandler(WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
         if client_class is not None:
             self.client_class = client_class
         self.client = self.get_client_instance()
+
+    async def prepare(self):
+        await super(MessengerHandler, self).prepare()
+        await self.setup_user()
 
     @property
     def client_handlers(self):

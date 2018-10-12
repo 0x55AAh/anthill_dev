@@ -1,9 +1,14 @@
 from anthill.framework.handlers import UploadFileStreamHandler, StaticFileHandler
+from anthill.platform.auth.handlers import UserHandlerMixin
 from media.thumbnailer import thumbnail, load_alias
 
 
-class UploadHandler(UploadFileStreamHandler):
+class UploadHandler(UserHandlerMixin, UploadFileStreamHandler):
     """Files upload handler."""
+
+    async def prepare(self):
+        await super().prepare()
+        await self.setup_user()
 
 
 class ResourceHandler(StaticFileHandler):

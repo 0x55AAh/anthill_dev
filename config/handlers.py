@@ -1,1 +1,2 @@
-# Create your handlers here.
+from anthill.platform.auth.handlers import UserRequestHandler
+
