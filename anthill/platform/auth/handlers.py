@@ -1,3 +1,4 @@
+from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.conf import settings
 from anthill.framework.handlers.base import RequestHandler
 from anthill.platform.auth.forms import AuthenticationForm

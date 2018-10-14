@@ -6,7 +6,7 @@ alembic==1.0.0
 WTForms==2.2.1
 WTForms-Alchemy==0.16.7
 WTForms-Components==0.10.3
-marshmallow==2.15.5
+marshmallow==2.16.0
 marshmallow-sqlalchemy==0.14.1
 six==1.11.0
 social-auth-core==1.7.0

@@ -29,7 +29,7 @@ class TranslationHandlerMixin:
         This method should return a `tornado.locale.Locale` object,
         most likely obtained via a call like ``tornado.locale.get("en")``
         """
-        return default_locale
+        return default_locale()
 
 
 class LogExceptionHandlerMixin:

@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -22,8 +23,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'dlc.apps.AnthillApplication'
 APPLICATION_NAME = 'dlc'
-APPLICATION_VERBOSE_NAME = 'DLC'
-APPLICATION_DESCRIPTION = 'Deliver downloadable content to a user'
+APPLICATION_VERBOSE_NAME = _('DLC')
+APPLICATION_DESCRIPTION = _('Deliver downloadable content to a user')
 APPLICATION_ICON_CLASS = 'icon-cloud-download2'
 APPLICATION_COLOR = 'warning'
 

@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -22,8 +23,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'event.apps.AnthillApplication'
 APPLICATION_NAME = 'event'
-APPLICATION_VERBOSE_NAME = 'Event'
-APPLICATION_DESCRIPTION = 'Compete players with time-limited events'
+APPLICATION_VERBOSE_NAME = _('Event')
+APPLICATION_DESCRIPTION = _('Compete players with time-limited events')
 APPLICATION_ICON_CLASS = 'icon-calendar'
 APPLICATION_COLOR = 'success'
 

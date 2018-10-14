@@ -4,6 +4,9 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill] '
 
+USE_I18N = True
+LOCALE = 'en'
+
 FILE_UPLOAD_PERMISSIONS = 0o755
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o644
 

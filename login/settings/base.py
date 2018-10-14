@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -22,8 +23,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 APPLICATION_CLASS = 'login.apps.AnthillApplication'
 APPLICATION_NAME = 'login'
-APPLICATION_VERBOSE_NAME = 'Login'
-APPLICATION_DESCRIPTION = 'Manage user accounts, credentials and access tokens'
+APPLICATION_VERBOSE_NAME = _('Login')
+APPLICATION_DESCRIPTION = _('Manage user accounts, credentials and access tokens')
 APPLICATION_ICON_CLASS = 'icon-key'
 APPLICATION_COLOR = 'pink'
 

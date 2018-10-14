@@ -1,0 +1,5 @@
+msgid "Message"
+msgstr ""
+
+msgid "Implements messaging system"
+msgstr ""

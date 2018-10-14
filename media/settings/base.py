@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -25,8 +26,8 @@ MEDIA_URL = '/media/'
 
 # APPLICATION_CLASS = 'media.apps.AnthillApplication'
 APPLICATION_NAME = 'media'
-APPLICATION_VERBOSE_NAME = 'Media'
-APPLICATION_DESCRIPTION = 'Manage user uploaded files'
+APPLICATION_VERBOSE_NAME = _('Media')
+APPLICATION_DESCRIPTION = _('Manage user uploaded files')
 APPLICATION_ICON_CLASS = 'icon-file-media'
 APPLICATION_COLOR = 'teal'
 

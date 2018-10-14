@@ -119,9 +119,9 @@ def doc(api_: InternalAPI):
 def get_service_metadata(api_: InternalAPI):
     return {
         'name': settings.APPLICATION_NAME,
-        'title': settings.APPLICATION_VERBOSE_NAME,
+        'title': str(settings.APPLICATION_VERBOSE_NAME),
         'icon_class': settings.APPLICATION_ICON_CLASS,
-        'description': settings.APPLICATION_DESCRIPTION,
+        'description': str(settings.APPLICATION_DESCRIPTION),
         'color': settings.APPLICATION_COLOR,
         'version': api_.service.version,
         'debug': api_.service.debug,

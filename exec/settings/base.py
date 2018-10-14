@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -23,8 +24,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'exec.apps.AnthillApplication'
 APPLICATION_NAME = 'exec'
-APPLICATION_VERBOSE_NAME = 'Exec'
-APPLICATION_DESCRIPTION = 'Execute custom javascript code on a server side'
+APPLICATION_VERBOSE_NAME = _('Exec')
+APPLICATION_DESCRIPTION = _('Execute custom javascript code on a server side')
 APPLICATION_ICON_CLASS = 'icon-circle-code'
 APPLICATION_COLOR = 'violet'
 

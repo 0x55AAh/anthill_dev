@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -92,8 +93,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'discovery.apps.AnthillApplication'
 APPLICATION_NAME = 'discovery'
-APPLICATION_VERBOSE_NAME = 'Discovery'
-APPLICATION_DESCRIPTION = 'Map each service location dynamically'
+APPLICATION_VERBOSE_NAME = _('Discovery')
+APPLICATION_DESCRIPTION = _('Map each service location dynamically')
 APPLICATION_ICON_CLASS = 'icon-direction'
 APPLICATION_COLOR = 'danger'
 

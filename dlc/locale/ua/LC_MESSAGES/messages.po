@@ -1,0 +1,5 @@
+msgid "DLC"
+msgstr ""
+
+msgid "Deliver downloadable content to a user"
+msgstr ""

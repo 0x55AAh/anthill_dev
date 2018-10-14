@@ -1,0 +1,5 @@
+msgid "Exec"
+msgstr ""
+
+msgid "Execute custom javascript code on a server side"
+msgstr ""

@@ -1,0 +1,5 @@
+msgid "Store"
+msgstr ""
+
+msgid "In-App Purchasing, with server validation"
+msgstr ""

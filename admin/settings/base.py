@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -22,7 +23,7 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'admin.apps.AnthillApplication'
 APPLICATION_NAME = 'admin'
-APPLICATION_VERBOSE_NAME = 'Admin'
+APPLICATION_VERBOSE_NAME = _('Admin')
 
 DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
 

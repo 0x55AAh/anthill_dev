@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -27,8 +28,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # APPLICATION_CLASS = 'profile.apps.AnthillApplication'
 APPLICATION_NAME = 'profile'
-APPLICATION_VERBOSE_NAME = 'Profile'
-APPLICATION_DESCRIPTION = 'Manage user profiles'
+APPLICATION_VERBOSE_NAME = _('Profile')
+APPLICATION_DESCRIPTION = _('Manage user profiles')
 APPLICATION_ICON_CLASS = 'icon-user'
 APPLICATION_COLOR = 'orange'
 

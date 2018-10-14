@@ -1,0 +1,5 @@
+msgid "Discovery"
+msgstr ""
+
+msgid "Map each service location dynamically"
+msgstr ""

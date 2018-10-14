@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -23,8 +24,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'promo.apps.AnthillApplication'
 APPLICATION_NAME = 'promo'
-APPLICATION_VERBOSE_NAME = 'Promo'
-APPLICATION_DESCRIPTION = 'Reward users with promo-codes'
+APPLICATION_VERBOSE_NAME = _('Promo')
+APPLICATION_DESCRIPTION = _('Reward users with promo-codes')
 APPLICATION_ICON_CLASS = 'icon-gift'
 APPLICATION_COLOR = 'brown'
 

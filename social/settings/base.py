@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -23,8 +24,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'social.apps.AnthillApplication'
 APPLICATION_NAME = 'social'
-APPLICATION_VERBOSE_NAME = 'Social'
-APPLICATION_DESCRIPTION = 'Manage social networks, groups and friend connections'
+APPLICATION_VERBOSE_NAME = _('Social')
+APPLICATION_DESCRIPTION = _('Manage social networks, groups and friend connections')
 APPLICATION_ICON_CLASS = 'icon-share3'
 APPLICATION_COLOR = 'slate'
 

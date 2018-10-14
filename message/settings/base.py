@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -23,8 +24,8 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'message.apps.AnthillApplication'
 APPLICATION_NAME = 'message'
-APPLICATION_VERBOSE_NAME = 'Message'
-APPLICATION_DESCRIPTION = 'Implements messaging system'
+APPLICATION_VERBOSE_NAME = _('Message')
+APPLICATION_DESCRIPTION = _('Implements messaging system')
 APPLICATION_ICON_CLASS = 'icon-envelope'
 APPLICATION_COLOR = 'green'
 
