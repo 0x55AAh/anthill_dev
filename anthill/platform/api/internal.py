@@ -101,22 +101,22 @@ as_internal = api.as_internal
 
 
 @as_internal()
-def test(api_: InternalAPI):
+def test(api_: InternalAPI, **options):
     return {'method': 'test', 'service': api_.service.name}
 
 
 @as_internal()
-def ping(api_: InternalAPI):
+def ping(api_: InternalAPI, **options):
     return {'message': 'pong', 'service': api_.service.name}
 
 
 @as_internal()
-def doc(api_: InternalAPI):
+def doc(api_: InternalAPI, **options):
     return {'methods': ', '.join(api_.methods)}
 
 
 @as_internal()
-def get_service_metadata(api_: InternalAPI):
+def get_service_metadata(api_: InternalAPI, **options):
     return {
         'name': settings.APPLICATION_NAME,
         'title': str(settings.APPLICATION_VERBOSE_NAME),
@@ -258,6 +258,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
 
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
+            kwargs.update(service=self.service.name)
             request_id = self.next_request_id()
             message = {
                 'type': self.message_type,
@@ -282,6 +283,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
                 del self._responses[request_id]
 
     async def push(self, service: str, method: str, **kwargs) -> None:
+        kwargs.update(service=self.service.name)
         message = {
             'type': self.message_type,
             'service': self.service.name,

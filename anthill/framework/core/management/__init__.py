@@ -135,10 +135,10 @@ class BaseManager:
         """
         To add your own commands use add_command or decorators.
         """
-        if "send-test-email" not in self._commands:
-            self.add_command("send-test-email", SendTestEmail)
-        if "compile-messages" not in self._commands:
-            self.add_command("compile-messages", CompileMessages)
+        if "send_test_email" not in self._commands:
+            self.add_command("send_test_email", SendTestEmail)
+        if "compile_messages" not in self._commands:
+            self.add_command("compile_messages", CompileMessages)
 
     def __call__(self, app=None, **kwargs):
         """

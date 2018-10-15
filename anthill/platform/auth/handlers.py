@@ -1,6 +1,6 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.conf import settings
-from anthill.framework.handlers.base import RequestHandler
+from anthill.framework.handlers.base import RequestHandler, RedirectHandler
 from anthill.platform.auth.forms import AuthenticationForm
 from anthill.platform.auth import RemoteUser
 from anthill.framework.handlers.edit import FormHandler
@@ -12,6 +12,17 @@ from anthill.framework.auth import (
     SESSION_KEY
 )
 from functools import partial
+
+
+__all__ = [
+    'UserHandlerMixin',
+    'LoginHandlerMixin',
+    'LogoutHandlerMixin',
+    'AuthHandlerMixin',
+    'UserRequestHandler',
+    'LoginHandler',
+    'LogoutHandler'
+]
 
 
 class InvalidLoginError(Exception):
@@ -58,8 +69,6 @@ class UserHandlerMixin:
 
 
 class LoginHandlerMixin:
-    # access_token_key = 'access_token'
-
     def _login(self, user: RemoteUser):
         """
         Persist a user id and a backend in the request. This way a user doesn't
@@ -102,7 +111,7 @@ class LoginHandlerMixin:
 
 class LogoutHandlerMixin:
     # noinspection PyAttributeOutsideInit
-    def logout(self):
+    async def logout(self):
         if not isinstance(self.current_user, (AnonymousUser, type(None))):
             self.session.flush()
             self.current_user = AnonymousUser()
@@ -114,7 +123,6 @@ class AuthHandlerMixin(UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin):
 
 class UserRequestHandler(UserHandlerMixin, RequestHandler):
     """User aware RequestHandler."""
-
     async def prepare(self):
         await super().prepare()
         await self.setup_user()
@@ -122,7 +130,6 @@ class UserRequestHandler(UserHandlerMixin, RequestHandler):
 
 class LoginHandler(LoginHandlerMixin, FormHandler):
     """Display the login form and handle the login action."""
-
     form_class = AuthenticationForm
     authentication_form = None
     redirect_field_name = REDIRECT_FIELD_NAME
@@ -153,3 +160,13 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
             self.redirect(self.get_success_url())
         except InvalidLoginError as e:
             pass
+
+
+class LogoutHandler(LogoutHandlerMixin, UserHandlerMixin, RedirectHandler):
+    async def prepare(self):
+        await super().prepare()
+        await self.setup_user()
+
+    async def get(self, *args, **kwargs):
+        await self.logout()
+        await super().get(*args, **kwargs)

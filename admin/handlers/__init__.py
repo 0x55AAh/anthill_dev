@@ -1,7 +1,10 @@
 from anthill.framework.handlers import (
     TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler, RequestHandler
 )
-from anthill.platform.auth.handlers import LoginHandler as BaseLoginHandler
+from anthill.platform.auth.handlers import (
+    LoginHandler as BaseLoginHandler,
+    LogoutHandler as BaseLogoutHandler
+)
 from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
 from anthill.framework.http.errors import HttpBadRequestError
 from admin.ui.modules import ServiceCard
@@ -12,17 +15,6 @@ import os
 
 
 logger = logging.getLogger('anthill.application')
-
-
-class AuthenticatedHandlerMixin:
-    access_token_key = 'access_token'
-
-    async def logout(self):
-        self.clear_cookie(self.access_token_key)
-
-    def get_current_user(self):
-        if self.token is None:
-            return None
 
 
 class HomeHandler(TemplateHandler):
@@ -72,12 +64,8 @@ class LoginHandler(BaseLoginHandler):
     pass
 
 
-class LogoutHandler(AuthenticatedHandlerMixin, RedirectHandler):
-    handler_name = 'login'
-
-    async def get(self, *args, **kwargs):
-        await self.logout()
-        await super().get(*args, **kwargs)
+class LogoutHandler(BaseLogoutHandler):
+    handler_name = 'login'  # Redirect to
 
 
 class DebugHandler(TemplateHandler):

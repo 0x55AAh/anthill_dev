@@ -6,7 +6,7 @@ Example:
     from anthill.platform.api.internal import as_internal, InternalAPI
 
     @as_internal()
-    async def your_internal_api_method(api: InternalAPI, **kwargs):
+    async def your_internal_api_method(api: InternalAPI, *params, **options):
         # current_service = api.service
         ...
 """
@@ -15,7 +15,7 @@ from profile.models import Profile
 
 
 @as_internal()
-async def get_profile(api: InternalAPI, user_id: str) -> dict:
+async def get_profile(api: InternalAPI, user_id: str, **options) -> dict:
     # ToDo: async query
     profile = Profile.query.filter_by(user_id=user_id).first()
     if profile is not None:
@@ -24,7 +24,7 @@ async def get_profile(api: InternalAPI, user_id: str) -> dict:
 
 @as_internal()
 async def get_profiles(api: InternalAPI, user_ids: list=None,
-                       request=None, pagination: int=None, page: int=None) -> dict:
+                       request=None, pagination: int=None, page: int=None, **options) -> dict:
     # ToDo: async query
     if user_ids:
         profiles_query = Profile.query.filter(Profile.user_id.in_(user_ids))

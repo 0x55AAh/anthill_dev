@@ -6,7 +6,7 @@ Example:
     from anthill.platform.api.internal import as_internal, InternalAPI
 
     @as_internal()
-    async def your_internal_api_method(api: InternalAPI, **kwargs):
+    async def your_internal_api_method(api: InternalAPI, *params, **options):
         # current_service = api.service
         ...
 """
@@ -16,7 +16,7 @@ from tornado.websocket import websocket_connect
 
 
 @as_internal()
-async def send_message(api: InternalAPI, message):
+async def send_message(api: InternalAPI, message, **options):
     """Send message via local messenger."""
 
     path = reverse('messenger')

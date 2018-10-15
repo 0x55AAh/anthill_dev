@@ -8,7 +8,7 @@ from anthill.framework.auth import (
     SESSION_KEY,
     load_backend
 )
-from anthill.framework.handlers.base import RequestHandler
+from anthill.framework.handlers.base import RequestHandler, RedirectHandler
 from anthill.framework.handlers.edit import FormHandler
 from anthill.framework.auth.forms import AuthenticationForm
 from anthill.framework.auth.models import AnonymousUser
@@ -108,7 +108,7 @@ class LoginHandlerMixin:
 
 class LogoutHandlerMixin:
     # noinspection PyAttributeOutsideInit
-    def logout(self):
+    async def logout(self):
         if not isinstance(self.current_user, (AnonymousUser, type(None))):
             self.session.flush()
             self.current_user = AnonymousUser()
@@ -120,7 +120,6 @@ class AuthHandlerMixin(UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin):
 
 class UserRequestHandler(UserHandlerMixin, RequestHandler):
     """User aware RequestHandler."""
-
     async def prepare(self):
         await super().prepare()
         await self.setup_user()
@@ -128,7 +127,6 @@ class UserRequestHandler(UserHandlerMixin, RequestHandler):
 
 class LoginHandler(LoginHandlerMixin, FormHandler):
     """Display the login form and handle the login action."""
-
     form_class = AuthenticationForm
     authentication_form = None
     redirect_field_name = REDIRECT_FIELD_NAME
@@ -157,3 +155,13 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
         user = await form.authenticate(self.request)
         self.login(user)
         self.redirect(self.get_success_url())
+
+
+class LogoutHandler(LogoutHandlerMixin, UserHandlerMixin, RedirectHandler):
+    async def prepare(self):
+        await super().prepare()
+        await self.setup_user()
+
+    async def get(self, *args, **kwargs):
+        await self.logout()
+        await super().get(*args, **kwargs)
