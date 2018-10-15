@@ -1,5 +1,0 @@
-msgid "Login"
-msgstr ""
-
-msgid "Manage user accounts, credentials and access tokens"
-msgstr ""

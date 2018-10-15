@@ -36,6 +36,8 @@ EMAIL_SUBJECT_PREFIX = '[Anthill: admin] '
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
 
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
+
 STATIC_URL = '/static/'
 
 # UI_MODULE = 'admin.ui'

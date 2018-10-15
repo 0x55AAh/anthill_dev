@@ -31,6 +31,7 @@ APPLICATION_COLOR = 'brown'
 
 # SERVICE_CLASS = 'promo.services.Service'
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: promo] '
 

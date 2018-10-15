@@ -1,5 +1,0 @@
-msgid "Promo"
-msgstr ""
-
-msgid "Reward users with promo-codes"
-msgstr ""

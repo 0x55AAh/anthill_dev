@@ -32,6 +32,7 @@ APPLICATION_COLOR = 'green'
 # SERVICE_CLASS = 'message.services.Service'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/19"
 

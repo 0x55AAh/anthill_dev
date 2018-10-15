@@ -1,5 +1,0 @@
-msgid "Media"
-msgstr ""
-
-msgid "Manage user uploaded files"
-msgstr ""

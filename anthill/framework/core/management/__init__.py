@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from .commands import (
     Group, Option, Command, Server, Shell, Version,
-    StartApplication, ApplicationChooser, SendTestEmail
+    StartApplication, ApplicationChooser, SendTestEmail, CompileMessages
 )
 import argparse
 import os
@@ -137,6 +137,8 @@ class BaseManager:
         """
         if "send-test-email" not in self._commands:
             self.add_command("send-test-email", SendTestEmail)
+        if "compile-messages" not in self._commands:
+            self.add_command("compile-messages", CompileMessages)
 
     def __call__(self, app=None, **kwargs):
         """

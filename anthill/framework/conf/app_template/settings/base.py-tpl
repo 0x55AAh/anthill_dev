@@ -24,6 +24,7 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 # APPLICATION_CLASS = '{{ app_name }}.apps.AnthillApplication'
 APPLICATION_NAME = '{{ app_name }}'

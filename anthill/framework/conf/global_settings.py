@@ -28,6 +28,7 @@ USE_TZ = False
 LOCALE = 'en_US'
 USE_I18N = False
 USE_L10N = False
+LOCALE_PATH = None
 
 LOCATION = 'http://localhost:9500'
 UNIX_SOCKET = None

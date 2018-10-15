@@ -32,6 +32,7 @@ APPLICATION_COLOR = 'violet'
 # SERVICE_CLASS = 'exec.services.Service'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: exec] '
 

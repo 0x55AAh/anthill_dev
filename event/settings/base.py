@@ -33,6 +33,7 @@ EMAIL_SUBJECT_PREFIX = '[Anthill: event] '
 # SERVICE_CLASS = 'event.services.Service'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 CELERY_ENABLE = True
 

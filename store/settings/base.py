@@ -31,6 +31,7 @@ APPLICATION_COLOR = 'primary'
 
 # SERVICE_CLASS = 'store.services.Service'
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: store] '
 

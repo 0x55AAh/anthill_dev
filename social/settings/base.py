@@ -32,6 +32,7 @@ APPLICATION_COLOR = 'slate'
 # SERVICE_CLASS = 'social.services.Service'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: social] '
 

@@ -1,5 +1,0 @@
-msgid "Profile"
-msgstr ""
-
-msgid "Manage user profiles"
-msgstr ""

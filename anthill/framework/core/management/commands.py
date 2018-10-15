@@ -1,11 +1,51 @@
+import codecs
+import glob
 import os
+import sys
 import code
 import inspect
 import argparse
 import shutil
+from io import TextIOBase
 from tornado.escape import to_unicode
 from tornado.template import Template
-from anthill.framework.core.management.utils import get_random_secret_key, get_random_color
+import concurrent.futures
+from anthill.framework.core.management.utils import (
+    get_random_secret_key, get_random_color, popen_wrapper, find_command)
+
+
+class OutputWrapper(TextIOBase):
+    """
+    Wrapper around stdout/stderr
+    """
+    @property
+    def style_func(self):
+        return self._style_func
+
+    @style_func.setter
+    def style_func(self, style_func):
+        if style_func and self.isatty():
+            self._style_func = style_func
+        else:
+            self._style_func = lambda x: x
+
+    def __init__(self, out, style_func=None, ending='\n'):
+        self._out = out
+        self.style_func = None
+        self.ending = ending
+
+    def __getattr__(self, name):
+        return getattr(self._out, name)
+
+    def isatty(self):
+        return hasattr(self._out, 'isatty') and self._out.isatty()
+
+    def write(self, msg, style_func=None, ending=None):
+        ending = self.ending if ending is None else ending
+        if ending and not msg.endswith(ending):
+            msg += ending
+        style_func = style_func or self.style_func
+        self._out.write(style_func(msg))
 
 
 class InvalidCommand(Exception):
@@ -101,9 +141,12 @@ class Command:
     option_list = ()
     help_args = None
 
-    def __init__(self, func=None):
+    def __init__(self, func=None, stdout=None, stderr=None):
         self.parser = None
         self.parent = None
+
+        self.stdout = OutputWrapper(stdout or sys.stdout)
+        self.stderr = OutputWrapper(stderr or sys.stderr)
 
         if func is None:
             if not self.option_list:
@@ -359,6 +402,7 @@ class Clean(Command):
 class Version(Command):
     help = description = 'Show app version and exit.'
 
+    # noinspection PyMethodOverriding
     def __call__(self, app):
         print('Application %s v%s' % (app.label, app.version))
 
@@ -528,3 +572,135 @@ class SendTestEmail(Command):
 
         if kwargs['admins']:
             mail_admins(subject, "This email was sent to the site admins.")
+
+
+def has_bom(fn):
+    with open(fn, 'rb') as f:
+        sample = f.read(4)
+    return sample.startswith((codecs.BOM_UTF8, codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE))
+
+
+def is_writable(path):
+    # Known side effect: updating file access/modified time to current time if
+    # it is writable.
+    try:
+        with open(path, 'a'):
+            os.utime(path, None)
+    except (IOError, OSError):
+        return False
+    return True
+
+
+class CompileMessages(Command):
+    help = description = 'Compiles .po files to .mo files for use with builtin gettext support.'
+
+    program = 'msgfmt'
+    program_options = ['--check-format']
+
+    def get_options(self):
+        options = (
+            Option('--locale', '-l', action='append', default=[],
+                   help='Locale(s) to process (e.g. de_AT). Default is to process all. '
+                        'Can be used multiple times.'),
+            Option('--exclude', '-x', action='append', default=[],
+                   help='Locales to exclude. Default is none. Can be used multiple times.'),
+            Option('--use-fuzzy', '-f', dest='fuzzy', action='store_true',
+                   help='Use fuzzy translations.'),
+        )
+        return options
+
+    def run(self, locale, exclude, fuzzy):
+        if fuzzy:
+            self.program_options = self.program_options + ['-f']
+
+        if find_command(self.program) is None:
+            raise InvalidCommand("Can't find %s. Make sure you have GNU gettext "
+                                 "tools 0.15 or newer installed." % self.program)
+
+        basedirs = []
+        if os.environ.get('SERVICE_SETTINGS_MODULE'):
+            from anthill.framework.conf import settings
+            if settings.LOCALE_PATH is not None:
+                basedirs.append(settings.LOCALE_PATH)
+
+        # Walk entire tree, looking for locale directories
+        for dirpath, dirnames, filenames in os.walk('.', topdown=True):
+            for dirname in dirnames:
+                if dirname == 'locale':
+                    basedirs.append(os.path.join(dirpath, dirname))
+
+        # Gather existing directories.
+        basedirs = set(map(os.path.abspath, filter(os.path.isdir, basedirs)))
+
+        if not basedirs:
+            raise InvalidCommand("This script should be run from the Django Git "
+                                 "checkout or your project or app tree, or with "
+                                 "the settings module specified.")
+
+        # Build locale list
+        all_locales = []
+        for basedir in basedirs:
+            locale_dirs = filter(os.path.isdir, glob.glob('%s/*' % basedir))
+            all_locales.extend(map(os.path.basename, locale_dirs))
+
+        # Account for excluded locales
+        locales = locale or all_locales
+        locales = set(locales).difference(exclude)
+
+        self.has_errors = False
+        for basedir in basedirs:
+            if locales:
+                dirs = [os.path.join(basedir, l, 'LC_MESSAGES') for l in locales]
+            else:
+                dirs = [basedir]
+            locations = []
+            for ldir in dirs:
+                for dirpath, dirnames, filenames in os.walk(ldir):
+                    locations.extend((dirpath, f) for f in filenames if f.endswith('.po'))
+            if locations:
+                self.compile_messages(locations)
+
+        if self.has_errors:
+            raise InvalidCommand('compilemessages generated one or more errors.')
+
+    def compile_messages(self, locations):
+        """
+        Locations is a list of tuples: [(directory, file), ...]
+        """
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
+            for i, (dirpath, f) in enumerate(locations):
+                self.stdout.write('processing file %s in %s\n' % (f, dirpath))
+                po_path = os.path.join(dirpath, f)
+                if has_bom(po_path):
+                    self.stderr.write(
+                        'The %s file has a BOM (Byte Order Mark). Django only '
+                        'supports .po files encoded in UTF-8 and without any BOM.' % po_path
+                    )
+                    self.has_errors = True
+                    continue
+                base_path = os.path.splitext(po_path)[0]
+
+                # Check writability on first location
+                if i == 0 and not is_writable(base_path + '.mo'):
+                    self.stderr.write(
+                        'The po files under %s are in a seemingly not writable location. '
+                        'mo files will not be updated/created.' % dirpath
+                    )
+                    self.has_errors = True
+                    return
+
+                args = [self.program] + self.program_options + [
+                    '-o', base_path + '.mo', base_path + '.po'
+                ]
+                futures.append(executor.submit(popen_wrapper, args))
+
+            for future in concurrent.futures.as_completed(futures):
+                output, errors, status = future.result()
+                if status:
+                    if errors:
+                        self.stderr.write("Execution of %s failed: %s" % (self.program, errors))
+                    else:
+                        self.stderr.write("Execution of %s failed" % self.program)
+                    self.has_errors = True
+

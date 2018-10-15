@@ -1,5 +1,0 @@
-msgid "Event"
-msgstr ""
-
-msgid "Compete players with time-limited events"
-msgstr ""

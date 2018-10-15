@@ -1,5 +1,0 @@
-msgid "Configuration"
-msgstr ""
-
-msgid "Configure your application dynamically"
-msgstr ""

@@ -23,6 +23,7 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 # ROUTES_CONF = 'profile.routes'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

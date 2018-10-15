@@ -1,5 +1,0 @@
-msgid "Social"
-msgstr ""
-
-msgid "Manage social networks, groups and friend connections"
-msgstr ""

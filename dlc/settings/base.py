@@ -33,6 +33,7 @@ EMAIL_SUBJECT_PREFIX = '[Anthill: dlc] '
 # SERVICE_CLASS = 'dlc.services.Service'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
+LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
