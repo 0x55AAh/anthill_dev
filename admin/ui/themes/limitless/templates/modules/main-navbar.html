@@ -13,7 +13,7 @@
 			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
 			<li>
 				<a href="{{ reverse_url('debug') }}" title="Terminal"><i class="icon-terminal"></i>
-					<span class="visible-xs-inline-block position-right">Terminal</span>
+					<span class="visible-xs-inline-block position-right">{{ _('Terminal') }}</span>
 				</a>
 			</li>
 			<!--<li><a href="#"><i class="icon-clipboard6" title="Log"></i><span class="visible-xs-inline-block position-right">Log</span></a></li>-->
@@ -23,7 +23,7 @@
 		<ul class="nav navbar-nav navbar-right">
 			<li>
 				<p class="navbar-text">
-			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">Debug</span>
+			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('Debug') }}</span>
 		        </p>
 			</li>
 			<li class="dropdown dropdown-user">
@@ -34,11 +34,11 @@
 				</a>
 
 				<ul class="dropdown-menu dropdown-menu-right">
-					<li><a href="#"><i class="icon-user"></i> Profile</a></li>
-					<li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment"></i> Messages</a></li>
+					<li><a href="#"><i class="icon-user"></i> {{ _('Profile') }}</a></li>
+					<li><a href="#"><span class="badge badge-warning pull-right">58</span> <i class="icon-comment"></i> {{ _('Messages') }}</a></li>
 					<li class="divider"></li>
-					<li><a href="{{ reverse_url('settings') }}"><i class="icon-cog5"></i> Settings</a></li>
-					<li><a href="{{ reverse_url('logout') }}"><i class="icon-switch2"></i> Logout</a></li>
+					<li><a href="{{ reverse_url('settings') }}"><i class="icon-cog5"></i> {{ _('Settings') }}</a></li>
+					<li><a href="{{ reverse_url('logout') }}"><i class="icon-switch2"></i> {{ _('Logout') }}</a></li>
 				</ul>
 			</li>
 		</ul>

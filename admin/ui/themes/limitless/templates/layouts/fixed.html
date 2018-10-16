@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Anthill Platform Admin Tool</title>
+	<title>{{ _('Anthill Platform Admin Tool') }}</title>
 
 	{% block meta %}{% end %}
 
@@ -40,7 +40,8 @@
 	{% block js_header %}{% end %}
 </head>
 
-<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}" data-debug="{% if debug %}1{% else %}0{% end %}" {% block service-name %}{% end %}>
+<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}"
+	  data-debug="{% if debug %}1{% else %}0{% end %}" {% block service-name %}{% end %}>
 
 <!-- Main navbar -->
 {% block main-navbar %}

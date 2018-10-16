@@ -4,18 +4,18 @@
 	<div class="panel panel-body login-form">
 		<div class="text-center">
 			<div class="icon-object border-slate-300 text-slate-300"><i class="icon-reading"></i></div>
-			<h5 class="content-group">Login to your account <small class="display-block">Your credentials</small></h5>
+			<h5 class="content-group">{{ _('Login to your account') }} <small class="display-block">{{ _('Your credentials') }}</small></h5>
 		</div>
 
 		<div class="form-group has-feedback has-feedback-left">
-			<input type="text" name="username" class="form-control" placeholder="Username" required>
+			{% raw form.username(class_="form-control", placeholder=form.username.label.text) %}
 			<div class="form-control-feedback">
 				<i class="icon-user text-muted"></i>
 			</div>
 		</div>
 
 		<div class="form-group has-feedback has-feedback-left">
-			<input type="password" name="password" class="form-control" placeholder="Password" required>
+			{% raw form.password(class_="form-control", placeholder=form.password.label.text) %}
 			<div class="form-control-feedback">
 				<i class="icon-lock2 text-muted"></i>
 			</div>
@@ -25,21 +25,21 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<label class="checkbox-inline">
-						<input type="checkbox" class="styled"> Remember
+						<input type="checkbox" class="styled"> {{ _('Remember') }}
 					</label>
 				</div>
 
 				<div class="col-sm-6 text-right">
-					<a href="#">Forgot password?</a>
+					<a href="#">{{ _('Forgot password?') }}</a>
 				</div>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<button type="submit" class="btn bg-blue btn-block">Login</button>
+			<button type="submit" class="btn bg-blue btn-block">{{ _('Login') }}</button>
 		</div>
 
-		<div class="content-divider text-muted form-group"><span>or sign in with</span></div>
+		<div class="content-divider text-muted form-group"><span>{{ _('or sign in with') }}</span></div>
 		<ul class="list-inline form-group list-inline-condensed text-center social-auth">
 			<li><a data-social-auth-name="facebook" data-popup-size="450,500" class="btn border-indigo text-indigo btn-flat btn-icon btn-rounded"><i class="icon-facebook"></i></a></li>
 			<li><a data-social-auth-name="google-oauth2" data-popup-size="450,500" class="btn border-danger text-danger btn-flat btn-icon btn-rounded"><i class="icon-google"></i></a></li>

@@ -1,4 +1,5 @@
 from anthill.framework.forms import Form
+from anthill.framework.utils.translation import translate as _
 from wtforms import StringField, PasswordField, validators, ValidationError
 from anthill.framework.auth import authenticate
 
@@ -8,8 +9,9 @@ class AuthenticationForm(Form):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    username = StringField('Username', [validators.Length(min=4, max=25)])
-    password = PasswordField('Password', [validators.DataRequired()])
+    username = StringField(_('Username'), [
+        validators.DataRequired(), validators.Length(min=4, max=25)])
+    password = PasswordField(_('Password'), [validators.DataRequired()])
 
     async def authenticate(self, request):
         user = await authenticate(request, **self.get_credentials())
@@ -37,7 +39,7 @@ class AuthenticationForm(Form):
         If the given user may log in, this method should return None.
         """
         if not user.is_active:
-            raise ValidationError('Inactive user.')
+            raise ValidationError(_('Inactive user.'))
 
     def invalid_login_error(self):
-        raise ValidationError('Invalid user.')
+        raise ValidationError(_('Invalid user.'))

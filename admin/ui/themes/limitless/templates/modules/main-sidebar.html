@@ -4,7 +4,7 @@
             <div class="category-content no-padding">
                 <ul class="navigation navigation-main navigation-accordion">
                     <li class="navigation-header">
-                        <span>Services</span> <i class="icon-menu" title="" data-original-title=""></i>
+                        <span>{{ _('Services') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     {% for entry in entries %}
                     <li class="{% if current == entry.name %}active{% end %} navigation-service {{ current }}" data-name="{{ entry.name }}">
