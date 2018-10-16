@@ -111,8 +111,8 @@ async def internal_authenticate(internal_request=None, **credentials) -> RemoteU
     if internal_request is None:
         from anthill.platform.utils.internal_api import internal_request
     do_authenticate = partial(internal_request, 'login', 'authenticate')
-    kwargs = await do_authenticate(credentials=credentials)  # User data dict
-    return RemoteUser(**kwargs)
+    data = await do_authenticate(credentials=credentials)  # User data dict
+    return RemoteUser(**data)
 
 
 async def internal_login(user_id, internal_request=None) -> str:

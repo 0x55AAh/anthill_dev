@@ -1,5 +1,5 @@
 from anthill.framework.handlers import (
-    TemplateHandler, RedirectHandler, WebSocketJSONRPCHandler, RequestHandler
+    TemplateHandler, WebSocketJSONRPCHandler, RequestHandler
 )
 from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
