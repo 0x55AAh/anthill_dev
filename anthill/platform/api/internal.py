@@ -15,6 +15,7 @@ from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestExcep
 from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
 from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
+from typing import Optional
 import inspect
 import json
 import logging
@@ -22,8 +23,8 @@ import logging
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
-    'InternalAPIError', 'as_internal', 'api', 'InternalAPI', 'RequestTimeoutError',
-    'is_response_valid'
+    'as_internal', 'api', 'InternalAPI',
+    'InternalAPIError', 'RequestTimeoutError', 'RequestError'
 ]
 
 
@@ -41,7 +42,11 @@ class InternalAPIError(Exception):
     """General internal API error."""
 
 
-class RequestTimeoutError(InternalAPIError):
+class RequestError(InternalAPIError):
+    pass
+
+
+class RequestTimeoutError(RequestError):
     pass
 
 
@@ -126,13 +131,6 @@ def get_service_metadata(api_: InternalAPI, **options):
         'version': api_.service.version,
         'debug': api_.service.debug,
     }
-
-
-def is_response_valid(response):
-    if 'error' in response:
-        logger.error(response['error']['message'])
-        return False
-    return True
 
 
 class BaseInternalConnection(Singleton):
@@ -256,6 +254,12 @@ class JSONRPCInternalConnection(BaseInternalConnection):
         else:
             raise ValueError('Invalid message: %s' % message)
 
+    @staticmethod
+    def _is_response_valid(response: Optional[dict]) -> bool:
+        if isinstance(response, dict) and 'error' in response:
+            return False
+        return True
+
     async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
             kwargs.update(service=self.service.name)
@@ -274,11 +278,15 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             await self.send(service, message)
             timeout = timeout or self.request_timeout
             try:
-                return await with_timeout(datetime.timedelta(seconds=timeout), future)
+                result = await with_timeout(datetime.timedelta(seconds=timeout), future)
             except TimeoutError:
                 raise RequestTimeoutError(
                     'Service `%s` not responded for %s sec' % (service, timeout))
                 # return {'error': {'message': 'Service `%s` not responded for %s sec' % (service, timeout)}}
+            else:
+                if not self._is_response_valid(result):
+                    raise RequestError(result)
+                return result
             finally:
                 del self._responses[request_id]
 

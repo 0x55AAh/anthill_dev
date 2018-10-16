@@ -1,6 +1,11 @@
+from anthill.platform.api.internal import RequestError
 from datetime import datetime
 from typing import Optional
 from functools import partial
+import logging
+
+
+logger = logging.getLogger('anthill.application')
 
 
 def filter_dict(data, exclude=None):
@@ -108,16 +113,26 @@ class RemoteProfile:
 
 
 async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:
+    """Perform internal api authentication."""
     if internal_request is None:
         from anthill.platform.utils.internal_api import internal_request
     do_authenticate = partial(internal_request, 'login', 'authenticate')
-    data = await do_authenticate(credentials=credentials)  # User data dict
-    return RemoteUser(**data)
+    try:
+        data = await do_authenticate(credentials=credentials)  # User data dict
+    except RequestError as e:
+        logger.error(str(e))
+    else:
+        return RemoteUser(**data)
 
 
 async def internal_login(user_id, internal_request=None) -> str:
+    """Perform internal api login."""
     if internal_request is None:
         from anthill.platform.utils.internal_api import internal_request
     do_login = partial(internal_request, 'login', 'login')
-    token = await do_login(user_id)
-    return token
+    try:
+        token = await do_login(user_id)
+    except RequestError as e:
+        logger.error(str(e))
+    else:
+        return token

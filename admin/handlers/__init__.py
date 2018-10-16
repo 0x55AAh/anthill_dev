@@ -5,7 +5,7 @@ from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
     LogoutHandler as BaseLogoutHandler
 )
-from anthill.platform.api.internal import RequestTimeoutError, is_response_valid
+from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
 from admin.ui.modules import ServiceCard
 from typing import Optional
@@ -34,6 +34,8 @@ class HomeHandler(TemplateHandler):
                 metadata = await self.internal_request(name, method='get_service_metadata')
             except RequestTimeoutError:
                 pass
+            except RequestError:
+                pass
             else:
                 res.append(metadata)
         return res
@@ -44,12 +46,13 @@ class HomeHandler(TemplateHandler):
             services = await self.internal_request('discovery', method='get_services')
         except RequestTimeoutError:
             pass
+        except RequestError:
+            pass
         else:
-            if is_response_valid(services):
-                self.metadata = await self.get_metadata(services)
-                for metadata in self.metadata:
-                    card = ServiceCard.Entry(**metadata)
-                    service_cards.append(card)
+            self.metadata = await self.get_metadata(services)
+            for metadata in self.metadata:
+                card = ServiceCard.Entry(**metadata)
+                service_cards.append(card)
         service_cards.sort()
         return service_cards
 
