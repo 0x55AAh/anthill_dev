@@ -1,6 +1,5 @@
-from anthill.framework.handlers import (
-    TemplateHandler, WebSocketJSONRPCHandler, RequestHandler
-)
+from anthill.framework.handlers import TemplateHandler, RequestHandler
+from anthill.platform.handlers.jsonrpc import JsonRPCSessionHandler, jsonrpc_method
 from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
     LogoutHandler as BaseLogoutHandler
@@ -32,9 +31,7 @@ class HomeHandler(TemplateHandler):
                 continue
             try:
                 metadata = await self.internal_request(name, method='get_service_metadata')
-            except RequestTimeoutError:
-                pass
-            except RequestError:
+            except (RequestTimeoutError, RequestError):
                 pass
             else:
                 res.append(metadata)
@@ -44,9 +41,7 @@ class HomeHandler(TemplateHandler):
         service_cards = []
         try:
             services = await self.internal_request('discovery', method='get_services')
-        except RequestTimeoutError:
-            pass
-        except RequestError:
+        except (RequestTimeoutError, RequestError):
             pass
         else:
             self.metadata = await self.get_metadata(services)
@@ -79,32 +74,7 @@ class DebugHandler(TemplateHandler):
         return context
 
 
-def jsonrpc_method(**kwargs):
-    """Marks debug session handler method as json-rpc method."""
-    def decorator(func):
-        func.jsonrpc_method = True
-        func.kwargs = kwargs
-        return func
-    return decorator
-
-
-class MessagesSessionHandler(WebSocketJSONRPCHandler):
-    """Json-rpc session channel."""
-
-    def __init__(self, application, request, dispatcher=None, **kwargs):
-        super().__init__(application, request, dispatcher, **kwargs)
-        self._setup_methods()
-
-    def _setup_methods(self):
-        for method_name in self.__class__.__dict__:
-            attr = getattr(self, method_name)
-            if getattr(attr, 'jsonrpc_method', False):
-                kwargs = getattr(attr, 'kwargs', {})
-                name = kwargs.get('name', method_name)
-                self.dispatcher.add_method(attr, name)
-
-
-class DebugSessionHandler(MessagesSessionHandler):
+class DebugSessionHandler(JsonRPCSessionHandler):
     """Defines json-rpc methods for debugging."""
 
     def __init__(self, application, request, dispatcher=None, **kwargs):

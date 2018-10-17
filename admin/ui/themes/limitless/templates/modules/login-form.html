@@ -1,4 +1,4 @@
-<form method="post">
+<form method="post" action="">
 	{% module xsrf_form_html() %}
 
 	<div class="panel panel-body login-form">
@@ -8,14 +8,14 @@
 		</div>
 
 		<div class="form-group has-feedback has-feedback-left">
-			{% raw form.username(class_="form-control", placeholder=form.username.label.text) %}
+			{% raw form.username(class_="form-control") %}
 			<div class="form-control-feedback">
 				<i class="icon-user text-muted"></i>
 			</div>
 		</div>
 
 		<div class="form-group has-feedback has-feedback-left">
-			{% raw form.password(class_="form-control", placeholder=form.password.label.text) %}
+			{% raw form.password(class_="form-control") %}
 			<div class="form-control-feedback">
 				<i class="icon-lock2 text-muted"></i>
 			</div>

@@ -9,9 +9,12 @@ class AuthenticationForm(Form):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    username = StringField(_('Username'), [
-        validators.DataRequired(), validators.Length(min=4, max=25)])
-    password = PasswordField(_('Password'), [validators.DataRequired()])
+    username = StringField(_('Username'),
+                           [validators.DataRequired(), validators.Length(min=4, max=25)],
+                           render_kw={'placeholder': _('Username')})
+    password = PasswordField(_('Password'),
+                             [validators.DataRequired()],
+                             render_kw={'placeholder': _('Password')})
 
     async def authenticate(self, request):
         user = await authenticate(request, **self.get_credentials())
@@ -39,7 +42,7 @@ class AuthenticationForm(Form):
         If the given user may log in, this method should return None.
         """
         if not user.is_active:
-            raise ValidationError(_('Inactive user.'))
+            raise ValidationError(_('Inactive user'))
 
-    def invalid_login_error(self):
-        raise ValidationError(_('Invalid user.'))
+    def invalid_login_error(self) -> None:
+        raise ValidationError(_('Invalid user'))

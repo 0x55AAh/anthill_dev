@@ -1,7 +1,7 @@
 # For more details about routing, see
 # http://www.tornadoweb.org/en/stable/routing.html
 from tornado.web import url
-from . import handlers
+from login import handlers
 from discovery.api.compat.rest import routes as rest_routes
 from anthill.framework.auth.social import routes as social_auth_routes
 from anthill.framework.utils.urls import include

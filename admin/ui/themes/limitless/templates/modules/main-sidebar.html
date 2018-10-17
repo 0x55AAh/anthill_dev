@@ -3,7 +3,7 @@
         <div class="sidebar-category sidebar-category-visible">
             <div class="category-content no-padding">
                 <ul class="navigation navigation-main navigation-accordion">
-                    <li class="navigation-header">
+                    <li class="navigation-header navigation-header-services">
                         <span>{{ _('Services') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     {% for entry in entries %}
@@ -11,6 +11,9 @@
                         <a href="{{ reverse_url('service', entry.name) }}"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
                     </li>
                     {% end %}
+                    <li class="navigation-header navigation-header-utils">
+                        <span>{{ _('Utils') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
+                    </li>
                 </ul>
             </div>
         </div>

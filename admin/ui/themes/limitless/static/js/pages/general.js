@@ -46,7 +46,7 @@ $(function() {
                     html_sidebar_data += html_sidebar_entry;
                 });
                 $('.sidebar-main ul.navigation-main li.navigation-service').remove();
-                $('.sidebar-main ul.navigation-main li.navigation-header').after(html_sidebar_data);
+                $('.sidebar-main ul.navigation-main li.navigation-header-services').after(html_sidebar_data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
 
