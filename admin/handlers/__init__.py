@@ -7,6 +7,7 @@ from anthill.platform.auth.handlers import (
 from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
 from admin.ui.modules import ServiceCard
+from anthill.framework.utils.decorators import authenticated
 from typing import Optional
 import logging
 import inspect
@@ -16,6 +17,7 @@ import os
 logger = logging.getLogger('anthill.application')
 
 
+# @authenticated(methods=['GET'])
 class HomeHandler(TemplateHandler):
     template_name = 'index.html'
 
@@ -66,6 +68,7 @@ class LogoutHandler(BaseLogoutHandler):
     handler_name = 'login'  # Redirect to
 
 
+# @authenticated(methods=['GET'])
 class DebugHandler(TemplateHandler):
     template_name = 'debug.html'
 
@@ -116,6 +119,7 @@ class DebugSessionHandler(JsonRPCSessionHandler):
         self._set_context(name, None)
 
 
+# @authenticated(methods=['GET'])
 class SidebarMainToggle(RequestHandler):
     """Save main sidebar state expanded or closed."""
 
@@ -142,6 +146,7 @@ class ServiceContextMixin:
         return context
 
 
+# @authenticated(methods=['GET'])
 class ServiceRequestHandler(ServiceContextMixin, TemplateHandler):
     """Shows individual service index page."""
 
@@ -158,9 +163,11 @@ class ServiceRequestHandler(ServiceContextMixin, TemplateHandler):
             super().render(template_name, **kwargs)
 
 
+# @authenticated(methods=['GET'])
 class SettingsRequestHandler(TemplateHandler):
     template_name = 'settings.html'
 
 
+# @authenticated(methods=['GET'])
 class LogRequestHandler(ServiceContextMixin, TemplateHandler):
     template_name = 'log.html'

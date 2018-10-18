@@ -13,6 +13,7 @@ Example:
 from anthill.platform.api.internal import as_internal, InternalAPI
 from anthill.framework.auth import authenticate as _authenticate, get_user_model
 from anthill.framework.utils.asynchronous import thread_pool_exec
+from anthill.framework.utils.urls import reverse, build_absolute_uri
 
 
 User = get_user_model()
@@ -80,3 +81,10 @@ async def login(api: InternalAPI, user_id: str, **options) -> str:
 @as_internal()
 async def logout(api: InternalAPI, token: str, **options) -> str:
     pass
+
+
+@as_internal()
+async def get_login_url(api: InternalAPI, **options) -> str:
+    path = reverse('login')
+    host_url = api.service.app.registry_entry['external']
+    return build_absolute_uri(host_url, path)

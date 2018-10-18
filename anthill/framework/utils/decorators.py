@@ -1,5 +1,6 @@
 from functools import update_wrapper
-from tornado.web import url, RedirectHandler, RequestHandler, authenticated
+from tornado.web import (
+    url, RedirectHandler, RequestHandler, authenticated as _authenticated)
 from functools import wraps
 from tornado.gen import sleep
 import logging
@@ -193,11 +194,27 @@ def auth_generic_route(uri, template, handler):
     class AuthHandler(handler):
         _template = template
 
-        @authenticated
+        @_authenticated
         def get(self):
             return self.render(self._template)
 
     return AuthHandler
+
+
+def authenticated(methods=None):
+    """
+    Extension for tornado.web.authenticated decorator.
+    :param methods: http method names list for tornado.web.authenticated decorator to apply
+    """
+    def decorator(wrapped):
+        if issubclass(wrapped, RequestHandler):
+            for method_name in map(lambda x: x.lower(), methods or []):
+                method = getattr(wrapped, method_name)
+                setattr(wrapped, method_name, _authenticated(method))
+            return wrapped
+        else:
+            _authenticated(wrapped)
+    return decorator
 
 
 def retry(max_retries=3, delay=3, on_exception=None, on_finish=None,

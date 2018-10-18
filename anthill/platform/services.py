@@ -2,7 +2,8 @@ from tornado.ioloop import PeriodicCallback
 from anthill.framework.utils.decorators import method_decorator, retry
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
-from anthill.platform.api.internal import JSONRPCInternalConnection, RequestTimeoutError
+from anthill.platform.api.internal import (
+    JSONRPCInternalConnection, RequestTimeoutError, RequestError)
 from anthill.framework.utils.geoip import GeoIP2
 from functools import partial
 from tornado.web import url
@@ -79,16 +80,14 @@ class BaseService(CeleryMixin, _BaseService):
 
 class PlainService(BaseService):
     auto_register_on_discovery = True
-    register_max_retries = 0
 
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.discovery_request = partial(self.internal_connection.request, 'discovery')
 
-    @method_decorator(retry(max_retries=register_max_retries, delay=0,
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e:
-                                logger.fatal('Service `discovery` is unreachable.'),
-                            exception_types=(RequestTimeoutError,)))
+                                logger.error('Service `discovery` is unreachable.'),))
     async def register_on_discovery(self) -> None:
         kwargs = {
             'name': self.name,
@@ -104,10 +103,20 @@ class PlainService(BaseService):
     async def discover(self, name: str, network: str=None) -> dict:
         return await self.discovery_request('get_service', name=name, network=network)
 
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
+                            on_exception=lambda func, e:
+                            logger.error('Cannot get login url. Retry...'), ))
+    async def set_login_url(self):
+        internal_request = self.internal_connection.request
+        login_url = await internal_request('admin', 'get_login_url')
+        self.settings.update(login_url=login_url)
+        logger.debug('Login url: %s' % login_url)
+
     async def on_start(self) -> None:
         await super().on_start()
         if self.auto_register_on_discovery:
             await self.register_on_discovery()
+        await self.set_login_url()
 
     async def on_stop(self) -> None:
         if self.auto_register_on_discovery:
