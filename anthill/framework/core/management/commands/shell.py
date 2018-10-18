@@ -1,5 +1,6 @@
 from anthill.framework.core.management.commands.base import Command, Option
 import code
+import os
 
 
 class Shell(Command):
