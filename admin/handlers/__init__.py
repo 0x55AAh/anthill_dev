@@ -64,6 +64,7 @@ class LoginHandler(BaseLoginHandler):
     pass
 
 
+# @authenticated(methods=['GET'])
 class LogoutHandler(BaseLogoutHandler):
     handler_name = 'login'  # Redirect to
 

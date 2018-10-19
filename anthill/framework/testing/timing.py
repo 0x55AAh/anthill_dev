@@ -1,5 +1,6 @@
 import time
 import logging
+import functools
 
 
 default_logger = logging.getLogger('anthill.application')
@@ -40,3 +41,20 @@ class ElapsedTime:
         self.end = time.time()
         self.elapsed = self.end - self.start
         return self
+
+
+def simple_timer(logger=None):
+    logger = logger or default_logger
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            start = time.time()
+            result = func(*args, **kwargs)
+            elapsed = time.time() - start
+            logger.debug('Timing: %s (%s ms)' % (func.__name__, elapsed / 1000))
+            return result
+
+        return wrapper
+
+    return decorator

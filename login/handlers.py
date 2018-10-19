@@ -23,8 +23,11 @@ class LoginHandler(LoginHandlerMixin, UserRequestHandler):
 
 
 class LogoutHandler(LogoutHandlerMixin, UserRequestHandler):
-    def post(self, *args, **kwargs):
-        self.logout()
+    async def get(self, *args, **kwargs):
+        await self.logout()
+
+    async def post(self, *args, **kwargs):
+        await self.get(*args, **kwargs)
 
 
 class RegisterHandler(RequestHandler):

@@ -9,11 +9,10 @@ class AuthenticationForm(Form):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    username = StringField(_('Username'),
+    username = StringField(_('Enter your username'),
                            [validators.DataRequired(), validators.Length(min=4, max=25)],
                            render_kw={'placeholder': _('Username')})
-    password = PasswordField(_('Password'),
-                             [validators.DataRequired()],
+    password = PasswordField(_('Enter your password'), [validators.DataRequired()],
                              render_kw={'placeholder': _('Password')})
 
     async def authenticate(self, request):

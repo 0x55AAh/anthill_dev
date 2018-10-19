@@ -22,6 +22,12 @@
             </div>
         </div>
     </div>
+    <div class="breadcrumb-line breadcrumb-line-component"><a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>
+        <ul class="breadcrumb">
+            <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Services') }}</a></li>
+            <li class="active">{{ metadata.get('title') }}</li>
+        </ul>
+    </div>
 </div>
 
 <!--<div class="page-header page-header-default page-header-lg">-->

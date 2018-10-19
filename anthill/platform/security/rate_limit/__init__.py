@@ -51,6 +51,7 @@ class RateLimitConfig(dict):
         'w': 7 * 24 * 60 * 60  # weeks
     }
 
+    # noinspection PyMethodMayBeStatic
     def _parse_callback(self, entry):
         callback = entry.get('callback')
         if callback is not None:

@@ -167,7 +167,6 @@ AUTH_USER_MODEL = 'User'
 AUTHENTICATION_BACKENDS = [
     # GOOGLE
     'anthill.framework.auth.social.backends.google.GoogleOAuth2',
-    'anthill.framework.auth.social.backends.google.GooglePlusAuth',
 
     # FACEBOOK
     'anthill.framework.auth.social.backends.facebook.FacebookOAuth2',

@@ -12,20 +12,20 @@
 		<ul class="nav navbar-nav">
 			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
 			<li>
-				<a href="{{ reverse_url('debug') }}" title="Terminal"><i class="icon-terminal"></i>
-					<span class="visible-xs-inline-block position-right">{{ _('Terminal') }}</span>
-				</a>
+				<p class="navbar-text">
+			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('Debug') }}</span>
+		        </p>
 			</li>
+			<!--<li>-->
+				<!--<a href="{{ reverse_url('debug') }}" title="Terminal"><i class="icon-terminal"></i>-->
+					<!--<span class="visible-xs-inline-block position-right">{{ _('Terminal') }}</span>-->
+				<!--</a>-->
+			<!--</li>-->
 			<!--<li><a href="#"><i class="icon-clipboard6" title="Log"></i><span class="visible-xs-inline-block position-right">Log</span></a></li>-->
 		</ul>
 
 
 		<ul class="nav navbar-nav navbar-right">
-			<li>
-				<p class="navbar-text">
-			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('Debug') }}</span>
-		        </p>
-			</li>
 			<li class="dropdown dropdown-user">
 				<a class="dropdown-toggle" data-toggle="dropdown">
 					<img src="{{ static_url('images/image.png') }}" alt="">

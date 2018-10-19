@@ -57,7 +57,7 @@ class FormMixin(ContextMixin):
 
     async def form_invalid(self, form):
         """If the form is invalid, render the invalid form."""
-        self.render(await self.get_context_data(form=form))
+        self.render(**(await self.get_context_data(form=form)))
 
     async def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""

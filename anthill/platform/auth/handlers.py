@@ -1,8 +1,6 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.conf import settings
 from anthill.framework.handlers.base import RequestHandler, RedirectHandler
-from anthill.platform.auth.forms import AuthenticationForm
-from anthill.platform.auth import RemoteUser
 from anthill.framework.handlers.edit import FormHandler
 from anthill.framework.utils.crypto import constant_time_compare
 from anthill.framework.auth import (
@@ -11,6 +9,9 @@ from anthill.framework.auth import (
     REDIRECT_FIELD_NAME,
     SESSION_KEY
 )
+from anthill.platform.auth.forms import AuthenticationForm
+from anthill.platform.auth import RemoteUser
+from wtforms import ValidationError
 from functools import partial
 
 
@@ -152,14 +153,22 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
     def get_form_class(self):
         return self.authentication_form or self.form_class
 
+    async def login_error(self, form):
+        context = await self.get_context_data(form=form)
+        self.render(**context)
+
     async def form_valid(self, form):
         """Security check complete. Log the user in."""
-        user = await form.authenticate()
         try:
-            await self.login(user=user)
-            self.redirect(self.get_success_url())
-        except InvalidLoginError as e:
-            pass
+            user = await form.authenticate()
+        except ValidationError:
+            await self.login_error(form)
+        else:
+            try:
+                await self.login(user=user)
+                self.redirect(self.get_success_url())
+            except InvalidLoginError:
+                await self.login_error(form)
 
 
 class LogoutHandler(LogoutHandlerMixin, UserHandlerMixin, RedirectHandler):
