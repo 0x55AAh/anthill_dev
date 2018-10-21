@@ -1,7 +1,7 @@
 """
 Settings and configuration.
 
-Read values from the module specified by the SERVICE_SETTINGS_MODULE environment
+Read values from the module specified by the ANTHILL_SETTINGS_MODULE environment
 variable, and then from anthill.framework.conf.global_settings;
 see the global_settings.py for a list of all possible variables.
 """
@@ -13,14 +13,14 @@ from anthill.framework.conf import global_settings
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.utils.functional import LazyObject, empty
 
-ENVIRONMENT_VARIABLE = "SERVICE_SETTINGS_MODULE"
+ENVIRONMENT_VARIABLE = "ANTHILL_SETTINGS_MODULE"
 
 
 class LazySettings(LazyObject):
     """
     A lazy proxy for either global settings or a custom settings object.
     The user can manually configure settings prior to using them. Otherwise,
-    framework uses the settings module pointed to by SERVICE_SETTINGS_MODULE.
+    framework uses the settings module pointed to by ANTHILL_SETTINGS_MODULE.
     """
     def _setup(self, name=None):
         """

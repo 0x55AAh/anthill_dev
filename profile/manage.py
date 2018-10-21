@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import os
 
-SERVICE_SETTINGS_MODULE = os.getenv("SERVICE_SETTINGS_MODULE", "profile.settings")
+ANTHILL_SETTINGS_MODULE = os.getenv("ANTHILL_SETTINGS_MODULE", "profile.settings")
 
 if __name__ == "__main__":
-    os.environ["SERVICE_SETTINGS_MODULE"] = SERVICE_SETTINGS_MODULE
+    os.environ["ANTHILL_SETTINGS_MODULE"] = ANTHILL_SETTINGS_MODULE
     try:
         import anthill.framework
         anthill.framework.setup()

@@ -1,4 +1,4 @@
-from anthill.framework.core.management.commands.base import Command, Option, InvalidCommand
+from anthill.framework.core.management import Command, Option, InvalidCommand
 from anthill.framework.core.management.utils import popen_wrapper, find_command
 import concurrent.futures
 import codecs
@@ -50,7 +50,7 @@ class CompileMessages(Command):
                                  "tools 0.15 or newer installed." % self.program)
 
         basedirs = []
-        if os.environ.get('SERVICE_SETTINGS_MODULE'):
+        if os.environ.get('ANTHILL_SETTINGS_MODULE'):
             from anthill.framework.conf import settings
             if settings.LOCALE_PATH is not None:
                 basedirs.append(settings.LOCALE_PATH)

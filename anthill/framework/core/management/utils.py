@@ -1,5 +1,6 @@
 from anthill.framework.utils.crypto import get_random_string
 from anthill.framework.utils.encoding import DEFAULT_LOCALE_ENCODING
+from anthill.framework.core.management import InvalidCommand
 from subprocess import PIPE, Popen
 import random
 import os
@@ -14,7 +15,6 @@ def popen_wrapper(args, stdout_encoding='utf-8'):
     try:
         p = Popen(args, shell=False, stdout=PIPE, stderr=PIPE, close_fds=os.name != 'nt')
     except OSError as err:
-        from anthill.framework.core.management.commands import InvalidCommand
         raise InvalidCommand('Error executing %s' % args[0]) from err
     output, errors = p.communicate()
     return (
@@ -22,6 +22,25 @@ def popen_wrapper(args, stdout_encoding='utf-8'):
         errors.decode(DEFAULT_LOCALE_ENCODING, errors='replace'),
         p.returncode
     )
+
+
+def handle_extensions(extensions):
+    """
+    Organize multiple extensions that are separated with commas or passed by
+    using --extension/-e multiple times.
+
+    >>> handle_extensions(['.html', 'html,js,py,py,py,.py', 'py,.py'])
+    {'.html', '.js', '.py'}
+    >>> handle_extensions(['.html, txt,.tpl'])
+    {'.html', '.tpl', '.txt'}
+    """
+    ext_list = []
+    for ext in extensions:
+        ext_list.extend(ext.replace(' ', '').split(','))
+    for i, ext in enumerate(ext_list):
+        if not ext.startswith('.'):
+            ext_list[i] = '.%s' % ext_list[i]
+    return set(ext_list)
 
 
 def find_command(cmd, path=None, pathext=None):

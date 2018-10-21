@@ -1,4 +1,4 @@
-from anthill.framework.core.management.commands.base import Command
+from anthill.framework.core.management import Command
 
 
 class Version(Command):

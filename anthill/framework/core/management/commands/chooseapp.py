@@ -1,4 +1,4 @@
-from anthill.framework.core.management.commands.base import Command, Option
+from anthill.framework.core.management import Command, Option
 
 
 class ApplicationChooser(Command):

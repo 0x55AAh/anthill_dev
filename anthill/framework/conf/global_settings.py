@@ -1,6 +1,6 @@
 """
 Default service settings. Override these with settings in the module pointed to
-by the SERVICE_SETTINGS_MODULE environment variable.
+by the ANTHILL_SETTINGS_MODULE environment variable.
 """
 
 ########

@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 import os
 
-SERVICE_SETTINGS_MODULE = "dlc.settings"
+ANTHILL_SETTINGS_MODULE = os.getenv("ANTHILL_SETTINGS_MODULE", "dlc.settings")
 
 if __name__ == "__main__":
-    if "SERVICE_SETTINGS_MODULE" not in os.environ:
-        os.environ["SERVICE_SETTINGS_MODULE"] = SERVICE_SETTINGS_MODULE
+    os.environ["ANTHILL_SETTINGS_MODULE"] = ANTHILL_SETTINGS_MODULE
     try:
         import anthill.framework
         anthill.framework.setup()

@@ -115,7 +115,7 @@ class Application:
     @lru_cache()
     def commands(self):
         def is_command_class(cls):
-            from anthill.framework.core.management.commands import Command
+            from anthill.framework.core.management import Command
             base_classes = (Command,)
             try:
                 return issubclass(cls, base_classes) and cls not in base_classes

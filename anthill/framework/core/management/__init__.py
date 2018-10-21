@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from .base import Group, Command, Option, InvalidCommand
 from .commands import (
-    Group, Option, Command, Server, Shell, Version,
-    StartApplication, ApplicationChooser, SendTestEmail, CompileMessages
+    Server, Shell, Version,
+    StartApplication, ApplicationChooser, SendTestEmail,
+    CompileMessages, StartProject
 )
 import argparse
 import os
@@ -14,7 +16,7 @@ import logging
 
 __all__ = [
     "Command", "Shell", "Server", "Group", "Option", "Version", "add_help",
-    "Manager", "EmptyManager"
+    "Manager", "EmptyManager", "InvalidCommand"
 ]
 
 safe_actions = (
@@ -452,17 +454,17 @@ class Manager(BaseManager):
 class EmptyManager(BaseManager):
     """Manager with no application context."""
 
-    def __init__(self, base_dir, config_mod=None, **kwargs):
-        self.base_dir = base_dir
-        self.config_mod = config_mod
+    def __init__(self, root_templates_mod=None, **kwargs):
+        self.root_templates_mod = root_templates_mod
         super(EmptyManager, self).__init__(**kwargs)
 
     def add_default_commands(self):
         if "startapp" not in self._commands:
             self.add_command(
-                "startapp", StartApplication(
-                    base_dir=self.base_dir, config_mod=self.config_mod)
-            )
+                "startapp", StartApplication(**{'root_templates_mod': self.root_templates_mod}))
+        if "startproject" not in self._commands:
+            self.add_command(
+                "startproject", StartProject(**{'root_templates_mod': self.root_templates_mod}))
         if "app" not in self._commands:
             self.add_command("app", ApplicationChooser())
         super(EmptyManager, self).add_default_commands()

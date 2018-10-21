@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-import os
-import sys
-import importlib
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.core.management import Manager, EmptyManager
+import importlib
+import os
+import sys
 
 
 def get_settings_module(default=''):
@@ -13,7 +13,7 @@ def get_settings_module(default=''):
         app_manage = ('%s.manage' % app_name) if app_name else ''
         try:
             app_manage_mod = importlib.import_module(app_manage)
-            return app_manage_mod.SERVICE_SETTINGS_MODULE
+            return app_manage_mod.ANTHILL_SETTINGS_MODULE
         except (ValueError, ImportError):
             pass
     except IndexError:
@@ -22,7 +22,7 @@ def get_settings_module(default=''):
 
 
 if __name__ == '__main__':
-    os.environ['SERVICE_SETTINGS_MODULE'] = get_settings_module()
+    os.environ['ANTHILL_SETTINGS_MODULE'] = get_settings_module()
 
     try:
         import anthill.framework
@@ -34,8 +34,13 @@ if __name__ == '__main__':
         del sys.argv[1:4]
 
     if app is None:
-        manager = EmptyManager(
-            base_dir=os.path.dirname(os.path.abspath(__file__)))
+        kwargs = dict()
+        try:
+            cfg = importlib.import_module('cfg')
+            kwargs.update(root_templates_mod=getattr(cfg, 'ROOT_TEMPLATES_MODULE'))
+        except (ImportError, AttributeError):
+            pass
+        manager = EmptyManager(**kwargs)
     else:
         manager = Manager(app=app)
 
