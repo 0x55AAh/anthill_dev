@@ -366,9 +366,9 @@ class TemplateMixin:
         """
         if self.settings.get("serve_traceback") and "exc_info" in kwargs:
             # in debug mode, try to send a traceback
-            self.set_header('Content-Type', 'text/plain')
+            self.set_header('Content-Type', 'text/html')
             reporter = ExceptionReporter(self, exc_info=kwargs["exc_info"])
-            self.finish(reporter.get_traceback_text())
+            self.finish(reporter.get_traceback_html())
         else:
             if status_code in range(500, 600):
                 self.render("errors/500.html")

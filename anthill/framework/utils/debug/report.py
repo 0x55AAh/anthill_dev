@@ -64,6 +64,7 @@ class ExceptionReporter:
                     frame_vars.append((k, v))
                 frame['vars'] = frame_vars
             frames[i] = frame
+
         unicode_hint = ''
         if self.exc_type and issubclass(self.exc_type, UnicodeError):
             start = getattr(self.exc_value, 'start', None)
@@ -74,12 +75,16 @@ class ExceptionReporter:
                     unicode_str[max(start - 5, 0):min(end + 5, len(unicode_str))],
                     'ascii', errors='replace'
                 )
-        user_str = '[unable to retrieve the current user]'
+
+        from anthill.framework import get_version
+
         context = {
-            'frames': self.get_traceback_frames(),
+            'is_email': self.is_email,
+            'unicode_hint': unicode_hint,
+            'frames': frames,
             'application': self.app,
             'app_version': self.app.version,
-            'user_str': user_str,
+            'user_str': None,
             'handler': None,
             'request': None,
             'sys_executable': sys.executable,
@@ -87,11 +92,11 @@ class ExceptionReporter:
             'server_time': timezone.now(),
             'sys_path': sys.path,
             'tornado_version_info': tornado.version,
+            'anthill_framework_version_info': get_version(),
             'exception_type': None,
             'exception_value': None,
             'headers': None,
             'request_variables': None,
-            'unicode_hint': unicode_hint,
         }
         if self.handler:
             context['handler'] = self.handler
@@ -100,10 +105,20 @@ class ExceptionReporter:
                 k: self.handler.decode_argument(v[0]) for k, v
                 in self.handler.request.arguments.items()
             }
+            if self.handler.request is None:
+                user_str = None
+            else:
+                try:
+                    user_str = str(self.handler.current_user)
+                except Exception:
+                    user_str = '[unable to retrieve the current user]'
+            context['user_str'] = user_str
         if self.exc_type:
             context['exception_type'] = self.exc_type.__name__
         if self.exc_value:
             context['exception_value'] = str(self.exc_value)
+        if frames:
+            context['lastframe'] = frames[-1]
         return context
 
     @staticmethod
