@@ -58,9 +58,9 @@ class UserHandlerMixin:
         return user or AnonymousUser()
 
     async def prepare(self):
+        await super().prepare()
         # noinspection PyAttributeOutsideInit
         self.current_user = await self.get_user()
-        await super().prepare()
 
 
 class LoginHandlerMixin:
