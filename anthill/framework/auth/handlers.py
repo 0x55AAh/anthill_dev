@@ -8,7 +8,8 @@ from anthill.framework.auth import (
     SESSION_KEY,
     load_backend
 )
-from anthill.framework.handlers.base import RequestHandler, RedirectHandler
+from anthill.framework.handlers.base import (
+    RequestHandler, RedirectHandler, TemplateHandler)
 from anthill.framework.handlers.edit import FormHandler
 from anthill.framework.auth.forms import AuthenticationForm
 from anthill.framework.auth.models import AnonymousUser
@@ -21,7 +22,9 @@ __all__ = [
     'LogoutHandlerMixin',
     'AuthHandlerMixin',
     'UserRequestHandler',
-    'LoginHandler'
+    'UserTemplateHandler',
+    'LoginHandler',
+    'LogoutHandler',
 ]
 
 
@@ -54,9 +57,10 @@ class UserHandlerMixin:
 
         return user or AnonymousUser()
 
-    # noinspection PyAttributeOutsideInit
-    async def setup_user(self):
+    async def prepare(self):
+        # noinspection PyAttributeOutsideInit
         self.current_user = await self.get_user()
+        await super().prepare()
 
 
 class LoginHandlerMixin:
@@ -107,10 +111,10 @@ class LoginHandlerMixin:
 
 
 class LogoutHandlerMixin:
-    # noinspection PyAttributeOutsideInit
     async def logout(self):
         if not isinstance(self.current_user, (AnonymousUser, type(None))):
             self.session.flush()
+            # noinspection PyAttributeOutsideInit
             self.current_user = AnonymousUser()
 
 
@@ -120,13 +124,11 @@ class AuthHandlerMixin(UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin):
 
 class UserRequestHandler(UserHandlerMixin, RequestHandler):
     """User aware RequestHandler."""
-    async def prepare(self):
-        await super().prepare()
-        await self.setup_user()
 
 
 class LoginHandler(LoginHandlerMixin, FormHandler):
     """Display the login form and handle the login action."""
+
     form_class = AuthenticationForm
     authentication_form = None
     redirect_field_name = REDIRECT_FIELD_NAME
@@ -158,10 +160,10 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
 
 
 class LogoutHandler(LogoutHandlerMixin, UserHandlerMixin, RedirectHandler):
-    async def prepare(self):
-        await super().prepare()
-        await self.setup_user()
-
     async def get(self, *args, **kwargs):
         await self.logout()
         await super().get(*args, **kwargs)
+
+
+class UserTemplateHandler(UserHandlerMixin, TemplateHandler):
+    """User aware TemplateHandler."""

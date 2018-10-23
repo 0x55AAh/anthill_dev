@@ -2,7 +2,9 @@ from anthill.framework.handlers import TemplateHandler, RequestHandler
 from anthill.platform.handlers.jsonrpc import JsonRPCSessionHandler, jsonrpc_method
 from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
-    LogoutHandler as BaseLogoutHandler
+    LogoutHandler as BaseLogoutHandler,
+    UserTemplateHandler,
+    UserHandlerMixin
 )
 from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
@@ -18,7 +20,7 @@ logger = logging.getLogger('anthill.application')
 
 
 # @authenticated(methods=['GET'])
-class HomeHandler(TemplateHandler):
+class HomeHandler(UserTemplateHandler):
     template_name = 'index.html'
 
     def __init__(self, application, request, **kwargs):
@@ -70,7 +72,7 @@ class LogoutHandler(BaseLogoutHandler):
 
 
 # @authenticated(methods=['GET'])
-class DebugHandler(TemplateHandler):
+class DebugHandler(UserTemplateHandler):
     template_name = 'debug.html'
 
     async def get_context_data(self, **kwargs):
@@ -78,7 +80,7 @@ class DebugHandler(TemplateHandler):
         return context
 
 
-class DebugSessionHandler(JsonRPCSessionHandler):
+class DebugSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
     """Defines json-rpc methods for debugging."""
 
     def __init__(self, application, request, dispatcher=None, **kwargs):
@@ -121,7 +123,7 @@ class DebugSessionHandler(JsonRPCSessionHandler):
 
 
 # @authenticated(methods=['GET'])
-class SidebarMainToggle(RequestHandler):
+class SidebarMainToggle(UserHandlerMixin, RequestHandler):
     """Save main sidebar state expanded or closed."""
 
     async def get(self):
@@ -148,7 +150,7 @@ class ServiceContextMixin:
 
 
 # @authenticated(methods=['GET'])
-class ServiceRequestHandler(ServiceContextMixin, TemplateHandler):
+class ServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
     """Shows individual service index page."""
 
     def get_template_name(self, default=False):
@@ -165,10 +167,10 @@ class ServiceRequestHandler(ServiceContextMixin, TemplateHandler):
 
 
 # @authenticated(methods=['GET'])
-class SettingsRequestHandler(TemplateHandler):
+class SettingsRequestHandler(UserTemplateHandler):
     template_name = 'settings.html'
 
 
 # @authenticated(methods=['GET'])
-class LogRequestHandler(ServiceContextMixin, TemplateHandler):
+class LogRequestHandler(ServiceContextMixin, UserTemplateHandler):
     template_name = 'log.html'

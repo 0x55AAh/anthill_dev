@@ -74,10 +74,6 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
             self.client_class = client_class
         self.client = self.get_client_instance()
 
-    async def prepare(self):
-        await super(MessengerHandler, self).prepare()
-        await self.setup_user()
-
     @property
     def client_handlers(self):
         return self._clients[self.client.get_user_id()]

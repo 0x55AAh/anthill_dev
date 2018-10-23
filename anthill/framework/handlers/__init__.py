@@ -12,7 +12,7 @@ from anthill.framework.handlers.streaming.uploadfile import UploadFileStreamHand
 from anthill.framework.handlers.graphql import GraphQLHandler
 from anthill.framework.auth.handlers import (
     UserHandlerMixin, LoginHandlerMixin, LogoutHandlerMixin, AuthHandlerMixin,
-    UserRequestHandler, LoginHandler
+    UserRequestHandler, LoginHandler, LogoutHandler, UserTemplateHandler
 )
 from anthill.framework.handlers.edit import (
     FormMixin, ProcessFormHandler, BaseFormHandler, FormHandler
@@ -27,7 +27,9 @@ __all__ = [
     'WatchFileHandler', 'WatchTextFileHandler', 'WatchLogFileHandler',
     'UploadFileStreamHandler',
     'GraphQLHandler',
+
     'UserHandlerMixin', 'LoginHandlerMixin', 'LogoutHandlerMixin', 'AuthHandlerMixin',
-    'UserRequestHandler', 'LoginHandler',
+    'UserRequestHandler', 'LoginHandler', 'LogoutHandler', 'UserTemplateHandler',
+
     'FormMixin', 'ProcessFormHandler', 'BaseFormHandler', 'FormHandler'
 ]

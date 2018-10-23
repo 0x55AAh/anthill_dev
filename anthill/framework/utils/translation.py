@@ -11,20 +11,20 @@ class LocaleWrapper:
         return getattr(self.default_locale, real_name)
 
 
-_locale_wrapper = LocaleWrapper()
+locale_wrapper = LocaleWrapper()
 
 
 def default_locale():
-    return _locale_wrapper.default_locale
+    return locale_wrapper.default_locale
 
 
 def translate(message, plural_message=None, count=None):
-    return _locale_wrapper.translate(message, plural_message, count)
+    return locale_wrapper.translate(message, plural_message, count)
 
 
 # noinspection SpellCheckingInspection
 def pgettext(context, message, plural_message=None, count=None):
-    return _locale_wrapper.pgettext(context, message, plural_message, count)
+    return locale_wrapper.pgettext(context, message, plural_message, count)
 
 
 translate_lazy = lazy(translate, str)
