@@ -4,6 +4,7 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.platform.auth.handlers import UserHandlerMixin
 from functools import wraps
 import json
+import enum
 
 
 class NotAuthenticatedError(Exception):
@@ -59,8 +60,14 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
     _clients = {}  # Mapping user_id to list of handlers
     same_clients_limit = None  # Same user_id clients count limitation
 
-    NET_STATUS_OFFLINE = 'offline'
-    NET_STATUS_ONLINE = 'online'
+    @enum.unique
+    class NetStatus(enum.Enum):
+        offline = 0
+        online = 1
+
+    @enum.unique
+    class MessageType(enum.Enum):
+        message = 0
 
     def __init__(self, *args, **kwargs):
         super(MessengerHandler, self).__init__(*args, **kwargs)
@@ -88,8 +95,8 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         await self.send_to_group(group, message)
 
     async def send_net_status(self, status: str) -> None:
-        if status not in (self.NET_STATUS_ONLINE, self.NET_STATUS_OFFLINE):
-            raise ValueError('Status can be `online` or `offline`')
+        if status not in NetStatus.__members__:
+            raise ValueError('Status must be in %s' % list(NetStatus.__members__))
         friends = await self.client.get_friends() or []
         message = {
             'type': '',
@@ -151,7 +158,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         await super(MessengerHandler, self).open(*args, **kwargs)
         await self.client.authenticate(user=self.current_user)
         if self.notification_on_net_status_changed:
-            await self.send_net_status(self.NET_STATUS_ONLINE)
+            await self.send_net_status(self.NetStatus.online.name)
         self._clients.setdefault(self.client.get_user_id(), []).append(self)
 
     @auth_required
@@ -236,7 +243,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
     async def on_connection_close(self) -> None:
         await super(MessengerHandler, self).on_connection_close()
         if self.notification_on_net_status_changed:
-            await self.send_net_status(self.NET_STATUS_OFFLINE)
+            await self.send_net_status(self.NetStatus.offline.name)
         self.client_handlers.remove(self)
 
     async def message_handler(self, message: dict) -> None:
@@ -253,7 +260,12 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
             raise ValueError('Action `%s` not available' % action_name)
         self.action_name = action_name
 
-        self.message_type = message['type']
+        self.message_type = message.get('type')
+        if self.message_type is None:
+            raise ValueError('Message must provide a type')
+        if self.message_type not in MessageType.__members__:
+            raise ValueError('Message type must be in %s' % list(MessageType.__members__))
+
         self.request_id = message.get('request_id')
 
         message.update(user=self.client.get_user_id())  # Add message source id
@@ -345,7 +357,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
 
     @action()
     async def join_group(self, group: str, message: dict) -> None:
-        """Join the group"""
+        """Join the group."""
         await self.client.join_group(group)
         await self.group_add(group)
         await self.send_to_group(group, message)
@@ -359,7 +371,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
 
     @action()
     async def leave_group(self, group: str, message: dict) -> None:
-        """Leave the group"""
+        """Leave the group."""
         await self.group_discard(group)
         await self.client.leave_group(group)
         await self.send_to_group(group, message)
@@ -382,7 +394,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         {
             "request_id": request_id,
             "action": "create_message",
-            "type": "",
+            "type": "message",
             "group": group, # Destination user_id if message is direct
             "data": {"content": content, "binary": False, "draft": False},
             "user_id": user_id, # Added automatically
@@ -499,7 +511,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         hidden = message['data'].get('hidden', False)
         reply = {
             'action': 'ping',
-            'type': '',
+            'type': 'message',
             'data': {'text': 'ping', 'hidden': hidden},
             'user_id': self.client.get_user_id(),
         }
@@ -509,7 +521,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
     async def pong_group(self, group: str, message: dict) -> None:
         reply = {
             'action': 'pong',
-            'type': '',
+            'type': 'message',
             'data': {'text': 'pong'},
             'user_id': self.client.get_user_id(),
         }
@@ -528,7 +540,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "typing_start",
-            "type": "",
+            "type": "message",
             "user_id": user_id,
         }
         """
@@ -541,7 +553,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "typing_finish",
-            "type": "",
+            "type": "message",
             "user_id": user_id,
         }
         """
@@ -554,7 +566,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "sending_file_start",
-            "type": "",
+            "type": "message",
             "user_id": user_id,
         }
         """
@@ -567,7 +579,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "sending_file_finish",
-            "type": "",
+            "type": "message",
             "user_id": user_id,
         }
         """
@@ -580,7 +592,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "online",
-            "type": "",
+            "type": "message",
             "user_id": user_id,
         }
         """
@@ -593,7 +605,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "offline",
-            "type": "",
+            "type": "message",
             "user_id": user_id,
         }
         """
@@ -606,7 +618,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         Message format:
         {
             "action": "delivered",
-            "type": "",
+            "type": "message",
             "data": {"message_id": message_id}
             "user_id": user_id,
         }
