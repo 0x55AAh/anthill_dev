@@ -1,4 +1,5 @@
 from anthill.framework.auth.models import AnonymousUser
+from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
 from anthill.platform.auth import RemoteUser
 from typing import Optional
 
@@ -16,6 +17,8 @@ class BaseClient:
         """
         if user is not None:
             self.user = user
+        if isinstance(self.user, (type(None), AnonymousUser)):
+            raise NotAuthenticatedError
 
     def get_personal_group(self, user_id: str=None) -> str:
         user_id = user_id if user_id is not None else self.get_user_id()

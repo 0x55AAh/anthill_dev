@@ -2,17 +2,10 @@ from anthill.framework.auth.models import AnonymousUser
 from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.platform.auth.handlers import UserHandlerMixin
+from anthill.platform.core.messenger.exceptions import NotAuthenticatedError, AuthenticationFailedError
 from functools import wraps
 import json
 import enum
-
-
-class NotAuthenticatedError(Exception):
-    pass
-
-
-class AuthenticationFailedError(Exception):
-    pass
 
 
 def auth_required(func):
