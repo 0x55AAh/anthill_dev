@@ -8,6 +8,15 @@
             background-color: rgb(43, 175, 164);
         }
     }
+    .page-header .breadcrumb-line-component {
+        margin-top: 20px;
+    }
+    .nav-tabs {
+         margin-bottom: 0;
+    }
+    .nav-tabs {
+         border-bottom: unset;
+    }
 </style>
 {% end %}
 
@@ -21,17 +30,15 @@
         <div class="panel panel-flat">
             <div class="panel-body">
                 <ul class="nav nav-lg nav-tabs nav-tabs-bottom">
-                    <li class="active"><a href="#"><i class="icon-display4 position-left"></i> Website</a></li>
-                    <li><a href="{{ reverse_url('service-log', name) }}"><i class="icon-clipboard6 position-left"></i> Log</a></li>
-                    <!--<li class="dropdown pull-right">-->
-                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-cog3"></i>-->
-                            <!--<span class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span>-->
-                        <!--</a>-->
-                        <!--<ul class="dropdown-menu dropdown-menu-right">-->
-                            <!--<li><a href="#">Log</a></li>-->
-                            <!--<li class="divider"></li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
+                    <li><a href="#"><i class="icon-display4 position-left"></i> Applications</a></li>
+                    <li class="dropdown pull-right">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-cog3"></i>
+                            <span class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="{{ reverse_url('service-log', name) }}"><i class="icon-clipboard6"></i> Log</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>

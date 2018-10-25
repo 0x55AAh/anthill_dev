@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 # Setup postgres database
-createuser -d postgres -U anthill_discovery
-createdb -U anthill_discovery anthill_discovery
+createuser -d anthill_dlc -U postgres
+createdb -U anthill_dlc anthill_dlc

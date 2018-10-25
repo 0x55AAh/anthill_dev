@@ -133,6 +133,13 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
         self.settings.update(websocket_max_message_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE)
         self.init_session()
 
+    async def prepare(self):
+        """
+        Called at the beginning of a request before websocket
+        connection is opened.
+        """
+        self.setup_session()
+
     async def on_message(self, message):
         """Handle incoming messages on the WebSocket."""
         self.update_session()
@@ -142,7 +149,6 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
 
     async def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
-        self.setup_session()
         self.ws_clients.append(self)
 
     def on_close(self):
@@ -167,10 +173,6 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
 class JsonWebSocketHandler(WebSocketHandler):
     def set_default_headers(self):
         self.set_header('Content-Type', 'application/json')
-
-    async def on_message(self, message):
-        """Handle incoming messages on the WebSocket."""
-        await super().on_message(message)
 
 
 class JSONHandlerMixin:

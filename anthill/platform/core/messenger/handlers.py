@@ -92,7 +92,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
             raise ValueError('Status must be in %s' % list(NetStatus.__members__))
         friends = await self.client.get_friends() or []
         message = {
-            'type': '',
+            'type': self.MessageType.message,
             'action': status,
             'user_id': self.client.get_user_id()
         }

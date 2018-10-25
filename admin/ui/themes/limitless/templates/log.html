@@ -3,9 +3,8 @@
 {% block css %}
 <link href="{{ static_url('css/terminal/jquery.terminal.css') }}" rel="stylesheet"/>
 <style>
-    .breadcrumb-line:first-child {
-        border-top-width: 0;
-        border-bottom: unset;
+    .page-header .breadcrumb-line-component {
+        margin: 20px;
     }
     @supports (--css: variables) {
         .console.ubuntu.terminal {
@@ -48,10 +47,11 @@
 {% end %}
 
 {% block header %}
-<div class="page-header page-header-default page-header-lg">
-    <div class="breadcrumb-line"><a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>
+<div class="page-header">
+    <div class="breadcrumb-line breadcrumb-line-component">
+        <a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>
         <ul class="breadcrumb">
-            <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Services') }}</a></li>
+            <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Home') }}</a></li>
             <li><a href="{{ reverse_url('service', name) }}">{{ metadata.get('title') }}</a></li>
             <li class="active">{{ _('Log') }}</li>
         </ul>

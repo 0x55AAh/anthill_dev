@@ -9,22 +9,22 @@
 {% block header %}
 <div class="page-header">
     <div class="page-header-content">
-        <div class="page-title">
-            <h4>
-                <i class="icon-arrow-left52 position-left"></i>
-                <span class="text-semibold">{{ _('Service') }}</span> - {{ metadata.get('title', _('Undefined')) }}
-                <small class="display-block">{{ metadata.get('description', _('Undefined')) }}</small>
-            </h4>
-        </div>
-        <div class="heading-elements">
-            <div class="heading-btn-group">
-                <a href="{{ reverse_url('service-log', name) }}" class="btn bg-primary btn-icon btn-sm heading-btn"><i class="icon-clipboard6"></i></a>
-            </div>
-        </div>
+        <!--<div class="page-title">-->
+            <!--<h4>-->
+                <!--<i class="icon-arrow-left52 position-left"></i>-->
+                <!--<span class="text-semibold">{{ _('Service') }}</span> - {{ metadata.get('title', _('Undefined')) }}-->
+                <!--<small class="display-block">{{ metadata.get('description', _('Undefined')) }}</small>-->
+            <!--</h4>-->
+        <!--</div>-->
+        <!--<div class="heading-elements">-->
+            <!--<div class="heading-btn-group">-->
+                <!--<a href="{{ reverse_url('service-log', name) }}" class="btn bg-primary btn-icon btn-sm heading-btn"><i class="icon-clipboard6"></i></a>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
     <div class="breadcrumb-line breadcrumb-line-component"><a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>
         <ul class="breadcrumb">
-            <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Services') }}</a></li>
+            <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Home') }}</a></li>
             <li class="active">{{ metadata.get('title') }}</li>
         </ul>
     </div>
