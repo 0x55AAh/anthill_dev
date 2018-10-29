@@ -122,9 +122,24 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         # self.set_header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
 
 
+class WSClientsWatcher:
+    def __init__(self, *args, **kwargs):
+        self.items = []
+
+    def append(self, handler: 'WebSocketHandler') -> None:
+        self.items.append(handler)
+
+    def remove(self, handler: 'WebSocketHandler') -> None:
+        self.items.remove(handler)
+
+    @property
+    def count(self) -> int:
+        return len(self.items)
+
+
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
                        CommonRequestHandlerMixin, BaseWebSocketHandler):
-    ws_clients = []
+    ws_clients = WSClientsWatcher()
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
@@ -149,11 +164,13 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
 
     async def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
-        self.ws_clients.append(self)
+        if self.ws_clients is not None:
+            self.ws_clients.append(self)
 
     def on_close(self):
         """Invoked when the WebSocket is closed."""
-        self.ws_clients.remove(self)
+        if self.ws_clients is not None:
+            self.ws_clients.remove(self)
 
     def on_ping(self, data):
         """Invoked when the a ping frame is received."""

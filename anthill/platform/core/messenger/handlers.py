@@ -43,6 +43,32 @@ class MessengerHandlerMeta(type):
         return handler
 
 
+class WSClientsWatcher:
+    user_limit: int = 0
+
+    def __init__(self, user_limit: int=0):
+        if user_limit:
+            self.user_limit = user_limit
+        self.items = dict()
+
+    def user_limit_triggered(self) -> bool:
+        return self.user_limit and len(self.items[user_id]) > self.user_limit
+
+    def append(self, handler: 'MessengerHandler') -> None:
+        user_id = handler.client.get_user_id()
+        self.items.setdefault(user_id, []).append(handler)
+        if self.user_limit_triggered():
+            pass
+
+    def remove(self, handler: 'MessengerHandler') -> None:
+        user_id = handler.client.get_user_id()
+        self.items[user_id].remove(handler)
+
+    @property
+    def count(self) -> int:
+        return sum(map(lambda x: len(x), self.items.values()))
+
+
 class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
     groups = ['__messenger__']  # Global groups. Must starts with `__` for security reason
     client_class = None
