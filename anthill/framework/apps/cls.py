@@ -259,7 +259,7 @@ class Application:
         for model in self.get_models():
             logger.debug('  \_ Model %s.' % class_name(model))
 
-        self.db.create_all()
+        # self.db.create_all()
         logger.debug('All database tables created.')
 
         self.update_models()

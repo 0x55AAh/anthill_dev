@@ -20,6 +20,17 @@ $(function() {
         }
     });
 
+    function filter_service_cards(q) {
+        $('.services-cards > div').each(function() {
+            var service_name = $(this).data('name').toUpperCase();
+            if (service_name.indexOf(q) === 0) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
     var services_metadata_query = " \
         query {                     \
             servicesMetadata {      \
@@ -45,7 +56,7 @@ $(function() {
                 var entries = result.data['servicesMetadata'];
                 $.each(entries, function(index, entry) {
                     html_card_entry = '' +
-                        '<div class="col-lg-2 col-md-3 col-sm-6" data-name="' + entry.name +'">' +
+                        '<div class="col-lg-2 col-md-3 col-sm-6" style="display: none" data-name="' + entry.name +'">' +
                         '    <div class="panel" style="height: 320px;">' +
                         '        <div class="panel-body text-center">' +
                         '            <a href="/services/' + entry.name + '/" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
@@ -61,6 +72,7 @@ $(function() {
                 });
                 $('.content-wrapper .content .row').html(html_card_data);
                 $('.page-header .page-title span.badge-warning').text(entries.length);
+                filter_service_cards($('input[name=search]').val().toUpperCase());
             },
             error: function(jqXHR, textStatus, errorThrown) {
 
@@ -69,5 +81,9 @@ $(function() {
     }
 
     setInterval(update_services_registry, AJAX_INTERVAL * 1000);
+
+    $('input[name=search]').keyup(function() {
+        filter_service_cards($(this).val().toUpperCase());
+    });
 
 });

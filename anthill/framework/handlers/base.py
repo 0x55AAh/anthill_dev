@@ -53,7 +53,10 @@ class CommonRequestHandlerMixin:
 
     @property
     def internal_request(self):
-        """An alias for `self.application.internal_connection.request <InternalConnection.request>`."""
+        """
+        An alias for `self.application.internal_connection.request
+        <InternalConnection.request>`.
+        """
         return self.application.internal_connection.request
 
     @property
@@ -79,6 +82,7 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
 
     def get_content_type(self):
         content_type = self.request.headers.get('Content-Type', 'text/plain')
+        # noinspection PyProtectedMember
         return httputil._parse_header(content_type)
 
     def reverse_url(self, name, *args):
@@ -122,7 +126,23 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         # self.set_header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
 
 
-class WSClientsWatcher:
+class BaseWSClientsWatcher:
+    """Base websoket handlers watcher."""
+
+    def append(self, handler) -> None:
+        raise NotImplementedError
+
+    def remove(self, handler) -> None:
+        raise NotImplementedError
+
+    @property
+    def count(self) -> int:
+        raise NotImplementedError
+
+
+class WSClientsWatcher(BaseWSClientsWatcher):
+    """Default websoket handlers watcher."""
+
     def __init__(self, *args, **kwargs):
         self.items = []
 
@@ -139,7 +159,7 @@ class WSClientsWatcher:
 
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
                        CommonRequestHandlerMixin, BaseWebSocketHandler):
-    ws_clients = WSClientsWatcher()
+    ws_clients = None
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)

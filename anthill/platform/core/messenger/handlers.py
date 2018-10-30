@@ -1,5 +1,6 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.framework.handlers.base import BaseWSClientsWatcher
 from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
@@ -43,24 +44,29 @@ class MessengerHandlerMeta(type):
         return handler
 
 
-class WSClientsWatcher:
+class WSClientsWatcher(BaseWSClientsWatcher):
+    """Messenger handlers watcher."""
     user_limit: int = 0
 
     def __init__(self, user_limit: int=0):
         if user_limit:
             self.user_limit = user_limit
-        self.items = dict()
+        self.items = {}
+
+    # noinspection PyMethodMayBeStatic
+    def get_user_id(self, handler: 'MessengerHandler') -> str:
+        return handler.client.get_user_id()
 
     def append(self, handler: 'MessengerHandler') -> None:
-        user_id = handler.client.get_user_id()
+        user_id = self.get_user_id(handler)
         self.items.setdefault(user_id, []).append(handler)
         if self.user_limit and len(self.items[user_id]) > self.user_limit:
-            handler.close(code=4001,
-                          reason='Cannot open new connection '
-                                 'because of limit (%s) exceeded' % len(self.items[user_id]))
+            reason = ('Cannot open new connection '
+                      'because of limit (%s) exceeded' % len(self.items[user_id]))
+            handler.close(code=4001, reason=reason)
 
     def remove(self, handler: 'MessengerHandler') -> None:
-        user_id = handler.client.get_user_id()
+        user_id = self.get_user_id(handler)
         self.items[user_id].remove(handler)
 
     @property

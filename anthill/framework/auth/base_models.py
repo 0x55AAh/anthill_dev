@@ -3,6 +3,7 @@ from anthill.framework.db import db
 from anthill.framework.utils import timezone
 from anthill.framework.utils.crypto import salted_hmac
 from anthill.framework.auth import password_validation
+from anthill.framework.core.mail import send_mail
 
 
 class BaseAbstractUser(db.Model):
@@ -56,7 +57,7 @@ class BaseAbstractUser(db.Model):
         return check_password(raw_password, self.password, setter=setter)
 
     def save(self, *args, **kwargs):
-        super(BaseAbstractUser, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if self._password is not None:
             password_validation.password_changed(self._password, self)
             self._password = None
@@ -71,6 +72,7 @@ class AbstractUser(BaseAbstractUser):
     __abstract__ = True
 
     username = db.Column(db.String(128), nullable=False, unique=True)
+    email = db.Column(db.String(128), nullable=False, unique=True)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     USERNAME_FIELD = 'username'
@@ -85,3 +87,7 @@ class AbstractUser(BaseAbstractUser):
     @property
     def is_authenticated(self):
         return True
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """Send an email to this user."""
+        send_mail(subject, message, from_email, [self.email], **kwargs)
