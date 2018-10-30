@@ -1,8 +1,8 @@
 from anthill.framework.auth.models import AnonymousUser
-from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
-from anthill.platform.core.messenger.exceptions import NotAuthenticatedError, AuthenticationFailedError
+from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
 from functools import wraps
 import json
 import enum
@@ -51,14 +51,13 @@ class WSClientsWatcher:
             self.user_limit = user_limit
         self.items = dict()
 
-    def user_limit_triggered(self) -> bool:
-        return self.user_limit and len(self.items[user_id]) > self.user_limit
-
     def append(self, handler: 'MessengerHandler') -> None:
         user_id = handler.client.get_user_id()
         self.items.setdefault(user_id, []).append(handler)
-        if self.user_limit_triggered():
-            pass
+        if self.user_limit and len(self.items[user_id]) > self.user_limit:
+            handler.close(code=4001,
+                          reason='Cannot open new connection '
+                                 'because of limit (%s) exceeded' % len(self.items[user_id]))
 
     def remove(self, handler: 'MessengerHandler') -> None:
         user_id = handler.client.get_user_id()
@@ -76,8 +75,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
     direct_group_prefix = '__direct'  # Must starts with `__`
     secure_direct = True
     secure_groups = True
-    _clients = {}  # Mapping user_id to list of handlers
-    same_clients_limit = None  # Same user_id clients count limitation
+    ws_clients = WSClientsWatcher(user_limit=0)
 
     @enum.unique
     class NetStatus(enum.Enum):
@@ -100,10 +98,6 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
             self.client_class = client_class
         self.client = self.get_client_instance()
 
-    @property
-    def client_handlers(self):
-        return self._clients[self.client.get_user_id()]
-
     def get_client_instance(self):
         if self.client_class is None:
             raise ImproperlyConfigured('Client class is undefined')
@@ -114,8 +108,8 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         await self.send_to_group(group, message)
 
     async def send_net_status(self, status: str) -> None:
-        if status not in NetStatus.__members__:
-            raise ValueError('Status must be in %s' % list(NetStatus.__members__))
+        if status not in self.NetStatus.__members__:
+            raise ValueError('Status must be in %s' % list(self.NetStatus.__members__))
         friends = await self.client.get_friends() or []
         message = {
             'type': self.MessageType.message,
@@ -170,15 +164,10 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
 
     async def open(self, *args, **kwargs) -> None:
         """Invoked when a new connection is opened."""
-        if self.same_clients_limit and len(self.client_handlers) > self.same_clients_limit:
-            self.close(code=None,
-                       reason='Cannot open new connection '
-                              'because of limit (%s) exceeded' % len(self.client_handlers))
         await super(MessengerHandler, self).open(*args, **kwargs)
         await self.client.authenticate(user=self.current_user)
         if self.notification_on_net_status_changed:
             await self.send_net_status(self.NetStatus.online.name)
-        self._clients.setdefault(self.client.get_user_id(), []).append(self)
 
     @auth_required
     async def on_channel_message(self, message: dict) -> None:
@@ -263,7 +252,6 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         await super(MessengerHandler, self).on_connection_close()
         if self.notification_on_net_status_changed:
             await self.send_net_status(self.NetStatus.offline.name)
-        self.client_handlers.remove(self)
 
     async def message_handler(self, message: dict) -> None:
         group_name = message.get('group')
@@ -282,8 +270,8 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         self.message_type = message.get('type')
         if self.message_type is None:
             raise ValueError('Message must provide a type')
-        if self.message_type not in MessageType.__members__:
-            raise ValueError('Message type must be in %s' % list(MessageType.__members__))
+        if self.message_type not in self.MessageType.__members__:
+            raise ValueError('Message type must be in %s' % list(self.MessageType.__members__))
 
         self.request_id = message.get('request_id')
 

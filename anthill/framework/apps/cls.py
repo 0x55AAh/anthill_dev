@@ -1,9 +1,8 @@
-from collections import defaultdict
-from tornado.web import URLSpec
 from anthill.framework.utils.text import slugify, camel_case_to_spaces, class_name
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
 from urllib.parse import urlparse, urljoin
+from collections import defaultdict
 from functools import lru_cache
 from _thread import get_ident
 import importlib
@@ -260,7 +259,7 @@ class Application:
         for model in self.get_models():
             logger.debug('  \_ Model %s.' % class_name(model))
 
-        # self.db.create_all()
+        self.db.create_all()
         logger.debug('All database tables created.')
 
         self.update_models()
