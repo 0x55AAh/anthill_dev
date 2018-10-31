@@ -1,5 +1,5 @@
 from anthill.platform.api.internal import RequestTimeoutError
-from anthill.platform.utils.internal_api import internal_request
+from anthill.platform.api.internal import InternalAPIMixin
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from anthill.framework.apps import app
 from admin import models
@@ -21,7 +21,7 @@ class ServiceMetadata(graphene.ObjectType):
         return self.name < other.name
 
 
-class RootQuery(graphene.ObjectType):
+class RootQuery(InternalAPIMixin, graphene.ObjectType):
     """Api root query."""
 
     services_metadata = graphene.List(ServiceMetadata, description='List of services metadata.')
@@ -30,7 +30,7 @@ class RootQuery(graphene.ObjectType):
     async def resolve_services_metadata(self, info, **kwargs):
         services_metadata = []
         try:
-            services = await internal_request('discovery', method='get_services')
+            services = await self.internal_request('discovery', method='get_services')
         except RequestTimeoutError:
             pass
         else:
@@ -39,7 +39,7 @@ class RootQuery(graphene.ObjectType):
                     # Skip current application
                     continue
                 try:
-                    metadata = await internal_request(name, method='get_service_metadata')
+                    metadata = await self.internal_request(name, method='get_service_metadata')
                     services_metadata.append(ServiceMetadata(**metadata))
                 except RequestTimeoutError:
                     pass

@@ -5,6 +5,7 @@ from anthill.framework.utils.urls import build_absolute_uri
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.core.files.storage import default_storage
+from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.utils.ssh import PrivateSSHKeyContext
 from anthill.platform.utils.rsync import Rsync
 from tornado.escape import to_unicode
@@ -15,7 +16,7 @@ from dlc.exceptions import DeploymentError
 METHODS = getattr(settings, 'DEPLOYMENT_METHODS', [])
 
 
-class DeploymentMethod:
+class DeploymentMethod(InternalAPIMixin):
     name = None
 
     def __init__(self):
@@ -26,11 +27,6 @@ class DeploymentMethod:
     def app(self):
         from anthill.framework.apps import app
         return app
-
-    @property
-    def internal_request(self):
-        from anthill.platform.utils.internal_api import internal_request
-        return internal_request
 
     async def deploy(self, src: str, dst: str) -> str:
         raise NotImplementedError(

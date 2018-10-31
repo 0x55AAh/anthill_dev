@@ -23,7 +23,7 @@ import logging
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
-    'as_internal', 'api', 'InternalAPI',
+    'as_internal', 'api', 'InternalAPI', 'InternalAPIMixin',
     'InternalAPIError', 'RequestTimeoutError', 'RequestError'
 ]
 
@@ -305,3 +305,27 @@ class JSONRPCInternalConnection(BaseInternalConnection):
 
 
 InternalConnection = JSONRPCInternalConnection  # More simple alias
+
+
+class InternalAPIMixin:
+    """Includes internal api operations."""
+    internal_connection_class = InternalConnection
+
+    @property
+    def internal_connection(self):
+        return self.internal_connection_class()
+
+    @property
+    def internal_request(self):
+        return self.internal_connection.request
+
+    @property
+    def internal_push(self):
+        return self.internal_connection.push
+
+
+class InternalAPIConnector(InternalAPIMixin):
+    pass
+
+
+connector = InternalAPIConnector()
