@@ -46,13 +46,11 @@ class Rsync:
         return ' '.join(cmd)
 
     def upload_cmd(self, src_path, dst_path):
-        self.cmd_context['src_path'] = src_path
-        self.cmd_context['dst_path'] = dst_path
+        self.cmd_context = {'src_path': src_path, 'dst_path': dst_path}
         return self.upload_cmd_template.format(**self.get_cmd_context())
 
     def download_cmd(self, src_path, dst_path):
-        self.cmd_context['src_path'] = src_path
-        self.cmd_context['dst_path'] = dst_path
+        self.cmd_context = {'src_path': src_path, 'dst_path': dst_path}
         return self.download_cmd_template.format(**self.get_cmd_context())
 
     async def upload(self, src_path, dst_path):

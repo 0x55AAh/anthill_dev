@@ -23,8 +23,8 @@ import logging
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
-    'as_internal', 'api', 'InternalAPI', 'InternalAPIMixin',
-    'InternalAPIError', 'RequestTimeoutError', 'RequestError'
+    'as_internal', 'api', 'InternalAPI', 'InternalAPIMixin', 'InternalAPIConnector',
+    'InternalAPIError', 'RequestTimeoutError', 'RequestError', 'connector'
 ]
 
 

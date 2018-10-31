@@ -1,4 +1,4 @@
-from anthill.platform.api.internal import RequestTimeoutError, RequestError
+from anthill.platform.api.internal import RequestTimeoutError, RequestError, connector
 from datetime import datetime
 from typing import Optional
 from functools import partial
@@ -114,8 +114,7 @@ class RemoteProfile:
 
 async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:
     """Perform internal api authentication."""
-    if internal_request is None:
-        from anthill.platform.utils.internal_api import internal_request
+    internal_request = internal_request or connector.internal_request
     do_authenticate = partial(internal_request, 'login', 'authenticate')
     try:
         data = await do_authenticate(credentials=credentials)  # User data dict
@@ -127,8 +126,7 @@ async def internal_authenticate(internal_request=None, **credentials) -> RemoteU
 
 async def internal_login(user_id, internal_request=None) -> str:
     """Perform internal api login."""
-    if internal_request is None:
-        from anthill.platform.utils.internal_api import internal_request
+    internal_request = internal_request or connector.internal_request
     do_login = partial(internal_request, 'login', 'login')
     try:
         token = await do_login(user_id)
