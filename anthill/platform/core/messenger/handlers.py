@@ -61,8 +61,8 @@ class WSClientsWatcher(BaseWSClientsWatcher):
         user_id = self.get_user_id(handler)
         self.items.setdefault(user_id, []).append(handler)
         if self.user_limit and len(self.items[user_id]) > self.user_limit:
-            reason = ('Cannot open new connection '
-                      'because of limit (%s) exceeded' % len(self.items[user_id]))
+            reason = ('Cannot open new connection because of limit '
+                      '(%s) exceeded' % len(self.items[user_id]))
             handler.close(code=4001, reason=reason)
 
     def remove(self, handler: 'MessengerHandler') -> None:
