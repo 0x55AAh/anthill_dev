@@ -81,7 +81,7 @@ class RemoteUser:
     def check_password(self, raw_password):
         raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
 
-    def get_porfile(self):
+    def get_profile(self):
         return self.profile
 
 
