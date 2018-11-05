@@ -1,5 +1,4 @@
-from anthill.platform.api.internal import RequestTimeoutError
-from anthill.platform.api.internal import InternalAPIMixin
+from anthill.platform.api.internal import RequestTimeoutError, connector
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from anthill.framework.apps import app
 from admin import models
@@ -21,16 +20,16 @@ class ServiceMetadata(graphene.ObjectType):
         return self.name < other.name
 
 
-class RootQuery(InternalAPIMixin, graphene.ObjectType):
+class RootQuery(graphene.ObjectType):
     """Api root query."""
 
     services_metadata = graphene.List(ServiceMetadata, description='List of services metadata.')
 
-    # noinspection PyMethodMayBeStatic
-    async def resolve_services_metadata(self, info, **kwargs):
+    @staticmethod
+    async def resolve_services_metadata(root, info, **kwargs):
         services_metadata = []
         try:
-            services = await self.internal_request('discovery', method='get_services')
+            services = await connector.internal_request('discovery', method='get_services')
         except RequestTimeoutError:
             pass
         else:
@@ -39,7 +38,7 @@ class RootQuery(InternalAPIMixin, graphene.ObjectType):
                     # Skip current application
                     continue
                 try:
-                    metadata = await self.internal_request(name, method='get_service_metadata')
+                    metadata = await connector.internal_request(name, method='get_service_metadata')
                     services_metadata.append(ServiceMetadata(**metadata))
                 except RequestTimeoutError:
                     pass
@@ -51,4 +50,5 @@ class Mutation(graphene.ObjectType):
     pass
 
 
+# noinspection PyTypeChecker
 schema = graphene.Schema(query=RootQuery)

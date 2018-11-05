@@ -1,4 +1,4 @@
-from anthill.platform.api.internal import RequestTimeoutError, RequestError, connector
+from anthill.platform.api.internal import RequestError, connector
 from datetime import datetime
 from typing import Optional
 from functools import partial
@@ -118,7 +118,7 @@ async def internal_authenticate(internal_request=None, **credentials) -> RemoteU
     do_authenticate = partial(internal_request, 'login', 'authenticate')
     try:
         data = await do_authenticate(credentials=credentials)  # User data dict
-    except (RequestTimeoutError, RequestError) as e:
+    except RequestError as e:
         logger.error(str(e))
     else:
         return RemoteUser(**data)
@@ -130,7 +130,7 @@ async def internal_login(user_id, internal_request=None) -> str:
     do_login = partial(internal_request, 'login', 'login')
     try:
         token = await do_login(user_id)
-    except (RequestTimeoutError, RequestError) as e:
+    except RequestError as e:
         logger.error(str(e))
     else:
         return token

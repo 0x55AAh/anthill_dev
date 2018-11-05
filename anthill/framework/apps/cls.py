@@ -33,7 +33,7 @@ class Application:
         self.icon_class = settings.APPLICATION_ICON_CLASS
 
         self.routes_conf = self.getdefault('ROUTES_CONF', '.'.join([self.name, 'routes']))
-        self.service_class = self.getdefault('SERVICE_CLASS', '.'.join([self.name, 'services.Service']))
+        self.service_class = self.getdefault('SERVICE_CLASS', '.'.join([self.name, 'services', 'Service']))
         self.management_conf = self.getdefault('MANAGEMENT_CONF', '.'.join([self.name, 'management']))
         self.models_conf = self.getdefault('MODELS_CONF', '.'.join([self.name, 'models']))
         self.ui_module = self.getdefault('UI_MODULE', '.'.join([self.name, 'ui']))
