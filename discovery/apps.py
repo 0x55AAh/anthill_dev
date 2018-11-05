@@ -12,15 +12,16 @@ class AnthillApplication(BaseAnthillApplication):
     
     def __init__(self):
         super().__init__()
-        self.registry = getattr(settings, 'REGISTERED_SERVICES', {})
-        if not self.registry:
-            self.load_services_from_file()
+        self.registry = self.load_services()
 
-    def load_services_from_file(self):
-        fn = getattr(settings, 'REGISTERED_SERVICES_EXTERNAL', None)
+    @staticmethod
+    def load_services():
+        path = getattr(settings, 'REGISTERED_SERVICES', None)
+        registry = {}
         try:
-            if fn is not None:
-                with open(fn) as f:
-                    self.registry = json.load(f)
+            if path is not None:
+                with open(path) as f:
+                    registry.update(json.load(f))
         except Exception as e:
             logging.warning(force_text(e))
+        return registry
