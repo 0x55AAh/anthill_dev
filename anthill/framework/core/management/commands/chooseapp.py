@@ -6,7 +6,7 @@ class ApplicationChooser(Command):
 
     def get_options(self):
         options = (
-            Option('-n', '--name', dest='name', required=True, help='Name of the application.'),
+            Option('name', help='Name of the application.'),
         )
         return options
 

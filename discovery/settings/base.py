@@ -68,9 +68,9 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '../discovery.log',
+            'filename': '/var/log/anthill/discovery.log',
             'formatter': 'anthill.server',
-            'maxBytes': 100 * 1024 * 1024,
+            'maxBytes': 100 * 1024 * 1024,  # 100 MiB
             'backupCount': 10
         },
         'mail_admins': {

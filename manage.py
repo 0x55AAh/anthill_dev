@@ -8,10 +8,12 @@ import sys
 
 def get_settings_module(default=''):
     try:
-        has_app_context = sys.argv[1] == 'app' and sys.argv[2] in ('-n', '--name')
-        app_name = sys.argv[3] if has_app_context else ''
+        app_name = sys.argv[2] if sys.argv[1] == 'app' else ''
         app_manage = ('%s.manage' % app_name) if app_name else ''
         try:
+            app_mod = importlib.import_module(app_name)
+            sys.path.insert(0, app_mod.__path__[0])
+            os.chdir(app_mod.__path__[0])
             app_manage_mod = importlib.import_module(app_manage)
             return app_manage_mod.ANTHILL_SETTINGS_MODULE
         except (ValueError, ImportError):
@@ -31,7 +33,7 @@ if __name__ == '__main__':
         app = None
     else:
         from anthill.framework.apps import app
-        del sys.argv[1:4]
+        del sys.argv[1:3]
 
     if app is None:
         kwargs = dict()

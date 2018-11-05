@@ -1,6 +1,6 @@
 """
 Usage:
-    thumbnail(source, geometry, *filters, **options)
+    await thumbnail(source, geometry, *filters, **options)
 """
 from anthill.framework.conf import settings
 from anthill.framework.utils.asynchronous import as_future
