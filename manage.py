@@ -36,8 +36,8 @@ if __name__ == '__main__':
     if app is None:
         kwargs = dict()
         try:
-            cfg = importlib.import_module('cfg')
-            kwargs.update(root_templates_mod=getattr(cfg, 'ROOT_TEMPLATES_MODULE'))
+            conf = importlib.import_module('conf')
+            kwargs.update(root_templates_mod=getattr(conf, 'ROOT_TEMPLATES_MODULE'))
         except (ImportError, AttributeError):
             pass
         manager = EmptyManager(**kwargs)
