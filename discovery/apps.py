@@ -12,16 +12,16 @@ class AnthillApplication(BaseAnthillApplication):
     
     def __init__(self):
         super().__init__()
-        self.registry = self.load_services()
+        self.load_services()
 
-    @staticmethod
-    def load_services():
-        path = getattr(settings, 'REGISTERED_SERVICES', None)
+    def load_services(self):
         registry = {}
+        path = getattr(settings, 'REGISTERED_SERVICES', None)
         try:
             if path is not None:
                 with open(path) as f:
                     registry.update(json.load(f))
         except Exception as e:
             logging.warning(force_text(e))
-        return registry
+        # noinspection PyAttributeOutsideInit
+        self.registry = registry
