@@ -26,7 +26,7 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 APPLICATION_NAME = 'message'
 APPLICATION_VERBOSE_NAME = _('Message')
 APPLICATION_DESCRIPTION = _('Implements messaging system')
-APPLICATION_ICON_CLASS = 'icon-envelope'
+APPLICATION_ICON_CLASS = 'icon-envelop5'
 APPLICATION_COLOR = 'green'
 
 # SERVICE_CLASS = 'message.services.Service'

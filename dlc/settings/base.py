@@ -25,7 +25,7 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 APPLICATION_NAME = 'dlc'
 APPLICATION_VERBOSE_NAME = _('DLC')
 APPLICATION_DESCRIPTION = _('Deliver downloadable content to a user')
-APPLICATION_ICON_CLASS = 'icon-cloud-download2'
+APPLICATION_ICON_CLASS = 'icon-onedrive'
 APPLICATION_COLOR = 'warning'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: dlc] '
