@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 import os
 
-ANTHILL_SETTINGS_MODULE = os.getenv("ANTHILL_SETTINGS_MODULE", "dlc.settings")
-
 if __name__ == "__main__":
-    os.environ["ANTHILL_SETTINGS_MODULE"] = ANTHILL_SETTINGS_MODULE
+    os.environ.setdefault("ANTHILL_SETTINGS_MODULE", "settings")
     try:
         import anthill.framework
         anthill.framework.setup()

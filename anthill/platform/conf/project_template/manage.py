@@ -6,36 +6,17 @@ import os
 import sys
 
 
-class ArgvParser:
-    @staticmethod
-    def get_app_name():
-        return sys.argv[2] if sys.argv[1] == 'app' else ''
-
-    @staticmethod
-    def clean_app_name():
-        del sys.argv[1:3]
-
-
-def get_settings_module(default=''):
-    try:
-        app_name = ArgvParser.get_app_name()
-        app_manage = ('%s.manage' % app_name) if app_name else ''
-        try:
-            app_manage_mod = importlib.import_module(app_manage)
-            return app_manage_mod.ANTHILL_SETTINGS_MODULE
-        except (ValueError, ImportError):
-            pass
-        finally:
-            app_mod = importlib.import_module(app_name)
-            sys.path.insert(0, app_mod.__path__[0])
-            os.chdir(app_mod.__path__[0])
-    except IndexError:
-        pass
-    return default
-
-
 if __name__ == '__main__':
-    os.environ['ANTHILL_SETTINGS_MODULE'] = get_settings_module()
+    os.environ.setdefault("ANTHILL_SETTINGS_MODULE", "settings")
+
+    try:
+        app_name = sys.argv[2] if sys.argv[1] == 'app' else ''
+        app_mod = importlib.import_module(app_name)
+    except (IndexError, ImportError):
+        pass
+    else:
+        sys.path.insert(0, app_mod.__path__[0])
+        os.chdir(app_mod.__path__[0])
 
     try:
         import anthill.framework
@@ -44,7 +25,7 @@ if __name__ == '__main__':
         app = None
     else:
         from anthill.framework.apps import app
-        ArgvParser.clean_app_name()
+        del sys.argv[1:3]
 
     kwargs = dict(app=app)
 
