@@ -1,6 +1,6 @@
-import graphene
+from anthill.framework.auth import get_user_model
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from login import models
+import graphene
 
 
 PAGINATED_BY = 50
@@ -9,14 +9,15 @@ PAGINATED_BY = 50
 class User(SQLAlchemyObjectType):
     """User model entity."""
     class Meta:
-        model = models.User
+        model = get_user_model()
 
 
 class RootQuery(graphene.ObjectType):
     """Api root query."""
     users = graphene.List(User)
 
-    def resolve_users(self, info, page=None, **kwargs):
+    @staticmethod
+    def resolve_users(root, info, page=None, **kwargs):
         request = info.context['request']
         query = User.get_query(info)
         pagination_kwargs = {
@@ -38,7 +39,7 @@ class CreateUser(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, username, password):
-        user = models.User(username=username)
+        user = get_user_model()(username=username)
         user.set_password(password)
         user.save()
 
@@ -56,7 +57,7 @@ class UpdateUser(graphene.Mutation):
 
     @staticmethod
     def mutate(root, info, id, username=None, password=None):
-        user = models.User.query.get(id)
+        user = get_user_model().query.get(id)
         if username is not None:
             user.username = username
         if password is not None:
