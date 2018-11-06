@@ -71,4 +71,5 @@ class Mutation(graphene.ObjectType):
     update_user = UpdateUser.Field()
 
 
+# noinspection PyTypeChecker
 schema = graphene.Schema(query=RootQuery, mutation=Mutation)

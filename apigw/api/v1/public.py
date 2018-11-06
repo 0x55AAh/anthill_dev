@@ -7,4 +7,5 @@ class RootQuery(graphene.ObjectType):
     pass
 
 
+# noinspection PyTypeChecker
 schema = graphene.Schema(query=RootQuery)
