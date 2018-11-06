@@ -411,7 +411,7 @@ class BaseManager:
         sys.exit(result or 0)
 
 
-class Manager(BaseManager):
+class AppManager(BaseManager):
     """Application context manager."""
 
     def add_default_commands(self):
@@ -425,7 +425,7 @@ class Manager(BaseManager):
             from anthill.framework.db.management import MigrateCommand
             self.add_command("db", MigrateCommand)
 
-        super(Manager, self).add_default_commands()
+        super(AppManager, self).add_default_commands()
 
         if self.app.commands is not None:
             self._commands.update(self.app.commands)
@@ -471,3 +471,13 @@ class EmptyManager(BaseManager):
 
     def __call__(self, app=None, **kwargs):
         pass
+
+
+class Manager:
+    """Proxy manager."""
+
+    def __init__(self, app=None, **kwargs):
+        self._manager = (AppManager if app else EmptyManager)(app, **kwargs)
+
+    def __getattr__(self, name):
+        return getattr(self._manager, name)
