@@ -15,8 +15,7 @@ class AppBuilder:
     def get_app_class(self):
         application_class = self.default_application_class
         try:
-            application_class = import_string(
-                '%s.apps.AnthillApplication' % settings.APPLICATION_NAME)
+            application_class = import_string('apps.AnthillApplication')
         except ImportError as e1:
             if settings.APPLICATION_CLASS is not None:
                 try:
