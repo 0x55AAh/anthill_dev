@@ -3,9 +3,14 @@
 from tornado.web import url
 from admin.routes import (
     config, discovery, dlc, exec as exec_, login,
-    message, profile, promo, social, store
+    message, profile, promo, social, store, apigw, media
 )
 from admin import handlers
+
+extra_routes = (
+    config, discovery, dlc, exec_, login, media,
+    message, profile, promo, social, store, apigw
+)
 
 
 route_patterns = [
@@ -20,8 +25,5 @@ route_patterns = [
     url(r'^/services/(?P<name>[^/]+)/log/?$', handlers.LogRequestHandler, name='service-log'),
 ]
 
-for mod in (
-    config, discovery, dlc, exec_, login,
-    message, profile, promo, social, store
-):
+for mod in extra_routes:
     route_patterns += getattr(mod, 'route_patterns', [])
