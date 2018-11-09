@@ -14,6 +14,7 @@ from anthill.platform.api.internal import as_internal, InternalAPI
 from anthill.framework.auth import authenticate as _authenticate, get_user_model
 from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.framework.utils.urls import reverse, build_absolute_uri
+from typing import Optional
 
 
 User = get_user_model()
@@ -22,7 +23,7 @@ User = get_user_model()
 PAGINATED_BY = 50
 
 
-async def _get_user_data(user: User, include_profile: bool=False, **options) -> dict:
+async def _get_user_data(user: User, include_profile: bool=False, **options) -> Optional[dict]:
     if user is not None:
         data = user.dump().data
         if include_profile:
@@ -56,21 +57,31 @@ async def _get_users(request=None, include_profiles: bool=False,
 
 
 @as_internal()
-async def get_user(api: InternalAPI, user_id: str, include_profile: bool=False, **options) -> dict:
+async def get_user(
+        api: InternalAPI,
+        user_id: str,
+        include_profile: bool=False,
+        **options) -> dict:
     return await _get_user(user_id, include_profile)
 
 
 @as_internal()
-async def get_users(api: InternalAPI, request=None, include_profiles: bool=False,
-                    pagination: int=None, page: int=None, filter_by: dict=None, **options) -> dict:
+async def get_users(
+        api: InternalAPI,
+        request=None,
+        include_profiles: bool=False,
+        pagination: int=None,
+        page: int=None,
+        filter_by: dict=None,
+        **options) -> dict:
     return await _get_users(request, include_profiles, pagination, page, filter_by)
 
 
 @as_internal()
 async def authenticate(api: InternalAPI, credentials: dict, **options) -> dict:
-    user = await _authenticate(request=None, **credentials)
-    data = await _get_user_data(user)
-    return data
+    user = await _authenticate(request=None, **credentials)  # None or User
+    data = await _get_user_data(user)  # None or user data dict
+    return data or {'error': 'User not found'}
 
 
 @as_internal()
