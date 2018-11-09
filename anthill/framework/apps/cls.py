@@ -47,6 +47,7 @@ class Application:
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.label)
 
+    # noinspection SpellCheckingInspection
     def getdefault(self, key, default=None):
         return getattr(self.settings, key, None) or default
 

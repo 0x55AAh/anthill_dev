@@ -61,6 +61,7 @@ class BaseAbstractUser(db.Model):
         if self._password is not None:
             password_validation.password_changed(self._password, self)
             self._password = None
+        return self
 
     def get_session_auth_hash(self):
         """Return an HMAC of the password field."""
@@ -76,9 +77,6 @@ class AbstractUser(BaseAbstractUser):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     USERNAME_FIELD = 'username'
-
-    def __init__(self, username):
-        self.username = username
 
     @classmethod
     def __declare_last__(cls):
