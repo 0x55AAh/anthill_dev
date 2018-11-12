@@ -93,7 +93,9 @@ class RemoteProfile:
         return '<RemoteProfile(name=%r)>' % self.user.get_username()
 
     def to_dict(self, exclude=None):
-        return filter_dict(self.__dict__, exclude)
+        d = self.__dict__
+        d['user'] = self.user.to_dict()
+        return filter_dict(d, exclude)
 
 
 async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:

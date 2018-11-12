@@ -72,7 +72,7 @@ class UserHandlerMixin:
 
 
 class LoginHandlerMixin:
-    def _login(self, user: RemoteUser):
+    async def login(self, user: RemoteUser):
         """
         Persist a user id and a backend in the request. This way a user doesn't
         have to reauthenticate on every request. Note that data set during
@@ -98,15 +98,14 @@ class LoginHandlerMixin:
         self.session[SESSION_KEY] = user.id
         self.session[HASH_SESSION_KEY] = session_auth_hash
         self.session[USER_DATA_KEY] = user.to_dict(exclude=['id'])
+        # noinspection PyAttributeOutsideInit
         self.current_user = user
 
-    async def login(self, user: RemoteUser):
-        do_login = partial(self.internal_request, 'login', 'login')
-        token = await do_login(user_id=user.id)
-        if token:
-            self._login(user)
-        else:
-            self.invalid_login_error()
+    # async def login(self, user: RemoteUser):
+        # do_login = partial(self.internal_request, 'login', 'login')
+        # token = await do_login(user_id=user.id)
+        # await self._login(user)
+        # self.invalid_login_error()
 
     def invalid_login_error(self):
         raise InvalidLoginError('Invalid token.')
