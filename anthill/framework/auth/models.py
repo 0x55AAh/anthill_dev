@@ -1,11 +1,3 @@
-# from anthill.framework.auth.base_models import AbstractUser
-#
-#
-# class User(AbstractUser):
-#     """Default User model."""
-#     __tablename__ = 'users'
-
-
 class AnonymousUser:
     id = None
     is_active = False

@@ -23,15 +23,10 @@ class RemoteUser:
     """
     USERNAME_FIELD = 'username'
 
-    def __init__(self, id: str, username: str, password: str,
-                 created: datetime, last_login: datetime,
-                 profile: Optional["RemoteProfile"]=None):
-        self.id = id
+    def __init__(self, username: str, password: str, **kwargs):
+        self.__dict__.update(kwargs)
         self.username = username
-        self.created = created
-        self.last_login = last_login
         self.password = password
-        self.profile = profile
 
     def __str__(self):
         return self.get_username()
@@ -40,18 +35,13 @@ class RemoteUser:
         return '<RemoteUser(name=%r)>' % self.get_username()
 
     def to_dict(self, exclude=None):
-        data = {
-            'id': self.id,
-            'username': self.username,
-            'created': self.created,
-            'last_login': self.last_login,
-            'password': self.password,
-        }
-        if isinstance(self.profile, RemoteProfile):
-            data['profile'] = self.profile.to_dict()
+        profile = getattr(self, 'profile', None)
+        d = self.__dict__
+        if isinstance(profile, RemoteProfile):
+            d['profile'] = profile.to_dict()
         else:
-            data['profile'] = self.profile
-        return filter_dict(data, exclude)
+            d['profile'] = profile
+        return filter_dict(d, exclude)
 
     @property
     def is_active(self):
@@ -82,7 +72,7 @@ class RemoteUser:
         raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
 
     def get_profile(self):
-        return self.profile
+        return getattr(self, 'profile', None)
 
 
 class RemoteProfile:
@@ -92,10 +82,9 @@ class RemoteProfile:
     we need to get user profile info from remote service to use it locally.
     That's why the RemoteProfile need.
     """
-    def __init__(self, id: str, user: "RemoteUser", payload: dict):
-        self.id = id
+    def __init__(self, user: RemoteUser, **kwargs):
+        self.__dict__.update(kwargs)
         self.user = user
-        self.payload = payload
 
     def __str__(self):
         return self.user.get_username()
@@ -104,12 +93,7 @@ class RemoteProfile:
         return '<RemoteProfile(name=%r)>' % self.user.get_username()
 
     def to_dict(self, exclude=None):
-        data = {
-            'id': self.id,
-            'user': self.user,
-            'payload': self.payload
-        }
-        return filter_dict(data, exclude)
+        return filter_dict(self.__dict__, exclude)
 
 
 async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:

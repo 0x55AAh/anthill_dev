@@ -166,9 +166,10 @@ class LoginHandler(LoginHandlerMixin, FormHandler):
         else:
             try:
                 await self.login(user=user)
-                self.redirect(self.get_success_url())
             except InvalidLoginError:
                 await self.login_error(form)
+            else:
+                self.redirect(self.get_success_url())
 
 
 class LogoutHandler(LogoutHandlerMixin, UserHandlerMixin, RedirectHandler):
