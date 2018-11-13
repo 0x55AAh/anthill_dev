@@ -1,7 +1,6 @@
 from anthill.platform.api.internal import RequestError, connector
-from datetime import datetime
-from typing import Optional
 from functools import partial
+import dateutil.parser
 import logging
 
 
@@ -14,6 +13,10 @@ def filter_dict(data, exclude=None):
     return data
 
 
+def iso_parse(s):
+    return dateutil.parser.parse(s) if isinstance(s, str) else s
+
+
 class RemoteUser:
     """
     User model is stored on dedicated service named `login`.
@@ -23,10 +26,11 @@ class RemoteUser:
     """
     USERNAME_FIELD = 'username'
 
-    def __init__(self, username: str, password: str, **kwargs):
+    def __init__(self, username: str, **kwargs):
+        kwargs['created'] = iso_parse(kwargs.pop('created', None))
+        kwargs['last_login'] = iso_parse(kwargs.pop('last_login', None))
         self.__dict__.update(kwargs)
         self.username = username
-        self.password = password
 
     def __str__(self):
         return self.get_username()
@@ -36,7 +40,7 @@ class RemoteUser:
 
     def to_dict(self, exclude=None):
         profile = getattr(self, 'profile', None)
-        d = self.__dict__
+        d = self.__dict__.copy()
         if isinstance(profile, RemoteProfile):
             d['profile'] = profile.to_dict()
         else:
@@ -93,7 +97,7 @@ class RemoteProfile:
         return '<RemoteProfile(name=%r)>' % self.user.get_username()
 
     def to_dict(self, exclude=None):
-        d = self.__dict__
+        d = self.__dict__.copy()
         d['user'] = self.user.to_dict()
         return filter_dict(d, exclude)
 
