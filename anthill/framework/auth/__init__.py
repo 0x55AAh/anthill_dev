@@ -12,7 +12,6 @@ REDIRECT_FIELD_NAME = 'next'
 
 
 def load_backend(path):
-    from social_core.backends.base import BaseAuth
     return import_string(path)()
 
 

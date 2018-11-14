@@ -1,4 +1,5 @@
 from anthill.platform.api.internal import RequestError, connector
+from tornado.escape import json_decode
 from functools import partial
 import dateutil.parser
 import logging
@@ -87,6 +88,7 @@ class RemoteProfile:
     That's why the RemoteProfile need.
     """
     def __init__(self, user: RemoteUser, **kwargs):
+        kwargs['payload'] = json_decode(kwargs.pop('payload', '{}'))
         self.__dict__.update(kwargs)
         self.user = user
 
