@@ -1,6 +1,5 @@
-import re
-
 from anthill.framework.core import validators
+import re
 
 
 class ASCIIUsernameValidator(validators.RegexValidator):

@@ -40,8 +40,8 @@ class RemoteUser:
         return '<RemoteUser(name=%r)>' % self.get_username()
 
     def to_dict(self, exclude=None):
-        profile = getattr(self, 'profile', None)
         d = self.__dict__.copy()
+        profile = getattr(self, 'profile', None)
         if isinstance(profile, RemoteProfile):
             d['profile'] = profile.to_dict()
         else:
@@ -114,15 +114,3 @@ async def internal_authenticate(internal_request=None, **credentials) -> RemoteU
         logger.error(str(e))
     else:
         return RemoteUser(**data)
-
-
-async def internal_login(user_id, internal_request=None) -> str:
-    """Perform internal api login."""
-    internal_request = internal_request or connector.internal_request
-    do_login = partial(internal_request, 'login', 'login')
-    try:
-        token = await do_login(user_id)
-    except RequestError as e:
-        logger.error(str(e))
-    else:
-        return token

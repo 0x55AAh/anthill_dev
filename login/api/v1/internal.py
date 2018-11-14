@@ -85,11 +85,6 @@ async def authenticate(api: InternalAPI, credentials: dict, **options) -> dict:
 
 
 @as_internal()
-async def login(api: InternalAPI, user_id: str, **options) -> str:
-    pass
-
-
-@as_internal()
 async def logout(api: InternalAPI, token: str, **options) -> str:
     pass
 
