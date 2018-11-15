@@ -4,25 +4,24 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.crypto import salted_hmac
 from anthill.framework.auth import password_validation
 from anthill.framework.core.mail import send_mail
-from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 
 
 class AbilitiesMixin:
-    abilities_text = db.Column(db.Text())
+    abilities_text = db.Column(db.Text)
 
     def __init__(self):
         super(AbilitiesMixin, self).__init__()
-        self.abilities_text = ""
+        self.abilities_text = ''
         self.abilities = None
 
     @property
     def abilities(self):
-        return set(filter(None, self.abilities_text.split("\n")))
+        return set(filter(None, self.abilities_text.split('\n')))
 
     @abilities.setter
     def abilities(self, new_abilities):
-        self.abilities_text = "\n".join(set(new_abilities))
+        self.abilities_text = '\n'.join(set(new_abilities))
 
     # noinspection PyMethodMayBeStatic
     def _check_abilities(self, abilities):
@@ -41,8 +40,8 @@ class AbilitiesMixin:
         if ability in self.abilities:
             return True
 
-        while "." in ability:
-            ability, ability_suffix = ability.rsplit(".", 1)
+        while '.' in ability:
+            ability, ability_suffix = ability.rsplit('.', 1)
             if ability in self.abilities:
                 return True
 
@@ -96,7 +95,7 @@ class UserMixin(AbilitiesMixin):
             db.Column("role_id", db.Integer, db.ForeignKey("%s.id" % self.__roleclass__.__tablename__), nullable=False),
             db.UniqueConstraint("user_id", "role_id"),
         )
-        return relationship("Role", secondary=users_roles_table, backref="users")
+        return db.relationship("Role", secondary=users_roles_table, backref="users")
 
     def add_roles(self, roles):
         if not isinstance(roles, (list, tuple)):

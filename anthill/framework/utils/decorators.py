@@ -1,8 +1,9 @@
 from functools import update_wrapper
 from tornado.web import (
     url, RedirectHandler, RequestHandler, authenticated as _authenticated)
-from functools import wraps
+from functools import wraps, partial
 from tornado.gen import sleep
+from inspect import iscoroutinefunction
 import logging
 
 
@@ -252,3 +253,29 @@ def retry(max_retries=3, delay=3, on_exception=None, on_finish=None,
         return wrapper
 
     return decorator
+
+
+class ClassDecorator:
+    """General class based decorator."""
+
+    def __call__(self, func):
+        if iscoroutinefunction(func):
+            wrapper = self.async_wrapper
+        else:
+            wrapper = self.wrapper
+        wrapper = wraps(func)(wrapper)
+        wrapper = partial(wrapper, func)
+        wrapper = self.transform_wrapper(wrapper)
+        return wrapper
+
+    # noinspection PyMethodMayBeStatic
+    def transform_wrapper(self, wrapper):
+        return wrapper
+
+    # noinspection PyMethodMayBeStatic
+    def wrapper(self, func, *args, **kwargs):
+        return func(*args, **kwargs)
+
+    # noinspection PyMethodMayBeStatic
+    async def async_wrapper(self, func, *args, **kwargs):
+        return await func(*args, **kwargs)

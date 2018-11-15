@@ -12,6 +12,9 @@ class AnonymousUser:
     def __hash__(self):
         return 1  # instances always return the same hash value
 
+    def __bool__(self):
+        return False
+
     @property
     def is_anonymous(self):
         return True
