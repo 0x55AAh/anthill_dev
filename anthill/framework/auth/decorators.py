@@ -1,9 +1,9 @@
 from anthill.framework.http.errors import HttpForbiddenError
-from typing import Union
+from typing import Union, List
 import functools
 
 
-def abilities_required(abilities: Union[str, list]):
+def abilities_required(abilities: Union[str, List[str]]):
     """
     Takes the abilities list and returns the function if the user has that abilities.
     Raise a HttpForbiddenError exception otherwise.
@@ -23,7 +23,7 @@ def abilities_required(abilities: Union[str, list]):
     return decorator
 
 
-def roles_required(roles: Union[str, list]):
+def roles_required(roles: Union[str, List[str]]):
     """
     Takes the roles list and returns the function if the user has that roles.
     Raise a HttpForbiddenError exception otherwise.

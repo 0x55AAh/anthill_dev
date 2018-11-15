@@ -14,6 +14,7 @@ class AbilitiesMixin:
     def __init__(self):
         super(AbilitiesMixin, self).__init__()
         self.abilities_text = ""
+        self.abilities = None
 
     @property
     def abilities(self):
@@ -84,6 +85,7 @@ class UserMixin(AbilitiesMixin):
         if roles:
             raise ValueError("Invalid roles")
 
+    # noinspection PyUnresolvedReferences
     @declared_attr
     def roles(self):
         users_roles_table = db.Table(
