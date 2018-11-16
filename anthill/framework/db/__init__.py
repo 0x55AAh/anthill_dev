@@ -5,12 +5,20 @@ from anthill.framework.db.marshmallow import Marshmallow
 from anthill.framework.db.sqlalchemy import SQLAlchemy, DefaultMeta, Model as DefaultModel
 from anthill.framework.db.sqlalchemy.activerecord import ActiveRecord
 from anthill.framework.db.management import Migrate
+from anthill.framework.utils.translation import translate_lazy as _
 
 
 __all__ = ['db', 'ma']
 
 
 class Model(ActiveRecord):
+    __default_abilities__ = (
+        ('can_create', _('Can create model')),
+        ('can_update', _('Can update model')),
+        ('can_delete', _('Can delete model')),
+        ('can_view', _('Can view model')),
+    )
+
     # def save(self, force_insert=False):
     #     if force_insert:
     #         self.session.add(self)

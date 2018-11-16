@@ -41,11 +41,10 @@ role_ability_table = db.Table(
 
 
 class Role(db.Model):
-    """Subclass this for your roles."""
     __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True)
+    name = db.Column(db.String(120), nullable=False, unique=True)
     abilities = db.relationship('Ability', secondary=role_ability_table, backref='roles')
 
     def __init__(self, name):
@@ -72,13 +71,18 @@ class Role(db.Model):
     def __str__(self):
         return self.name
 
+    def __eq__(self, other):
+        return self.name == other or self.name == other.name
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 class Ability(db.Model):
-    """Subclass this for your abilities."""
     __tablename__ = 'abilities'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True)
+    name = db.Column(db.String(120), nullable=False, unique=True)
 
     def __init__(self, name):
         self.name = name.lower()
@@ -89,9 +93,14 @@ class Ability(db.Model):
     def __str__(self):
         return self.name
 
+    def __eq__(self, other):
+        return self.name == other or self.name == other.name
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 
 class UserMixin(db.Model):
-    """Subclass this for your user class."""
     __abstract__ = True
 
     def __init__(self, roles=None, default_role='user', **kwargs):
@@ -141,6 +150,10 @@ class UserMixin(db.Model):
 
     def remove_roles(self, *roles):
         self.roles = [role for role in self.roles if role not in roles]
+
+    @property
+    def abilities(self):
+        return Ability.query.filter(Ability.roles.in_(self._roles))
 
 
 class BaseAbstractUser(UserMixin, db.Model):
