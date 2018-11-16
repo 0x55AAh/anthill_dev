@@ -4,139 +4,146 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.crypto import salted_hmac
 from anthill.framework.auth import password_validation
 from anthill.framework.core.mail import send_mail
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
-class AbilitiesMixin:
-    abilities_text = db.Column(db.Text)
-
-    def __init__(self):
-        super(AbilitiesMixin, self).__init__()
-        self.abilities_text = ''
-        self.abilities = None
-
-    @property
-    def abilities(self):
-        return set(filter(None, self.abilities_text.split('\n')))
-
-    @abilities.setter
-    def abilities(self, new_abilities):
-        self.abilities_text = '\n'.join(set(new_abilities))
-
-    # noinspection PyMethodMayBeStatic
-    def _check_abilities(self, abilities):
-        if not isinstance(abilities, (list, tuple)):
-            raise ValueError('Abilities has to be list or tuple')
-
-    def add_abilities(self, new_abilities):
-        self._check_abilities(new_abilities)
-        self.abilities = self.abilities.union(new_abilities)
-
-    def remove_abilities(self, old_abilities):
-        self._check_abilities(old_abilities)
-        self.abilities = self.abilities.difference(old_abilities)
-
-    def has_ability(self, ability):
-        if ability in self.abilities:
-            return True
-
-        while '.' in ability:
-            ability, ability_suffix = ability.rsplit('.', 1)
-            if ability in self.abilities:
-                return True
-
+def is_sequence(arg):
+    if hasattr(arg, "strip"):
         return False
+    return hasattr(arg, "__getitem__") or hasattr(arg, "__iter__")
 
 
-class RoleMixin(AbilitiesMixin):
-    """Subclass this for your role model."""
+def _role_find_or_create(name):
+    role = Role.query.filter_by(name=name).first()
+    if not role:
+        role = Role(name=name)
+        db.session.add(role)
+    return role
+
+
+def make_user_role_table(table_name='users', id_column_name='id'):
+    """
+    Create the user-role association table so that
+    it correctly references your own UserMixin subclass.
+    """
+    return db.Table(
+        'user_role',
+        db.Column('user_id', db.Integer, db.ForeignKey('{}.{}'.format(table_name, id_column_name))),
+        db.Column('role_id', db.Integer, db.ForeignKey('roles.id')), extend_existing=True)
+
+
+role_ability_table = db.Table(
+    'role_ability',
+    db.Column('role_id', db.Integer, db.ForeignKey('roles.id')),
+    db.Column('ability_id', db.Integer, db.ForeignKey('abilities.id')))
+
+
+class Role(db.Model):
+    """Subclass this for your roles."""
+    __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), unique=True)
+    abilities = db.relationship('Ability', secondary=role_ability_table, backref='roles')
 
-    def __init__(self, name=None):
-        super(RoleMixin, self).__init__()
-        if name:
-            self.name = name.lower()
+    def __init__(self, name):
+        self.name = name.lower()
+
+    def add_abilities(self, *abilities):
+        for ability in abilities:
+            existing_ability = Ability.query.filter_by(name=ability).first()
+            if not existing_ability:
+                existing_ability = Ability(ability)
+                db.session.add(existing_ability)
+                db.session.commit()
+            self.abilities.append(existing_ability)
+
+    def remove_abilities(self, *abilities):
+        for ability in abilities:
+            existing_ability = Ability.query.filter_by(name=ability).first()
+            if existing_ability and existing_ability in self.abilities:
+                self.abilities.remove(existing_ability)
+
+    def __repr__(self):
+        return '<Role(name=%r)>' % self.name
 
     def __str__(self):
         return self.name
 
 
-class UserMixin(AbilitiesMixin):
-    """Subclass this for your user model."""
+class Ability(db.Model):
+    """Subclass this for your abilities."""
+    __tablename__ = 'abilities'
 
-    def __init__(self, roles=None):
-        super(UserMixin, self).__init__()
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True)
+
+    def __init__(self, name):
+        self.name = name.lower()
+
+    def __repr__(self):
+        return '<Ability(name=%r)>' % self.name
+
+    def __str__(self):
+        return self.name
+
+
+class UserMixin(db.Model):
+    """Subclass this for your user class."""
+    __abstract__ = True
+
+    def __init__(self, roles=None, default_role='user', **kwargs):
+        super().__init__(**kwargs)
         # If only a string is passed for roles, convert it to a list containing
         # that string
-        if roles and isinstance(roles, RoleMixin):
-            self.roles = [roles]
-            return
+        if roles and isinstance(roles, str):
+            roles = [roles]
 
         # If a sequence is passed for roles (or if roles has been converted to
         # a sequence), fetch the corresponding database objects and make a list
         # of those.
-        if roles and all(isinstance(role, RoleMixin) for role in roles):
+        if roles and is_sequence(roles):
             self.roles = roles
-            return
+        # Otherwise, assign the default 'user' role. Create that role if it
+        # doesn't exist.
+        elif default_role:
+            self.roles = [default_role]
 
-        if roles:
-            raise ValueError("Invalid roles")
+    @hybrid_property
+    def _id_column_name(self):
+        # the list of the class's columns (with attributes like
+        # 'primary_key', etc.) is accessible in different places
+        # before and after table definition.
+        if self.__tablename__ in self.metadata.tables.keys():
+            # after definition, it's here
+            columns = self.metadata.tables[self.__tablename__]._columns
+        else:
+            # before, it's here
+            columns = self.__dict__
 
-    # noinspection PyUnresolvedReferences
+        for k, v in columns.items():
+            if getattr(v, 'primary_key', False):
+                return k
+
+    @declared_attr
+    def _roles(self):
+        user_role_table = make_user_role_table(self.__tablename__, self._id_column_name.fget(self))
+        return db.relationship('Role', secondary=user_role_table, backref='users')
+
     @declared_attr
     def roles(self):
-        users_roles_table = db.Table(
-            "%s_%s" % (self.__tablename__, self.__roleclass__.__tablename__),
-            self.metadata,
-            db.Column("id", db.Integer, primary_key=True),
-            db.Column("user_id", db.Integer, db.ForeignKey("%s.id" % self.__tablename__), nullable=False),
-            db.Column("role_id", db.Integer, db.ForeignKey("%s.id" % self.__roleclass__.__tablename__), nullable=False),
-            db.UniqueConstraint("user_id", "role_id"),
-        )
-        return db.relationship("Role", secondary=users_roles_table, backref="users")
+        return association_proxy('_roles', 'name', creator=_role_find_or_create)
 
-    def add_roles(self, roles):
-        if not isinstance(roles, (list, tuple)):
-            raise ValueError("Invalid roles")
-
-        for role in roles:
-            if isinstance(role, RoleMixin):
-                if role not in self.roles:
-                    self.roles.append(role)
-                # TODO: Option to add role by role name
-
+    def add_roles(self, *roles):
         self.roles.extend([role for role in roles if role not in self.roles])
 
-    def remove_roles(self, roles):
-        if not isinstance(roles, (list, tuple)):
-            raise ValueError("Invalid roles")
-
+    def remove_roles(self, *roles):
         self.roles = [role for role in self.roles if role not in roles]
-
-    def has_role(self, role):
-        if isinstance(role, RoleMixin):
-            return role in self.roles
-        elif isinstance(role, str):
-            return True if next((role_ for role_ in self.roles if role_.name == role), None) else False
-
-    @AbilitiesMixin.abilities.getter
-    def abilities(self):
-        user_abilities = super(UserMixin, self).abilities
-
-        for role in self.roles:
-            user_abilities.update(role.abilities)
-
-        return user_abilities
-
-
-class Role(RoleMixin, db.Model):
-    __tablename__ = 'roles'
 
 
 class BaseAbstractUser(UserMixin, db.Model):
-    __roleclass__ = Role
     __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
