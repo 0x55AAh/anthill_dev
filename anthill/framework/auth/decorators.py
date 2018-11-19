@@ -1,6 +1,6 @@
 from anthill.framework.http.errors import HttpForbiddenError
 from anthill.framework.utils.decorators import ClassDecorator
-from anthill.framework.auth.base_models import Ability, Role
+from anthill.framework.auth.base_models import Ability
 from typing import Union, List, Callable
 from tornado.web import RequestHandler
 from inspect import iscoroutinefunction

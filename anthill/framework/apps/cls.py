@@ -3,6 +3,7 @@ from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
 from urllib.parse import urlparse, urljoin
 from collections import defaultdict
+from sqlalchemy import event
 from functools import lru_cache
 from _thread import get_ident
 import importlib
@@ -199,6 +200,8 @@ class Application:
         return sys_modules + usr_modules
 
     def update_models(self):
+        models = self.get_models()
+
         from marshmallow_sqlalchemy import (
             ModelConversionError, ModelSchema, convert)
 
@@ -223,10 +226,18 @@ class Application:
 
                 setattr(cls, '__marshmallow__', schema_class)
 
-        logger.debug('Adding marshmallow schema to models...')
-        for model in self.get_models():
+        def events_connect(cls):
+            @event.listens_for(cls.__table__, 'after_create')
+            def receive_after_create(target, connection, **kw):
+                abilities = cls.get_abitities()
+
+            @event.listens_for(cls.__table__, 'after_drop')
+            def receive_after_drop(target, connection, **kw):
+                pass
+
+        for model in models:
             add_schema(model)
-            logger.debug('\_ Model %s.' % class_name(model))
+            events_connect(model)
 
     # noinspection PyMethodMayBeStatic
     def pre_setup_models(self):

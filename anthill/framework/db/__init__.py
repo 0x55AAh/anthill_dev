@@ -18,12 +18,17 @@ class Model(ActiveRecord):
         ('can_delete', _('Can delete model')),
         ('can_view', _('Can view model')),
     )
+    __abilities__ = ()
 
     # def save(self, force_insert=False):
     #     if force_insert:
     #         self.session.add(self)
     #     self.session.flush()
     #     return self
+
+    @classmethod
+    def get_abilities(cls):
+        return cls.__default_abilities__ + cls.__abilities__
 
     def dump(self):
         """Marshmallow default schema data dump."""
