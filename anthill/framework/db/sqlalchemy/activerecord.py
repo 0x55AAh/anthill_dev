@@ -3,12 +3,11 @@
     :license: BSD, see LICENSE for more details.
 """
 
-__all__ = ['ActiveRecord', 'json_value']
+__all__ = ['ActiveRecordMixin', 'json_value']
 
 import datetime as dt
 from functools import wraps
 from sqlalchemy.orm import RelationshipProperty, object_mapper, class_mapper, defer, eagerload
-from anthill.framework.db.sqlalchemy import Model as DefaultModel
 
 
 def _get_mapper(obj):
@@ -419,7 +418,7 @@ class _QueryHelper:
 EMPTY = tuple()
 
 
-class ActiveRecord(DefaultModel):
+class ActiveRecordMixin:
     """A implementation of the `ActiveRecord` pattern for Anthill SQLAlchemy models."""
 
     #: a `dict` of attribute filters for different purposes
