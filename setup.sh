@@ -24,8 +24,8 @@ source anthill/platform/setup.sh
 
 # Services setup
 services=(
-    admin config discovery dlc event exec login
-    media message profile promo social store
+    "admin" "config" "discovery" "dlc" "event" "exec" "login"
+    "media" "message" "profile" "promo" "social" "store"
 )
 for service in "${services[@]}"; do
     echo
