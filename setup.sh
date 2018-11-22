@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 OS=${OSTYPE//[0-9.-]*/}
+python="/usr/bin/env python3"
 
 case "$OS" in
     darwin|linux)
@@ -22,16 +23,18 @@ source anthill/framework/setup.sh
 source anthill/platform/setup.sh
 
 # Services setup
-source admin/setup.sh
-source config/setup.sh
-source discovery/setup.sh
-source dlc/setup.sh
-source event/setup.sh
-source exec/setup.sh
-source login/setup.sh
-source media/setup.sh
-source message/setup.sh
-source profile/setup.sh
-source promo/setup.sh
-source social/setup.sh
-source store/setup.sh
+services=(
+    admin config discovery dlc event exec login
+    media message profile promo social store
+)
+for service in "${services[@]}"; do
+    echo
+	source ${service}/setup.sh
+done
+
+echo
+echo "Updating geoip databases..."
+eval ${python} "mmdb_update.py"
+
+echo
+echo "Installation completed."
