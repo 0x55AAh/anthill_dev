@@ -29,7 +29,7 @@ services=(
 )
 for service in "${services[@]}"; do
     echo
-	source ${service}/setup.sh
+    source ${service}/setup.sh
 done
 
 echo
