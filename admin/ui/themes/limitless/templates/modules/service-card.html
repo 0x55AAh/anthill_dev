@@ -1,13 +1,14 @@
 <div class="col-lg-2 col-md-3 col-sm-6" data-name="{{ entry.name }}">
-    <div class="panel" style="height: 320px;">
-        <div class="panel-body text-center">
+    <div class="panel" style="height: 290px;">
+        <span class="label pull-right {% if entry.debug %}bg-success{% else %}bg-danger{% end %}" style="font-weight: 400;font-size: 9px;line-height: normal;">{{ _('debug') }}</span>
+        <span class="label pull-left bg-grey-300" style="font-weight: 400;font-size: 9px;line-height: normal;">{{ entry.version }}</span>
+        <div class="panel-body text-center" style="padding: 15px;">
             <a href="{{ reverse_url('service', entry.name) }}" class="icon-object border-{{ entry.color }} text-{{ entry.color }} btn btn-flat">
                 <i class="{{ entry.icon_class }}"></i>
             </a>
             <h5 class="text-semibold">{{ entry.title }}</h5>
+            <!-- <h5 class="text-semibold">{{ entry.title }} <span class="label bg-grey-300">{{ entry.version }}</span></h5> -->
             <p class="mb-15">{{ entry.description }}</p>
-
-            <span class="label text-grey-300">{{ _('version') }} {{ entry.version }}</span>
         </div>
     </div>
 </div>

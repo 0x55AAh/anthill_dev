@@ -49,7 +49,7 @@ $(function() {
                 $('.sidebar-main ul.navigation-main li.navigation-header-services').after(html_sidebar_data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-
+                // ¯\_(ツ)_/¯
             }
         });
     }

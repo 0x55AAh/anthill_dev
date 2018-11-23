@@ -224,7 +224,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             try:
                 future = self._responses[request_id]
             except KeyError:
-                pass
+                pass  # ¯\_(ツ)_/¯
             else:
                 future.set_result(result)
 

@@ -27,6 +27,6 @@ $(function() {
         term.echo(event.data);
     });
     client.addEventListener('error', function(event) {
-
+        // ¯\_(ツ)_/¯
     });
 });
