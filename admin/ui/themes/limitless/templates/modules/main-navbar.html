@@ -11,11 +11,13 @@
 	<div class="navbar-collapse collapse" id="navbar-mobile">
 		<ul class="nav navbar-nav">
 			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+			{% if debug %}
 			<li>
 				<p class="navbar-text">
-			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('Debug') }}</span>
+			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('debug') }}</span>
 		        </p>
 			</li>
+			{% end %}
 			<!--<li>-->
 				<!--<a href="{{ reverse_url('debug') }}" title="Terminal"><i class="icon-terminal"></i>-->
 					<!--<span class="visible-xs-inline-block position-right">{{ _('Terminal') }}</span>-->
