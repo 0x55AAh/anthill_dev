@@ -202,8 +202,7 @@ class Application:
     def update_models(self):
         models = self.get_models()
 
-        from marshmallow_sqlalchemy import (
-            ModelConversionError, ModelSchema, convert)
+        from marshmallow_sqlalchemy import ModelConversionError, ModelSchema, convert
 
         class ModelConverter(convert.ModelConverter):
             """Anthill model converter for marshmallow model schema."""
@@ -226,18 +225,8 @@ class Application:
 
                 setattr(cls, '__marshmallow__', schema_class)
 
-        def events_connect(cls):
-            @event.listens_for(cls.__table__, 'after_create')
-            def receive_after_create(target, connection, **kw):
-                abilities = cls.get_abitities()
-
-            @event.listens_for(cls.__table__, 'after_drop')
-            def receive_after_drop(target, connection, **kw):
-                pass
-
         for model in models:
             add_schema(model)
-            events_connect(model)
 
     # noinspection PyMethodMayBeStatic
     def pre_setup_models(self):
@@ -270,9 +259,6 @@ class Application:
         logger.debug('\_ Installed models:')
         for model in self.get_models():
             logger.debug('  \_ Model %s.' % class_name(model))
-
-        # self.db.create_all()
-        logger.debug('All database tables created.')
 
         self.update_models()
 

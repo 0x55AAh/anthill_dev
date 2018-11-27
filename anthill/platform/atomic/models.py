@@ -4,6 +4,7 @@ from sqlalchemy_utils.types.uuid import UUIDType
 from anthill.platform.atomic.exceptions import (
     TransactionError, TransactionTimeoutError, TransactionFinished)
 import enum
+import logging
 
 
 logger = logging.getLogger('anthill.application')

@@ -16,10 +16,8 @@ class LoginHandler(LoginHandlerMixin, UserRequestHandler):
         self.login(user=user)
 
     def get_credentials(self):
-        return {
-            'username': self.get_argument('username'),
-            'password': self.get_argument('password')
-        }
+        field_names = ('username', 'password')
+        return dict(map(lambda x: (x, self.get_argument(x)), field_names))
 
 
 class LogoutHandler(LogoutHandlerMixin, UserRequestHandler):
