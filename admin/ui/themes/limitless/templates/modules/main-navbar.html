@@ -11,7 +11,7 @@
 	<div class="navbar-collapse collapse" id="navbar-mobile">
 		<ul class="nav navbar-nav">
 			<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
-			{% if debug %}
+			{% if metadata['debug'] %}
 			<li>
 				<p class="navbar-text">
 			        <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('debug') }}</span>

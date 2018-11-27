@@ -300,6 +300,18 @@ class Application:
         service_instance = service_class(app=self)
         return service_instance
 
+    @property
+    def metadata(self):
+        return {
+            'name': self.config.APPLICATION_NAME,
+            'title': str(self.config.APPLICATION_VERBOSE_NAME),
+            'icon_class': self.config.APPLICATION_ICON_CLASS,
+            'description': str(self.config.APPLICATION_DESCRIPTION),
+            'color': self.config.APPLICATION_COLOR,
+            'version': self.version,
+            'debug': self.debug,
+        }
+
     def reverse_url(self, name, *args, external=False):
         """
         Returns a URL path for handler named ``name``.

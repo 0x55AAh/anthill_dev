@@ -352,6 +352,7 @@ class TemplateMixin:
         namespace = super().get_template_namespace()
         namespace.update(app_version=app.version)
         namespace.update(debug=app.debug)
+        namespace.update(metadata=app.metadata)
         namespace.update(bytes2human=bytes2human)
         namespace.update(build_absolute_uri=build_absolute_uri)
         return namespace

@@ -1,5 +1,5 @@
 <div class="footer text-muted{% if centered %} text-center{% end %}" style="bottom: 19px">
     &copy; 2018{% if now.year > 2018 %}-{{ now.year }}{% end %}.
     <a href="#">{{ _('Anthill Platform Admin Tool') }}</a> by <a href="mailto:x55aah@gmail.com">Lysenko Vladimir</a>
-    <div class="footer-version">{{ _('Version') }} {{ app_version }}</div>
+    <div class="footer-version">{{ _('Version') }} {{ metadata['version'] }}</div>
 </div>

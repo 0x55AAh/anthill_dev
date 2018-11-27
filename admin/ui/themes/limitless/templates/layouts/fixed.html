@@ -46,7 +46,7 @@
 
 <!-- Main navbar -->
 {% block main-navbar %}
-{% module Template('modules/main-navbar.html') %}
+{% module Template('modules/main-navbar.html', metadata=metadata) %}
 {% end %}
 <!-- /main navbar -->
 
@@ -74,7 +74,7 @@
 
 				<!-- Footer -->
 				{% block footer %}
-				{% module Template('modules/footer.html', centered=False, now=now) %}
+				{% module Template('modules/footer.html', centered=False, metadata=metadata, now=now) %}
 				{% end %}
 				<!-- /footer -->
 				<!-- /content area -->

@@ -122,15 +122,7 @@ def doc(api_: InternalAPI, **options):
 
 @as_internal()
 def get_service_metadata(api_: InternalAPI, **options):
-    return {
-        'name': settings.APPLICATION_NAME,
-        'title': str(settings.APPLICATION_VERBOSE_NAME),
-        'icon_class': settings.APPLICATION_ICON_CLASS,
-        'description': str(settings.APPLICATION_DESCRIPTION),
-        'color': settings.APPLICATION_COLOR,
-        'version': api_.service.version,
-        'debug': api_.service.debug,
-    }
+    return api_.service.app.metadata
 
 
 class BaseInternalConnection(Singleton):

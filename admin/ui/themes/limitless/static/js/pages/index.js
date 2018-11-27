@@ -44,12 +44,12 @@ $(function() {
                 '<div class="col-lg-2 col-md-3 col-sm-6" style="display: none" data-name="' + entry.name +'">' +
                 '    <div class="panel" style="height: 290px;">' +
                      ((entry.debug) ? '<span class="label pull-right bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
-                '    <span class="label pull-left bg-grey-300" style="font-weight: 400;font-size: 9px;line-height: normal;">' + entry.version + '</span>' +
+                // '    <span class="label pull-left bg-grey-300" style="font-weight: 400;font-size: 9px;line-height: normal;">' + entry.version + '</span>' +
                 '        <div class="panel-body text-center" style="padding: 15px;">' +
                 '            <a href="/services/' + entry.name + '/" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
                 '                <i class="' + entry.iconClass + '"></i>' +
                 '            </a>' +
-                '            <h5 class="text-semibold">' + entry.title + '</h5>' +
+                '            <h5 class="text-semibold">' + entry.title + ' <span class="label bg-grey-300" style="text-transform: none;">' + entry.version + '</span></h5>' +
                 '            <p class="mb-15">' + entry.description + '</p>' +
                 '        </div>' +
                 '    </div>' +
