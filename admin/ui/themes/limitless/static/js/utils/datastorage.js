@@ -2,13 +2,13 @@
  *
  * @param storage
  * @param key_prefix
- * @param format
+ * @param data_format
  * @constructor
  */
-function AnthillStorage(storage, key_prefix, format) {
+function AnthillStorage(storage, key_prefix, data_format) {
     this.storage = window[storage] || window['sessionStorage'];
-    this.key_prefix = key_prefix || 'anthill_';
-    this.format = format|| 'json';
+    this.key_prefix = key_prefix || 'anthill';
+    this.data_format = data_format || 'json';
 }
 
 /**
@@ -17,7 +17,7 @@ function AnthillStorage(storage, key_prefix, format) {
  * @returns {string}
  */
 AnthillStorage.prototype.build_key = function (key) {
-    return this.key_prefix + key;
+    return [this.key_prefix, key].join('_');
 };
 
 /**
@@ -27,9 +27,9 @@ AnthillStorage.prototype.build_key = function (key) {
  * @returns {boolean}
  */
 AnthillStorage.prototype.changed = function (key, current_value) {
-    var _key = this.build_key(key);
-    var old_value = this.storage.getItem(_key);
-    this.storage.setItem(_key, current_value);
+    key = this.build_key(key);
+    var old_value = this.storage.getItem(key);
+    this.storage.setItem(key, current_value);
     return old_value !== null && old_value !== current_value;
 };
 
@@ -37,27 +37,27 @@ AnthillStorage.prototype.changed = function (key, current_value) {
  *
  * @param key
  * @param current_value
- * @param format
+ * @param data_format
  */
-AnthillStorage.prototype.setItem = function (key, current_value, format) {
-    var _key = this.build_key(key);
-    var fmt = format || this.format;
-    if (fmt === 'json')
+AnthillStorage.prototype.setItem = function (key, current_value, data_format) {
+    key = this.build_key(key);
+    data_format = data_format || this.data_format;
+    if (data_format === 'json')
         current_value = JSON.stringify(current_value);
-    this.storage.setItem(_key, current_value);
+    this.storage.setItem(key, current_value);
 };
 
 /**
  *
  * @param key
- * @param format
+ * @param data_format
  * @returns {*}
  */
-AnthillStorage.prototype.getItem = function (key, format) {
-    var fmt = format || this.format;
-    var _key = this.build_key(key);
-    var value = this.storage.getItem(_key);
-    if (fmt === 'json')
+AnthillStorage.prototype.getItem = function (key, data_format) {
+    data_format = data_format || this.data_format;
+    key = this.build_key(key);
+    var value = this.storage.getItem(key);
+    if (data_format === 'json')
         return JSON.parse(value);
     return value;
 };
