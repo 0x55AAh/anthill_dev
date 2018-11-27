@@ -54,9 +54,9 @@ AnthillStorage.prototype.setItem = function (key, current_value, data_format) {
  * @returns {*}
  */
 AnthillStorage.prototype.getItem = function (key, data_format) {
-    data_format = data_format || this.data_format;
     key = this.build_key(key);
     var value = this.storage.getItem(key);
+    data_format = data_format || this.data_format;
     if (data_format === 'json')
         return JSON.parse(value);
     return value;

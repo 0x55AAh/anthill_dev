@@ -1,4 +1,4 @@
-from anthill.framework.handlers import TemplateHandler, RequestHandler
+from anthill.framework.handlers import RequestHandler
 from anthill.platform.handlers.jsonrpc import JsonRPCSessionHandler, jsonrpc_method
 from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
@@ -8,8 +8,9 @@ from anthill.platform.auth.handlers import (
 )
 from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
-from admin.ui.modules import ServiceCard
 from anthill.framework.utils.decorators import authenticated
+from admin.handlers._base import ServiceContextMixin
+from admin.ui.modules import ServiceCard
 from typing import Optional
 import logging
 import inspect
@@ -135,21 +136,6 @@ class SidebarMainToggle(UserHandlerMixin, RequestHandler):
 
     async def post(self):
         await self.get()
-
-
-class ServiceContextMixin:
-    async def get_service_metadata(self):
-        service_name = self.path_kwargs['name']
-        return await self.internal_request(service_name, method='get_service_metadata')
-
-    async def get_context_data(self, **kwargs):
-        context = await super().get_context_data(**kwargs)
-        try:
-            metadata = await self.get_service_metadata()
-        except RequestTimeoutError:
-            metadata = {}
-        context.update(metadata=metadata)
-        return context
 
 
 # @authenticated(methods=['GET'])
