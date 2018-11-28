@@ -9,9 +9,9 @@ class ServiceContextMixin:
     """
 
     async def get_service_metadata(self):
-        service_name = self.path_kwargs['name']
         return await self.internal_request(
-            service_name, method='get_service_metadata',
+            self.path_kwargs['name'],
+            method='get_service_metadata',
             registered_services=self.settings['registered_services'])
 
     async def get_context_data(self, **kwargs):
