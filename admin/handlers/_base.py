@@ -1,8 +1,9 @@
 from anthill.platform.api.internal import RequestTimeoutError, ServiceDoesNotExist
+from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.framework.http.errors import HttpNotFoundError
 
 
-class ServiceContextMixin:
+class ServiceContextMixin(InternalRequestHandlerMixin):
     """
     Put current request handler into special service context.
     Need for url kwarg `name` to identify target service.

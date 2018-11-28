@@ -1,5 +1,5 @@
 from admin.ui.modules import MainSidebar
-from anthill.platform.api.internal import RequestTimeoutError
+from anthill.platform.api.internal import RequestTimeoutError, connector
 
 
 async def main_sidebar(handler):
@@ -20,7 +20,7 @@ async def main_sidebar(handler):
             make_entry(metadata)
     else:
         try:
-            services = await handler.internal_request('discovery', method='get_services')
+            services = await connector.internal_request('discovery', method='get_services')
         except RequestTimeoutError:
             pass
         else:
@@ -29,7 +29,7 @@ async def main_sidebar(handler):
                     # Skip current application
                     continue
                 try:
-                    metadata = await handler.internal_request(name, method='get_service_metadata')
+                    metadata = await connector.internal_request(name, method='get_service_metadata')
                     make_entry(metadata)
                 except RequestTimeoutError:
                     pass

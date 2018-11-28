@@ -22,7 +22,7 @@ logger = logging.getLogger('anthill.application')
 
 
 # @authenticated()
-class HomeHandler(UserTemplateHandler):
+class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
     template_name = 'index.html'
 
     def __init__(self, application, request, **kwargs):
