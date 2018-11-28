@@ -1,23 +1,8 @@
 {% extends '../base.html' %}
 
 {% block css %}
+<link href="{{ static_url('css/pages/services/common.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ static_url('css/pages/services/config.css') }}" rel="stylesheet" type="text/css">
-<style>
-    @media (min-width: 769px) {
-        .nav-tabs.nav-tabs-bottom > li.active > a:after {
-            background-color: rgb(43, 175, 164);
-        }
-    }
-    .page-header .breadcrumb-line-component {
-        margin-top: 20px;
-    }
-    .nav-tabs {
-         margin-bottom: 0;
-    }
-    .nav-tabs {
-         border-bottom: unset;
-    }
-</style>
 {% end %}
 
 {% block js %}

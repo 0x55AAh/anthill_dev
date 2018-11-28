@@ -20,7 +20,7 @@ import os
 logger = logging.getLogger('anthill.application')
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class HomeHandler(UserTemplateHandler):
     template_name = 'index.html'
 
@@ -67,12 +67,12 @@ class LoginHandler(BaseLoginHandler):
     pass
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class LogoutHandler(BaseLogoutHandler):
     handler_name = 'login'  # Redirect to
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class DebugHandler(UserTemplateHandler):
     template_name = 'debug.html'
 
@@ -123,7 +123,7 @@ class DebugSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
         self._set_context(name, None)
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class SidebarMainToggle(UserHandlerMixin, RequestHandler):
     """Save main sidebar state expanded or closed."""
 
@@ -138,7 +138,7 @@ class SidebarMainToggle(UserHandlerMixin, RequestHandler):
         await self.get()
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class ServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
     """Shows individual service index page."""
 
@@ -155,11 +155,11 @@ class ServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
             super().render(template_name, **kwargs)
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class LogRequestHandler(ServiceContextMixin, UserTemplateHandler):
     template_name = 'log.html'
 
 
-# @authenticated(methods=['GET'])
+# @authenticated()
 class SettingsRequestHandler(UserTemplateHandler):
     template_name = 'settings.html'

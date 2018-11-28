@@ -210,7 +210,8 @@ def authenticated(methods=None):
     """
     def decorator(wrapped):
         if issubclass(wrapped, RequestHandler):
-            for method_name in map(lambda x: x.lower(), methods or []):
+            supported_methods = RequestHandler.SUPPORTED_METHODS
+            for method_name in map(lambda x: x.lower(), methods or supported_methods):
                 method = getattr(wrapped, method_name)
                 setattr(wrapped, method_name, _authenticated(method))
             return wrapped
