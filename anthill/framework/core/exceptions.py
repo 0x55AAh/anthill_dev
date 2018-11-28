@@ -4,11 +4,11 @@ Global exception and warning classes.
 
 
 class ObjectDoesNotExist(Exception):
-    """The requested object does not exist"""
+    """The requested object does not exist."""
 
 
 class MultipleObjectsReturned(Exception):
-    """The query returned multiple objects when only one was expected"""
+    """The query returned multiple objects when only one was expected."""
 
 
 class SuspiciousOperation(Exception):
@@ -16,15 +16,15 @@ class SuspiciousOperation(Exception):
 
 
 class SuspiciousMultipartForm(SuspiciousOperation):
-    """Suspect MIME request in multipart form data"""
+    """Suspect MIME request in multipart form data."""
 
 
 class SuspiciousFileOperation(SuspiciousOperation):
-    """A Suspicious filesystem operation was attempted"""
+    """A Suspicious filesystem operation was attempted."""
 
 
 class DisallowedHost(SuspiciousOperation):
-    """HTTP_HOST header contains invalid value"""
+    """HTTP_HOST header contains invalid value."""
 
 
 class RequestDataTooBig(SuspiciousOperation):
@@ -35,15 +35,15 @@ class RequestDataTooBig(SuspiciousOperation):
 
 
 class PermissionDenied(Exception):
-    """The user did not have permission to do that"""
+    """The user did not have permission to do that."""
 
 
 class ImproperlyConfigured(Exception):
-    """Framework is somehow improperly configured"""
+    """Framework is somehow improperly configured."""
 
 
 class EmptyResultSet(Exception):
-    """A database query predicate is impossible"""
+    """A database query predicate is impossible."""
 
 
 NON_FIELD_ERRORS = '__all__'

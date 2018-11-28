@@ -24,7 +24,8 @@ import logging
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
     'as_internal', 'api', 'InternalAPI', 'InternalAPIMixin', 'InternalAPIConnector',
-    'InternalAPIError', 'RequestTimeoutError', 'RequestError', 'connector'
+    'InternalAPIError', 'RequestTimeoutError', 'RequestError', 'connector',
+    'ServiceDoesNotExist'
 ]
 
 
@@ -47,6 +48,10 @@ class RequestError(InternalAPIError):
 
 
 class RequestTimeoutError(RequestError):
+    pass
+
+
+class ServiceDoesNotExist(Exception):
     pass
 
 
@@ -252,8 +257,16 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             return False
         return True
 
-    async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
+    # noinspection PyMethodMayBeStatic
+    def check_service(self, service, registered_services=None):
+        if callable(registered_services):
+            registered_services = registered_services()
+        if registered_services is not None and service not in registered_services:
+            raise ServiceDoesNotExist
+
+    async def request(self, service: str, method: str, timeout: int=None, registered_services=None, **kwargs) -> dict:
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
+            self.check_service(service, registered_services)
             kwargs.update(service=self.service.name)
             request_id = self.next_request_id()
             message = {
@@ -282,7 +295,8 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             finally:
                 del self._responses[request_id]
 
-    async def push(self, service: str, method: str, **kwargs) -> None:
+    async def push(self, service: str, method: str, registered_services=None, **kwargs) -> None:
+        self.check_service(service, registered_services)
         kwargs.update(service=self.service.name)
         message = {
             'type': self.message_type,

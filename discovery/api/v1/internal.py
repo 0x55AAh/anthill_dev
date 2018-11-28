@@ -30,6 +30,11 @@ async def get_services(api: InternalAPI, **options) -> dict:
 
 
 @as_internal()
+async def get_registered_services(api: InternalAPI, **options) -> dict:
+    return api.service.registry
+
+
+@as_internal()
 async def set_service(api: InternalAPI, name: str, network: str, location: str, **options) -> None:
     await api.service.setup_service(name, {network: location})
 
