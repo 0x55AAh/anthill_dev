@@ -130,8 +130,8 @@ class AdminService(PlainService):
                             logger.error('Cannot get registered services. Retry...'), ))
     async def set_registered_services(self):
         internal_request = self.internal_connection.request
-        regirtered_services = await internal_request('discovery', 'get_registered_services')
-        self.settings.update(registered_services=regirtered_services)
+        registered_services = await internal_request('discovery', 'get_registered_services')
+        self.settings.update(registered_services=registered_services)
 
     async def on_start(self) -> None:
         await super().on_start()

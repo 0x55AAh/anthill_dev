@@ -52,14 +52,6 @@ class CommonRequestHandlerMixin:
         return self.application.db
 
     @property
-    def internal_request(self):
-        """
-        An alias for `self.application.internal_connection.request
-        <InternalConnection.request>`.
-        """
-        return self.application.internal_connection.request
-
-    @property
     def debug(self):
         """An alias for `self.application.debug <Application.debug>`."""
         return self.application.debug

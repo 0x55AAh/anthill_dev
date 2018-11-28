@@ -8,6 +8,7 @@ from anthill.platform.auth.handlers import (
 )
 from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
+from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.framework.utils.decorators import authenticated
 from admin.handlers._base import ServiceContextMixin
 from admin.ui.modules import ServiceCard
