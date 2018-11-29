@@ -1,10 +1,9 @@
-from anthill.platform.auth.handlers import UserRequestHandler
-from admin.handlers._base import ServiceContextMixin
+from admin.handlers._base import UserTemplateServiceRequestHandler
 
 
-class ServicesList(ServiceContextMixin, UserRequestHandler):
-    pass
+class ServicesList(UserTemplateServiceRequestHandler):
+    template_name = 'services-list.html'
 
 
-class ServiceDetail(ServiceContextMixin, UserRequestHandler):
-    pass
+class ServiceDetail(UserTemplateServiceRequestHandler):
+    template_name = 'service-detail.html'

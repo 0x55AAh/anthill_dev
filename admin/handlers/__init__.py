@@ -10,7 +10,7 @@ from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.framework.utils.decorators import authenticated
-from admin.handlers._base import ServiceContextMixin
+from admin.handlers._base import ServiceContextMixin, UserTemplateServiceRequestHandler
 from admin.ui.modules import ServiceCard
 from typing import Optional
 import logging
@@ -140,21 +140,9 @@ class SidebarMainToggle(UserHandlerMixin, RequestHandler):
 
 
 # @authenticated()
-class ServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
+class ServiceRequestHandler(UserTemplateServiceRequestHandler):
     """Shows individual service index page."""
-
-    def get_template_name(self, default=False):
-        if default:
-            return os.path.join('services', 'default.html')
-        name = self.path_kwargs['name']
-        return os.path.join('services', name, 'index.html')
-
-    def render(self, template_name=None, **kwargs):
-        try:
-            super().render(template_name, **kwargs)
-        except FileNotFoundError:
-            template_name = self.get_template_name(default=True)
-            super().render(template_name, **kwargs)
+    template_name = 'index.html'
 
 
 # @authenticated()

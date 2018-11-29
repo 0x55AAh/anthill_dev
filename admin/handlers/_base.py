@@ -1,6 +1,8 @@
 from anthill.platform.api.internal import RequestTimeoutError, ServiceDoesNotExist
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
+from anthill.platform.auth.handlers import UserTemplateHandler
 from anthill.framework.http.errors import HttpNotFoundError
+import os
 
 
 class ServiceContextMixin(InternalRequestHandlerMixin):
@@ -26,3 +28,20 @@ class ServiceContextMixin(InternalRequestHandlerMixin):
         else:
             context.update(metadata=metadata)
         return context
+
+
+class UserTemplateServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
+    template_name = None
+
+    def get_template_name(self, default=False):
+        if default:
+            return os.path.join('services', 'default.html')
+        service_name = self.path_kwargs['name']
+        return os.path.join('services', service_name, self.template_name)
+
+    def render(self, template_name=None, **kwargs):
+        try:
+            super().render(template_name, **kwargs)
+        except FileNotFoundError:
+            template_name = self.get_template_name(default=True)
+            super().render(template_name, **kwargs)
