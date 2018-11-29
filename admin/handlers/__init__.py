@@ -146,7 +146,8 @@ class ServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
     def get_template_name(self, default=False):
         if default:
             return os.path.join('services', 'default.html')
-        return os.path.join('services', self.path_kwargs['name'], 'index.html')
+        name = self.path_kwargs['name']
+        return os.path.join('services', name, 'index.html')
 
     def render(self, template_name=None, **kwargs):
         try:
