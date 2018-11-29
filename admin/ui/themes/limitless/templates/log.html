@@ -52,7 +52,7 @@
         <a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>
         <ul class="breadcrumb">
             <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Home') }}</a></li>
-            <li><a href="{{ reverse_url('service:service', name) }}">{{ metadata.get('title') }}</a></li>
+            <li><a href="{{ reverse_url('service:index', name) }}">{{ metadata.get('title') }}</a></li>
             <li class="active">{{ _('Log') }}</li>
         </ul>
     </div>

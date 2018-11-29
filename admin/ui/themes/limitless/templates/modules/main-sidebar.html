@@ -8,7 +8,7 @@
                     </li>
                     {% for entry in entries %}
                     <li class="{% if current == entry.name %}active{% end %} navigation-service {{ current }}" data-name="{{ entry.name }}">
-                        <a href="{{ reverse_url('service:service', entry.name) }}"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
+                        <a href="{{ reverse_url('service:index', entry.name) }}"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
                     </li>
                     {% end %}
                     <li class="navigation-header navigation-header-utils">
