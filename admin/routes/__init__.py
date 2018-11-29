@@ -1,17 +1,33 @@
 # For more details about routing, see
 # http://www.tornadoweb.org/en/stable/routing.html
-from tornado.web import url
-from admin.routes import (
-    config, discovery, dlc, exec as exec_, login,
-    message, profile, promo, social, store, apigw, media
-)
+from anthill.framework.utils.urls import include
+from anthill.framework.utils.module_loading import import_module
 from admin import handlers
+from tornado.web import url
+import itertools
 
 extra_routes = (
-    config, discovery, dlc, exec_, login, media,
-    message, profile, promo, social, store, apigw
+    'admin.routes.config',
+    'admin.routes.discovery',
+    'admin.routes.dlc',
+    'admin.routes.exec',
+    'admin.routes.login',
+    'admin.routes.media',
+    'admin.routes.message',
+    'admin.routes.profile',
+    'admin.routes.promo',
+    'admin.routes.social',
+    'admin.routes.store',
+    'admin.routes.apigw',
 )
+extra_routes = map(import_module, extra_routes)
+extra_routes = map(lambda mod: getattr(mod, 'route_patterns', []), extra_routes)
+extra_routes = list(itertools.chain.from_iterable(extra_routes))
 
+service_url_patterns = [
+    url(r'^/?$', handlers.ServiceRequestHandler, name='service'),
+    url(r'^/log/?$', handlers.LogRequestHandler, name='log'),
+] + extra_routes
 
 route_patterns = [
     url(r'^/?$', handlers.HomeHandler, name='index'),
@@ -21,9 +37,5 @@ route_patterns = [
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
-    url(r'^/services/(?P<name>[^/]+)/?$', handlers.ServiceRequestHandler, name='service'),
-    url(r'^/services/(?P<name>[^/]+)/log/?$', handlers.LogRequestHandler, name='service-log'),
+    url(r'^/services/(?P<name>[^/]+)/', include(service_url_patterns, namespace='service')),
 ]
-
-for mod in extra_routes:
-    route_patterns += getattr(mod, 'route_patterns', [])

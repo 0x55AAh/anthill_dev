@@ -38,7 +38,7 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
             try:
                 metadata = await self.internal_request(name, method='get_service_metadata')
             except (RequestTimeoutError, RequestError):
-                pass
+                pass  # ¯\_(ツ)_/¯
             else:
                 res.append(metadata)
         return res
@@ -48,7 +48,7 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
         try:
             services = await self.internal_request('discovery', method='get_services')
         except (RequestTimeoutError, RequestError):
-            pass
+            pass  # ¯\_(ツ)_/¯
         else:
             self.metadata = await self.get_metadata(services)
             for metadata in self.metadata:

@@ -6,7 +6,7 @@ class HTTPError(GenericHTTPError):
     status_code = 500
 
     def __init__(self, log_message=None, *args, **kwargs):
-        super().__init__(status_code=self.status_code, log_message=log_message, *args, **kwargs)
+        super().__init__(self.status_code, log_message, *args, **kwargs)
 
 
 class HttpBadRequestError(HTTPError):
@@ -33,9 +33,5 @@ class HttpGoneError(HTTPError):
     status_code = 410
 
 
-class HttpServerError(HTTPError):
-    pass
-
-
-class Http404(HttpNotFoundError):
-    pass
+HttpServerError = HTTPError
+Http404 = HttpNotFoundError

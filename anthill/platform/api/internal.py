@@ -265,8 +265,8 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             raise ServiceDoesNotExist
 
     async def request(self, service: str, method: str, timeout: int=None, registered_services=None, **kwargs) -> dict:
+        self.check_service(service, registered_services)
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
-            self.check_service(service, registered_services)
             kwargs.update(service=self.service.name)
             request_id = self.next_request_id()
             message = {
@@ -297,17 +297,18 @@ class JSONRPCInternalConnection(BaseInternalConnection):
 
     async def push(self, service: str, method: str, registered_services=None, **kwargs) -> None:
         self.check_service(service, registered_services)
-        kwargs.update(service=self.service.name)
-        message = {
-            'type': self.message_type,
-            'service': self.service.name,
-            'payload': {
-                'jsonrpc': self.json_rpc_ver,
-                'method': method,
-                'params': kwargs
+        with ElapsedTime('push@InternalConnection -> {0}@{1}', method, service):
+            kwargs.update(service=self.service.name)
+            message = {
+                'type': self.message_type,
+                'service': self.service.name,
+                'payload': {
+                    'jsonrpc': self.json_rpc_ver,
+                    'method': method,
+                    'params': kwargs
+                }
             }
-        }
-        await self.send(service, message)
+            await self.send(service, message)
 
 
 InternalConnection = JSONRPCInternalConnection  # More simple alias
