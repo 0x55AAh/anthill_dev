@@ -7,9 +7,11 @@ from tornado.web import url
 import itertools
 
 extra_routes = (
+    'admin.routes.apigw',
     'admin.routes.config',
     'admin.routes.discovery',
     'admin.routes.dlc',
+    'admin.routes.event',
     'admin.routes.exec',
     'admin.routes.login',
     'admin.routes.media',
@@ -18,16 +20,14 @@ extra_routes = (
     'admin.routes.promo',
     'admin.routes.social',
     'admin.routes.store',
-    'admin.routes.apigw',
 )
 extra_routes = map(import_module, extra_routes)
-extra_routes = map(lambda mod: getattr(mod, 'route_patterns', []), extra_routes)
-extra_routes = list(itertools.chain.from_iterable(extra_routes))
+extra_route_patterns = map(lambda mod: getattr(mod, 'route_patterns', []), extra_routes)
 
-service_url_patterns = [
+service_route_patterns = [
     url(r'^/?$', handlers.ServiceRequestHandler, name='service'),
     url(r'^/log/?$', handlers.LogRequestHandler, name='log'),
-] + extra_routes
+] + list(itertools.chain.from_iterable(extra_route_patterns))
 
 route_patterns = [
     url(r'^/?$', handlers.HomeHandler, name='index'),
@@ -37,5 +37,5 @@ route_patterns = [
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
-    url(r'^/services/(?P<name>[^/]+)/', include(service_url_patterns, namespace='service')),
+    url(r'^/services/(?P<name>[^/]+)/', include(service_route_patterns, namespace='service')),
 ]
