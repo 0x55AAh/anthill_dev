@@ -1,18 +1,17 @@
-from anthill.platform.api.internal import RequestTimeoutError, ServiceDoesNotExist
-from anthill.platform.handlers.base import InternalRequestHandlerMixin
+from anthill.platform.api.internal import RequestTimeoutError, ServiceDoesNotExist, connector
 from anthill.platform.auth.handlers import UserTemplateHandler
 from anthill.framework.http.errors import HttpNotFoundError
 import os
 
 
-class ServiceContextMixin(InternalRequestHandlerMixin):
+class ServiceContextMixin:
     """
     Put current request handler into special service context.
     Need for url kwarg `name` to identify target service.
     """
 
     async def get_service_metadata(self):
-        return await self.internal_request(
+        return await connector.internal_request(
             self.path_kwargs['name'],
             method='get_service_metadata',
             registered_services=self.settings['registered_services'])
