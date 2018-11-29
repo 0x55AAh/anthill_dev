@@ -1,39 +1,23 @@
 from admin.ui.modules import MainSidebar
-from anthill.platform.api.internal import RequestTimeoutError, connector
+from admin.utils import get_services_metadata
 
 
 async def main_sidebar(handler):
-    main_sidebar_entries = []
-
-    def make_entry(meta):
+    def build_entry(meta):
         kwargs = {
             'title': meta['title'],
             'icon_class': meta['icon_class'],
             'name': meta['name'],
         }
-        entry = MainSidebar.Entry(**kwargs)
-        main_sidebar_entries.append(entry)
+        return MainSidebar.Entry(**kwargs)
 
-    # Check for cached metatada
-    if getattr(handler, 'metadata', None) and handler.metadata:
-        for metadata in handler.metadata:
-            make_entry(metadata)
+    # Check for cached metadata
+    if getattr(handler, 'metadata', None):
+        services_metadata = handler.metadata
     else:
-        try:
-            services = await connector.internal_request('discovery', method='get_services')
-        except RequestTimeoutError:
-            pass
-        else:
-            for name in services.keys():
-                if name == handler.application.name:
-                    # Skip current application
-                    continue
-                try:
-                    metadata = await connector.internal_request(name, method='get_service_metadata')
-                    make_entry(metadata)
-                except RequestTimeoutError:
-                    pass
+        services_metadata = await get_services_metadata(exclude_names=[handler.application.name])
 
+    main_sidebar_entries = list(map(build_entry, services_metadata))
     main_sidebar_entries.sort()
 
     return {

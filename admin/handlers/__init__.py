@@ -6,16 +6,15 @@ from anthill.platform.auth.handlers import (
     UserTemplateHandler,
     UserHandlerMixin
 )
-from anthill.platform.api.internal import RequestTimeoutError, RequestError
 from anthill.framework.http.errors import HttpBadRequestError
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.framework.utils.decorators import authenticated
 from admin.handlers._base import ServiceContextMixin, UserTemplateServiceRequestHandler
+from admin.utils import get_services_metadata
 from admin.ui.modules import ServiceCard
 from typing import Optional
 import logging
 import inspect
-import os
 
 
 logger = logging.getLogger('anthill.application')
@@ -29,31 +28,12 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
         super().__init__(application, request, **kwargs)
         self.metadata = []
 
-    async def get_metadata(self, services):
-        res = []
-        for name in services.keys():
-            if name == self.application.name:
-                # Skip current application
-                continue
-            try:
-                metadata = await self.internal_request(name, method='get_service_metadata')
-            except (RequestTimeoutError, RequestError):
-                pass  # ¯\_(ツ)_/¯
-            else:
-                res.append(metadata)
-        return res
-
     async def get_service_cards(self):
         service_cards = []
-        try:
-            services = await self.internal_request('discovery', method='get_services')
-        except (RequestTimeoutError, RequestError):
-            pass  # ¯\_(ツ)_/¯
-        else:
-            self.metadata = await self.get_metadata(services)
-            for metadata in self.metadata:
-                card = ServiceCard.Entry(**metadata)
-                service_cards.append(card)
+        self.metadata = await get_services_metadata(exclude_names=[self.application.name])
+        for metadata in self.metadata:
+            card = ServiceCard.Entry(**metadata)
+            service_cards.append(card)
         service_cards.sort()
         return service_cards
 
