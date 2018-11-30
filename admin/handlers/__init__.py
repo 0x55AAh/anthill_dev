@@ -10,7 +10,6 @@ from anthill.framework.http.errors import HttpBadRequestError
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.framework.utils.decorators import authenticated
 from admin.handlers._base import ServiceContextMixin, UserTemplateServiceRequestHandler
-from admin.utils import get_services_metadata
 from admin.ui.modules import ServiceCard
 from typing import Optional
 import logging

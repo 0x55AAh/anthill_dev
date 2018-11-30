@@ -1,5 +1,4 @@
 from admin.ui.modules import MainSidebar
-from admin.utils import get_services_metadata
 
 
 async def main_sidebar(handler):
@@ -12,7 +11,6 @@ async def main_sidebar(handler):
         return MainSidebar.Entry(**kwargs)
 
     services_metadata = handler.settings['services_meta']
-
     main_sidebar_entries = list(map(build_entry, services_metadata))
     main_sidebar_entries.sort()
 

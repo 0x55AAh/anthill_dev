@@ -1,6 +1,4 @@
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from anthill.framework.apps import app
-from admin.utils import get_services_metadata
 from admin import models
 import graphene
 
@@ -27,7 +25,7 @@ class RootQuery(graphene.ObjectType):
 
     @staticmethod
     async def resolve_services_metadata(root, info, **kwargs):
-        services_metadata = await get_services_metadata(exclude_names=[app.name])
+        services_metadata = info.context['handler'].settings['services_meta']
         services_metadata = list(map(lambda m: ServiceMetadata(**m), services_metadata))
         services_metadata.sort()
         return services_metadata
