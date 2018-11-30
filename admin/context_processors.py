@@ -3,11 +3,8 @@ from admin.ui.modules import MainSidebar
 
 async def main_sidebar(handler):
     def build_entry(meta):
-        kwargs = {
-            'title': meta['title'],
-            'icon_class': meta['icon_class'],
-            'name': meta['name'],
-        }
+        keys = ('title', 'icon_class', 'name')
+        kwargs = dict(map(lambda x: (x, meta[x]), keys))
         return MainSidebar.Entry(**kwargs)
 
     services_metadata = handler.settings['services_meta']
