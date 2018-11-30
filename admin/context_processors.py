@@ -11,11 +11,7 @@ async def main_sidebar(handler):
         }
         return MainSidebar.Entry(**kwargs)
 
-    # Check for cached metadata
-    if getattr(handler, 'metadata', None):
-        services_metadata = handler.metadata
-    else:
-        services_metadata = await get_services_metadata(exclude_names=[handler.application.name])
+    services_metadata = handler.settings['services_meta']
 
     main_sidebar_entries = list(map(build_entry, services_metadata))
     main_sidebar_entries.sort()

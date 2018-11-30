@@ -29,7 +29,7 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
         self.metadata = []
 
     async def get_service_cards(self):
-        self.metadata = await get_services_metadata(exclude_names=[self.application.name])
+        self.metadata = self.settings['services_meta']
         service_cards = list(map(lambda m: ServiceCard.Entry(**m), self.metadata))
         service_cards.sort()
         return service_cards

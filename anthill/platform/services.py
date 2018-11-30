@@ -5,6 +5,7 @@ from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
 from anthill.framework.utils.geoip import GeoIP2
+from admin.utils import get_services_metadata
 from functools import partial
 from tornado.web import url
 import logging
@@ -86,8 +87,7 @@ class PlainService(BaseService):
         self.discovery_request = partial(self.internal_connection.request, 'discovery')
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
-                            on_exception=lambda func, e:
-                                logger.error('Service `discovery` is unreachable.'),))
+                            on_exception=lambda func, e: logger.error('Service `discovery` is unreachable.'),))
     async def register_on_discovery(self) -> None:
         kwargs = {
             'name': self.name,
@@ -104,8 +104,7 @@ class PlainService(BaseService):
         return await self.discovery_request('get_service', name=name, network=network)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
-                            on_exception=lambda func, e:
-                            logger.error('Cannot get login url. Retry...'), ))
+                            on_exception=lambda func, e: logger.error('Cannot get login url. Retry...'), ))
     async def set_login_url(self):
         internal_request = self.internal_connection.request
         login_url = await internal_request('admin', 'get_login_url')
@@ -125,21 +124,46 @@ class PlainService(BaseService):
 
 
 class AdminService(PlainService):
+    update_services_meta_period = 5
+    update_services_meta = True
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.settings.update(services_meta={})
+        if self.update_services_meta:
+            self.services_meta_updater = PeriodicCallback(
+                self.set_services_meta, self.update_services_meta_period * 1000)
+        else:
+            self.services_meta_updater = None
+
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
-                            on_exception=lambda func, e:
-                            logger.error('Cannot get registered services. Retry...'), ))
+                            on_exception=lambda func, e: logger.error('Cannot get registered services. Retry...'), ))
     async def set_registered_services(self):
         internal_request = self.internal_connection.request
         registered_services = await internal_request('discovery', 'get_registered_services')
         self.settings.update(registered_services=registered_services)
 
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
+                            on_exception=lambda func, e: logger.error('Cannot get services meta. Retry...'), ))
+    async def set_services_meta(self):
+        services_meta = await get_services_metadata(exclude_names=self.name)
+        self.settings.update(services_meta=services_meta)
+
     async def on_start(self) -> None:
         await super().on_start()
         await self.set_registered_services()
+        await self.set_services_meta()
+        if self.services_meta_updater is not None:
+            self.services_meta_updater.start()
+
+    async def on_stop(self) -> None:
+        await super().on_stop()
+        if self.services_meta_updater is not None:
+            self.services_meta_updater.stop()
 
 
 class DiscoveryService(BaseService):
-    cleanup_storage_on_stop = True
+    cleanup_storage_on_start = False
     cleanup_services_period = 5
     ping_services = True
     ping_max_retries = 1
@@ -147,23 +171,22 @@ class DiscoveryService(BaseService):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ping_monitor = None
         if self.ping_services:
             self.ping_monitor = PeriodicCallback(
                 self.check_services, self.cleanup_services_period * 1000)
+        else:
+            self.ping_monitor = None
         self.registry = self.app.registry
 
     async def on_start(self) -> None:
         await super().on_start()
         await self.setup_storage()
-        await self.setup_services()
+        await self.setup_services(cleanup=self.cleanup_storage_on_start)
         if self.ping_monitor is not None:
             self.ping_monitor.start()
 
     async def on_stop(self) -> None:
         await super().on_stop()
-        if self.cleanup_storage_on_stop:
-            await self.remove_services()
         if self.ping_monitor is not None:
             self.ping_monitor.stop()
 
@@ -189,7 +212,9 @@ class DiscoveryService(BaseService):
                 if name not in await self.list_services():
                     await self.setup_service(name, self.registry[name])
 
-    async def setup_services(self) -> None:
+    async def setup_services(self, cleanup=False) -> None:
+        if cleanup:
+            await self.remove_services()
         for name, networks in self.registry.items():
             await self.setup_service(name, networks)
 
