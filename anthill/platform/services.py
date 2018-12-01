@@ -5,7 +5,6 @@ from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
 from anthill.framework.utils.geoip import GeoIP2
-from admin.utils import get_services_metadata
 from functools import partial
 from tornado.web import url
 import logging
@@ -24,13 +23,20 @@ class BaseService(CeleryMixin, _BaseService):
 
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
-        self.internal_connection = self.internal_api_connection_class(service=self)
         if getattr(self.config, 'GEOIP_PATH', None):
             self.gis = GeoIP2()
             logger.debug('Geo position tracking system status: ENABLED.')
         else:
             self.gis = None
             logger.debug('Geo position tracking system status: DISABLED.')
+
+    @property
+    def internal_connection(self):
+        return self.internal_api_connection_class(service=self)
+
+    @property
+    def internal_request(self):
+        return self.internal_connection.request
 
     def setup(self) -> None:
         def url_pattern(_url, float_slash=True):
@@ -84,7 +90,7 @@ class PlainService(BaseService):
 
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
-        self.discovery_request = partial(self.internal_connection.request, 'discovery')
+        self.discovery_request = partial(self.internal_request, 'discovery')
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Service `discovery` is unreachable.'),))
@@ -106,8 +112,7 @@ class PlainService(BaseService):
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get login url. Retry...'), ))
     async def set_login_url(self):
-        internal_request = self.internal_connection.request
-        login_url = await internal_request('admin', 'get_login_url')
+        login_url = await self.internal_request('admin', 'get_login_url')
         self.settings.update(login_url=login_url)
         logger.debug('Login url: %s' % login_url)
 
@@ -136,6 +141,24 @@ class AdminService(PlainService):
         else:
             self.services_meta_updater = None
 
+    async def get_services_metadata(self, exclude_names=None):
+        services_metadata = []
+        exclude_names = exclude_names or []
+        try:
+            services_names = await self.internal_request('discovery', method='get_services_names')
+        except RequestTimeoutError:
+            pass  # ¯\_(ツ)_/¯
+        else:
+            for name in services_names:
+                if name in exclude_names:
+                    continue
+                try:
+                    metadata = await self.internal_request(name, method='get_service_metadata')
+                    services_metadata.append(metadata)
+                except RequestTimeoutError:
+                    pass  # ¯\_(ツ)_/¯
+        return services_metadata
+
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get registered services. Retry...'), ))
     async def set_registered_services(self):
@@ -146,7 +169,7 @@ class AdminService(PlainService):
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get services meta. Retry...'), ))
     async def set_services_meta(self):
-        services_meta = await get_services_metadata(exclude_names=self.name)
+        services_meta = await self.get_services_metadata(exclude_names=[self.name])
         self.settings.update(services_meta=services_meta)
 
     async def on_start(self) -> None:
