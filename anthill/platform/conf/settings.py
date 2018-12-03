@@ -177,7 +177,7 @@ CHANNEL_LAYERS = {
 #######
 
 INTERNAL_API_CONF = 'api.v1.internal'
-PUBLIC_API_URL = '/api/'
+PUBLIC_API_URL = None
 
 
 #########

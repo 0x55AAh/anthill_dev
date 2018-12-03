@@ -161,6 +161,9 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 HTTPS = None
 
 
+PUBLIC_API_URL = '/api/'
+
+
 ############
 # GRAPHENE #
 ############
