@@ -63,11 +63,12 @@ class BaseService(CeleryMixin, _BaseService):
             logger.debug('Log streaming installed on %s.' % log_streaming_url)
 
         # Public API
-        from anthill.framework.handlers import GraphQLHandler
-        public_api_url = getattr(self.config, 'PUBLIC_API_URL', '/api/')
-        self.add_handlers(self.app.host_regex, [
-            url(url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
-        logger.debug('Public api installed on %s.' % public_api_url)
+        public_api_url = getattr(self.config, 'PUBLIC_API_URL', None)
+        if public_api_url is not None:
+            from anthill.framework.handlers import GraphQLHandler
+            self.add_handlers(self.app.host_regex, [
+                url(url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
+            logger.debug('Public api installed on %s.' % public_api_url)
 
         super().setup()
 
