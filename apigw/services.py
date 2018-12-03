@@ -1,5 +1,5 @@
-from anthill.platform.services import PlainService
+from anthill.platform.services import APIGatewayService
 
 
-class Service(PlainService):
+class Service(APIGatewayService):
     """Anthill default service."""

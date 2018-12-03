@@ -185,6 +185,10 @@ class AdminService(PlainService):
             self.services_meta_updater.stop()
 
 
+class APIGatewayService(AdminService):
+    pass
+
+
 class DiscoveryService(BaseService):
     cleanup_storage_on_start = False
     cleanup_services_period = 5
