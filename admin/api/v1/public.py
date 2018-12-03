@@ -13,6 +13,7 @@ class ServiceMetadata(graphene.ObjectType):
     color = graphene.String()
     version = graphene.String()
     debug = graphene.Boolean()
+    public_api_url = graphene.String()
 
     def __lt__(self, other):
         return self.name < other.name
@@ -25,7 +26,8 @@ class RootQuery(graphene.ObjectType):
 
     @staticmethod
     async def resolve_services_metadata(root, info, **kwargs):
-        services_metadata = info.context['handler'].settings['services_meta']
+        handler = info.context['handler']
+        services_metadata = handler.settings['services_meta']
         services_metadata = list(map(lambda m: ServiceMetadata(**m), services_metadata))
         services_metadata.sort()
         return services_metadata

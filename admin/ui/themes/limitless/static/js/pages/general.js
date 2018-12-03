@@ -28,6 +28,7 @@ $(function() {
               color,                \
               version,              \
               debug,                \
+              publicApiUrl          \
             }                       \
         }";
 

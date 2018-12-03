@@ -15,8 +15,13 @@
                         <span>{{ _('Utils') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     <li class="{% if current == 'debug' %}active{% end %}">
-                        <a href="{{ reverse_url('debug') }}"><i class="icon-bug2"></i> <span>{{ _('Console') }}</span></a>
+                        <a href="{{ reverse_url('debug') }}" target="_blank"><i class="icon-bug2"></i> <span>{{ _('Console') }}</span></a>
                     </li>
+                    {% if metadata['debug'] and metadata['public_api_url'] %}
+                    <li>
+                        <a href="{{ metadata['public_api_url'] }}" target="_blank"><i class="icon-puzzle3"></i> <span>{{ _('API') }}</span></a>
+                    </li>
+                    {% end %}
                 </ul>
             </div>
         </div>

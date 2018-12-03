@@ -190,6 +190,8 @@ SIGNING_BACKEND = 'anthill.framework.core.signing.TimestampSigner'
 
 AUTH_USER_MODEL = 'User'
 
+AUTH_USER_PERMISSIONS = None
+
 AUTHENTICATION_BACKENDS = [
     'anthill.framework.auth.backends.ModelBackend'
 ]

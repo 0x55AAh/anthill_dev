@@ -2,6 +2,7 @@ from anthill.framework.apps.cls import Application
 from anthill.platform.api.internal import api as internal_api
 from anthill.framework.conf import settings
 from importlib import import_module
+from functools import lru_cache
 import logging
 
 
@@ -36,3 +37,15 @@ class BaseAnthillApplication(Application):
 
     def post_setup(self):
         self.setup_internal_api()
+
+    def public_api_url(self):
+        from anthill.framework.utils.urls import build_absolute_uri
+        public_api_url = getattr(self.config, 'PUBLIC_API_URL', '/api/')
+        return build_absolute_uri(self.config.LOCATION, public_api_url)
+
+    @property
+    @lru_cache()
+    def metadata(self):
+        metadata = super().metadata
+        metadata.update(public_api_url=self.public_api_url())
+        return metadata

@@ -1,5 +1,6 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
+from tornado.httpclient import AsyncHTTPClient
 from apigw import models
 
 

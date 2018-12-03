@@ -107,8 +107,8 @@ class MainSidebar(TemplateModule):
             return self.name < other.name
 
     # noinspection PyMethodOverriding
-    def render(self, entries, current=None):
-        return super().render(entries=entries, current=current)
+    def render(self, entries, current=None, metadata=None):
+        return super().render(entries=entries, current=current, metadata=metadata)
 
 
 class ServiceCard(TemplateModule):
@@ -118,7 +118,8 @@ class ServiceCard(TemplateModule):
     template_name = 'modules/service-card.html'
 
     class Entry:
-        def __init__(self, name, title, description='', icon_class='', color='', version='', debug=False):
+        def __init__(self, name, title,
+                     description='', icon_class='', color='', version='', public_api_url='',  debug=False):
             self.name = name
             self.title = title
             self.description = description
@@ -126,6 +127,7 @@ class ServiceCard(TemplateModule):
             self.color = color
             self.version = version
             self.debug = debug
+            self.public_api_url = public_api_url
 
         def __repr__(self):
             return 'ServiceCard(name="%s", title="%s")' % (self.name, self.title)
