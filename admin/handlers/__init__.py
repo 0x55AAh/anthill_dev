@@ -29,8 +29,7 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
 
     async def get_service_cards(self):
         self.metadata = self.settings['services_meta']
-        service_cards = list(map(lambda m: ServiceCard.Entry(**m), self.metadata))
-        service_cards.sort()
+        service_cards = sorted(map(lambda m: ServiceCard.Entry(**m), self.metadata))
         return service_cards
 
     async def get_context_data(self, **kwargs):

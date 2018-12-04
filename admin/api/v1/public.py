@@ -28,8 +28,7 @@ class RootQuery(graphene.ObjectType):
     async def resolve_services_metadata(root, info, **kwargs):
         handler = info.context['handler']
         services_metadata = handler.settings['services_meta']
-        services_metadata = list(map(lambda m: ServiceMetadata(**m), services_metadata))
-        services_metadata.sort()
+        services_metadata = sorted(map(lambda m: ServiceMetadata(**m), services_metadata))
         return services_metadata
 
 
