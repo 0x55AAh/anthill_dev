@@ -18,17 +18,24 @@ class ServiceAlreadyRegistered(Exception):
         self.name = name
 
 
+def _url_pattern(url_, float_slash=True):
+    end = ''
+    if float_slash is not None:
+        end = '/?' if float_slash else '/'
+        url_ = url_.rstrip('/')
+    return r'^{url}{end}$'.format(url=url_, end=end)
+
+
 class BaseService(CeleryMixin, _BaseService):
     internal_api_connection_class = JSONRPCInternalConnection
 
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
+        self.gis = None
         if getattr(self.config, 'GEOIP_PATH', None):
             self.gis = GeoIP2()
-            logger.debug('Geo position tracking system status: ENABLED.')
-        else:
-            self.gis = None
-            logger.debug('Geo position tracking system status: DISABLED.')
+        logger.debug(
+            'Geo position tracking system status: %s.' % 'ENABLED' if self.gis else 'DISABLED')
 
     @property
     def internal_connection(self):
@@ -38,14 +45,17 @@ class BaseService(CeleryMixin, _BaseService):
     def internal_request(self):
         return self.internal_connection.request
 
-    def setup(self) -> None:
-        def url_pattern(_url, float_slash=True):
-            _url, end = _url.rstrip('/'), ''
-            if float_slash is not None:
-                end += '/?' if float_slash else '/'
-            return r'^{url}{end}$'.format(url=_url, end=end)
+    def setup_public_api(self):
+        public_api_url = getattr(self.config, 'PUBLIC_API_URL', None)
+        if public_api_url is not None:
+            from anthill.framework.handlers import GraphQLHandler
+            self.add_handlers(self.app.host_regex, [
+                url(_url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
+            logger.debug('Public api installed on %s.' % public_api_url)
+        else:
+            logger.debug('Public api not installed.')
 
-        # Log streaming
+    def setup_log_streaming(self):
         log_streaming_config = getattr(self.config, 'LOG_STREAMING', None)
         if log_streaming_config:
             from anthill.framework.handlers import WatchLogFileHandler
@@ -58,18 +68,15 @@ class BaseService(CeleryMixin, _BaseService):
             handler_kwargs = log_streaming_config.get('handler', {}).get('kwargs', dict(handler_name='anthill'))
             log_streaming_url = log_streaming_config.get('path', '/log/')
             self.add_handlers(self.app.host_regex, [
-                url(url_pattern(log_streaming_url), handler_class, kwargs=handler_kwargs, name='log'),
+                url(_url_pattern(log_streaming_url), handler_class, kwargs=handler_kwargs, name='log'),
             ])
             logger.debug('Log streaming installed on %s.' % log_streaming_url)
+        else:
+            logger.debug('Log streaming not installed.')
 
-        # Public API
-        public_api_url = getattr(self.config, 'PUBLIC_API_URL', None)
-        if public_api_url is not None:
-            from anthill.framework.handlers import GraphQLHandler
-            self.add_handlers(self.app.host_regex, [
-                url(url_pattern(public_api_url), GraphQLHandler, dict(graphiql=True), name='api')])
-            logger.debug('Public api installed on %s.' % public_api_url)
-
+    def setup(self) -> None:
+        self.setup_log_streaming()
+        self.setup_public_api()
         super().setup()
 
     def get_server_kwargs(self) -> dict:
