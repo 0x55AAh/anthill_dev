@@ -12,7 +12,7 @@ if __name__ == '__main__':
     try:
         app_name = sys.argv[2] if sys.argv[1] == 'app' else ''
         app_mod = importlib.import_module(app_name)
-    except (IndexError, ImportError):
+    except (IndexError, ImportError, ValueError):
         pass
     else:
         sys.path.insert(0, app_mod.__path__[0])
