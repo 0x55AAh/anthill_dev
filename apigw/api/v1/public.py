@@ -1,11 +1,32 @@
-import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from tornado.httpclient import AsyncHTTPClient
+from tornado.escape import to_unicode
+from anthill.framework.apps import app
 from apigw import models
+import graphene
+import json
 
 
 class RootQuery(graphene.ObjectType):
-    pass
+    """Api root query."""
+
+    request = graphene.JSONString(
+        service_name=graphene.String(default_value=app.label),
+        query=graphene.String()
+    )
+
+    @staticmethod
+    async def resolve_request(root, info, service_name, query):
+        handler = info.context['handler']
+        metadata = list(filter(
+            lambda x: x['name'] == service_name, handler.settings['services_meta']))[0]
+        data = await AsyncHTTPClient().fetch(
+            metadata['public_api_url'],
+            method=handler.request.method,
+            body=json.dumps({"query": query}),
+            headers=handler.request.headers
+        )
+        return json.loads(to_unicode(data.body))
 
 
 # noinspection PyTypeChecker
