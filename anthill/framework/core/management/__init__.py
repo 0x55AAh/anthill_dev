@@ -477,7 +477,7 @@ class Manager:
     """Proxy manager."""
 
     def __init__(self, app=None, **kwargs):
-        self._manager = (AppManager if app else EmptyManager)(app, **kwargs)
+        self._manager = AppManager(app, **kwargs) if app else EmptyManager(**kwargs)
 
     def __getattr__(self, name):
         return getattr(self._manager, name)
