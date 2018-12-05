@@ -1,4 +1,5 @@
 import os
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -25,14 +26,12 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 # APPLICATION_CLASS = 'environment.apps.AnthillApplication'
 APPLICATION_NAME = 'environment'
-APPLICATION_VERBOSE_NAME = 'Environment'
-APPLICATION_DESCRIPTION = 'Service description'
+APPLICATION_VERBOSE_NAME = _('Environment')
+APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-cube'
 APPLICATION_COLOR = 'info'
 
 # SERVICE_CLASS = 'environment.services.Service'
-
-STATIC_URL = '/static/'
 
 # UI_MODULE = 'environment.ui'
 

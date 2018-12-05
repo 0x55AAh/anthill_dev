@@ -1,0 +1,32 @@
+{% extends '../base.html' %}
+
+{% block css %}
+<link href="{{ static_url('css/pages/services/common.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ static_url('css/pages/services/report.css') }}" rel="stylesheet" type="text/css">
+{% end %}
+
+{% block js %}
+<script type="text/javascript" src="{{ static_url('js/pages/services/report.js') }}"></script>
+{% end %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-flat">
+            <div class="panel-body">
+                <ul class="nav nav-lg nav-tabs nav-tabs-bottom">
+                    <li><a href="#"><i class="icon-server position-left"></i> {{ _('Services') }}</a></li>
+                    <li class="dropdown pull-right">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-cog3"></i>
+                            <span class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="{{ reverse_url('service:log', name) }}"><i class="icon-clipboard6"></i> Log</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}

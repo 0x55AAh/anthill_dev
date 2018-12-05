@@ -198,7 +198,7 @@ class APIGatewayService(AdminService):
 
 
 class DiscoveryService(BaseService):
-    cleanup_storage_on_start = False
+    cleanup_storage_on_start = True
     cleanup_services_period = 5
     ping_services = True
     ping_max_retries = 1

@@ -73,5 +73,20 @@
         "internal": "http://localhost:9517",
         "external": "http://localhost:9517",
         "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "game_master": {
+        "internal": "http://localhost:9518",
+        "external": "http://localhost:9518",
+        "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "report": {
+        "internal": "http://localhost:9520",
+        "external": "http://localhost:9520",
+        "broker": "amqp://guest:guest@localhost:5672"
+    },
+    "leaderboard": {
+        "internal": "http://localhost:9521",
+        "external": "http://localhost:9521",
+        "broker": "amqp://guest:guest@localhost:5672"
     }
 }

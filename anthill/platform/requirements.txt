@@ -4,7 +4,9 @@ aniso8601==3.0.0
 asn1crypto==0.24.0
 async-timeout==2.0.1
 billiard==3.5.0.4
-celery==4.2.1
+# celery from pip is brocken for python 3.7+
+# celery==4.2.1
+git+https://github.com/celery/celery.git
 certifi==2018.8.24
 cffi==1.11.5
 chardet==3.0.4

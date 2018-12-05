@@ -18,15 +18,19 @@ class RootQuery(graphene.ObjectType):
     @staticmethod
     async def resolve_request(root, info, service_name, query):
         handler = info.context['handler']
-        metadata = list(filter(
-            lambda x: x['name'] == service_name, handler.settings['services_meta']))[0]
-        data = await AsyncHTTPClient().fetch(
-            metadata['public_api_url'],
-            method=handler.request.method,
-            body=json.dumps({"query": query}),
-            headers=handler.request.headers
-        )
-        return json.loads(to_unicode(data.body))
+        try:
+            metadata = next(filter(
+                lambda x: x['name'] == service_name, handler.settings['services_meta']))
+        except StopIteration:
+            return {}
+        else:
+            data = await AsyncHTTPClient().fetch(
+                metadata['public_api_url'],
+                method=handler.request.method,
+                body=json.dumps({'query': query}),
+                headers=handler.request.headers
+            )
+            return json.loads(to_unicode(data.body))
 
 
 # noinspection PyTypeChecker
