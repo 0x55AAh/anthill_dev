@@ -3,7 +3,7 @@ from .base import Group, Command, Option, InvalidCommand
 from .commands import (
     Server, Shell, Version,
     StartApplication, ApplicationChooser, SendTestEmail,
-    CompileMessages, StartProject
+    CompileMessages, StartProject, GeoIPMMDBUpdate
 )
 import argparse
 import os
@@ -467,6 +467,8 @@ class EmptyManager(BaseManager):
                 "startproject", StartProject(**{'root_templates_mod': self.root_templates_mod}))
         if "app" not in self._commands:
             self.add_command("app", ApplicationChooser())
+        if "mmdb_update" not in self._commands:
+            self.add_command("mmdb_update", GeoIPMMDBUpdate())
         super(EmptyManager, self).add_default_commands()
 
     def __call__(self, app=None, **kwargs):

@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-"""Creates or updates geoip2 mmdb databases."""
-import argparse
+from anthill.framework.core.management import Command, Option
 import requests
 import tarfile
 import functools
 import os
 
-__all__ = ['update']
 
 products = ['City', 'Country']
 link_base = 'http://geolite.maxmind.com/download/geoip/database'
@@ -77,8 +74,11 @@ def update(base, logger=None):
         cleanup()
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--path', dest='path', default='', help='Path where files to save', type=str)
-    args = parser.parse_args()
-    update(base=args.path, logger=None)
+class GeoIPMMDBUpdate(Command):
+    help = description = 'Creates or updates geoip2 mmdb databases.'
+    option_list = (
+        Option('-p', '--path', default='', help='Path where files to save'),
+    )
+
+    def run(self, path):
+        update(path)

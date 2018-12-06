@@ -8,9 +8,10 @@ from .startapp import StartApplication
 from .startproject import StartProject
 from .sendtestemail import SendTestEmail
 from .version import Version
+from .mmdbupdate import GeoIPMMDBUpdate
 
 __all__ = [
     'ApplicationChooser', 'Clean', 'CompileMessages', 'Server',
     'Shell', 'StartApplication', 'SendTestEmail', 'Version', 'StartProject',
-    'MakeMessages'
+    'MakeMessages', 'GeoIPMMDBUpdate'
 ]

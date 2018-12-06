@@ -3,7 +3,7 @@ from anthill.framework.core.management import Command, Option
 
 class ApplicationChooser(Command):
     help = description = 'Choose application for administration.'
-    options = (
+    option_list = (
         Option('name', help='Name of the application.'),
     )
 
