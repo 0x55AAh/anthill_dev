@@ -13,9 +13,9 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 
     update_redis_databases /etc/redis/redis.conf
 
-    service start redis-server
-    service start rabbitmq-server
-    service start postgresql
+    service redis-server restart
+    service rabbitmq-server restart
+    service postgresql restart
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     brew install redis
@@ -24,8 +24,8 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
 
     update_redis_databases /usr/local/etc/redis.conf
 
-    brew services start redis
-    brew services start rabbitmq
-    brew services start postgres
+    brew services restart redis
+    brew services restart rabbitmq
+    brew services restart postgres
 fi
 
