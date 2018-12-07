@@ -1,5 +1,5 @@
 <div class="col-lg-2 col-md-3 col-sm-6" data-name="{{ entry.name }}">
-    <div class="panel" style="height: 290px;">
+    <div class="panel" style="height: 300px;">
         {% if entry.debug %}
         <span class="label pull-right bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">{{ _('debug') }}</span>
         {% end %}
@@ -9,7 +9,11 @@
                 <i class="{{ entry.icon_class }}"></i>
             </a>
             <!--<h5 class="text-semibold">{{ entry.title }}</h5>-->
-            <h5 class="text-semibold">{{ entry.title }} <span class="label bg-grey-300" style="text-transform: none;">{{ entry.version }}</span></h5>
+            <h5 class="text-semibold">{{ entry.title }}</h5>
+            <p class="mb-15">
+                <span class="label bg-success">{{ _('updated') }}</span>
+                <span class="label bg-grey-300" style="margin-top: 3px;">{{ entry.version }}</span>
+            </p>
             <p class="mb-15">{{ entry.description }}</p>
         </div>
     </div>
