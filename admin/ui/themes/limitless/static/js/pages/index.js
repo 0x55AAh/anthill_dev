@@ -12,8 +12,14 @@ $(function() {
     var UPDATE_INTERVAL = 1;
     var services_metadata_key = 'servicesMetadata';
 
+    function setCardsSameHeight() {
+        var card_heights = $('.services-cards__entry .panel-body').map(function () {
+            return $(this).outerHeight();
+        });
+        $('.services-cards__entry .panel').height(Math.max.apply(null, card_heights));
+    }
+
     function filter_services_cards(q, animation) {
-        setCardsSameHeight();
         $('.services-cards__entry').each(function() {
             var service_name = $(this).data('name').toUpperCase();
             if (service_name.indexOf(q) === 0) {
@@ -34,13 +40,7 @@ $(function() {
                 }
             }
         });
-    }
-
-    function setCardsSameHeight() {
-        var card_heights = $('.services-cards__entry .panel-body').map(function () {
-                return $(this).outerHeight();
-            });
-        $('.services-cards__entry .panel').height(Math.max.apply(null, card_heights));
+        setCardsSameHeight();
     }
 
     // Build services cards and main sidebar services section.
@@ -72,7 +72,8 @@ $(function() {
         if (anthill_storage.changed('html_cards_list', html_cards_list)) {
             $('.services-cards').html(html_cards_list);
             $('.page-header .page-title span.badge-warning').text(entries.length);
-            filter_services_cards($('input[name=search]').val().toUpperCase());
+            var query = $('input[name=search]').val().toUpperCase();
+            filter_services_cards(query);
         }
     }
 
@@ -81,7 +82,7 @@ $(function() {
         filter_services_cards(query, true);
     });
 
-    $(window).on('resize', setCardsSameHeight);
+    $(window).on('resize', setCardsSameHeight).resize();
 
     setInterval(update_services_cards, UPDATE_INTERVAL * 1000);
 
