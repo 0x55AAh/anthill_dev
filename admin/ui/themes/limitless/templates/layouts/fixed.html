@@ -24,6 +24,11 @@
 	<script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
 	<!-- /core JS files -->
 
+    <script>
+        var settings = $('body').data('settings') || '{}';
+        window.settings = JSON.parse(settings);
+    </script>
+
 	<!-- Theme JS files -->
 	<script type="text/javascript" src="{{ static_url('js/plugins/ui/nicescroll.min.js') }}"></script>
 	<script type="text/javascript" src="{{ static_url('js/core/app.js') }}"></script>
@@ -36,11 +41,6 @@
 	<script type="text/javascript" src="{{ static_url('js/pages/layout_fixed_custom.js') }}"></script>
 	<script type="text/javascript" src="{{ static_url('js/pages/general.js') }}"></script>
 	<!-- /theme JS files -->
-
-    <script>
-        var settings = $('body').data('settings') || '{}';
-        window.settings = JSON.parse(settings);
-    </script>
 
     {% block js %}{% end %}
 	{% block js_header %}{% end %}
