@@ -45,7 +45,7 @@ $(function() {
                 anthill_storage.setItem(services_metadata_key, result.data['servicesMetadata']);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                // ¯\_(ツ)_/¯
+                anthill_storage.setItem(services_metadata_key, []); // ¯\_(ツ)_/¯
             }
         });
     }
@@ -56,7 +56,7 @@ $(function() {
         var entries = anthill_storage.getItem(services_metadata_key);
         $.each(entries, function(index, entry) {
             var active = service_match(entry.name) ? 'active' : '';
-            html_sidebar_entry = '' +
+            html_sidebar_entry =
                 '<li class="navigation-service ' + active + '" data-name="' + entry.name +'">' +
                 '    <a href="/services/' + entry.name + '/"><i class="' + entry.iconClass + '"></i> <span>' + entry.title + '</span></a>' +
                 '</li>';

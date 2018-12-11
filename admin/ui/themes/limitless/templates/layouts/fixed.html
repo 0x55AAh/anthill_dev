@@ -37,12 +37,17 @@
 	<script type="text/javascript" src="{{ static_url('js/pages/general.js') }}"></script>
 	<!-- /theme JS files -->
 
+    <script>
+        var settings = $('body').data('settings') || '{}';
+        window.settings = JSON.parse(settings);
+    </script>
+
     {% block js %}{% end %}
 	{% block js_header %}{% end %}
 </head>
 
 <body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}"
-	  data-debug="{% if debug %}1{% else %}0{% end %}" {% block service-name %}{% end %}>
+	  data-debug="{% if debug %}1{% else %}0{% end %}" {% block service-name %}{% end %} data-settings>
 
 <!-- Main navbar -->
 {% block main-navbar %}

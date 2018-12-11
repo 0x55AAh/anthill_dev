@@ -13,7 +13,8 @@ $(function() {
     var services_metadata_key = 'servicesMetadata';
 
     function filter_services_cards(q, animation) {
-        $('.services-cards > div').each(function() {
+        setCardsSameHeight();
+        $('.services-cards__entry').each(function() {
             var service_name = $(this).data('name').toUpperCase();
             if (service_name.indexOf(q) === 0) {
                 if (animation) {
@@ -35,17 +36,24 @@ $(function() {
         });
     }
 
+    function setCardsSameHeight() {
+        var card_heights = $('.services-cards__entry .panel-body').map(function () {
+                return $(this).outerHeight();
+            });
+        $('.services-cards__entry .panel').height(Math.max.apply(null, card_heights));
+    }
+
     // Build services cards and main sidebar services section.
     function update_services_cards() {
-        var html_card_data = '', html_card_entry;
+        var html_cards_list = '', html_card_entry;
         var entries = anthill_storage.getItem(services_metadata_key);
+
         $.each(entries, function(index, entry) {
-            html_card_entry = '' +
-                '<div class="col-lg-2 col-md-3 col-sm-6" style="display: none" data-name="' + entry.name +'">' +
-                '    <div class="panel" style="height: 300px;">' +
+            html_card_entry =
+                '<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" style="display: none" data-name="' + entry.name +'">' +
+                '    <div class="panel">' +
                      ((entry.debug) ? '<span class="label pull-right bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
-                // '    <span class="label pull-left bg-grey-300" style="font-weight: 400;font-size: 9px;line-height: normal;">' + entry.version + '</span>' +
-                '        <div class="panel-body text-center" style="padding: 15px;">' +
+                '        <div class="panel-body text-center">' +
                 '            <a href="/services/' + entry.name + '/" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
                 '                <i class="' + entry.iconClass + '"></i>' +
                 '            </a>' +
@@ -58,18 +66,22 @@ $(function() {
                 '        </div>' +
                 '    </div>' +
                 '</div>';
-            html_card_data += html_card_entry;
+            html_cards_list += html_card_entry;
         });
-        if (anthill_storage.changed('html_card_data', html_card_data)) {
-            $('.content-wrapper .content .row').html(html_card_data);
+
+        if (anthill_storage.changed('html_cards_list', html_cards_list)) {
+            $('.services-cards').html(html_cards_list);
             $('.page-header .page-title span.badge-warning').text(entries.length);
             filter_services_cards($('input[name=search]').val().toUpperCase());
         }
     }
 
     $('input[name=search]').keyup(function() {
-        filter_services_cards($(this).val().toUpperCase(), true);
+        var query = $(this).val().toUpperCase();
+        filter_services_cards(query, true);
     });
+
+    $(window).on('resize', setCardsSameHeight);
 
     setInterval(update_services_cards, UPDATE_INTERVAL * 1000);
 
