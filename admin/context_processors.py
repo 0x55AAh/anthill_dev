@@ -14,3 +14,11 @@ async def main_sidebar(handler):
         'main_sidebar_entries': main_sidebar_entries,
         'main_sidebar_expanded': handler.session.get('sidebar-main-expanded', True),
     }
+
+
+async def js_settings(handler):
+    return {
+        'js_settings': {
+            # settings for js scripts here
+        }
+    }

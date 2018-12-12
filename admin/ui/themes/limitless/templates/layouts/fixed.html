@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-js-settings='{% raw json_encode(js_settings) %}'>
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,8 +25,7 @@
 	<!-- /core JS files -->
 
     <script>
-        var settings = $('body').data('settings') || '{}';
-        window.settings = JSON.parse(settings);
+        window.js_settings = $('html').data('js-settings') || {};
     </script>
 
 	<!-- Theme JS files -->
@@ -47,7 +46,7 @@
 </head>
 
 <body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}"
-	  data-debug="{% if debug %}1{% else %}0{% end %}" {% block service-name %}{% end %} data-settings>
+	  data-debug="{% if debug %}1{% else %}0{% end %}" {% block service-name %}{% end %}>
 
 <!-- Main navbar -->
 {% block main-navbar %}
