@@ -18,7 +18,7 @@ SQLALCHEMY_DATABASE_URI = 'postgres://anthill_admin@/anthill_admin'
 
 # ROUTES_CONF = 'admin.routes'
 
-LOCATION = 'http://localhost:9500'
+LOCATION = 'http://localhost:9600'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # APPLICATION_CLASS = 'admin.apps.AnthillApplication'
@@ -45,7 +45,6 @@ STATIC_URL = '/static/'
 CONTEXT_PROCESSORS = [
     'anthill.framework.context_processors.datetime',
     'admin.context_processors.main_sidebar',
-    'admin.context_processors.js_settings',
 ]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/10"

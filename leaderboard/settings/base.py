@@ -16,7 +16,7 @@ ADMINS = (
 
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_leaderboard@/anthill_leaderboard'
 
-LOCATION = 'http://localhost:9521'
+LOCATION = 'http://localhost:9621'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'leaderboard.routes'

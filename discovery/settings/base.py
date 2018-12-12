@@ -18,7 +18,7 @@ REGISTERED_SERVICES = os.path.join(BASE_DIR, '../registry.json')
 
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_discovery@/anthill_discovery'
 
-LOCATION = 'http://localhost:9502'
+LOCATION = 'http://localhost:9602'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'discovery.routes'

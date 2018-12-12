@@ -12,6 +12,14 @@ import logging
 logger = logging.getLogger('anthill.application')
 
 
+class MasterRole:
+    """Mixin class for enabling `master` role on service."""
+
+
+class ControllerRole:
+    """Mixin class for enabling `controller` role on service."""
+
+
 class ServiceAlreadyRegistered(Exception):
     def __init__(self, name, message=None):
         super().__init__(message)

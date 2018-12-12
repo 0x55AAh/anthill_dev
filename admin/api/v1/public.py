@@ -23,6 +23,7 @@ class RootQuery(graphene.ObjectType):
     """Api root query."""
 
     services_metadata = graphene.List(ServiceMetadata, description='List of services metadata.')
+    settings = graphene.JSONString(description='Admin local settings.')
 
     @staticmethod
     async def resolve_services_metadata(root, info, **kwargs):
@@ -30,6 +31,13 @@ class RootQuery(graphene.ObjectType):
         services_metadata = handler.settings['services_meta']
         services_metadata = sorted(map(lambda m: ServiceMetadata(**m), services_metadata))
         return services_metadata
+
+    @staticmethod
+    async def resolve_settings(root, info, **kwargs):
+        handler = info.context['handler']
+        return {
+            'metadata': handler.application.app.metadata
+        }
 
 
 class Mutation(graphene.ObjectType):

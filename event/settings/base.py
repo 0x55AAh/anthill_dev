@@ -16,7 +16,7 @@ ADMINS = (
 
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_event@/anthill_event'
 
-LOCATION = 'http://localhost:9506'
+LOCATION = 'http://localhost:9606'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'event.routes'

@@ -14,8 +14,8 @@ DEFAULT_HANDLER_CLASS = None
 
 RESOLVERS = {
     "default": {
-        'internal': 'http://localhost:9502',
-        'external': 'http://localhost:9502',
+        'internal': 'http://localhost:9602',
+        'external': 'http://localhost:9602',
         'broker': BROKER
     }
 }

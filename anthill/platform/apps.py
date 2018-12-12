@@ -40,9 +40,10 @@ class BaseAnthillApplication(Application):
 
     def public_api_url(self):
         public_api_url = getattr(self.config, 'PUBLIC_API_URL', None)
-        if public_api_url is not None:
-            from anthill.framework.utils.urls import build_absolute_uri
-            return build_absolute_uri(self.config.LOCATION, public_api_url)
+        # if public_api_url is not None:
+        #    from anthill.framework.utils.urls import build_absolute_uri
+        #    return build_absolute_uri(self.config.LOCATION, public_api_url)
+        return public_api_url
 
     @property
     @lru_cache()

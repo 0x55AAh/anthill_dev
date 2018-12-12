@@ -16,7 +16,7 @@ ADMINS = (
 
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_report@/anthill_report'
 
-LOCATION = 'http://localhost:9520'
+LOCATION = 'http://localhost:9620'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'report.routes'
@@ -27,7 +27,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 # APPLICATION_CLASS = 'report.apps.AnthillApplication'
 APPLICATION_NAME = 'report'
 APPLICATION_VERBOSE_NAME = _('Report')
-APPLICATION_DESCRIPTION = _('Service description')
+APPLICATION_DESCRIPTION = _('User-submitted reporting service')
 APPLICATION_ICON_CLASS = 'icon-flag3'
 APPLICATION_COLOR = 'grey'
 

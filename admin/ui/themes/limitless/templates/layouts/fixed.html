@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-js-settings='{% raw json_encode(js_settings) %}'>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,7 +25,7 @@
 	<!-- /core JS files -->
 
     <script>
-        window.js_settings = $('html').data('js-settings') || {};
+        window.public_api_url = "{{ metadata.get('public_api_url', '/api/') }}";
     </script>
 
 	<!-- Theme JS files -->

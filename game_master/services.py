@@ -1,5 +1,5 @@
-from anthill.platform.services import PlainService
+from anthill.platform.services import PlainService, MasterRole
 
 
-class Service(PlainService):
+class Service(MasterRole, PlainService):
     """Anthill default service."""

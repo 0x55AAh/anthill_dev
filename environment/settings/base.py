@@ -16,7 +16,7 @@ ADMINS = (
 
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_environment@/anthill_environment'
 
-LOCATION = 'http://localhost:9517'
+LOCATION = 'http://localhost:9617'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'environment.routes'

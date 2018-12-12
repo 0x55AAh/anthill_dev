@@ -17,7 +17,7 @@ ADMINS = (
 # Database uri example:
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_social@/anthill_social'
 
-LOCATION = 'http://localhost:9514'
+LOCATION = 'http://localhost:9614'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'social.routes'

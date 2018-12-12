@@ -16,7 +16,7 @@ ADMINS = (
 
 SQLALCHEMY_DATABASE_URI = 'postgres://anthill_media@/anthill_media'
 
-LOCATION = 'http://localhost:9515'
+LOCATION = 'http://localhost:9615'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
 # ROUTES_CONF = 'media.routes'

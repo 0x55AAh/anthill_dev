@@ -23,13 +23,9 @@ logger = logging.getLogger('anthill.application')
 class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
     template_name = 'index.html'
 
-    def __init__(self, application, request, **kwargs):
-        super().__init__(application, request, **kwargs)
-        self.metadata = []
-
     async def get_service_cards(self):
-        self.metadata = self.settings['services_meta']
-        service_cards = sorted(map(lambda m: ServiceCard.Entry(**m), self.metadata))
+        metadata = self.settings['services_meta']
+        service_cards = sorted(map(lambda m: ServiceCard.Entry(**m), metadata))
         return service_cards
 
     async def get_context_data(self, **kwargs):
@@ -128,3 +124,8 @@ class LogRequestHandler(ServiceContextMixin, UserTemplateHandler):
 # @authenticated()
 class SettingsRequestHandler(UserTemplateHandler):
     template_name = 'settings.html'
+
+
+# @authenticated()
+class AuditLogRequestHandler(UserTemplateHandler):
+    template_name = 'audit_log.html'

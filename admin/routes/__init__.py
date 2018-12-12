@@ -38,6 +38,7 @@ route_patterns = [
     url(r'^/login/?$', handlers.LoginHandler, name='login'),
     url(r'^/logout/?$', handlers.LogoutHandler, name='logout'),
     url(r'^/settings/?$', handlers.SettingsRequestHandler, name='settings'),
+    url(r'^/audit-log/?$', handlers.AuditLogRequestHandler, name='audit-log'),
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
