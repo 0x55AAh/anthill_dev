@@ -1,11 +1,5 @@
 {% extends 'layouts/fixed.html' %}
 
-<!-- Main navbar -->
-{% block main-navbar %}
-{% module Template('modules/main-navbar.html', metadata=metadata, current='profile') %}
-{% end %}
-<!-- /main navbar -->
-
 <!-- Main sidebar -->
 {% block main-sidebar %}
 {% module MainSidebar(entries=main_sidebar_entries, metadata=metadata, current=None) %}

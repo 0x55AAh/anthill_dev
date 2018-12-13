@@ -22,6 +22,7 @@ logger = logging.getLogger('anthill.application')
 # @authenticated()
 class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
     template_name = 'index.html'
+    extra_context = {'page': 'index'}
 
     async def get_service_cards(self):
         metadata = self.settings['services_meta']
@@ -36,7 +37,7 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
 
 
 class LoginHandler(BaseLoginHandler):
-    pass
+    extra_context = {'page': 'login'}
 
 
 # @authenticated()
@@ -47,6 +48,7 @@ class LogoutHandler(BaseLogoutHandler):
 # @authenticated()
 class DebugHandler(UserTemplateHandler):
     template_name = 'debug.html'
+    extra_context = {'page': 'debug'}
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -55,6 +57,7 @@ class DebugHandler(UserTemplateHandler):
 
 class DebugSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
     """Defines json-rpc methods for debugging."""
+    extra_context = {'page': 'debug-session'}
 
     def __init__(self, application, request, dispatcher=None, **kwargs):
         super().__init__(application, request, dispatcher, **kwargs)
@@ -114,23 +117,28 @@ class SidebarMainToggle(UserHandlerMixin, RequestHandler):
 class ServiceRequestHandler(UserTemplateServiceRequestHandler):
     """Shows individual service index page."""
     template_name = 'index.html'
+    extra_context = {'page': 'service-index'}
 
 
 # @authenticated()
 class LogRequestHandler(ServiceContextMixin, UserTemplateHandler):
     template_name = 'log.html'
+    extra_context = {'page': 'log'}
 
 
 # @authenticated()
 class SettingsRequestHandler(UserTemplateHandler):
     template_name = 'settings.html'
+    extra_context = {'page': 'settings'}
 
 
 # @authenticated()
 class AuditLogRequestHandler(UserTemplateHandler):
     template_name = 'audit_log.html'
+    extra_context = {'page': 'audit_log'}
 
 
 # @authenticated()
 class ProfileRequestHandler(UserTemplateHandler):
     template_name = 'profile.html'
+    extra_context = {'page': 'profile'}
