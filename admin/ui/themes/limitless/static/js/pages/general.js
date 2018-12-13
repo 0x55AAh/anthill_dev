@@ -32,13 +32,7 @@ $(function() {
             }                       \
         }";
 
-    var settings_query = " \
-        query {            \
-            settings       \
-        }";
-
-    var services_metadata_key = 'servicesMetadata',
-        settings_key = 'settings';
+    var services_metadata_key = 'servicesMetadata';
 
     function update_services_registry() {
         $.ajax({
@@ -52,22 +46,6 @@ $(function() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 anthill_storage.setItem(services_metadata_key, []); // ¯\_(ツ)_/¯
-            }
-        });
-    }
-
-    function update_settings() {
-        $.ajax({
-            url: window.public_api_url,
-            type: 'POST',
-            dataType: 'json',
-            headers: {'Content-Type': 'application/json'},
-            data: JSON.stringify({query: settings_query}),
-            success: function(result) {
-                anthill_storage.setItem(settings_key, JSON.parse(result.data['settings']));
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                anthill_storage.setItem(settings_key, {}); // ¯\_(ツ)_/¯
             }
         });
     }
@@ -91,9 +69,7 @@ $(function() {
     }
 
     update_services_registry();
-    update_settings();
     setInterval(update_services_registry, AJAX_INTERVAL * 1000);
-    setInterval(update_settings, AJAX_INTERVAL * 1000);
     setInterval(update_sidebar_services, UPDATE_INTERVAL * 1000);
 
 });

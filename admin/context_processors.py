@@ -1,4 +1,5 @@
 from admin.ui.modules import MainSidebar
+from anthill.framework.apps import app
 
 
 async def main_sidebar(handler):
@@ -13,4 +14,10 @@ async def main_sidebar(handler):
     return {
         'main_sidebar_entries': main_sidebar_entries,
         'main_sidebar_expanded': handler.session.get('sidebar-main-expanded', True),
+    }
+
+
+def metadata(handler):
+    return {
+        'admin_metadata': app.metadata
     }

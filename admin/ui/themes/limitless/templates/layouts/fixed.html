@@ -25,7 +25,8 @@
 	<!-- /core JS files -->
 
     <script>
-        window.public_api_url = "{{ metadata.get('public_api_url', '/api/') }}";
+        var public_api_url = "{{ admin_metadata['public_api_url'] }}";
+        window.public_api_url = new URL(public_api_url).pathname;
     </script>
 
 	<!-- Theme JS files -->

@@ -45,6 +45,7 @@ STATIC_URL = '/static/'
 CONTEXT_PROCESSORS = [
     'anthill.framework.context_processors.datetime',
     'admin.context_processors.main_sidebar',
+    'admin.context_processors.metadata',
 ]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/10"
