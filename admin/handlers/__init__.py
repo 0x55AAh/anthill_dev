@@ -129,3 +129,8 @@ class SettingsRequestHandler(UserTemplateHandler):
 # @authenticated()
 class AuditLogRequestHandler(UserTemplateHandler):
     template_name = 'audit_log.html'
+
+
+# @authenticated()
+class ProfileRequestHandler(UserTemplateHandler):
+    template_name = 'profile.html'

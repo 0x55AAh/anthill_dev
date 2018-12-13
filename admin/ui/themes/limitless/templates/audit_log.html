@@ -2,7 +2,7 @@
 
 <!-- Main navbar -->
 {% block main-navbar %}
-{% module Template('modules/main-navbar.html', metadata=metadata, current='settings') %}
+{% module Template('modules/main-navbar.html', metadata=metadata, current='history') %}
 {% end %}
 <!-- /main navbar -->
 
@@ -13,5 +13,292 @@
 <!-- /main sidebar -->
 
 {% block content %}
+<!-- Timeline -->
+<div class="timeline timeline-left">
+    <div class="timeline-container">
 
+        <!-- Tasks -->
+        <div class="timeline-row">
+            <div class="timeline-icon">
+                <img src="assets/images/placeholder.jpg" alt="">
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel border-left-lg border-left-primary timeline-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="no-margin-top"><a href="task_manager_detailed.html">#24. Create UI design model</a></h6>
+                                    <p class="mb-15">One morning, when Gregor Samsa woke from troubled..</p>
+
+                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <ul class="list task-details">
+                                        <li>28 January, 2015</li>
+                                        <li class="dropdown">
+                                            Priority: &nbsp;
+                                            <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span class="caret"></span></a>
+                                            <ul class="dropdown-menu dropdown-menu-right active">
+                                                <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a></li>
+                                                <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
+                                                <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a></li>
+                                                <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Eternity app</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer panel-footer-condensed"><a class="heading-elements-toggle"><i class="icon-more"></i></a>
+                            <div class="heading-elements">
+                                <span class="heading-text">Due: <span class="text-semibold">23 hours</span></span>
+
+                                <ul class="list-inline list-inline-condensed heading-text pull-right">
+                                    <li class="dropdown">
+                                        <a href="#" class="text-default dropdown-toggle" data-toggle="dropdown">Open <span class="caret"></span></a>
+                                        <ul class="dropdown-menu dropdown-menu-right active">
+                                            <li class="active"><a href="#">Open</a></li>
+                                            <li><a href="#">On hold</a></li>
+                                            <li><a href="#">Resolved</a></li>
+                                            <li><a href="#">Closed</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#">Dublicate</a></li>
+                                            <li><a href="#">Invalid</a></li>
+                                            <li><a href="#">Wontfix</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <li class="dropdown">
+                                        <a href="#" class="text-default dropdown-toggle" data-toggle="dropdown"><i class="icon-menu7"></i> <span class="caret"></span></a>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
+                                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
+                                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
+                                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="panel border-left-lg border-left-danger timeline-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="no-margin-top"><a href="task_manager_detailed.html">#23. New icons set for an iOS app</a></h6>
+                                    <p class="mb-15">A collection of textile samples lay spread out on the table..</p>
+
+                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <ul class="list task-details">
+                                        <li>20 January, 2015</li>
+                                        <li class="dropdown">
+                                            Priority: &nbsp;
+                                            <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span class="caret"></span></a>
+                                            <ul class="dropdown-menu dropdown-menu-right active">
+                                                <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a></li>
+                                                <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
+                                                <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a></li>
+                                                <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Eternity app</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer panel-footer-condensed"><a class="heading-elements-toggle"><i class="icon-more"></i></a>
+                            <div class="heading-elements">
+                                <span class="heading-text">Due: <span class="text-semibold">18 hours</span></span>
+
+                                <ul class="list-inline list-inline-condensed heading-text pull-right">
+                                    <li class="dropdown">
+                                        <a href="#" class="text-default dropdown-toggle" data-toggle="dropdown">On hold <span class="caret"></span></a>
+                                        <ul class="dropdown-menu dropdown-menu-right active">
+                                            <li><a href="#">Open</a></li>
+                                            <li class="active"><a href="#">On hold</a></li>
+                                            <li><a href="#">Resolved</a></li>
+                                            <li><a href="#">Closed</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#">Dublicate</a></li>
+                                            <li><a href="#">Invalid</a></li>
+                                            <li><a href="#">Wontfix</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <li class="dropdown">
+                                        <a href="#" class="text-default dropdown-toggle" data-toggle="dropdown"><i class="icon-menu7"></i> <span class="caret"></span></a>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
+                                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
+                                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
+                                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /tasks -->
+
+
+        <!-- Date stamp -->
+        <div class="timeline-date text-muted">
+            <i class="icon-history position-left"></i> <span class="text-semibold">Tuesday</span>, April 19
+        </div>
+        <!-- /date stamp -->
+
+
+        <!-- Invoices -->
+        <div class="timeline-row">
+            <div class="timeline-icon">
+                <div class="bg-warning-400">
+                    <i class="icon-cash3"></i>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel border-left-lg border-left-danger invoice-grid timeline-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="text-semibold no-margin-top">Leonardo Fellini</h6>
+                                    <ul class="list list-unstyled">
+                                        <li>Invoice #: &nbsp;0028</li>
+                                        <li>Issued on: <span class="text-semibold">2015/01/25</span></li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <h6 class="text-semibold text-right no-margin-top">$8,750</h6>
+                                    <ul class="list list-unstyled text-right">
+                                        <li>Method: <span class="text-semibold">SWIFT</span></li>
+                                        <li class="dropdown">
+                                            Status: &nbsp;
+                                            <a href="#" class="label bg-danger-400 dropdown-toggle" data-toggle="dropdown">Overdue <span class="caret"></span></a>
+                                            <ul class="dropdown-menu dropdown-menu-right active">
+                                                <li class="active"><a href="#"><i class="icon-alert"></i> Overdue</a></li>
+                                                <li><a href="#"><i class="icon-alarm"></i> Pending</a></li>
+                                                <li><a href="#"><i class="icon-checkmark3"></i> Paid</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="#"><i class="icon-spinner2 spinner"></i> On hold</a></li>
+                                                <li><a href="#"><i class="icon-cross2"></i> Canceled</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer panel-footer-condensed"><a class="heading-elements-toggle"><i class="icon-more"></i></a>
+                            <div class="heading-elements">
+													<span class="heading-text">
+														<span class="status-mark border-danger position-left"></span> Due: <span class="text-semibold">2015/02/25</span>
+													</span>
+
+                                <ul class="list-inline list-inline-condensed heading-text pull-right">
+                                    <li><a href="#" class="text-default" data-toggle="modal" data-target="#invoice"><i class="icon-eye8"></i></a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="text-default dropdown-toggle" data-toggle="dropdown"><i class="icon-menu7"></i> <span class="caret"></span></a>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li><a href="#"><i class="icon-printer"></i> Print invoice</a></li>
+                                            <li><a href="#"><i class="icon-file-download"></i> Download invoice</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#"><i class="icon-file-plus"></i> Edit invoice</a></li>
+                                            <li><a href="#"><i class="icon-cross2"></i> Remove invoice</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="panel border-left-lg border-left-success invoice-grid timeline-content">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="text-semibold no-margin-top">Rebecca Manes</h6>
+                                    <ul class="list list-unstyled">
+                                        <li>Invoice #: &nbsp;0027</li>
+                                        <li>Issued on: <span class="text-semibold">2015/02/24</span></li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <h6 class="text-semibold text-right no-margin-top">$5,100</h6>
+                                    <ul class="list list-unstyled text-right">
+                                        <li>Method: <span class="text-semibold">Paypal</span></li>
+                                        <li class="dropdown">
+                                            Status: &nbsp;
+                                            <a href="#" class="label bg-success-400 dropdown-toggle" data-toggle="dropdown">Paid <span class="caret"></span></a>
+                                            <ul class="dropdown-menu dropdown-menu-right active">
+                                                <li><a href="#"><i class="icon-alert"></i> Overdue</a></li>
+                                                <li><a href="#"><i class="icon-alarm"></i> Pending</a></li>
+                                                <li class="active"><a href="#"><i class="icon-checkmark3"></i> Paid</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="#"><i class="icon-spinner2 spinner"></i> On hold</a></li>
+                                                <li><a href="#"><i class="icon-cross2"></i> Canceled</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer panel-footer-condensed"><a class="heading-elements-toggle"><i class="icon-more"></i></a>
+                            <div class="heading-elements">
+													<span class="heading-text">
+														<span class="status-mark border-success position-left"></span> Due: <span class="text-semibold">2015/03/24</span>
+													</span>
+
+                                <ul class="list-inline list-inline-condensed heading-text pull-right">
+                                    <li><a href="#" class="text-default" data-toggle="modal" data-target="#invoice"><i class="icon-eye8"></i></a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="text-default dropdown-toggle" data-toggle="dropdown"><i class="icon-menu7"></i> <span class="caret"></span></a>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li><a href="#"><i class="icon-printer"></i> Print invoice</a></li>
+                                            <li><a href="#"><i class="icon-file-download"></i> Download invoice</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#"><i class="icon-file-plus"></i> Edit invoice</a></li>
+                                            <li><a href="#"><i class="icon-cross2"></i> Remove invoice</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /invoices -->
+
+    </div>
+</div>
+<!-- /timeline -->
 {% end %}

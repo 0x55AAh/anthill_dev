@@ -12,6 +12,18 @@ $(function() {
         }
     });
 
+    function api_request(query, success, error, url) {
+        $.ajax({
+            url: url || window.public_api_url,
+            type: 'POST',
+            dataType: 'json',
+            headers: {'Content-Type': 'application/json'},
+            data: JSON.stringify({query: query}),
+            success: success,
+            error: error
+        });
+    }
+
     function service_match(serviceName) {
         return serviceName === window.service_name;
     }
@@ -33,19 +45,15 @@ $(function() {
     var services_metadata_key = 'servicesMetadata';
 
     function update_services_registry() {
-        $.ajax({
-            url: window.public_api_url,
-            type: 'POST',
-            dataType: 'json',
-            headers: {'Content-Type': 'application/json'},
-            data: JSON.stringify({query: services_metadata_query}),
-            success: function(result) {
+        api_request(
+            services_metadata_query,
+            function(result) {
                 anthill_storage.setItem(services_metadata_key, result.data['servicesMetadata']);
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            function(jqXHR, textStatus, errorThrown) {
                 anthill_storage.setItem(services_metadata_key, []); // ¯\_(ツ)_/¯
             }
-        });
+        );
     }
 
     // Build main sidebar services section.
