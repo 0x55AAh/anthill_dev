@@ -2,7 +2,6 @@ $(function() {
 
     var AJAX_INTERVAL = 10;
     var UPDATE_INTERVAL = 1;
-    var current_service_name = $('body').data('service-name');
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -14,8 +13,7 @@ $(function() {
     });
 
     function service_match(serviceName) {
-        return current_service_name !== undefined
-            && serviceName === current_service_name;
+        return serviceName === window.service_name;
     }
 
     var services_metadata_query = " \

@@ -7,7 +7,6 @@
 * ---------------------------------------------------------------------------- */
 
 $(function() {
-    var debug = $('body').data('debug') === 1;
     var term = $('.console').terminal(function() {}, {
         enable: false,
         greetings: null,
@@ -19,7 +18,7 @@ $(function() {
     var options = {
         connectionTimeout: 1000,
         maxRetries: 10,
-        debug: debug
+        debug: window.debug
     };
     var url = 'ws://localhost:9500/log/';
     var client = new ReconnectingWebSocket(url, [], options);

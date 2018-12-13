@@ -37,7 +37,7 @@ requests-oauthlib==1.0.0
 Rx==1.6.1
 singledispatch==3.4.0.3
 typing==3.6.4
-urllib3==1.22
+urllib3==1.24.1
 validators==0.12.2
 vine==1.1.4
 websocket-client==0.53.0
