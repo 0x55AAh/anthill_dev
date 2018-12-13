@@ -25,7 +25,7 @@ class ServiceContextMixin:
         except ServiceDoesNotExist:
             raise HttpNotFoundError
         else:
-            context.update(metadata=metadata)
+            context['metadata'] = metadata
         return context
 
 
