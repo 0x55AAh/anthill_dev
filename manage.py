@@ -30,9 +30,13 @@ if __name__ == '__main__':
     kwargs = dict(app=app)
 
     if app is None:
+        from anthill.platform.management.commands import StartApplication
         try:
             conf = importlib.import_module('conf')
-            kwargs.update(root_templates_mod=getattr(conf, 'ROOT_TEMPLATES_MODULE'))
+            kwargs.update(root_templates_mod=conf.ROOT_TEMPLATES_MODULE)
+            kwargs.update(extra_commands={
+                'startapp': StartApplication(root_templates_mod=conf.ROOT_TEMPLATES_MODULE)
+            })
         except (ImportError, AttributeError):
             pass
 

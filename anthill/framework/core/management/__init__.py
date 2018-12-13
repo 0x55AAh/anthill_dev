@@ -479,7 +479,11 @@ class Manager:
     """Proxy manager."""
 
     def __init__(self, app=None, **kwargs):
+        extra_commands = kwargs.pop('extra_commands', {})
         self._manager = AppManager(app, **kwargs) if app else EmptyManager(**kwargs)
+        for cmd_name, cmd_entity in extra_commands.items():
+            if cmd_name not in self._manager._commands:
+                self._manager.add_command(cmd_name, cmd_entity)
 
     def __getattr__(self, name):
         return getattr(self._manager, name)

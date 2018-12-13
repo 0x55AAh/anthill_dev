@@ -5,6 +5,7 @@ from urllib.parse import urlparse, urljoin
 from collections import defaultdict
 from sqlalchemy import event
 from functools import lru_cache
+from itertools import chain
 from _thread import get_ident
 import importlib
 import logging
@@ -23,7 +24,78 @@ class ApplicationExtensionNotRegistered(Exception):
         self.extension = extension
 
 
+class CommandParser:
+    raise_on_conflict_commands = True
+
+    def __init__(self, raise_on_conflict_commands=None):
+        if raise_on_conflict_commands is not None:
+            self.raise_on_conflict_commands = raise_on_conflict_commands
+
+    @staticmethod
+    def is_command_class(cls):
+        from anthill.framework.core.management import Command
+        base_classes = (Command,)
+        try:
+            return issubclass(cls, base_classes) and cls not in base_classes
+        except TypeError:
+            return False
+
+    @staticmethod
+    def is_manager_instance(obj):
+        from anthill.framework.core.management import Manager
+        return isinstance(obj, Manager)
+
+    @classmethod
+    def is_command(cls, obj):
+        return cls.is_command_class(obj) or cls.is_manager_instance(obj)
+
+    @classmethod
+    def command_instance(cls, obj):
+        if cls.is_manager_instance(obj):
+            return obj
+        return obj()
+
+    @classmethod
+    def command_name(cls, obj):
+        default_name = obj.__class__.__name__ if cls.is_manager_instance(obj) else obj.__name__
+        return getattr(obj, 'name', None) or slugify(camel_case_to_spaces(default_name))
+
+    @classmethod
+    def check_names(cls, _commands):
+        data = defaultdict(list)
+        for name, instance in _commands:
+            data[name].append(instance)
+        for name, instances in data.items():
+            if len(instances) > 1 and cls.raise_on_conflict_commands:
+                raise CommandNamesDuplicatedError(
+                    '%s => %s' % (name, [obj.__class__.__name__ for obj in instances]))
+
+    @classmethod
+    def get_commands(cls, management_conf):
+        if callable(management_conf):
+            management_conf = management_conf()
+        management = importlib.import_module(management_conf)
+        return [
+            (cls.command_name(obj), cls.command_instance(obj))
+            for obj in management.__dict__.values()
+            if cls.is_command(obj)
+        ]
+
+    def parse(self, management_conf):
+        if isinstance(management_conf, str):
+            management_conf = [management_conf]
+
+        commands = map(self.get_commands, management_conf)
+        commands = list(chain.from_iterable(commands))
+
+        self.check_names(commands)
+
+        return commands
+
+
 class Application:
+    raise_on_conflict_commands = True
+
     def __init__(self):
         self.settings = self.config = settings
         self.debug = settings.DEBUG
@@ -42,6 +114,8 @@ class Application:
         self.protocol, self.host, self.port = self.split_location()
         self.host_regex = r'^(%s)$' % re.escape(self.host)
         self.extensions = {}
+
+        self.command_parser = CommandParser(self.raise_on_conflict_commands)
 
         setattr(self, '__ident_func__', get_ident)
 
@@ -115,50 +189,7 @@ class Application:
     @property
     @lru_cache()
     def commands(self):
-        def is_command_class(cls):
-            from anthill.framework.core.management import Command
-            base_classes = (Command,)
-            try:
-                return issubclass(cls, base_classes) and cls not in base_classes
-            except TypeError:
-                return False
-
-        def is_manager_instance(obj):
-            from anthill.framework.core.management import Manager
-            return isinstance(obj, Manager)
-
-        def is_command(obj):
-            return is_command_class(obj) or is_manager_instance(obj)
-
-        def command_instance(obj):
-            if is_manager_instance(obj):
-                return obj
-            return obj()
-
-        def command_name(obj):
-            nm = obj.__class__.__name__ if is_manager_instance(obj) else obj.__name__
-            return getattr(obj, 'name', None) or slugify(camel_case_to_spaces(nm))
-
-        def check_names(_commands):
-            data = defaultdict(list)
-            for name, instance in _commands:
-                data[name].append(instance)
-            for name, instances in data.items():
-                if len(instances) > 1:
-                    raise CommandNamesDuplicatedError(
-                        '%s => %s' % (name, [obj.__class__.__name__ for obj in instances]))
-
-        management = importlib.import_module(self.management_conf)
-
-        commands = [
-            (command_name(obj), command_instance(obj))
-            for obj in management.__dict__.values()
-            if is_command(obj)
-        ]
-
-        check_names(commands)
-
-        return commands
+        return self.command_parser.parse(self.management_conf)
 
     @property
     @lru_cache()
