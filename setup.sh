@@ -35,7 +35,7 @@ done
 
 echo
 echo "Updating geoip databases..."
-eval ${python} "mmdb_update.py"
+eval ${python} "manage.py mmdb_update"
 
 echo
 echo "Installation completed."
