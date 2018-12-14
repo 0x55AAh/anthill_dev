@@ -7,14 +7,14 @@
                         <span>{{ _('Services') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     {% for entry in entries %}
-                    <li class="{% if current == entry.name %}active{% end %} navigation-service {{ current }}" data-name="{{ entry.name }}">
+                    <li class="{% if metadata['name'] == entry.name %}active {% end %}navigation-service" data-name="{{ entry.name }}">
                         <a href="{{ reverse_url('service:index', entry.name) }}"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
                     </li>
                     {% end %}
                     <li class="navigation-header navigation-header-utils">
                         <span>{{ _('Utils') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
-                    <li class="{% if current == 'debug' %}active{% end %}">
+                    <li class="{% if page == 'debug' %}active{% end %}">
                         <a href="{{ reverse_url('debug') }}" target="_blank"><i class="icon-bug2"></i> <span>{{ _('Console') }}</span></a>
                     </li>
                     {% if metadata['debug'] and metadata['public_api_url'] %}

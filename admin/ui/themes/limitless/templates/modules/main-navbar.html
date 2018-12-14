@@ -23,7 +23,7 @@
 
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="icon-bubbles4"></i>
                     <span class="visible-xs-inline-block position-right">Messages</span>
                     <span class="badge bg-warning-400">56</span>
@@ -40,7 +40,7 @@
                     <ul class="media-list dropdown-content-body">
                         <li class="media">
                             <div class="media-left">
-                                <img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt="">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt="">
                                 <span class="badge bg-danger-400 media-badge">5</span>
                             </div>
 
@@ -56,7 +56,7 @@
 
                         <li class="media">
                             <div class="media-left">
-                                <img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt="">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt="">
                                 <span class="badge bg-danger-400 media-badge">4</span>
                             </div>
 
@@ -71,7 +71,7 @@
                         </li>
 
                         <li class="media">
-                            <div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt=""></div>
                             <div class="media-body">
                                 <a href="#" class="media-heading">
                                     <span class="text-semibold">Jeremy Victorino</span>
@@ -83,7 +83,7 @@
                         </li>
 
                         <li class="media">
-                            <div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt=""></div>
                             <div class="media-body">
                                 <a href="#" class="media-heading">
                                     <span class="text-semibold">Beatrix Diaz</span>
@@ -95,7 +95,7 @@
                         </li>
 
                         <li class="media">
-                            <div class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></div>
+                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt=""></div>
                             <div class="media-body">
                                 <a href="#" class="media-heading">
                                     <span class="text-semibold">Richard Vango</span>
@@ -108,7 +108,9 @@
                     </ul>
 
                     <div class="dropdown-content-footer">
-                        <a href="#" data-popup="tooltip" title="" data-original-title="All messages"><i class="icon-menu display-block"></i></a>
+                        <a href="{{ reverse_url('messages') }}" data-popup="tooltip" title=""
+                           data-original-title="All messages"><i class="icon-menu display-block"></i>
+                        </a>
                     </div>
                 </div>
             </li>

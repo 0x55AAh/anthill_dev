@@ -13,10 +13,19 @@ $(function() {
     var services_metadata_key = 'servicesMetadata';
 
     function setCardsSameHeight() {
-        var card_heights = $('.services-cards__entry .panel-body').map(function () {
-            return $(this).outerHeight();
+        var $panels = $('.services-cards__entry .panel');
+        var card_heights = $panels.map(function () {
+            var h1 = $(this).find('.panel-heading').outerHeight(),
+                h2 = $(this).find('.panel-body').outerHeight();
+            return h1 + h2;
         });
-        $('.services-cards__entry .panel').height(Math.max.apply(null, card_heights));
+        $panels.height(Math.max.apply(null, card_heights));
+    }
+
+    function setCardHeight($panel) {
+        var h1 = $panel.find('.panel-heading').outerHeight(),
+            h2 = $panel.find('.panel-body').outerHeight();
+        $panel.height(h1 + h2);
     }
 
     function filter_services_cards(q, animation) {
@@ -51,8 +60,8 @@ $(function() {
         $.each(entries, function(index, entry) {
             html_card_entry =
                 '<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" style="display: none" data-name="' + entry.name +'">' +
-                '    <div class="panel">' +
-                     ((entry.debug) ? '<span class="label pull-right bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
+                '    <div class="panel panel-flat">' +
+                     ((entry.debug) ? '<span class="label pull-left bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
                 '        <div class="panel-body text-center">' +
                 '            <a href="/services/' + entry.name + '/" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
                 '                <i class="' + entry.iconClass + '"></i>' +
@@ -71,7 +80,7 @@ $(function() {
 
         if (anthill_storage.changed('html_cards_list', html_cards_list)) {
             $('.services-cards').html(html_cards_list);
-            $('.page-header .page-title span.badge-warning').text(entries.length);
+            $('.page-header .page-title .badge').text(entries.length);
             var query = $('input[name=search]').val().toUpperCase();
             filter_services_cards(query);
         }
@@ -80,6 +89,10 @@ $(function() {
     $('input[name=search]').keyup(function() {
         var query = $(this).val().toUpperCase();
         filter_services_cards(query, true);
+    });
+
+    $('.heading-elements-toggle').on('click', function () {
+        setCardHeight($(this).closest('.panel'));
     });
 
     $(window).on('resize', setCardsSameHeight).resize();

@@ -1,11 +1,5 @@
 {% extends 'layouts/fixed.html' %}
 
-<!-- Main sidebar -->
-{% block main-sidebar %}
-{% module MainSidebar(entries=main_sidebar_entries, metadata=metadata, current=None) %}
-{% end %}
-<!-- /main sidebar -->
-
 {% block content %}
 <!-- Timeline -->
 <div class="timeline timeline-left">
@@ -14,7 +8,7 @@
         <!-- Tasks -->
         <div class="timeline-row">
             <div class="timeline-icon">
-                <img src="assets/images/placeholder.jpg" alt="">
+                <img src="{{ static_url('images/placeholder.jpg') }}" alt="">
             </div>
 
             <div class="row">
@@ -26,9 +20,9 @@
                                     <h6 class="no-margin-top"><a href="task_manager_detailed.html">#24. Create UI design model</a></h6>
                                     <p class="mb-15">One morning, when Gregor Samsa woke from troubled..</p>
 
-                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt=""></a>
                                     <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
                                 </div>
 
@@ -95,8 +89,8 @@
                                     <h6 class="no-margin-top"><a href="task_manager_detailed.html">#23. New icons set for an iOS app</a></h6>
                                     <p class="mb-15">A collection of textile samples lay spread out on the table..</p>
 
-                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                                    <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt=""></a>
+                                    <a href="#"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt=""></a>
                                     <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
                                 </div>
 

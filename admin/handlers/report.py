@@ -1,3 +1,3 @@
 from anthill.platform.auth.handlers import UserRequestHandler
-from admin.handlers._base import ServiceContextMixin
+from ._base import ServiceContextMixin, PageHandlerMixin
 

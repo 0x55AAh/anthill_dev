@@ -1,4 +1,4 @@
-from admin.handlers._base import UserTemplateServiceRequestHandler
+from ._base import UserTemplateServiceRequestHandler, PageHandlerMixin
 
 
 class ServicesList(UserTemplateServiceRequestHandler):

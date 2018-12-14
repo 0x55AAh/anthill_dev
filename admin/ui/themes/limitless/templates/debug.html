@@ -37,10 +37,6 @@
 <script src="{{ static_url('js/pages/debug.js') }}"></script>
 {% end %}
 
-{% block main-sidebar %}
-{% module MainSidebar(main_sidebar_entries, metadata=metadata, current='debug') %}
-{% end %}
-
 {% block content %}
 <div class="console custom"></div>
 {% end %}

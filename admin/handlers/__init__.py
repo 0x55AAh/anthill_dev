@@ -9,7 +9,7 @@ from anthill.platform.auth.handlers import (
 from anthill.framework.http.errors import HttpBadRequestError
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.framework.utils.decorators import authenticated
-from admin.handlers._base import ServiceContextMixin, UserTemplateServiceRequestHandler
+from ._base import ServiceContextMixin, UserTemplateServiceRequestHandler, PageHandlerMixin
 from admin.ui.modules import ServiceCard
 from typing import Optional
 import logging
@@ -20,9 +20,8 @@ logger = logging.getLogger('anthill.application')
 
 
 # @authenticated()
-class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
-    template_name = 'index.html'
-    extra_context = {'page': 'index'}
+class HomeHandler(InternalRequestHandlerMixin, PageHandlerMixin, UserTemplateHandler):
+    page_name = 'index'
 
     async def get_service_cards(self):
         metadata = self.settings['services_meta']
@@ -36,8 +35,8 @@ class HomeHandler(InternalRequestHandlerMixin, UserTemplateHandler):
         return context
 
 
-class LoginHandler(BaseLoginHandler):
-    extra_context = {'page': 'login'}
+class LoginHandler(PageHandlerMixin, BaseLoginHandler):
+    page_name = 'login'
 
 
 # @authenticated()
@@ -46,18 +45,17 @@ class LogoutHandler(BaseLogoutHandler):
 
 
 # @authenticated()
-class DebugHandler(UserTemplateHandler):
-    template_name = 'debug.html'
-    extra_context = {'page': 'debug'}
+class DebugHandler(PageHandlerMixin, UserTemplateHandler):
+    page_name = 'debug'
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
         return context
 
 
-class DebugSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
+class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHandler):
     """Defines json-rpc methods for debugging."""
-    extra_context = {'page': 'debug-session'}
+    page_name = 'debug-session'
 
     def __init__(self, application, request, dispatcher=None, **kwargs):
         super().__init__(application, request, dispatcher, **kwargs)
@@ -121,24 +119,25 @@ class ServiceRequestHandler(UserTemplateServiceRequestHandler):
 
 
 # @authenticated()
-class LogRequestHandler(ServiceContextMixin, UserTemplateHandler):
-    template_name = 'log.html'
-    extra_context = {'page': 'log'}
+class LogRequestHandler(ServiceContextMixin, PageHandlerMixin, UserTemplateHandler):
+    page_name = 'log'
 
 
 # @authenticated()
-class SettingsRequestHandler(UserTemplateHandler):
-    template_name = 'settings.html'
-    extra_context = {'page': 'settings'}
+class SettingsRequestHandler(PageHandlerMixin, UserTemplateHandler):
+    page_name = 'settings'
 
 
 # @authenticated()
-class AuditLogRequestHandler(UserTemplateHandler):
-    template_name = 'audit_log.html'
-    extra_context = {'page': 'audit_log'}
+class AuditLogRequestHandler(PageHandlerMixin, UserTemplateHandler):
+    page_name = 'audit_log'
 
 
 # @authenticated()
-class ProfileRequestHandler(UserTemplateHandler):
-    template_name = 'profile.html'
-    extra_context = {'page': 'profile'}
+class ProfileRequestHandler(PageHandlerMixin, UserTemplateHandler):
+    page_name = 'profile'
+
+
+# @authenticated()
+class MessagesRequestHandler(PageHandlerMixin, UserTemplateHandler):
+    page_name = 'messages'
