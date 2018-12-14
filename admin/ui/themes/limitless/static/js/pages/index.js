@@ -61,7 +61,21 @@ $(function() {
             html_card_entry =
                 '<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" style="display: none" data-name="' + entry.name +'">' +
                 '    <div class="panel panel-flat">' +
-                     ((entry.debug) ? '<span class="label pull-left bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
+                '        <div class="panel-heading">' +
+                '            <div class="panel-title">' +
+                             ((entry.debug) ? '<span class="label bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
+                '            </div>' +
+                '            <div class="heading-elements">' +
+                '                <ul class="icons-list text-muted">' +
+                '                    <li class="dropdown">' +
+                '                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="caret"></span></a>' +
+                '                        <ul class="dropdown-menu dropdown-menu-right">' +
+                '                            <li><a href="javascript:void(0);"><i class="icon-spinner9"></i> Update</a></li>' +
+                '                        </ul>' +
+                '                    </li>' +
+                '                </ul>' +
+                '            </div>' +
+                '        </div>' +
                 '        <div class="panel-body text-center">' +
                 '            <a href="/services/' + entry.name + '/" class="icon-object border-' + entry.color + ' text-' + entry.color + ' btn btn-flat">' +
                 '                <i class="' + entry.iconClass + '"></i>' +
