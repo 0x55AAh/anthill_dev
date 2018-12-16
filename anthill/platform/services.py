@@ -1,5 +1,6 @@
 from tornado.ioloop import PeriodicCallback
 from anthill.framework.utils.decorators import method_decorator, retry
+from anthill.framework.utils import timezone
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import (
@@ -44,6 +45,7 @@ class BaseService(CeleryMixin, _BaseService):
             self.gis = GeoIP2()
         logger.debug(
             'Geo position tracking system status: %s.' % 'ENABLED' if self.gis else 'DISABLED')
+        self.started_at = None
 
     @property
     def internal_connection(self):
@@ -52,6 +54,11 @@ class BaseService(CeleryMixin, _BaseService):
     @property
     def internal_request(self):
         return self.internal_connection.request
+
+    @property
+    def uptime(self):
+        if self.started_at is not None:
+            return timezone.now() - self.started_at
 
     def setup_public_api(self):
         public_api_url = getattr(self.config, 'PUBLIC_API_URL', None)

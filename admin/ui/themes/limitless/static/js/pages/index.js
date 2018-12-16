@@ -22,7 +22,7 @@ $(function() {
         $panels.height(Math.max.apply(null, card_heights));
     }
 
-    function setCardHeight($panel) {
+    function updateCardHeight($panel) {
         var h1 = $panel.find('.panel-heading').outerHeight(),
             h2 = $panel.find('.panel-body').outerHeight();
         $panel.height(h1 + h2);
@@ -50,6 +50,10 @@ $(function() {
             }
         });
         setCardsSameHeight();
+        $('.panel-title').parent()
+                .has('> .heading-elements:not(.not-collapsible)')
+                .children('.panel-title')
+                .append('<a class="heading-elements-toggle"><i class="icon-more"></i></a>');
     }
 
     // Build services cards and main sidebar services section.
@@ -105,8 +109,8 @@ $(function() {
         filter_services_cards(query, true);
     });
 
-    $('.heading-elements-toggle').on('click', function () {
-        setCardHeight($(this).closest('.panel'));
+    $(document).on('click', '.heading-elements-toggle', function () {
+        updateCardHeight($(this).closest('.panel'));
     });
 
     $(window).on('resize', setCardsSameHeight).resize();

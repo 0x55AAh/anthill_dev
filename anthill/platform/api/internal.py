@@ -3,7 +3,6 @@ from tornado.util import TimeoutError
 from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 
-from anthill.framework.conf import settings
 from anthill.framework.testing.timing import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
 from anthill.platform.core.messenger.channels.layers import get_channel_layer
@@ -19,6 +18,8 @@ from typing import Optional
 import inspect
 import json
 import logging
+import os
+import signal
 
 
 __all__ = [
@@ -128,6 +129,11 @@ def doc(api_: InternalAPI, **options):
 @as_internal()
 def get_service_metadata(api_: InternalAPI, **options):
     return api_.service.app.metadata
+
+
+@as_internal()
+def send_signal(api_: InternalAPI, sig_name: str, **options):
+    os.kill(os.getpid(), getattr(signal, sig_name))
 
 
 class BaseInternalConnection(Singleton):

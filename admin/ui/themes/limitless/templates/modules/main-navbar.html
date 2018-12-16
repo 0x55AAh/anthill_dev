@@ -116,15 +116,19 @@
             </li>
             <li class="dropdown dropdown-user">
                 <a class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="{{ static_url('images/image.png') }}" alt="">
-                    <span>Vladimir</span>
-                    <i class="caret"></i>
+                    <img src="{{ static_url('images/placeholder.jpg') }}" alt=""> <span>Vladimir</span> <i class="caret"></i>
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li class="{% if page == 'profile' %}active{% end %}"><a href="{{ reverse_url('profile') }}"><i class="icon-user"></i> {{ _('Profile') }}</a></li>
-                    <li class="{% if page == 'settings' %}active{% end %}"><a href="{{ reverse_url('settings') }}"><i class="icon-cog5"></i> {{ _('Settings') }}</a></li>
-                    <li class="{% if page == 'history' %}active{% end %}"><a href="{{ reverse_url('audit-log') }}"><i class="icon-history"></i> {{ _('History') }}</a></li>
+                    <li class="{% if page == 'profile' %}active{% end %}">
+                        <a href="{{ reverse_url('profile') }}"><i class="icon-user"></i> {{ _('Profile') }}</a>
+                    </li>
+                    <li class="{% if page == 'settings' %}active{% end %}">
+                        <a href="{{ reverse_url('settings') }}"><i class="icon-cog5"></i> {{ _('Settings') }}</a>
+                    </li>
+                    <li class="{% if page == 'history' %}active{% end %}">
+                        <a href="{{ reverse_url('audit-log') }}"><i class="icon-history"></i> {{ _('History') }}</a>
+                    </li>
                     <li class="divider"></li>
                     <li><a href="{{ reverse_url('logout') }}"><i class="icon-switch2"></i> {{ _('Logout') }}</a></li>
                 </ul>

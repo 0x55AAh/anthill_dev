@@ -59,10 +59,10 @@ $(function() {
 
 
     // Toggle visible state of heading elements
-    $('.page-title .heading-elements-toggle, .panel-title .heading-elements-toggle').on('click', function() {
+    $(document).on('click', '.page-title .heading-elements-toggle, .panel-title .heading-elements-toggle', function() {
         $(this).parent().parent().toggleClass('has-visible-elements').children('.heading-elements').toggleClass('visible-elements');
     });
-    $('.panel-footer .heading-elements-toggle').on('click', function() {
+    $(document).on('click', '.panel-footer .heading-elements-toggle', function() {
         $(this).parent().toggleClass('has-visible-elements').children('.heading-elements').toggleClass('visible-elements');
     });
 

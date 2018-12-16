@@ -24,11 +24,10 @@ $(function() {
 		} else {
 			popup_size = [450, 500]; // Default size
 		}
-		var width = popup_size[0], heigth = popup_size[1];
-		var login_location = 'http://localhost:9507';
-		var path = '/social/login/';
-		var url = login_location + path + social_auth_name;
-        window.popup(url, 'Authenticate', width, heigth);
+		var width = popup_size[0], height = popup_size[1];
+		var login_location = 'http://localhost:9607/social/login/';
+		var url = login_location + social_auth_name;
+        window.popup(url, 'Authenticate', width, height);
     });
 
 });

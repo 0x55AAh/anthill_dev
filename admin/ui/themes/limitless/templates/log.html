@@ -1,7 +1,7 @@
 {% extends 'layouts/fixed.html' %}
 
 {% block css %}
-<link href="{{ static_url('css/terminal/jquery.terminal.css') }}" rel="stylesheet"/>
+<link href="{{ static_url('css/terminal/jquery.terminal.css') }}" rel="stylesheet" type="text/css">
 <style>
     .page-header .breadcrumb-line-component {
         margin: 20px;
@@ -35,8 +35,8 @@
 {% end %}
 
 {% block js %}
-<script src="{{ static_url('js/plugins/terminals/jquery.terminal/jquery.terminal.min.js') }}"></script>
-<script src="{{ static_url('js/utils/websocket.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/plugins/terminals/jquery.terminal/jquery.terminal.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/utils/websocket.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/pages/log.js') }}"></script>
 {% end %}
 

@@ -3,7 +3,6 @@ from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
 from urllib.parse import urlparse, urljoin
 from collections import defaultdict
-from sqlalchemy import event
 from functools import lru_cache
 from itertools import chain
 from _thread import get_ident

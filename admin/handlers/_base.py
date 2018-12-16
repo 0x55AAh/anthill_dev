@@ -45,10 +45,17 @@ class UserTemplateServiceRequestHandler(ServiceContextMixin, UserTemplateHandler
 
 class PageHandlerMixin:
     page_name = None
+    breadcrumbs = None
 
     def get_template_name(self):
         return '%s.html' % self.page_name
 
+    def get_breadcrumbs(self):
+        return self.breadcrumbs
+
     @property
     def extra_context(self):
-        return {'page': self.page_name}
+        return {
+            'page': self.page_name,
+            'breadcrumbs': self.get_breadcrumbs(),
+        }
