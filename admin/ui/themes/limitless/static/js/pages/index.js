@@ -117,7 +117,7 @@ $(function() {
     $(window).on('resize', setCardsSameHeight).resize();
 
     // Update service
-    $(document).on('click', '#update_service a', function() {
+    $(document).on('click', '.services-cards__entry .update_service a', function() {
         var service_name = $(this).closest('.services-cards__entry').data('name');
         swal({
                 title: "Are you sure?",
@@ -151,7 +151,7 @@ $(function() {
     });
 
     // Restart service
-    $(document).on('click', '#restart_service a', function() {
+    $(document).on('click', '.services-cards__entry .restart_service a', function() {
         var service_name = $(this).closest('.services-cards__entry').data('name');
         swal({
                 title: "Are you sure?",
