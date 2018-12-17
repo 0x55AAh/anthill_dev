@@ -59,7 +59,7 @@ setup(
     name='anthill.gaming',
     version='0.0.1a1',
     python_requires='>={}.{}'.format(*REQUIRED_PYTHON),
-    url='',
+    url='https://github.com/0x55AAh/anthill_gaming',
     author='woland',
     author_email='wofkin@gmail.com',
     description='',

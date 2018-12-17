@@ -35,6 +35,25 @@ def _url_pattern(url_, float_slash=True):
     return r'^{url}{end}$'.format(url=url_, end=end)
 
 
+class UpdateManager:
+    schemes = ('git', 'pip')
+
+    def __init__(self, scheme='git'):
+        self.scheme = scheme
+
+    def versions(self):
+        pass
+
+    def current_version(self):
+        pass
+
+    def update_to_latest(self):
+        pass
+
+    def update_to(self, version):
+        pass
+
+
 class BaseService(CeleryMixin, _BaseService):
     internal_api_connection_class = JSONRPCInternalConnection
 
@@ -46,6 +65,7 @@ class BaseService(CeleryMixin, _BaseService):
         logger.debug(
             'Geo position tracking system status: %s.' % 'ENABLED' if self.gis else 'DISABLED')
         self.started_at = None
+        self.update_manager = UpdateManager()
 
     @property
     def internal_connection(self):
@@ -101,6 +121,7 @@ class BaseService(CeleryMixin, _BaseService):
     async def on_start(self) -> None:
         await self.internal_connection.connect()
         self.start_celery()
+        self.started_at = timezone.now()  # TODO: allready started?
         logger.info('Service `%s` started.' % self.name)
 
     async def on_stop(self) -> None:

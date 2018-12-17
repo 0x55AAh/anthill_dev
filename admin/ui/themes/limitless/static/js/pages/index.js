@@ -74,7 +74,8 @@ $(function() {
                 '                    <li class="dropdown">' +
                 '                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="caret"></span></a>' +
                 '                        <ul class="dropdown-menu dropdown-menu-right">' +
-                '                            <li><a href="javascript:void(0);"><i class="icon-spinner9"></i> Update</a></li>' +
+                '                            <li id="update_service"><a href="javascript:void(0);"><i class="icon-download"></i> Update</a></li>' +
+                '                            <li id="restart_service"><a href="javascript:void(0);"><i class="icon-spinner11"></i> Restart</a></li>' +
                 '                        </ul>' +
                 '                    </li>' +
                 '                </ul>' +
@@ -114,6 +115,74 @@ $(function() {
     });
 
     $(window).on('resize', setCardsSameHeight).resize();
+
+    // Update service
+    $(document).on('click', '#update_service a', function() {
+        var service_name = $(this).closest('.services-cards__entry').data('name');
+        swal({
+                title: "Are you sure?",
+                text: "Service " + service_name.toUpperCase() + " will be updated!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Update",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    swal({
+                        title: "Updated!",
+                        text: "Your imaginary file has been deleted.",
+                        confirmButtonColor: "#66BB6A",
+                        type: "success"
+                    });
+                }
+                else {
+                    swal({
+                        title: "Cancelled!",
+                        text: "Your imaginary file is safe :)",
+                        confirmButtonColor: "#2196F3",
+                        type: "error"
+                    });
+                }
+            });
+    });
+
+    // Restart service
+    $(document).on('click', '#restart_service a', function() {
+        var service_name = $(this).closest('.services-cards__entry').data('name');
+        swal({
+                title: "Are you sure?",
+                text: "Service " + service_name.toUpperCase() + " will be restarted!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Restart",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    swal({
+                        title: "Restarting...",
+                        text: "Your imaginary file has been deleted.",
+                        confirmButtonColor: "#66BB6A",
+                        type: "success"
+                    });
+                }
+                else {
+                    swal({
+                        title: "Cancelled",
+                        text: "Your imaginary file is safe :)",
+                        confirmButtonColor: "#2196F3",
+                        type: "error"
+                    });
+                }
+            });
+    });
 
     setInterval(update_services_cards, UPDATE_INTERVAL * 1000);
 

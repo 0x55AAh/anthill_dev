@@ -3,6 +3,8 @@ $(function() {
     var AJAX_INTERVAL = 10;
     var UPDATE_INTERVAL = 1;
 
+    var messenger_client = null;
+
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {

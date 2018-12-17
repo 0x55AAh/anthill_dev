@@ -99,6 +99,9 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         self.action_name = None
         self.message_type = None
 
+    def check_origin(self, origin):
+        return super().check_origin(origin)
+
     def initialize(self, client_class=None):
         if client_class is not None:
             self.client_class = client_class
