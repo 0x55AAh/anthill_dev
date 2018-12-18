@@ -1,6 +1,7 @@
 from anthill.framework.apps.cls import Application
-from anthill.platform.api.internal import api as internal_api
+from anthill.framework.utils.duration import duration_string
 from anthill.framework.conf import settings
+from anthill.platform.api.internal import api as internal_api
 from importlib import import_module
 from functools import lru_cache
 import logging
@@ -46,8 +47,10 @@ class BaseAnthillApplication(Application):
         return public_api_url
 
     @property
-    @lru_cache()
     def metadata(self):
         metadata = super().metadata
-        metadata.update(public_api_url=self.public_api_url())
+        metadata.update({
+            'public_api_url': self.public_api_url(),
+            'uptime': duration_string(self.service.uptime).split('.')[0],
+        })
         return metadata

@@ -224,9 +224,9 @@ class AdminService(PlainService):
             self.services_meta_updater.start()
 
     async def on_stop(self) -> None:
-        await super().on_stop()
         if self.services_meta_updater is not None:
             self.services_meta_updater.stop()
+        await super().on_stop()
 
 
 class APIGatewayService(AdminService):

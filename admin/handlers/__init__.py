@@ -1,13 +1,14 @@
 from anthill.framework.handlers import RequestHandler
+from anthill.framework.http.errors import HttpBadRequestError
+from anthill.framework.utils.decorators import authenticated
+from anthill.framework.utils.translation import translate as _
 from anthill.platform.handlers.jsonrpc import JsonRPCSessionHandler, jsonrpc_method
 from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
     LogoutHandler as BaseLogoutHandler,
     UserTemplateHandler, UserHandlerMixin
 )
-from anthill.framework.http.errors import HttpBadRequestError
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
-from anthill.framework.utils.decorators import authenticated
 from ._base import ServiceContextMixin, UserTemplateServiceRequestHandler, PageHandlerMixin
 from admin.ui.modules import ServiceCard
 from typing import Optional
@@ -97,12 +98,10 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
 
 class UtilsSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
     @jsonrpc_method()
-    def update(self, service_name):
-        pass
-
-    @jsonrpc_method()
-    def restart(self, service_name):
-        self.internal_request(service_name, 'send_signal', 'SIGHUP')
+    async def update(self, service_name, version=None):
+        return {
+            'message': _('Completed successfully.')
+        }
 
 
 # @authenticated()

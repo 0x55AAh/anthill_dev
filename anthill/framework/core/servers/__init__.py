@@ -84,7 +84,8 @@ class BaseService(TornadoWebApplication):
         return '<%s: %s>' % (self.__class__.__name__, self.app.name)
 
     def __sig_handler__(self, sig, frame):
-        self.io_loop.add_callback(self.on_stop)
+        logger.warning('Caught signal: %s', sig)
+        self.io_loop.add_callback(self.stop)
 
     # noinspection PyMethodMayBeStatic
     def __io_loop_handle_callback_exception__(self, callback):
@@ -159,7 +160,7 @@ class BaseService(TornadoWebApplication):
         """Stop server."""
         if self.server:
             self.io_loop.add_callback(self.on_stop)
-            self.server.stop()
+            self.io_loop.stop()
 
     async def on_start(self):
         raise NotImplementedError

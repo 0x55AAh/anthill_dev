@@ -119,7 +119,8 @@ class ServiceCard(TemplateModule):
 
     class Entry:
         def __init__(self, name, title,
-                     description='', icon_class='', color='', version='', public_api_url='',  debug=False):
+                     description='', icon_class='', color='', version='',
+                     public_api_url='',  debug=False, uptime=''):
             self.name = name
             self.title = title
             self.description = description
@@ -128,6 +129,7 @@ class ServiceCard(TemplateModule):
             self.version = version
             self.debug = debug
             self.public_api_url = public_api_url
+            self.uptime = uptime
 
         def __repr__(self):
             return 'ServiceCard(name="%s", title="%s")' % (self.name, self.title)
