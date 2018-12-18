@@ -3,8 +3,7 @@ from anthill.platform.handlers.jsonrpc import JsonRPCSessionHandler, jsonrpc_met
 from anthill.platform.auth.handlers import (
     LoginHandler as BaseLoginHandler,
     LogoutHandler as BaseLogoutHandler,
-    UserTemplateHandler,
-    UserHandlerMixin
+    UserTemplateHandler, UserHandlerMixin
 )
 from anthill.framework.http.errors import HttpBadRequestError
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
@@ -78,7 +77,7 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
         return res.rstrip()
 
     @jsonrpc_method(name='get_context')
-    def get_context(self, name: str=''):
+    def get_context(self, name: str = ''):
         """Get context variables."""
         if name in self._context:
             return 'Current context %s: %s' % (name, self._context[name] or '--')
@@ -94,6 +93,16 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
     def clear_context(self, name: str):
         """Clear context variable."""
         self._set_context(name, None)
+
+
+class UtilsSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
+    @jsonrpc_method()
+    def update(self, service_name):
+        pass
+
+    @jsonrpc_method()
+    def restart(self, service_name):
+        self.internal_request(service_name, 'send_signal', 'SIGHUP')
 
 
 # @authenticated()

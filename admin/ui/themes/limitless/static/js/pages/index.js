@@ -74,8 +74,8 @@ $(function() {
                 '                    <li class="dropdown">' +
                 '                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="caret"></span></a>' +
                 '                        <ul class="dropdown-menu dropdown-menu-right">' +
-                '                            <li id="update_service"><a href="javascript:void(0);"><i class="icon-download"></i> Update</a></li>' +
-                '                            <li id="restart_service"><a href="javascript:void(0);"><i class="icon-spinner11"></i> Restart</a></li>' +
+                '                            <li class="update_service"><a href="javascript:void(0);"><i class="icon-download"></i> Update</a></li>' +
+                '                            <li class="restart_service"><a href="javascript:void(0);"><i class="icon-spinner11"></i> Restart</a></li>' +
                 '                        </ul>' +
                 '                    </li>' +
                 '                </ul>' +
@@ -117,8 +117,8 @@ $(function() {
     $(window).on('resize', setCardsSameHeight).resize();
 
     // Update service
-    $(document).on('click', '.services-cards__entry .update_service a', function() {
-        var service_name = $(this).closest('.services-cards__entry').data('name');
+    $(document).on('click', '.services-cards__entry .update_service a, .sidebar-main .update_service a', function() {
+        var service_name = $(this).closest('.services-cards__entry').data('name') || 'admin';
         swal({
                 title: "Are you sure?",
                 text: "Service " + service_name.toUpperCase() + " will be updated!",
@@ -151,8 +151,8 @@ $(function() {
     });
 
     // Restart service
-    $(document).on('click', '.services-cards__entry .restart_service a', function() {
-        var service_name = $(this).closest('.services-cards__entry').data('name');
+    $(document).on('click', '.services-cards__entry .restart_service a, .sidebar-main .restart_service a', function() {
+        var service_name = $(this).closest('.services-cards__entry').data('name') || 'admin';
         swal({
                 title: "Are you sure?",
                 text: "Service " + service_name.toUpperCase() + " will be restarted!",

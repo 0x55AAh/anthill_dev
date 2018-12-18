@@ -1,4 +1,5 @@
 from anthill.framework.handlers import WebSocketJSONRPCHandler
+from anthill.platform.handlers.base import InternalRequestHandlerMixin
 
 
 __all__ = ['JsonRPCSessionHandler', 'jsonrpc_method']
@@ -13,7 +14,7 @@ def jsonrpc_method(**kwargs):
     return decorator
 
 
-class JsonRPCSessionHandler(WebSocketJSONRPCHandler):
+class JsonRPCSessionHandler(InternalRequestHandlerMixin, WebSocketJSONRPCHandler):
     """
     Json-rpc session channel.
 

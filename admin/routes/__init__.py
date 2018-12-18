@@ -42,6 +42,7 @@ route_patterns = [
     url(r'^/profile/?$', handlers.ProfileRequestHandler, name='profile'),
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
+    url(r'^/utils-session/?$', handlers.UtilsSessionHandler, name='utils-session'),
     url(r'^/messages/?$', handlers.MessagesRequestHandler, name='messages'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
     url(r'^/services/(?P<name>[^/]+)/', include(service_route_patterns, namespace='service')),

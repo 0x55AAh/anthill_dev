@@ -113,13 +113,10 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         """
         Override this to set HTTP headers at the beginning of the request.
         """
-        # self.set_header('Access-Control-Allow-Origin', '*')
-        # self.set_header('Access-Control-Allow-Headers', 'origin, x-requested-with, content-type')
-        # self.set_header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
 
 
 class BaseWSClientsWatcher:
-    """Base websoket handlers watcher."""
+    """Base websocket handlers watcher."""
 
     def append(self, handler) -> None:
         raise NotImplementedError
@@ -133,7 +130,7 @@ class BaseWSClientsWatcher:
 
 
 class WSClientsWatcher(BaseWSClientsWatcher):
-    """Default websoket handlers watcher."""
+    """Default websocket handlers watcher."""
 
     def __init__(self, *args, **kwargs):
         self.items = []

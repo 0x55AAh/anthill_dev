@@ -121,7 +121,7 @@ class BaseService(CeleryMixin, _BaseService):
     async def on_start(self) -> None:
         await self.internal_connection.connect()
         self.start_celery()
-        self.started_at = timezone.now()  # TODO: allready started?
+        self.started_at = timezone.now()  # TODO: already started?
         logger.info('Service `%s` started.' % self.name)
 
     async def on_stop(self) -> None:
@@ -150,7 +150,7 @@ class PlainService(BaseService):
         await self.discovery_request('remove_service', name=self.name)
         logger.info('Disconnected from `discovery` service.')
 
-    async def discover(self, name: str, network: str=None) -> dict:
+    async def discover(self, name: str, network: str = None) -> dict:
         return await self.discovery_request('get_service', name=name, network=network)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
@@ -306,7 +306,7 @@ class DiscoveryService(BaseService):
     async def is_service_exists(self, name: str) -> bool:
         raise NotImplementedError
 
-    async def get_service(self, name: str, networks: list=None) -> dict:
+    async def get_service(self, name: str, networks: list = None) -> dict:
         raise NotImplementedError
 
     async def setup_storage(self) -> None:
