@@ -16,6 +16,7 @@ extra_routes = (
     'admin.routes.exec',
     'admin.routes.game_master',
     'admin.routes.leaderboard',
+    'admin.routes.log',
     'admin.routes.login',
     'admin.routes.media',
     'admin.routes.message',
@@ -44,6 +45,7 @@ route_patterns = [
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/utils-session/?$', handlers.UtilsSessionHandler, name='utils-session'),
     url(r'^/messages/?$', handlers.MessagesRequestHandler, name='messages'),
+    url(r'^/update-manager/?$', handlers.UpdateManagerRequestHandler, name='update-manager'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
     url(r'^/services/(?P<name>[^/]+)/', include(service_route_patterns, namespace='service')),
 ]

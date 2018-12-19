@@ -12,6 +12,7 @@
 -r game_controller/requirements.txt
 -r game_master/requirements.txt
 -r leaderboard/requirements.txt
+-r log/requirements.txt
 -r login/requirements.txt
 -r media/requirements.txt
 -r message/requirements.txt

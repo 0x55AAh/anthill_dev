@@ -149,3 +149,8 @@ class ProfileRequestHandler(PageHandlerMixin, UserTemplateHandler):
 # @authenticated()
 class MessagesRequestHandler(PageHandlerMixin, UserTemplateHandler):
     page_name = 'messages'
+
+
+# @authenticated()
+class UpdateManagerRequestHandler(PageHandlerMixin, UserTemplateHandler):
+    page_name = 'update_manager'
