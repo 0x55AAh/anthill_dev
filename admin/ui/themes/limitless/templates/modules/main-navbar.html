@@ -132,6 +132,9 @@
                     <li class="{% if page == 'history' %}active{% end %}">
                         <a href="{{ reverse_url('audit-log') }}"><i class="icon-history"></i> {{ _('History') }}</a>
                     </li>
+                    <li class="{% if page == 'update-manager' %}active{% end %}">
+                        <a href="{{ reverse_url('update-manager') }}"><i class="icon-download"></i> {{ _('Updates') }}</a>
+                    </li>
                     <li class="divider"></li>
                     <li><a href="{{ reverse_url('logout') }}"><i class="icon-switch2"></i> {{ _('Logout') }}</a></li>
                 </ul>

@@ -65,7 +65,7 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
         if name in self._context:
             self._context[name] = value
 
-    @jsonrpc_method(name='help')
+    @jsonrpc_method()
     def help(self):
         """Shows supported commands."""
         res = ''
@@ -77,7 +77,7 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
                 i, f.__name__, str(anno).strip('{}'), f.__doc__)
         return res.rstrip()
 
-    @jsonrpc_method(name='get_context')
+    @jsonrpc_method()
     def get_context(self, name: str = ''):
         """Get context variables."""
         if name in self._context:
@@ -85,12 +85,12 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
         else:
             return 'No such context, (%s) available.' % ', '.join(self._context.keys())
 
-    @jsonrpc_method(name='set_context')
+    @jsonrpc_method()
     def set_context(self, name: str, value: Optional[str]):
         """Set context variable."""
         self._set_context(name, value)
 
-    @jsonrpc_method(name='clear_context')
+    @jsonrpc_method()
     def clear_context(self, name: str):
         """Clear context variable."""
         self._set_context(name, None)
