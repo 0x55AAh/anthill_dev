@@ -13,6 +13,7 @@ from anthill.framework.handlers.base import (
 from anthill.framework.handlers.edit import FormHandler
 from anthill.framework.auth.forms import AuthenticationForm
 from anthill.framework.auth.models import AnonymousUser
+from anthill.framework.auth.log import get_user_logger
 from anthill.framework.conf import settings
 
 
@@ -57,10 +58,11 @@ class UserHandlerMixin:
 
         return user or AnonymousUser()
 
+    # noinspection PyAttributeOutsideInit
     async def prepare(self):
         await super().prepare()
-        # noinspection PyAttributeOutsideInit
         self.current_user = await self.get_user()
+        self.logger = get_user_logger(self.current_user)
 
 
 class LoginHandlerMixin:

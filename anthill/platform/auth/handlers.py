@@ -9,6 +9,7 @@ from anthill.framework.auth import (
     REDIRECT_FIELD_NAME,
     SESSION_KEY
 )
+from anthill.framework.auth.log import get_user_logger
 from anthill.platform.auth.forms import AuthenticationForm
 from anthill.platform.auth import RemoteUser
 from wtforms import ValidationError
@@ -66,10 +67,11 @@ class UserHandlerMixin:
 
         return user or AnonymousUser()
 
+    # noinspection PyAttributeOutsideInit
     async def prepare(self):
         await super().prepare()
-        # noinspection PyAttributeOutsideInit
         self.current_user = await self.get_user()
+        self.logger = get_user_logger(self.current_user)
 
 
 class LoginHandlerMixin:

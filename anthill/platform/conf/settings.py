@@ -193,3 +193,5 @@ COMPRESS_RESPONSE = True
 
 
 SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
+
+USER_LOGGING_ROOT_DIR = '/var/log/anthill/users'
