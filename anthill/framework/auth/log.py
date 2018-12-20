@@ -49,13 +49,13 @@ def get_user_logger(user):
     try:
         handler = UserRotatingFileHandler(**handler_settings)
     except FileNotFoundError:
+        logger.disabled = True
         if not settings.DEBUG:
             raise
     else:
         handler.setLevel(logging.INFO)
         handler.setFormatter(formatter)
         handler.addFilter(RequireDebugFalse)
-
         logger.addHandler(handler)
 
-        return logger
+    return logger
