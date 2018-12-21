@@ -32,7 +32,6 @@ $(function() {
         var mode = prefix_parts[0],
             date = prefix_parts[1],
             time = prefix_parts[2],
-            datetime = Date.parse([date, time].join(" ")),
             user = null;
         if (prefix_parts.length === 5) {
             user = prefix_parts[3];
