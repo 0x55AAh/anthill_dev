@@ -167,4 +167,17 @@ class RequireDebugTrue(logging.Filter):
 
 
 class ServerFormatter(LogFormatter):
-    pass
+    DEFAULT_FORMAT = \
+        '%(color)s[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
+    DEFAULT_USER_FORMAT = \
+        '%(color)s[%(levelname)1.1s %(asctime)s %(username)s %(module)s:%(lineno)d]%(end_color)s %(message)s'
+    DEFAULT_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+    def format(self, record):
+        if hasattr(record, 'username'):
+            self._fmt = self.DEFAULT_USER_FORMAT
+            if not record.username:
+                record.username = 'anonymous'
+        else:
+            self._fmt = self.DEFAULT_FORMAT
+        return super(ServerFormatter, self).format(record)
