@@ -325,13 +325,17 @@ class RedirectMixin:
 class TemplateMixin:
     """A mixin that can be used to render a template."""
     template_name = None
+    content_type = 'text/html'
 
-    def initialize(self, template_name=None):
+    def initialize(self, template_name=None, content_type=None):
         if template_name is not None:
             self.template_name = template_name
+        if content_type is not None:
+            self.content_type = content_type
 
     def render(self, template_name=None, **kwargs):
         template_name = template_name or self.get_template_name()
+        self.set_header('Content-Type', self.content_type)
         # noinspection PyUnresolvedReferences
         super().render(template_name, **kwargs)
 

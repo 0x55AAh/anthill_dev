@@ -2,6 +2,7 @@
 # http://www.tornadoweb.org/en/stable/routing.html
 from anthill.framework.utils.urls import include
 from anthill.framework.utils.module_loading import import_module
+from anthill.framework.handlers import TemplateHandler
 from admin import handlers
 from tornado.web import url
 import itertools
@@ -44,6 +45,8 @@ route_patterns = [
     url(r'^/debug/?$', handlers.DebugHandler, name='debug'),
     url(r'^/debug-session/?$', handlers.DebugSessionHandler, name='debug-session'),
     url(r'^/utils-session/?$', handlers.UtilsSessionHandler, name='utils-session'),
+    url(r'^/robots.txt$', TemplateHandler,
+        dict(template_name='robots.txt', content_type='text/plain'), name='robots.txt'),
     url(r'^/messages/?$', handlers.MessagesRequestHandler, name='messages'),
     url(r'^/update-manager/?$', handlers.UpdateManagerRequestHandler, name='update-manager'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
