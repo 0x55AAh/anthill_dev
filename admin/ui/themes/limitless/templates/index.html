@@ -1,25 +1,7 @@
 {% extends 'layouts/fixed.html' %}
 
 {% block css %}
-<style>
-    @media (min-width: 769px) {
-        .panel-flat > .panel-heading {
-            padding: 0 0 0 3px;
-            background-color: unset;
-        }
-        .panel-flat > .panel-heading > .panel-title {
-            margin-top: 0;
-        }
-        .panel-flat > .panel-heading > .heading-elements {
-            margin-top: -14px;
-            margin-right: -14px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .panel-flat > .panel-heading {padding-top: 7px;}
-    }
-</style>
+<link href="{{ static_url('css/pages/index.css') }}" rel="stylesheet" type="text/css">
 {% end %}
 
 {% block js %}

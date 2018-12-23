@@ -1,0 +1,25 @@
+@supports (--css: variables) {
+    .console.ubuntu.terminal {
+        --background: #300924;
+    }
+    .console.osx.terminal {
+        --background: #222;
+    }
+    .console.light.terminal {
+        --background: white;
+        --color: black;
+    }
+    /*
+    * windows and custom are the last ones so
+    * they don't get overwritten by light
+    */
+    .console.windows.terminal {
+        --background: black;
+        --color: white;
+        --animation: terminal-underline;
+    }
+    .console.custom.terminal {
+        --background: #222d32;
+        --color: #aaa;
+    }
+}
