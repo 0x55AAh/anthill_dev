@@ -69,7 +69,7 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/anthill/profile.log',
+            'filename': os.path.join(LOGGING_ROOT_DIR, 'profile.log'),
             'formatter': 'anthill.server',
             'maxBytes': 100 * 1024 * 1024,  # 100 MiB
             'backupCount': 10

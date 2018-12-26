@@ -1,3 +1,5 @@
+import os
+
 NETWORKS = ['internal', 'external']
 
 BROKER = 'amqp://guest:guest@localhost:5672'
@@ -194,4 +196,6 @@ COMPRESS_RESPONSE = True
 
 SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
 
-USER_LOGGING_ROOT_DIR = '/var/log/anthill/users'
+# LOGGING_ROOT_DIR = '/var/log/anthill'
+LOGGING_ROOT_DIR = '../'
+USER_LOGGING_ROOT_DIR = os.path.join(LOGGING_ROOT_DIR, 'users')

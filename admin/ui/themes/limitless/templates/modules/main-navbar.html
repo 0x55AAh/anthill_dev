@@ -12,15 +12,13 @@
         <ul class="nav navbar-nav">
             <li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
             {% if metadata['debug'] %}
+            <li><p class="navbar-text"><span class="label bg-success">{{ _('debug') }}</span></p></li>
+            {% end %}
             <li>
-                <p class="navbar-text">
-                    <span class="label {% if debug %} bg-success{% else %} bg-danger{% end %}">{{ _('debug') }}</span>
-                </p>
                 <p class="navbar-text">
                     <span class="heading-text"><i class="icon-history text-warning position-left"></i> {{ metadata['uptime'] }}</span>
                 </p>
             </li>
-            {% end %}
         </ul>
 
 
