@@ -38,6 +38,7 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/12"
+CACHES["default"]["KEY_PREFIX"] = "anthill:discovery"
 
 LOGGING = {
     'version': 1,

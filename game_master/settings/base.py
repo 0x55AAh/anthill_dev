@@ -38,6 +38,7 @@ APPLICATION_COLOR = 'purple'
 EMAIL_SUBJECT_PREFIX = '[Anthill: game_master] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/28"
+CACHES["default"]["KEY_PREFIX"] = "anthill:game_master"
 
 LOGGING = {
     'version': 1,

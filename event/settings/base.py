@@ -38,6 +38,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 CELERY_ENABLE = True
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/16"
+CACHES["default"]["KEY_PREFIX"] = "anthill:event"
 
 LOGGING = {
     'version': 1,

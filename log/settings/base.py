@@ -38,6 +38,7 @@ APPLICATION_COLOR = 'purple'
 EMAIL_SUBJECT_PREFIX = '[Anthill: log] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/32"
+CACHES["default"]["KEY_PREFIX"] = "anthill:log"
 
 LOGGING = {
     'version': 1,

@@ -35,7 +35,6 @@ cache = caches['rate_limit']
 
 
 RATE_LIMIT_ENABLE = getattr(settings, 'RATE_LIMIT_ENABLE', False)
-RATE_LIMIT_CACHE_PREFIX = getattr(settings, 'RATE_LIMIT_CACHE_PREFIX', 'rl')
 RATE_LIMIT_CONFIG = getattr(settings, 'RATE_LIMIT_CONFIG', {})
 
 
@@ -150,14 +149,17 @@ class RateLimit:
         return decorator
 
     def reset(self, storage_key):
-        """
-        Reset limits by storage key
-        """
+        """Reset limits by storage key."""
         with self.lock:
             return self.storage.delete(storage_key)
 
+    def reset_all(self):
+        """Reset all limits."""
+        with self.lock:
+            return self.storage.clear()
+
     def build_storage_key(self, resource_name, resource_key):
-        return ':'.join([RATE_LIMIT_CACHE_PREFIX, resource_name, resource_key])
+        return ':'.join([resource_name, resource_key])
 
 
 default_rate_limit = RateLimit(storage=cache)

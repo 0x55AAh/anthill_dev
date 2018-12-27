@@ -115,40 +115,44 @@ class RequestHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionH
         """
 
 
-class BaseWSClientsWatcher:
+class BaseClientsWatcher:
     """Base websocket handlers watcher."""
 
-    def append(self, handler) -> None:
+    def get_user_id(self, handler: 'WebSocketHandler') -> str:
         raise NotImplementedError
 
-    def remove(self, handler) -> None:
+    async def append(self, handler: 'WebSocketHandler') -> None:
         raise NotImplementedError
 
-    @property
-    def count(self) -> int:
+    async def remove(self, handler: 'WebSocketHandler') -> None:
+        raise NotImplementedError
+
+    async def count(self) -> int:
         raise NotImplementedError
 
 
-class WSClientsWatcher(BaseWSClientsWatcher):
+class InMemoryClientsWatcher(BaseClientsWatcher):
     """Default websocket handlers watcher."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.items = []
 
-    def append(self, handler: 'WebSocketHandler') -> None:
+    async def append(self, handler: 'WebSocketHandler') -> None:
         self.items.append(handler)
 
-    def remove(self, handler: 'WebSocketHandler') -> None:
+    async def remove(self, handler: 'WebSocketHandler') -> None:
         self.items.remove(handler)
 
-    @property
-    def count(self) -> int:
+    async def count(self) -> int:
         return len(self.items)
+
+    def get_user_id(self, handler: 'WebSocketHandler') -> str:
+        return handler.current_user.id
 
 
 class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, SessionHandlerMixin,
                        CommonRequestHandlerMixin, BaseWebSocketHandler):
-    ws_clients = None
+    clients = None
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
@@ -173,13 +177,13 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
 
     async def open(self, *args, **kwargs):
         """Invoked when a new WebSocket is opened."""
-        if self.ws_clients is not None:
-            self.ws_clients.append(self)
+        if self.clients is not None:
+            await self.clients.append(self)
 
-    def on_close(self):
-        """Invoked when the WebSocket is closed."""
-        if self.ws_clients is not None:
-            self.ws_clients.remove(self)
+    async def close(self, code=None, reason=None):
+        if self.clients is not None:
+            await self.clients.remove(self)
+        await super().close(code, reason)
 
     def on_ping(self, data):
         """Invoked when the a ping frame is received."""

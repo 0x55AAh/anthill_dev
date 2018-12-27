@@ -49,6 +49,7 @@ CONTEXT_PROCESSORS = [
 ]
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/10"
+CACHES["default"]["KEY_PREFIX"] = "anthill:admin"
 
 
 LOGGING = {

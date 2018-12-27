@@ -1,6 +1,7 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.handlers.base import BaseWSClientsWatcher
+from anthill.framework.core.cache import caches
+from anthill.framework.handlers.base import BaseClientsWatcher
 from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
@@ -44,13 +45,39 @@ class MessengerHandlerMeta(type):
         return handler
 
 
-class WSClientsWatcher(BaseWSClientsWatcher):
+class CacheClientsWatcher(BaseClientsWatcher):
+    user_limit: int = 0
+    storage = caches['websocket_clients_watcher']
+
+    def __init__(self, user_limit: int = 0):
+        if user_limit:
+            self.user_limit = user_limit
+        self.handlers = {}
+
+    def build_cache_key(self, handler: 'WebSocketHandler'):
+        return ':'.join([id(handler), self.get_user_id(handler)])
+
+    async def append(self, handler: 'WebSocketHandler') -> None:
+        user_id = self.get_user_id(handler)
+        self.handlers.setdefault(user_id, []).append(handler)
+
+    async def remove(self, handler: 'WebSocketHandler') -> None:
+        user_id = self.get_user_id(handler)
+        self.handlers[user_id].remove(handler)
+
+    async def count(self) -> int:
+        raise NotImplementedError
+
+    def get_user_id(self, handler: 'WebSocketHandler') -> str:
+        return handler.current_user.id
+
+
+class MessengerClientsWatcher(CacheClientsWatcher):
     """Messenger handlers watcher."""
     user_limit: int = 0
 
-    def __init__(self, user_limit: int=0):
-        if user_limit:
-            self.user_limit = user_limit
+    def __init__(self, user_limit: int = 0):
+        super().__init__(user_limit)
         self.items = {}
 
     # noinspection PyMethodMayBeStatic
@@ -81,7 +108,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
     direct_group_prefix = '__direct'  # Must starts with `__`
     secure_direct = True
     secure_groups = True
-    ws_clients = WSClientsWatcher(user_limit=0)
+    clients = MessengerClientsWatcher(user_limit=0)
 
     @enum.unique
     class NetStatus(enum.Enum):

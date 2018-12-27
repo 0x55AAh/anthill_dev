@@ -41,6 +41,7 @@ STATIC_URL = '/static/'
 EMAIL_SUBJECT_PREFIX = '[Anthill: apigw] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/26"
+CACHES["default"]["KEY_PREFIX"] = "anthill:apigw"
 
 LOGGING = {
     'version': 1,

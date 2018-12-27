@@ -36,21 +36,18 @@ def _url_pattern(url_, float_slash=True):
 
 
 class UpdateManager:
-    schemes = ('git', 'pip')
+    schemes = ('git', 'pip', 'pip+git')
 
     def __init__(self, scheme='git'):
         self.scheme = scheme
 
-    def versions(self):
+    async def versions(self):
         pass
 
-    def current_version(self):
+    async def current_version(self):
         pass
 
-    def update_to_latest(self):
-        pass
-
-    def update_to(self, version):
+    async def update(self, version=None):
         pass
 
 

@@ -100,21 +100,19 @@ LOG_STREAMING = {
 # RATE LIMIT #
 ##############
 
-CACHES.update(
-    rate_limit={
-        "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {
-                "max_connections": 500
-            }
+CACHES['rate_limit'] = {
+    "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
+    "LOCATION": "redis://localhost:6379/1",
+    "OPTIONS": {
+        "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
+        "CONNECTION_POOL_KWARGS": {
+            "max_connections": 500
         }
-    }
-)
+    },
+    "KEY_PREFIX": "rate_limit"
+}
 
 RATE_LIMIT_ENABLE = False
-RATE_LIMIT_CACHE_PREFIX = 'rl'
 
 # Maps resource names and its rate limit parameters.
 # Rate limit has blocking and non-blocking mode.
@@ -152,6 +150,23 @@ WEBSOCKET_PING_TIMEOUT = 30
 WEBSOCKET_MAX_MESSAGE_SIZE = 10 * 1024 * 1024  # 10MiB
 WEBSOCKET_COMPRESSION_LEVEL = -1
 WEBSOCKET_MEM_LEVEL = 6
+
+
+#############################
+# WEBSOCKET CLIENTS WATCHER #
+#############################
+
+CACHES['websocket_clients_watcher'] = {
+    "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
+    "LOCATION": "redis://localhost:6379/1",
+    "OPTIONS": {
+        "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
+        "CONNECTION_POOL_KWARGS": {
+            "max_connections": 500
+        }
+    },
+    "KEY_PREFIX": "websocket_clients_watcher"
+}
 
 
 ############

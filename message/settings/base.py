@@ -35,6 +35,7 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/19"
+CACHES["default"]["KEY_PREFIX"] = "anthill:message"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: message] '
 
