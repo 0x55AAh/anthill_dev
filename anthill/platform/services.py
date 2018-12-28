@@ -2,6 +2,7 @@ from tornado.ioloop import PeriodicCallback
 from anthill.framework.utils.decorators import method_decorator, retry
 from anthill.framework.utils import timezone
 from anthill.framework.core.servers import BaseService as _BaseService
+from anthill.framework.core.cache import caches
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
@@ -19,6 +20,22 @@ class MasterRole:
 
 class ControllerRole:
     """Mixin class for enabling `controller` role on service."""
+
+
+def dict_filter(d, keys=None):
+    if keys:
+        return dict((k, d[k]) for k in d if k in keys)
+    else:
+        return d
+
+
+class ServiceDoesNotExist(Exception):
+    def __init__(self, service_name):
+        self.service_name = service_name
+        self.message = 'Service does not exists: %s' % service_name
+
+    def __str__(self):
+        return self.message
 
 
 class ServiceAlreadyRegistered(Exception):
@@ -245,6 +262,7 @@ class DiscoveryService(BaseService):
         else:
             self.ping_monitor = None
         self.registry = self.app.registry
+        self.storage = None
 
     async def on_start(self) -> None:
         await super().on_start()
@@ -292,19 +310,21 @@ class DiscoveryService(BaseService):
 
     async def list_services(self) -> list:
         """Returns a list of services names."""
-        raise NotImplementedError
-
-    async def setup_service(self, name: str, networks: dict) -> None:
-        raise NotImplementedError
-
-    async def remove_service(self, name: str) -> None:
-        raise NotImplementedError
-
-    async def is_service_exists(self, name: str) -> bool:
-        raise NotImplementedError
-
-    async def get_service(self, name: str, networks: list = None) -> dict:
-        raise NotImplementedError
+        return list(self.storage.get_many(self.registry.keys()).keys())
 
     async def setup_storage(self) -> None:
-        raise NotImplementedError
+        self.storage = caches['services']
+
+    async def setup_service(self, name: str, networks: dict) -> None:
+        self.storage.set(name, networks)
+
+    async def remove_service(self, name: str) -> None:
+        self.storage.delete(name)
+
+    async def is_service_exists(self, name: str) -> bool:
+        return name in self.storage
+
+    async def get_service(self, name: str, networks: list = None) -> dict:
+        if not await self.is_service_exists(name):
+            raise ServiceDoesNotExist(name)
+        return dict_filter(self.storage.get(name), keys=networks)
