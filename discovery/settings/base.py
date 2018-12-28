@@ -38,7 +38,19 @@ TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/12"
-CACHES["default"]["KEY_PREFIX"] = "anthill:discovery"
+CACHES["default"]["KEY_PREFIX"] = "discovery.anthill"
+
+CACHES['services'] = {
+    "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
+    "LOCATION": "redis://localhost:6379/1",
+    "OPTIONS": {
+        "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
+        "CONNECTION_POOL_KWARGS": {
+            "max_connections": 500
+        }
+    },
+    "KEY_PREFIX": "services.discovery.anthill"
+}
 
 LOGGING = {
     'version': 1,

@@ -36,7 +36,7 @@ APPLICATION_COLOR = 'info'
 # UI_MODULE = 'environment.ui'
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/27"
-CACHES["default"]["KEY_PREFIX"] = "anthill:environment"
+CACHES["default"]["KEY_PREFIX"] = "environment.anthill"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: environment] '
 

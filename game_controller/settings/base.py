@@ -35,7 +35,7 @@ APPLICATION_VERBOSE_NAME = _('Game Controller')
 EMAIL_SUBJECT_PREFIX = '[Anthill: game_controller] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/29"
-CACHES["default"]["KEY_PREFIX"] = "anthill:game_controller"
+CACHES["default"]["KEY_PREFIX"] = "game_controller.anthill"
 
 LOGGING = {
     'version': 1,

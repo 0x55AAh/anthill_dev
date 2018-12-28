@@ -38,7 +38,7 @@ APPLICATION_COLOR = 'grey'
 EMAIL_SUBJECT_PREFIX = '[Anthill: report] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/30"
-CACHES["default"]["KEY_PREFIX"] = "anthill:promo"
+CACHES["default"]["KEY_PREFIX"] = "report.anthill"
 
 LOGGING = {
     'version': 1,

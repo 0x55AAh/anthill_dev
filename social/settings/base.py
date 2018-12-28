@@ -37,7 +37,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 EMAIL_SUBJECT_PREFIX = '[Anthill: social] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/24"
-CACHES["default"]["KEY_PREFIX"] = "anthill:social"
+CACHES["default"]["KEY_PREFIX"] = "social.anthill"
 
 LOGGING = {
     'version': 1,

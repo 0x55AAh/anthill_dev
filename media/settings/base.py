@@ -35,7 +35,7 @@ APPLICATION_COLOR = 'teal'
 # SERVICE_CLASS = 'media.services.Service'
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/25"
-CACHES["default"]["KEY_PREFIX"] = "anthill:media"
+CACHES["default"]["KEY_PREFIX"] = "media.anthill"
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: media] '
 

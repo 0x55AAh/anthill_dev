@@ -38,7 +38,7 @@ APPLICATION_COLOR = 'indigo'
 EMAIL_SUBJECT_PREFIX = '[Anthill: leaderboard] '
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/31"
-CACHES["default"]["KEY_PREFIX"] = "anthill:leaderboard"
+CACHES["default"]["KEY_PREFIX"] = "leaderboard.anthill"
 
 LOGGING = {
     'version': 1,

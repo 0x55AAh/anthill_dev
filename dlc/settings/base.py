@@ -38,19 +38,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/15"
-CACHES["default"]["KEY_PREFIX"] = "anthill:dlc"
-
-CACHES['services_storage'] = {
-    "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-    "LOCATION": "redis://localhost:6379/15",
-    "OPTIONS": {
-        "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
-        "CONNECTION_POOL_KWARGS": {
-            "max_connections": 500
-        }
-    },
-    "KEY_PREFIX": "service"
-}
+CACHES["default"]["KEY_PREFIX"] = "dlc.anthill"
 
 LOGGING = {
     'version': 1,
