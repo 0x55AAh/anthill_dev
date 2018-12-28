@@ -1,6 +1,6 @@
-import os
 from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
+import os
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

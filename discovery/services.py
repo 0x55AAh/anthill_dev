@@ -1,5 +1,6 @@
 from anthill.platform.services import DiscoveryService
 from anthill.framework.core.cache.backends.redis import get_redis_connection
+from anthill.framework.core.cache import caches
 from tornado.escape import to_basestring
 
 
@@ -28,6 +29,7 @@ class Service(DiscoveryService):
 
     async def setup_storage(self) -> None:
         self.storage = get_redis_connection()
+        self.storage = caches['']
 
     async def setup_service(self, name: str, networks: dict) -> None:
         for network_name, service_location in networks.items():
@@ -42,7 +44,7 @@ class Service(DiscoveryService):
         key = self.get_service_storage_key(name)
         return self.storage.exists(key)
 
-    async def get_service(self, name: str, networks: list=None) -> dict:
+    async def get_service(self, name: str, networks: list = None) -> dict:
         if not await self.is_service_exists(name):
             raise ServiceDoesNotExist(name)
         key = self.get_service_storage_key(name)
