@@ -28,10 +28,7 @@ async def get_services_names(api: InternalAPI, **options) -> list:
 
 @as_internal()
 async def get_services(api: InternalAPI, **options) -> dict:
-    result = {}
-    for name in await api.service.list_services():
-        result[name] = await api.service.get_service(name)
-    return result
+    return await api.service.get_services()
 
 
 @as_internal()

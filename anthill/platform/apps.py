@@ -1,5 +1,4 @@
 from anthill.framework.apps.cls import Application
-from anthill.framework.utils.duration import duration_string
 from anthill.framework.conf import settings
 from anthill.platform.api.internal import api as internal_api
 from importlib import import_module
@@ -48,9 +47,11 @@ class BaseAnthillApplication(Application):
 
     @property
     def metadata(self):
+        from anthill.framework.utils.urls import build_absolute_uri, reverse
         metadata = super().metadata
         metadata.update({
             'public_api_url': self.public_api_url(),
-            'uptime': duration_string(self.service.uptime).split('.')[0],
+            'log_url': build_absolute_uri(self.config.LOCATION, reverse('log')),
+            'uptime': self.service.uptime.seconds,
         })
         return metadata

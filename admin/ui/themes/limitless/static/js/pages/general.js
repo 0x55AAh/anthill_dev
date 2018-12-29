@@ -59,7 +59,8 @@ $(function() {
               version,              \
               debug,                \
               publicApiUrl,         \
-              uptime                \
+              uptime,               \
+              logUrl                \
             }                       \
         }";
 

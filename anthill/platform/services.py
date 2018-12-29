@@ -25,6 +25,7 @@ class ControllerRole:
 def dict_filter(d, keys=None):
     if keys:
         return dict((k, d[k]) for k in d if k in keys)
+        # return dict(filter(lambda x: x[0] in keys, d.items()))
     else:
         return d
 
@@ -262,11 +263,10 @@ class DiscoveryService(BaseService):
         else:
             self.ping_monitor = None
         self.registry = self.app.registry
-        self.storage = None
+        self.storage = caches['services']
 
     async def on_start(self) -> None:
         await super().on_start()
-        await self.setup_storage()
         await self.setup_services(cleanup=self.cleanup_storage_on_start)
         if self.ping_monitor is not None:
             self.ping_monitor.start()
@@ -301,22 +301,17 @@ class DiscoveryService(BaseService):
     async def setup_services(self, cleanup=False) -> None:
         if cleanup:
             await self.remove_services()
-        for name, networks in self.registry.items():
-            await self.setup_service(name, networks)
+        self.storage.set_many(self.registry, timeout=None)
 
     async def remove_services(self) -> None:
         self.storage.delete_many(keys=self.registry.keys())
-        # self.storage.clear()
 
     async def list_services(self) -> list:
         """Returns a list of services names."""
         return list(self.storage.get_many(keys=self.registry.keys()).keys())
 
-    async def setup_storage(self) -> None:
-        self.storage = caches['services']
-
     async def setup_service(self, name: str, networks: dict) -> None:
-        self.storage.set(name, networks)
+        self.storage.set(name, networks, timeout=None)
 
     async def remove_service(self, name: str) -> None:
         self.storage.delete(name)
@@ -328,3 +323,6 @@ class DiscoveryService(BaseService):
         if not await self.is_service_exists(name):
             raise ServiceDoesNotExist(name)
         return dict_filter(self.storage.get(name), keys=networks)
+
+    async def get_services(self) -> dict:
+        return self.storage.get_many(keys=self.registry.keys())

@@ -42,7 +42,7 @@ CACHES["default"]["KEY_PREFIX"] = "discovery.anthill"
 
 CACHES['services'] = {
     "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-    "LOCATION": "redis://localhost:6379/1",
+    "LOCATION": "redis://localhost:6379/12",
     "OPTIONS": {
         "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
         "CONNECTION_POOL_KWARGS": {

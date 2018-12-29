@@ -14,7 +14,8 @@ class ServiceMetadata(graphene.ObjectType):
     version = graphene.String()
     debug = graphene.Boolean()
     public_api_url = graphene.String()
-    uptime = graphene.String()
+    log_url = graphene.String()
+    uptime = graphene.Int()
 
     def __lt__(self, other):
         return self.name < other.name

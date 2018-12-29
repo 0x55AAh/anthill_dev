@@ -1,10 +1,16 @@
+{% from anthill.framework.utils.duration import duration_string %}
+{% from datetime import timedelta %}
 <div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" data-name="{{ entry.name }}">
     <div class="panel panel-flat">
-        <div class="panel-heading">
+        <div class="panel-heading">{% set uptime=timedelta(seconds=entry.uptime) %}
             <div class="panel-title">
                 {% if entry.debug %}
                 <span class="label bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">{{ _('debug') }}</span>
                 {% end %}
+                <span class="label" style="font-weight: 400;font-size: 9px;line-height: normal;color: gray;" title="{{ duration_string(uptime) }}">
+                    <i class="icon-history {% if uptime < timedelta(days=1) %}text-warning{% else %}text-success{% end %} position-left"></i>
+                        {% if not entry.debug %}{{ duration_string(uptime) }}{% end %}
+                </span>
             </div>
             <div class="heading-elements">
                 <ul class="icons-list text-muted">

@@ -1,7 +1,7 @@
-from anthill.framework.handlers import WebSocketHandler
+from tornado.websocket import WebSocketHandler
 from tornado.process import Subprocess
-from anthill.framework.conf import settings
 from tornado.escape import to_unicode
+from anthill.framework.conf import settings
 import logging
 
 
@@ -61,7 +61,13 @@ class WatchFileHandler(WebSocketHandler):
         self.write_message(self.transform_output_data(data.strip()))
         self._process.stdout.read_until(b'\n', self.write_line)
 
+    def check_origin(self, origin):
+        return super().check_origin(origin)
+
     def on_message(self, message):
+        pass
+
+    def data_received(self, chunk):
         pass
 
 

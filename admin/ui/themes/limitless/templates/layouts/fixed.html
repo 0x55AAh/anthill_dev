@@ -28,9 +28,11 @@
 
     <script>
         var public_api_url = "{{ admin_metadata['public_api_url'] }}";
+        var log_url = "{{ metadata['log_url'] }}";
         window.public_api_url = new URL(public_api_url).pathname;
         window.debug = {{ json_encode(debug) }};
         window.service_name = "{{ metadata['name'] }}";
+        window.log_url = log_url;
     </script>
 
 	<!-- Theme JS files -->
