@@ -305,12 +305,12 @@ class DiscoveryService(BaseService):
             await self.setup_service(name, networks)
 
     async def remove_services(self) -> None:
-        for name in await self.list_services():
-            await self.remove_service(name)
+        self.storage.delete_many(keys=self.registry.keys())
+        # self.storage.clear()
 
     async def list_services(self) -> list:
         """Returns a list of services names."""
-        return list(self.storage.get_many(self.registry.keys()).keys())
+        return list(self.storage.get_many(keys=self.registry.keys()).keys())
 
     async def setup_storage(self) -> None:
         self.storage = caches['services']
