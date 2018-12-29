@@ -127,7 +127,9 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         self.message_type = None
 
     def check_origin(self, origin):
-        return super().check_origin(origin)
+        return True
+        # TODO: configuration from settings.py
+        # return super().check_origin(origin)
 
     def initialize(self, client_class=None):
         if client_class is not None:

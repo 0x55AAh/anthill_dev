@@ -62,7 +62,9 @@ class WatchFileHandler(WebSocketHandler):
         self._process.stdout.read_until(b'\n', self.write_line)
 
     def check_origin(self, origin):
-        return super().check_origin(origin)
+        return True
+        # TODO: configuration from settings.py
+        # return super().check_origin(origin)
 
     def on_message(self, message):
         pass

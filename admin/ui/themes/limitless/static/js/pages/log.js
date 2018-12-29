@@ -24,7 +24,7 @@ $(function() {
         maxRetries: 10,
         debug: window.debug
     };
-    var url = 'ws://localhost:9600/log/';
+    var url = ws_url(window.log_url);
     var client = new ReconnectingWebSocket(url, [], options);
     client.addEventListener('message', function(event) {
         var parsed = event.data.match(LOG_RE);
