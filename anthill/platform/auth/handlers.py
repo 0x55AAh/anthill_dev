@@ -12,6 +12,7 @@ from anthill.framework.auth import (
 from anthill.framework.auth.log import get_user_logger, ApplicationLogger
 from anthill.platform.auth.forms import AuthenticationForm
 from anthill.platform.auth import RemoteUser
+from anthill.platform.services import MessengerClient
 from wtforms import ValidationError
 from functools import partial
 
@@ -73,6 +74,7 @@ class UserHandlerMixin:
         self.current_user = await self.get_user()
         self.user_logger = get_user_logger(self.current_user)
         self.app_logger = ApplicationLogger(self.current_user)
+        self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
 
 
 class LoginHandlerMixin:

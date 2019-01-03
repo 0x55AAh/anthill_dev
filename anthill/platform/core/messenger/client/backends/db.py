@@ -7,7 +7,7 @@ class Client(BaseClient):
         """Returns user as dict object."""
         return self.user.to_dict()
 
-    async def get_friends(self, id_only: bool=False) -> list:
+    async def get_friends(self, id_only: bool = False) -> list:
         pass
 
     async def get_groups(self) -> list:

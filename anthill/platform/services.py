@@ -1,12 +1,14 @@
 from tornado.ioloop import PeriodicCallback
 from anthill.framework.utils.decorators import method_decorator, retry
 from anthill.framework.utils import timezone
+from anthill.framework.utils.websocket import transform_from_http_to_ws
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.core.cache import caches
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
 from anthill.framework.utils.geoip import GeoIP2
+from tornado.websocket import websocket_connect
 from functools import partial
 from tornado.web import url
 import logging
@@ -69,6 +71,38 @@ class UpdateManager:
         pass
 
 
+class MessengerClient:
+    def __init__(self, url):
+        self.url = transform_from_http_to_ws(url)
+        self._conn = None
+
+    def __repr__(self):
+        return "<MessengerClient(url=%r)>" % self.url
+
+    async def __aenter__(self):
+        return await self.connect()
+
+    async def __aexit__(self, exc_type, exc, tb):
+        self.close()
+
+    async def connect(self):
+        self._conn = await websocket_connect(self.url)
+        logger.debug('Connected to messenger.')
+        return self._conn
+
+    async def send(self, message):
+        if self._conn is not None:
+            await self._conn.write_message(message)
+            # response = await self._conn.read_message()
+            logger.debug('Message has been sent.')
+            # return response
+
+    def close(self):
+        logger.debug('Disconnected from messenger.')
+        if self._conn is not None:
+            self._conn.close()
+
+
 class BaseService(CeleryMixin, _BaseService):
     internal_api_connection_class = JSONRPCInternalConnection
 
@@ -77,8 +111,8 @@ class BaseService(CeleryMixin, _BaseService):
         self.gis = None
         if getattr(self.config, 'GEOIP_PATH', None):
             self.gis = GeoIP2()
-        logger.debug(
-            'Geo position tracking system status: %s.' % 'ENABLED' if self.gis else 'DISABLED')
+        logger.debug('Geo position tracking system status: '
+                     '%s.' % 'ENABLED' if self.gis else 'DISABLED')
         self.started_at = None
         self.update_manager = UpdateManager()
 
@@ -150,6 +184,7 @@ class PlainService(BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.discovery_request = partial(self.internal_request, 'discovery')
+        self.messenger_client = None
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Service `discovery` is unreachable.'),))
@@ -175,13 +210,24 @@ class PlainService(BaseService):
         self.settings.update(login_url=login_url)
         logger.debug('Login url: %s' % login_url)
 
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
+                            on_exception=lambda func, e: logger.error('Cannot get messenger url. Retry...'), ))
+    async def set_messenger_url(self):
+        messenger_url = await self.internal_request('message', 'get_messenger_url')
+        self.settings.update(messenger_url=messenger_url)
+        logger.debug('Messenger url: %s' % messenger_url)
+
     async def on_start(self) -> None:
         await super().on_start()
         if self.auto_register_on_discovery:
             await self.register_on_discovery()
         await self.set_login_url()
+        await self.set_messenger_url()
+        self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
+        await self.messenger_client.connect()
 
     async def on_stop(self) -> None:
+        self.messenger_client.close()
         if self.auto_register_on_discovery:
             await self.unregister_on_discovery()
         await super().on_stop()

@@ -74,31 +74,9 @@ class CacheClientsWatcher(BaseClientsWatcher):
 
 class MessengerClientsWatcher(CacheClientsWatcher):
     """Messenger handlers watcher."""
-    user_limit: int = 0
 
-    def __init__(self, user_limit: int = 0):
-        super().__init__(user_limit)
-        self.items = {}
-
-    # noinspection PyMethodMayBeStatic
-    def get_user_id(self, handler: 'MessengerHandler') -> str:
-        return handler.client.get_user_id()
-
-    def append(self, handler: 'MessengerHandler') -> None:
-        user_id = self.get_user_id(handler)
-        self.items.setdefault(user_id, []).append(handler)
-        if self.user_limit and len(self.items[user_id]) > self.user_limit:
-            reason = ('Cannot open new connection because of limit '
-                      '(%s) exceeded' % len(self.items[user_id]))
-            handler.close(code=4001, reason=reason)
-
-    def remove(self, handler: 'MessengerHandler') -> None:
-        user_id = self.get_user_id(handler)
-        self.items[user_id].remove(handler)
-
-    @property
-    def count(self) -> int:
-        return sum(map(lambda x: len(x), self.items.values()))
+    async def count(self) -> int:
+        raise NotImplementedError
 
 
 class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
@@ -120,8 +98,8 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         message = 0
 
     def __init__(self, *args, **kwargs):
-        super(MessengerHandler, self).__init__(*args, **kwargs)
         self.client = None
+        super(MessengerHandler, self).__init__(*args, **kwargs)
         self.request_id = None
         self.action_name = None
         self.message_type = None
@@ -141,7 +119,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
             raise ImproperlyConfigured('Client class is undefined')
         return self.client_class()
 
-    async def send_personal(self, message: dict, user_id: str=None) -> None:
+    async def send_personal(self, message: dict, user_id: str = None) -> None:
         group = self.client.get_personal_group(user_id=user_id)
         await self.send_to_group(group, message)
 
@@ -192,7 +170,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
     def is_group_system(cls, group: str) -> bool:
         return group.startswith('__')
 
-    def build_direct_group_with(self, user_id: str, reverse: bool=False) -> str:
+    def build_direct_group_with(self, user_id: str, reverse: bool = False) -> str:
         items = [self.direct_group_prefix]
         if reverse:
             items += [user_id, self.client.get_user_id()]
