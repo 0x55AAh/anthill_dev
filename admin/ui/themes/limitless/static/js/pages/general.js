@@ -139,4 +139,24 @@ $(function() {
     setInterval(update_services_registry, AJAX_INTERVAL * 1000);
     setInterval(update_sidebar_services, UPDATE_INTERVAL * 1000);
 
+    ion.sound({
+        sounds: [
+            /*{
+                name: "my_cool_sound"
+            },
+            {
+                name: "notify_sound",
+                volume: 0.2
+            },
+            {
+                name: "alert_sound",
+                volume: 0.3,
+                preload: false
+            }*/
+        ],
+        volume: 0.5,
+        path: "sounds/",
+        preload: true
+    });
+
 });

@@ -3,30 +3,1194 @@
 {% block css %}
 <link href="{{ static_url('css/pages/services/common.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ static_url('css/pages/services/message.css') }}" rel="stylesheet" type="text/css">
+<style>
+    .content {
+        padding: 0;
+    }
+    .content:first-child {
+        padding-top: 0;
+    }
+    .media-list-linked .media-link {
+        padding: 12px 20px;
+    }
+    .media-list-linked .media-link .media-left {
+        padding-right: 12px;
+    }
+    @media (min-width: 769px) {
+        .sidebar-secondary {
+            display: table-cell;
+            vertical-align: top;
+            width: 300px;
+        }
+    }
+    .sidebar-content {
+        position: relative;
+        padding-bottom: 0;
+    }
+    .chat-list, .chat-stacked {
+        max-height: 612px;
+        overflow: auto;
+    }
+    @media (min-width: 769px) {
+        .sidebar-fixed.sidebar-default .sidebar-content {
+            width: 300px;
+        }
+    }
+    /*
+    .category-content {
+        position: relative;
+        padding: 0 20px;
+    }*/
+    .sidebar.sidebar-secondary > .sidebar-content .sidebar-category > .category-content > ul > li.active {
+        background-color: #f5f5f5;
+        border-right: 1px solid #ddd;
+    }
+    .media > .media-link > .media-left > .status-mark {
+        width: 11px;
+        height: 11px;
+        display: inline-block;
+        border-radius: 50%;
+        border: 2px solid;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .media > .media-left > .status-mark {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        border-radius: 50%;
+        border: 2px solid;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .chat-list > li {
+        cursor: pointer;
+    }
+    .status-mark-mobile {
+        display: inline-block;
+        position: absolute;
+        background: white;
+        color: #81C784;
+        padding: 2px 0;
+        top: -3px;
+        left: -1px;
+        border: 0 solid white;
+        border-radius: 2px;
+        font-size: 12px;
+    }
+    .media-list-linked .media {
+        padding-right: 1px;
+    }
+</style>
 {% end %}
 
 {% block js %}
 <script type="text/javascript" src="{{ static_url('js/pages/services/message.js') }}"></script>
+<script>
+    $(window).on('resize', function() {
+        setTimeout(function() {
+            if($(window).width() <= 768) {
+                $('body').addClass('sidebar-mobile-secondary');
+                $('.content-group').hide();
+            }
+            else {
+                $('body').removeClass('sidebar-mobile-secondary');
+                $('.content-group').show();
+            }
+        }, 100);
+    }).resize();
+
+    $(function () {
+        // Toggle main sidebar
+        $('.sidebar-mobile-main-toggle').on('click', function (e) {
+            e.preventDefault();
+            $('body').toggleClass('sidebar-mobile-main').removeClass('sidebar-mobile-opposite sidebar-mobile-detached');
+        });
+    });
+</script>
 {% end %}
 
-{% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-flat">
-            <div class="panel-body">
-                <ul class="nav nav-lg nav-tabs nav-tabs-bottom">
-                    <li><a href="#"><i class="icon-display4 position-left"></i> {{ _('Applications') }}</a></li>
-                    <li class="dropdown pull-right">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-cog3"></i>
-                            <span class="visible-xs-inline-block position-right">{{ _('Options') }}</span> <span class="caret"></span>
+{% block header %}{% end %}
+
+{% block secondary-sidebar %}
+<div class="sidebar sidebar-secondary sidebar-default sidebar-fixed">
+    <div class="sidebar-content">
+
+        <!-- Search messages -->
+        <div class="sidebar-category">
+            <div class="category-content">
+                <form action="#">
+                    <div class="has-feedback has-feedback-left">
+                        <input type="search" class="form-control" placeholder="Search">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 text-size-base text-muted"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /search messages -->
+
+        <!-- Users -->
+        <div class="sidebar-category">
+
+            <div class="category-content no-padding">
+                <ul class="media-list media-list-linked media-list-bordered">
+                    <li class="media massage-group-tab active" data-group-id="1">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading massage-group-tab__top-row">
+                                    <span class="text-semibold">James Alexander</span>
+                                    <span class="media-annotation pull-right">
+                                            <i class="icon-volume-mute5"></i> 5:45
+                                        </span>
+                                </div>
+                                <div class="massage-group-tab-bottom-row">
+                                    <span class="text-muted massage-group-tab__bottom-left massage-group-tab__bottom-left__typing-status" style="display: none"></span>
+                                    <span class="text-muted massage-group-tab__bottom-left massage-group-tab__bottom-left__last-message">You: Thanks a lot!</span>
+                                    <span class="badge bg-warning-400 pull-right">131</span>
+                                </div>
+                            </div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="{{ reverse_url('service:log', name) }}"><i class="icon-clipboard6"></i> {{ _('Log') }}</a></li>
-                        </ul>
+                    </li>
+                    <li class="media" data-group-id="2">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Jeremy Victorino</span>
+                                    <span class="media-annotation pull-right">
+{#                                            <i class="icon-check"></i>#}
+                                            yesterday
+                                        </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Thanks a lot!</span>
+                                    {#                                        <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>#}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="3">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <i class="icon-mobile text-size-base status-mark-mobile"></i>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                LNU (general)
+                                            </span>
+                                    <span class="media-annotation pull-right">5 hours ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">8 march public event.</span>
+                                    <span class="badge bg-warning-400 pull-right">1</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="4">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">William Miles</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                <i class="icon-volume-mute5"></i>
+                                                1 hour ago
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: You make my day, pal.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="5">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Margo Baker</span>
+                                    <span class="media-annotation pull-right">1 hour ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Will see next week.</span>
+                                    <span class="badge bg-warning-400 pull-right">15</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="6">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Beatrix Diaz</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                23 june 2016
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Ok.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="7">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-users" style="font-size: 13px;"></i>
+                                                DBA-42 group chat
+                                            </span>
+                                    <span class="media-annotation pull-right">2 may</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Igor: typing...</span>
+                                    <span class="badge bg-warning-400 pull-right">83</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="8">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                DBA-42 group chanel
+                                            </span>
+                                    <span class="media-annotation pull-right">tomorrow</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">About summer practice...</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="media" data-group-id="1">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">James Alexander</span>
+                                    <span class="media-annotation pull-right">
+                                                <i class="icon-volume-mute5"></i> 5:45
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Hi!</span>
+                                    <span class="badge bg-warning-400 pull-right">131</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="2">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Jeremy Victorino</span>
+                                    <span class="media-annotation pull-right">
+{#                                            <i class="icon-check"></i>#}
+                                            yesterday
+                                        </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Thanks a lot!</span>
+                                    {#                                        <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>#}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="3">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                LNU (general)
+                                            </span>
+                                    <span class="media-annotation pull-right">5 hours ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">8 march public event.</span>
+                                    <span class="badge bg-warning-400 pull-right">1</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="4">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">William Miles</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                <i class="icon-volume-mute5"></i>
+                                                1 hour ago
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: You make my day, pal.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="5">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Margo Baker</span>
+                                    <span class="media-annotation pull-right">1 hour ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Will see next week.</span>
+                                    <span class="badge bg-warning-400 pull-right">15</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="6">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Beatrix Diaz</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                23 june 2016
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Ok.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="7">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-users" style="font-size: 13px;"></i>
+                                                DBA-42 group chat
+                                            </span>
+                                    <span class="media-annotation pull-right">2 may</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Igor: Fuck you!</span>
+                                    <span class="badge bg-warning-400 pull-right">83</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="8">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                DBA-42 group chanel
+                                            </span>
+                                    <span class="media-annotation pull-right">tomorrow</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">About summer practice...</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="media" data-group-id="1">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">James Alexander</span>
+                                    <span class="media-annotation pull-right">
+                                                <i class="icon-volume-mute5"></i> 5:45
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Hi!</span>
+                                    <span class="badge bg-warning-400 pull-right">131</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="2">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Jeremy Victorino</span>
+                                    <span class="media-annotation pull-right">
+{#                                            <i class="icon-check"></i>#}
+                                            yesterday
+                                        </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Thanks a lot!</span>
+                                    {#                                        <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>#}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="3">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                LNU (general)
+                                            </span>
+                                    <span class="media-annotation pull-right">5 hours ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">8 march public event.</span>
+                                    <span class="badge bg-warning-400 pull-right">1</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="4">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">William Miles</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                <i class="icon-volume-mute5"></i>
+                                                1 hour ago
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: You make my day, pal.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="5">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Margo Baker</span>
+                                    <span class="media-annotation pull-right">1 hour ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Will see next week.</span>
+                                    <span class="badge bg-warning-400 pull-right">15</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="6">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Beatrix Diaz</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                23 june 2016
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Ok.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="7">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-users" style="font-size: 13px;"></i>
+                                                DBA-42 group chat
+                                            </span>
+                                    <span class="media-annotation pull-right">2 may</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Igor: Fuck you!</span>
+                                    <span class="badge bg-warning-400 pull-right">83</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="8">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                DBA-42 group chanel
+                                            </span>
+                                    <span class="media-annotation pull-right">tomorrow</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">About summer practice...</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="media" data-group-id="1">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">James Alexander</span>
+                                    <span class="media-annotation pull-right">
+                                                <i class="icon-volume-mute5"></i> 5:45
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Hi!</span>
+                                    <span class="badge bg-warning-400 pull-right">131</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="2">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Jeremy Victorino</span>
+                                    <span class="media-annotation pull-right">
+{#                                            <i class="icon-check"></i>#}
+                                            yesterday
+                                        </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Thanks a lot!</span>
+                                    {#                                        <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>#}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="3">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                LNU (general)
+                                            </span>
+                                    <span class="media-annotation pull-right">5 hours ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">8 march public event.</span>
+                                    <span class="badge bg-warning-400 pull-right">1</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="4">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">William Miles</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                <i class="icon-volume-mute5"></i>
+                                                1 hour ago
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: You make my day, pal.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="5">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Margo Baker</span>
+                                    <span class="media-annotation pull-right">1 hour ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Will see next week.</span>
+                                    <span class="badge bg-warning-400 pull-right">15</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="6">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Beatrix Diaz</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                23 june 2016
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Ok.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="7">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-users" style="font-size: 13px;"></i>
+                                                DBA-42 group chat
+                                            </span>
+                                    <span class="media-annotation pull-right">2 may</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Igor: Fuck you!</span>
+                                    <span class="badge bg-warning-400 pull-right">83</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="8">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                DBA-42 group chanel
+                                            </span>
+                                    <span class="media-annotation pull-right">tomorrow</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">About summer practice...</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="media" data-group-id="1">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">James Alexander</span>
+                                    <span class="media-annotation pull-right">
+                                                <i class="icon-volume-mute5"></i> 5:45
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Hi!</span>
+                                    <span class="badge bg-warning-400 pull-right">131</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="2">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Jeremy Victorino</span>
+                                    <span class="media-annotation pull-right">
+{#                                            <i class="icon-check"></i>#}
+                                            yesterday
+                                        </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Thanks a lot!</span>
+                                    {#                                        <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>#}
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="3">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                LNU (general)
+                                            </span>
+                                    <span class="media-annotation pull-right">5 hours ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">8 march public event.</span>
+                                    <span class="badge bg-warning-400 pull-right">1</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="4">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">William Miles</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                <i class="icon-volume-mute5"></i>
+                                                1 hour ago
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: You make my day, pal.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="5">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Margo Baker</span>
+                                    <span class="media-annotation pull-right">1 hour ago</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Will see next week.</span>
+                                    <span class="badge bg-warning-400 pull-right">15</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="6">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <span class="status-mark bg-success-300"></span>
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                    <span class="text-semibold">Beatrix Diaz</span>
+                                    <span class="media-annotation pull-right">
+{#                                                <i class="icon-check"></i>#}
+                                                23 june 2016
+                                            </span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">You: Ok.</span>
+                                    <span class="status-mark bg-grey-300 pull-right" style="margin-top: 6px;"></span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="7">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-users" style="font-size: 13px;"></i>
+                                                DBA-42 group chat
+                                            </span>
+                                    <span class="media-annotation pull-right">2 may</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Igor: Fuck you!</span>
+                                    <span class="badge bg-warning-400 pull-right">83</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="media" data-group-id="8">
+                        <a class="media-link">
+                            <div class="media-left">
+                                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-md" alt="">
+                            </div>
+                            <div class="media-body">
+                                <div class="media-heading">
+                                            <span class="text-semibold">
+                                                <i class="icon-megaphone" style="font-size: 13px;"></i>
+                                                DBA-42 group chanel
+                                            </span>
+                                    <span class="media-annotation pull-right">tomorrow</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">About summer practice...</span>
+                                </div>
+                            </div>
+                        </a>
                     </li>
                 </ul>
             </div>
         </div>
+        <!-- /users -->
+
     </div>
 </div>
 {% end %}
+
+{% block content %}
+<div class="content-group" style="margin-bottom: 0!important;">
+
+    <div class="panel panel-flat no-border" style="margin-bottom: 0;">
+        <div class="panel-heading">
+            <div class="media-left" style="vertical-align: middle;">
+                <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+            </div>
+            <div class="media-body" style="vertical-align: middle;">
+                <h6 style="margin-top: 0;margin-bottom: 0;">
+                    <span class="text-semibold">Jeremy Victorino</span>
+                    <small>online</small>
+                    <i class="icon-mobile text-size-base text-muted"></i>
+                </h6>
+            </div>
+            <div class="heading-elements">
+                <form class="heading-form" action="#">
+                    <div class="form-group">
+                        <div class="has-feedback">
+                            <input type="search" class="form-control" placeholder="Search">
+                            <div class="form-control-feedback">
+                                <i class="icon-search4 text-size-small text-muted"></i>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <ul class="media-list chat-list content-group" style="overflow: hidden; outline: none;">
+                <li class="media date-step">
+                    <span>Yesterday</span>
+                </li>
+
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.</div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.</div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.</div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.</div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.</div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.
+                        </div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-slate">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.
+                        </div>
+                        <span class="media-annotation display-block mt-10">Tue, 10:28 am</span>
+                    </div>
+                </li>
+                <li class="media reversed">
+                    <div class="media-body">
+                        <div class="media-content bg-info">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Far squid and that hello fidgeted and when. As this oh darn but slapped casually husky sheared that cardinal hugely one and some unnecessary factiously hedgehog a feeling one rudely much
+                        </div>
+                        <span class="media-annotation display-block mt-10">Mon, 10:24 am</span>
+                    </div>
+
+                    <div class="media-right">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-danger-400">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Tolerantly some understood this stubbornly after snarlingly frog far added insect into snorted more auspiciously heedless drunkenly jeez foolhardy oh.
+                        </div>
+                        <span class="media-annotation display-block mt-10">Wed, 4:20 pm</span>
+                    </div>
+                </li>
+                <li class="media reversed">
+                    <div class="media-body">
+                        <div class="media-content bg-teal-400">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Satisfactorily strenuously while sleazily dear frustratingly insect menially some shook far sardonic badger telepathic much jeepers immature much hey.
+                        </div>
+                        <span class="media-annotation display-block mt-10">2 hours ago</span>
+                    </div>
+
+                    <div class="media-right">
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+                </li>
+                <li class="media">
+                    <div class="media-left">
+                        <span class="status-mark bg-success-300"></span>
+                        <a href="#">
+                            <img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-xs" alt="">
+                        </a>
+                    </div>
+
+                    <div class="media-body">
+                        <div class="media-content bg-success-400">
+                            <div class="media-heading">
+                                <span class="text-semibold">James Alexander</span>
+                            </div>
+                            Grunted smirked and grew less but rewound much despite and impressive via alongside out and gosh easy manatee dear ineffective yikes.
+                        </div>
+                        <span class="media-annotation display-block mt-10">13 minutes ago</span>
+                    </div>
+                </li>
+
+            </ul>
+
+            <form method="post" id="send-message-form" data-draft-id="">{% module xsrf_form_html() %}
+                <textarea name="text_message" class="form-control content-group" rows="3" cols="1" placeholder="Enter your message..."></textarea>
+
+                <div class="row">
+                    <div class="col-xs-6">
+                        <ul class="icons-list icons-list-extended mt-10">
+                            <li><a href="#" data-popup="tooltip" title="" data-container="body" data-original-title="Send photo"><i class="icon-file-picture"></i></a></li>
+                            <li><a href="#" data-popup="tooltip" title="" data-container="body" data-original-title="Send video"><i class="icon-file-video"></i></a></li>
+                            <li><a href="#" data-popup="tooltip" title="" data-container="body" data-original-title="Send file"><i class="icon-file-plus"></i></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-xs-6 text-right">
+                        <button class="btn bg-teal-400 btn-labeled btn-labeled-right legitRipple">
+                            <b><i class="icon-paperplane"></i></b> Send
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% end %}
+
+{% block footer %}{% end %}

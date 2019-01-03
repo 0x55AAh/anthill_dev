@@ -1,8 +1,13 @@
 from anthill.platform.core.messenger.client.backends.base import BaseClient
+from anthill.platform.auth import RemoteUser
 from typing import Optional
 
 
 class Client(BaseClient):
+    async def authenticate(self, user: Optional[RemoteUser] = None) -> None:
+        # TODO: skiped so far...
+        pass
+
     def get_user_serialized(self) -> dict:
         """Returns user as dict object."""
         return self.user.to_dict()

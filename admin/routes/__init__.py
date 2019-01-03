@@ -47,7 +47,6 @@ route_patterns = [
     url(r'^/utils-session/?$', handlers.UtilsSessionHandler, name='utils-session'),
     url(r'^/robots.txt$', TemplateHandler,
         dict(template_name='robots.txt', content_type='text/plain'), name='robots.txt'),
-    url(r'^/messages/?$', handlers.MessagesRequestHandler, name='messages'),
     url(r'^/update-manager/?$', handlers.UpdateManagerRequestHandler, name='update-manager'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
     url(r'^/services/(?P<name>[^/]+)/', include(service_route_patterns, namespace='service')),

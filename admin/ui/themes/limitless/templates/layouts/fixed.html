@@ -43,6 +43,7 @@
 	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/kurento-jsonrpc.min.js') }}"></script>
 	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/reconnecting-websocket.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/notifications/sweet_alert.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/plugins/sounds/ion.sound/ion.sound.js') }}"></script>
 
 	<script type="text/javascript" src="{{ static_url('js/utils/datastorage.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/utils/websocket.js') }}"></script>
@@ -74,6 +75,10 @@
         {% module MainSidebar(main_sidebar_entries, metadata, page) %}
         {% end %}
 		<!-- /main sidebar -->
+
+        <!-- Secondary sidebar -->
+        {% block secondary-sidebar %}{% end %}
+        <!-- /secondary sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">

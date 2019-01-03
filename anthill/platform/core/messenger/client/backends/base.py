@@ -11,7 +11,7 @@ class BaseClient:
     def __init__(self, user: Optional[RemoteUser]=None):
         self.user = user or AnonymousUser()
 
-    async def authenticate(self, user: Optional[RemoteUser]=None) -> None:
+    async def authenticate(self, user: Optional[RemoteUser] = None) -> None:
         """
         While authentication process we need to update `self.user`.
         """
@@ -20,7 +20,7 @@ class BaseClient:
         if isinstance(self.user, (type(None), AnonymousUser)):
             raise NotAuthenticatedError
 
-    def get_personal_group(self, user_id: str=None) -> str:
+    def get_personal_group(self, user_id: str = None) -> str:
         user_id = user_id if user_id is not None else self.get_user_id()
         return '.'.join([self.personal_group_prefix, str(user_id)])
 
@@ -30,7 +30,7 @@ class BaseClient:
     def get_user_serialized(self) -> dict:
         raise NotImplementedError
 
-    async def get_friends(self, id_only: bool=False) -> list:
+    async def get_friends(self, id_only: bool = False) -> list:
         raise NotImplementedError
 
     async def get_groups(self) -> list:
