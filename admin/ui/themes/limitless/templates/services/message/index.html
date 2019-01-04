@@ -28,7 +28,7 @@
         padding-bottom: 0;
     }
     .chat-list, .chat-stacked {
-        max-height: 612px;
+        max-height: 0;
         overflow: auto;
     }
     @media (min-width: 769px) {
@@ -87,6 +87,12 @@
 {% end %}
 
 {% block js %}
+<script>
+    $(document).ready(function () {
+        var availableHeight = $(window).height() - $('.page-container').offset().top - $('.content-group').outerHeight();
+        $('.chat-list').attr('style', 'min-height:' + availableHeight + 'px');
+    });
+</script>
 <script type="text/javascript" src="{{ static_url('js/pages/services/message.js') }}"></script>
 <script>
     $(window).on('resize', function() {
