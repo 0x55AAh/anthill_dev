@@ -3,7 +3,19 @@ $(function() {
     var AJAX_INTERVAL = 10;
     var UPDATE_INTERVAL = 1;
 
-    var messenger_client = null;
+    var messenger_options = {
+        connectionTimeout: 1000,
+        maxRetries: 10,
+        debug: window.debug
+    };
+    var messenger_url = ws_url('http://localhost:9609/messenger/');
+    var messenger_client = new ReconnectingWebSocket(messenger_url, [], messenger_options);
+    messenger_client.addEventListener('message', function(event) {
+        // ¯\_(ツ)_/¯
+    });
+    messenger_client.addEventListener('error', function(event) {
+        // ¯\_(ツ)_/¯
+    });
 
     var utils_config = {
         hearbeat: 5000,
