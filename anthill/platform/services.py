@@ -204,6 +204,13 @@ class PlainService(BaseService):
         return await self.discovery_request('get_service', name=name, network=network)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
+                            on_exception=lambda func, e: logger.error('Cannot get registered services. Retry...'), ))
+    async def set_registered_services(self):
+        internal_request = self.internal_connection.request
+        registered_services = await internal_request('discovery', 'get_registered_services')
+        self.settings.update(registered_services=registered_services)
+
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get login url. Retry...'), ))
     async def set_login_url(self):
         login_url = await self.internal_request('admin', 'get_login_url')
@@ -222,6 +229,7 @@ class PlainService(BaseService):
         if self.auto_register_on_discovery:
             await self.register_on_discovery()
         await self.set_login_url()
+        await self.set_registered_services()
         await self.set_messenger_url()
         self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
         await self.messenger_client.connect()
@@ -265,13 +273,6 @@ class AdminService(PlainService):
         return services_metadata
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
-                            on_exception=lambda func, e: logger.error('Cannot get registered services. Retry...'), ))
-    async def set_registered_services(self):
-        internal_request = self.internal_connection.request
-        registered_services = await internal_request('discovery', 'get_registered_services')
-        self.settings.update(registered_services=registered_services)
-
-    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get services meta. Retry...'), ))
     async def set_services_meta(self):
         services_meta = await self.get_services_metadata(exclude_names=[self.name])
@@ -279,7 +280,6 @@ class AdminService(PlainService):
 
     async def on_start(self) -> None:
         await super().on_start()
-        await self.set_registered_services()
         await self.set_services_meta()
         if self.services_meta_updater is not None:
             self.services_meta_updater.start()
