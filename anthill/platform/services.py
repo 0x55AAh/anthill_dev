@@ -206,8 +206,7 @@ class PlainService(BaseService):
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get registered services. Retry...'), ))
     async def set_registered_services(self):
-        internal_request = self.internal_connection.request
-        registered_services = await internal_request('discovery', 'get_registered_services')
+        registered_services = await self.internal_request('discovery', 'get_registered_services')
         self.settings.update(registered_services=registered_services)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
@@ -226,10 +225,10 @@ class PlainService(BaseService):
 
     async def on_start(self) -> None:
         await super().on_start()
+        await self.set_registered_services()
         if self.auto_register_on_discovery:
             await self.register_on_discovery()
         await self.set_login_url()
-        await self.set_registered_services()
         await self.set_messenger_url()
         self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
         await self.messenger_client.connect()
