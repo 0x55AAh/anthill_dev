@@ -9,6 +9,7 @@ from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
 from anthill.framework.utils.geoip import GeoIP2
 from tornado.websocket import websocket_connect
+from tornado.httpclient import HTTPClientError
 from functools import partial
 from tornado.web import url
 import logging
@@ -230,6 +231,8 @@ class PlainService(BaseService):
         self.settings.update(messenger_url=messenger_url)
         logger.debug('Messenger url: %s' % messenger_url)
 
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(HTTPClientError,),
+                            on_exception=lambda func, e: logger.error('Cannot connect to messenger. Retry...'), ))
     async def messenger_client_connect(self) -> None:
         self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
         await self.messenger_client.connect()

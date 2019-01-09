@@ -74,7 +74,10 @@ class UserHandlerMixin:
         self.current_user = await self.get_user()
         self.user_logger = get_user_logger(self.current_user)
         self.app_logger = ApplicationLogger(self.current_user)
-        self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
+        try:
+            self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
+        except AttributeError:
+            self.messenger_client = None
 
 
 class LoginHandlerMixin:
