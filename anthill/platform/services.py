@@ -163,10 +163,6 @@ class BaseService(CeleryMixin, _BaseService):
         self.setup_public_api()
         super().setup()
 
-    def get_server_kwargs(self) -> dict:
-        kwargs = super().get_server_kwargs()
-        return kwargs
-
     async def on_start(self) -> None:
         await self.internal_connection.connect()
         self.start_celery()
@@ -180,19 +176,30 @@ class BaseService(CeleryMixin, _BaseService):
 
 class PlainService(BaseService):
     auto_register_on_discovery = True
+    discovery_name = 'discovery'
+    message_name = 'message'
+    admin_name = 'admin'
 
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
-        self.discovery_request = partial(self.internal_request, 'discovery')
         self.messenger_client = None
+
+    def setup(self) -> None:
+        self.settings.update(messenger_url=None)
+        self.settings.update(registered_services={})
+        self.setup_internal_request_methods()
+        super().setup()
+
+    # noinspection PyAttributeOutsideInit
+    def setup_internal_request_methods(self):
+        self.discovery_request = partial(self.internal_request, self.discovery_name)
+        self.message_request = partial(self.internal_request, self.message_name)
+        self.admin_request = partial(self.internal_request, self.admin_name)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Service `discovery` is unreachable.'),))
     async def register_on_discovery(self) -> None:
-        kwargs = {
-            'name': self.name,
-            'networks': self.app.registry_entry
-        }
+        kwargs = dict(name=self.name, networks=self.app.registry_entry)
         await self.discovery_request('set_service_bulk', **kwargs)
         logger.info('Connected to `discovery` service.')
 
@@ -205,33 +212,36 @@ class PlainService(BaseService):
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get registered services. Retry...'), ))
-    async def set_registered_services(self):
-        registered_services = await self.internal_request('discovery', 'get_registered_services')
+    async def set_registered_services(self) -> None:
+        registered_services = await self.discovery_request('get_registered_services')
         self.settings.update(registered_services=registered_services)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get login url. Retry...'), ))
-    async def set_login_url(self):
-        login_url = await self.internal_request('admin', 'get_login_url')
+    async def set_login_url(self) -> None:
+        login_url = await self.admin_request('get_login_url')
         self.settings.update(login_url=login_url)
         logger.debug('Login url: %s' % login_url)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=lambda func, e: logger.error('Cannot get messenger url. Retry...'), ))
-    async def set_messenger_url(self):
-        messenger_url = await self.internal_request('message', 'get_messenger_url')
+    async def set_messenger_url(self) -> None:
+        messenger_url = await self.message_request('get_messenger_url')
         self.settings.update(messenger_url=messenger_url)
         logger.debug('Messenger url: %s' % messenger_url)
 
+    async def messenger_client_connect(self) -> None:
+        self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
+        await self.messenger_client.connect()
+
     async def on_start(self) -> None:
         await super().on_start()
-        await self.set_registered_services()
         if self.auto_register_on_discovery:
             await self.register_on_discovery()
         await self.set_login_url()
         await self.set_messenger_url()
-        self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
-        await self.messenger_client.connect()
+        await self.messenger_client_connect()
+        await self.set_registered_services()
 
     async def on_stop(self) -> None:
         self.messenger_client.close()
@@ -246,18 +256,21 @@ class AdminService(PlainService):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.settings.update(services_meta={})
         if self.update_services_meta:
             self.services_meta_updater = PeriodicCallback(
                 self.set_services_meta, self.update_services_meta_period * 1000)
         else:
             self.services_meta_updater = None
 
+    def setup(self) -> None:
+        self.settings.update(services_meta={})
+        super().setup()
+
     async def get_services_metadata(self, exclude_names=None):
         services_metadata = []
         exclude_names = exclude_names or []
         try:
-            services_names = await self.internal_request('discovery', method='get_services_names')
+            services_names = await self.discovery_request('get_services_names')
         except RequestTimeoutError:
             pass  # ¯\_(ツ)_/¯
         else:
@@ -324,7 +337,7 @@ class DiscoveryService(BaseService):
     @method_decorator(retry(max_retries=ping_max_retries, delay=0,
                             exception_types=(RequestTimeoutError, KeyError, TypeError)))
     async def is_service_alive(self, name):
-        internal_request = partial(self.internal_connection.request, name)
+        internal_request = partial(self.internal_request, name)
         try:
             response = await internal_request('ping', timeout=self.ping_timeout)
             return response['message'] == 'pong'

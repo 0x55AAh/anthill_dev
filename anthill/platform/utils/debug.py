@@ -1,4 +1,4 @@
-from anthill.framework.utils.asynchronous import call_subprocess
+from anthill.framework.utils.process import call_subprocess
 import os
 
 
@@ -20,13 +20,11 @@ class CoreDumpInspector:
         self.corefile = corefile
 
     def __repr__(self):
-        kwargs = dict(binary=self.binary, corefile=self.corefile)
-        return '<CoreDumpInspector(binary=%(binary)s, corefile=%(corefile)s)>' % kwargs
+        return '<CoreDumpInspector(binary=%s, corefile=%s)>' % (self.binary, self.corefile)
 
     @property
     def base_command(self):
-        kwargs = dict(binary=self.binary, corefile=self.corefile)
-        return "gdb %(binary)s %(corefile)s" % kwargs
+        return "gdb %s %s" % (self.binary, self.corefile)
 
     # noinspection PyMethodMayBeStatic
     def sub_command(self, body='bt'):

@@ -1,7 +1,7 @@
 """
 Async tools for sending email.
 """
-from anthill.framework.utils.asynchronous import thread_pool_exec
+from anthill.framework.utils.asynchronous import as_future
 from . import (
     send_mail as _send_mail,
     send_mass_mail as _send_mass_mail,
@@ -15,8 +15,8 @@ __all__ = [
     'mail_managers', 'get_connection'
 ]
 
-send_mail = thread_pool_exec.as_future(_send_mail)
-send_mass_mail = thread_pool_exec.as_future(_send_mass_mail)
-mail_admins = thread_pool_exec.as_future(_mail_admins)
-mail_managers = thread_pool_exec.as_future(_mail_managers)
-get_connection = thread_pool_exec.as_future(_get_connection)
+send_mail = as_future(_send_mail)
+send_mass_mail = as_future(_send_mass_mail)
+mail_admins = as_future(_mail_admins)
+mail_managers = as_future(_mail_managers)
+get_connection = as_future(_get_connection)

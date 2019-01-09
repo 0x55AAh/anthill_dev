@@ -1,4 +1,4 @@
-from anthill.framework.utils.asynchronous import call_subprocess
+from anthill.framework.utils.process import call_subprocess
 
 
 class Rsync:
