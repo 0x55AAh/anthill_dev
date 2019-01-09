@@ -21,6 +21,9 @@ class GDBInspector:
         await self.exit()
         self._gdb = None
 
+    def __getattr__(self, item):
+        return getattr(self._gdb, item)
+
     @as_future
     def connect(self):
         return GdbController(gdb_args=self.gdb_args)
@@ -38,4 +41,4 @@ class GDBInspector:
         return await as_future(self._gdb.write)(*args, **kwargs)
 
     def corefile_exists(self):
-        return os.path.exists(self._corefile)
+        return os.path.isfile(self._corefile)
