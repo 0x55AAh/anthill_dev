@@ -1,5 +1,5 @@
 $(function() {
-	var $messages = $('.chat-list, .chat-stacked');
+	var $messages = $('.chat-list');
 
 	function updateMessagesAreaHeight() {
 	    $messages.attr('style', 'min-height: 0px');
@@ -16,7 +16,7 @@ $(function() {
 
 	// Setup
 	function initScroll() {
-	    $(".chat-list, .chat-stacked").niceScroll({
+	    $messages.niceScroll({
 			cursoropacitymax: 0.7,
 	        mousescrollstep: 40,
             scrollspeed: 10,
@@ -57,6 +57,53 @@ $(function() {
                 updateMessagesAreaHeight();
             }
         }, 100);
+    });
+
+	// Keyboard typing listener
+    var timer;
+    $("#message-form [name=text-message]").on("keyup keydown", function (event) {
+        if (timer) {
+            clearTimeout(timer);
+        } else {
+            // code here
+        }
+        timer = setTimeout(function() {
+            timer = 0;
+            // code here
+        }, 3000);
+    });
+
+    $("#message-form [name=text-message]").on("keydown", function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            $("#message-form").trigger('submit');
+        }
+    });
+    $("#message-form").on("focusout", function (event) {
+        var $form = $(this);
+        setTimeout(function () {
+            if (!$form.find(':focus').length) {
+                $form.trigger('submit', [event.type]);
+            }
+        }, 0);
+    });
+
+    // Send text message
+    $("#message-form").on("submit", function (event, parentEvent) {
+        event.preventDefault();
+        var form = this, $form = $(this);
+    });
+
+    // Scroll messages
+    $messages.on("scroll", function(event) {
+        // code here
+    });
+
+    // Select group
+    $(document).on("click", ".sidebar-category li.media", function(event) {
+        if (!$(this).hasClass('active')) {
+            // code here
+        }
     });
 
 });
