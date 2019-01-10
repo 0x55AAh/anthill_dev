@@ -14,7 +14,6 @@ from anthill.platform.auth.forms import AuthenticationForm
 from anthill.platform.auth import RemoteUser
 from anthill.platform.services import MessengerClient
 from wtforms import ValidationError
-from functools import partial
 
 
 __all__ = [

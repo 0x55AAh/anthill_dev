@@ -15,7 +15,6 @@ from anthill.framework.auth.forms import AuthenticationForm
 from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.auth.log import get_user_logger, ApplicationLogger
 from anthill.framework.conf import settings
-import logging
 
 
 __all__ = [

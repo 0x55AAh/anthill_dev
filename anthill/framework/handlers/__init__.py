@@ -5,6 +5,7 @@ from anthill.framework.handlers.base import (
     TemplateHandler, TemplateMixin, Handler404
 )
 from anthill.framework.handlers.jsonrpc import WebSocketJSONRPCHandler, JSONRPCMixin
+from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.framework.handlers.streaming.watchfile import (
     WatchFileHandler, WatchTextFileHandler, WatchLogFileHandler
 )

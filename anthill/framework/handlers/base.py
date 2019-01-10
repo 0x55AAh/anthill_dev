@@ -199,6 +199,10 @@ class WebSocketHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Sessio
             options.update(mem_level=settings.WEBSOCKET_MEM_LEVEL)
         return options
 
+    def check_origin(self, origin):
+        """Override to enable support for allowing alternate origins."""
+        return super().check_origin(origin)
+
 
 class JsonWebSocketHandler(WebSocketHandler):
     def set_default_headers(self):

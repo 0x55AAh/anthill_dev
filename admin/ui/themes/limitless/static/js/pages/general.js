@@ -153,22 +153,63 @@ $(function() {
 
     ion.sound({
         sounds: [
-            /*{
-                name: "my_cool_sound"
-            },
             {
-                name: "notify_sound",
-                volume: 0.2
-            },
-            {
-                name: "alert_sound",
-                volume: 0.3,
-                preload: false
-            }*/
+                name: "button_tiny",
+                alias: "incoming_message"
+            }
         ],
         volume: 0.5,
-        path: "sounds/",
+        path: "/static/js/plugins/sounds/ion.sound/sounds/",
         preload: true
+    });
+
+    // Keyboard typing listener
+    var timer;
+    $("#message-form [name=text-message]").on("keyup keydown", function (event) {
+        if (timer) {
+            clearTimeout(timer);
+        } else {
+            // code here
+        }
+        timer = setTimeout(function() {
+            timer = 0;
+            // code here
+        }, 3000);
+    });
+
+    $("#message-form [name=text-message]").on("keydown", function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            $("#message-form").trigger('submit');
+        }
+    });
+    $("#message-form").on("focusout", function (event) {
+        var $form = $(this);
+        setTimeout(function () {
+            if (!$form.find(':focus').length) {
+                $form.trigger('submit', [event.type]);
+            }
+        }, 0);
+    });
+
+    // Send text message
+    $("#message-form").on("submit", function (event, parentEvent) {
+        event.preventDefault();
+        var form = this, $form = $(this);
+    });
+
+    // Scroll messages
+    $(".chat-list").on("scroll", function(event) {
+        var $history = $(this);
+        // code here
+    });
+
+    // Select group
+    $(document).on("click", ".sidebar-category li.media", function(event) {
+        var $history = $('.chat-list');
+        if (!$(this).hasClass('active')) {
+            // code here
+        }
     });
 
 });
