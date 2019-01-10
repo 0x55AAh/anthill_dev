@@ -1,31 +1,10 @@
-from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.core.cache import caches
-from anthill.framework.handlers.base import BaseClientsWatcher
 from anthill.platform.core.messenger.channels.handlers.websocket import WebSocketChannelHandler
+from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
+from anthill.platform.core.messenger.handlers.utils import action, auth_required
 from anthill.platform.auth.handlers import UserHandlerMixin
-from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
-from functools import wraps
 import json
 import enum
-
-
-def auth_required(func):
-    @wraps(func)
-    async def wrapper(self, *args, **kwargs):
-        user = self.client.user
-        if isinstance(user, (type(None), AnonymousUser)):
-            raise NotAuthenticatedError('Authentication required')
-        return await func(self, *args, **kwargs)
-    return wrapper
-
-
-def action(**kwargs):
-    def decorator(func):
-        func.action = True
-        func.kwargs = kwargs
-        return func
-    return decorator
 
 
 class MessengerHandlerMeta(type):
@@ -43,40 +22,6 @@ class MessengerHandlerMeta(type):
                 handler.available_actions[name] = method_name
 
         return handler
-
-
-class CacheClientsWatcher(BaseClientsWatcher):
-    user_limit: int = 0
-    storage = caches['websocket_clients_watcher']
-
-    def __init__(self, user_limit: int = 0):
-        if user_limit:
-            self.user_limit = user_limit
-        self.handlers = {}
-
-    def build_cache_key(self, handler: 'WebSocketHandler'):
-        return ':'.join([id(handler), self.get_user_id(handler)])
-
-    async def append(self, handler: 'WebSocketHandler') -> None:
-        user_id = self.get_user_id(handler)
-        self.handlers.setdefault(user_id, []).append(handler)
-
-    async def remove(self, handler: 'WebSocketHandler') -> None:
-        user_id = self.get_user_id(handler)
-        self.handlers[user_id].remove(handler)
-
-    async def count(self) -> int:
-        raise NotImplementedError
-
-    def get_user_id(self, handler: 'WebSocketHandler') -> str:
-        return handler.current_user.id
-
-
-class MessengerClientsWatcher(CacheClientsWatcher):
-    """Messenger handlers watcher."""
-
-    async def count(self) -> int:
-        raise NotImplementedError
 
 
 class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=MessengerHandlerMeta):

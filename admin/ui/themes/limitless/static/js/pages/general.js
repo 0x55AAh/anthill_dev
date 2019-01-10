@@ -8,6 +8,7 @@ $(function() {
         maxRetries: 10,
         debug: window.debug
     };
+    //var messenger_io = io.connect('http://localhost:9609/messenger');
     var messenger_url = ws_url('http://localhost:9609/messenger/');
     var messenger_client = new ReconnectingWebSocket(messenger_url, [], messenger_options);
     messenger_client.addEventListener('message', function(event) {

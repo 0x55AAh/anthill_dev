@@ -15,7 +15,7 @@ class GDBInspector:
         self._gdb = None
 
     async def __aenter__(self):
-        self._gdb = await self.connect()
+        await self.connect()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -27,7 +27,7 @@ class GDBInspector:
 
     @as_future
     def connect(self):
-        return GdbController(gdb_args=self.gdb_args)
+        self._gdb = GdbController(gdb_args=self.gdb_args)
 
     async def exit(self):
         return await as_future(self._gdb.exit)()
