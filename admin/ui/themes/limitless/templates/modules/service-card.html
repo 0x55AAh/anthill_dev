@@ -1,16 +1,31 @@
-{% from anthill.framework.utils.duration import duration_string %}
-{% from datetime import timedelta %}
+<script>
+    $(function () {
+        var timer = new easytimer.Timer();
+        var uptime = "{{ entry.uptime }}";
+
+        function updateUptime() {
+            var newValue = timer.getTimeValues().toString();
+            var data = '<i class="icon-history text-warning position-left"></i>';
+            var $item = $('#' + "services-cards__entry__{{ entry.name }}_uptime");
+            $item.html(data).attr('title', newValue);
+        }
+
+        timer.start({precision: 'seconds', startValues: {seconds: parseInt(uptime)}});
+
+        updateUptime();
+        timer.addEventListener('minutesUpdated', function (e) {
+            updateUptime();
+        });
+    })
+</script>
 <div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" data-name="{{ entry.name }}">
     <div class="panel panel-flat">
-        <div class="panel-heading">{% set uptime=timedelta(seconds=entry.uptime) %}
+        <div class="panel-heading">
             <div class="panel-title">
                 {% if entry.debug %}
                 <span class="label bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">{{ _('debug') }}</span>
                 {% end %}
-                <span class="label" style="font-weight: 400;font-size: 9px;line-height: normal;color: gray;" title="{{ duration_string(uptime) }}">
-                    <i class="icon-history {% if uptime < timedelta(days=1) %}text-warning{% else %}text-success{% end %} position-left"></i>
-                        {% if not entry.debug %}{{ duration_string(uptime) }}{% end %}
-                </span>
+                <span class="label" id="services-cards__entry__{{ entry.name }}_uptime" style="font-weight: 400;font-size: 10px;line-height: normal;color: gray;"></span>
             </div>
             <div class="heading-elements">
                 <ul class="icons-list text-muted">

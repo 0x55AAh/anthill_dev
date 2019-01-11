@@ -13,7 +13,7 @@ __all__ = ['BaseSocketIOHandler', 'SocketIOHandler', 'socketio_server']
 logger = logging.getLogger('anthill.application')
 
 socketio_server = socketio.AsyncServer(
-    client_manager=socketio.asyncio_manager.AsyncManager(),
+    client_manager=socketio.AsyncRedisManager('redis://', logger=logger),
     async_mode='tornado',
     engineio_logger=logger,
     ping_timeout=settings.WEBSOCKET_PING_TIMEOUT,
@@ -40,7 +40,7 @@ class SocketIOHandler(TranslationHandlerMixin, LogExceptionHandlerMixin, Session
         Called at the beginning of a request before websocket
         connection is opened.
         """
-        # self.setup_session()
+        self.setup_session()
 
     async def on_message(self, message):
         """Handle incoming messages on the WebSocket."""

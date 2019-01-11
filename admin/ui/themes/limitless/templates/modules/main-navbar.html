@@ -1,5 +1,22 @@
-{% from anthill.framework.utils.duration import duration_string %}
-{% from datetime import timedelta %}
+<script>
+    $(function () {
+        var timer = new easytimer.Timer();
+        var uptime = "{{ metadata['uptime'] }}";
+
+        function updateUptime() {
+            var newValue = timer.getTimeValues().toString();
+            var data = '<i class="icon-history text-warning position-left"></i> ' + newValue;
+            $('#navbar-uptime .heading-text').html(data);
+        }
+
+        timer.start({precision: 'seconds', startValues: {seconds: parseInt(uptime)}});
+
+        updateUptime();
+        timer.addEventListener('secondsUpdated', function (e) {
+            updateUptime();
+        });
+    })
+</script>
 <div class="navbar navbar-default navbar-fixed-top header-highlight">
     <div class="navbar-header">
         <a class="navbar-brand" href="/"><img src="{{ static_url('images/logo_light.png') }}" alt=""></a>
@@ -16,12 +33,9 @@
             {% if metadata['debug'] %}
             <li><p class="navbar-text"><span class="label bg-success">{{ _('debug') }}</span></p></li>
             {% end %}
-            <li>{% set uptime=timedelta(seconds=metadata['uptime']) %}
+            <li id="navbar-uptime">
                 <p class="navbar-text">
-                    <span class="heading-text">
-                        <i class="icon-history {% if uptime < timedelta(days=1) %}text-warning{% else %}text-success{% end %} position-left"></i>
-                        {{ duration_string(uptime) }}
-                    </span>
+                    <span class="heading-text"></span>
                 </p>
             </li>
         </ul>

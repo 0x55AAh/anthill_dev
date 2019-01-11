@@ -25,10 +25,10 @@ class MessengerHandlerMeta(type):
 
 
 class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=MessengerHandlerMeta):
-    groups = ['__messenger__']  # Global groups. Must starts with `__` for security reason
-    client_class = None
-    notification_on_net_status_changed = True
+    groups = ['__messenger__']        # Global groups. Must starts with `__` for security reason
     direct_group_prefix = '__direct'  # Must starts with `__`
+    client_class = None
+    notify_on_net_status_changed = True
     secure_direct = True
     secure_groups = True
     clients = MessengerClientsWatcher(user_limit=0)
@@ -127,7 +127,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
         """Invoked when a new connection is opened."""
         await super(MessengerHandler, self).open(*args, **kwargs)
         await self.client.authenticate(user=self.current_user)
-        if self.notification_on_net_status_changed:
+        if self.notify_on_net_status_changed:
             await self.send_net_status(self.NetStatus.online.name)
 
     @auth_required
@@ -211,7 +211,7 @@ class MessengerHandler(UserHandlerMixin, WebSocketChannelHandler, metaclass=Mess
 
     async def on_connection_close(self) -> None:
         await super(MessengerHandler, self).on_connection_close()
-        if self.notification_on_net_status_changed:
+        if self.notify_on_net_status_changed:
             await self.send_net_status(self.NetStatus.offline.name)
 
     async def message_handler(self, message: dict) -> None:

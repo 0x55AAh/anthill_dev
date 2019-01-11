@@ -85,7 +85,7 @@ $(function() {
                 anthill_storage.setItem(services_metadata_key, result.data['servicesMetadata']);
             },
             function(jqXHR, textStatus, errorThrown) {
-                anthill_storage.setItem(services_metadata_key, []); // ¯\_(ツ)_/¯
+                anthill_storage.setItem(services_metadata_key, []);
             }
         );
     }
@@ -165,13 +165,13 @@ $(function() {
 
     var messenger = io('http://localhost:9609/messenger', {transports: ['websocket']});
     messenger.on('connect', function () {
-        // code here
+        // ¯\_(ツ)_/¯
     });
     messenger.on('disconnect', function () {
-        // code here
+        // ¯\_(ツ)_/¯
     });
     messenger.on('message', function (message) {
-        // code here
+        // ¯\_(ツ)_/¯
     });
 
 });
