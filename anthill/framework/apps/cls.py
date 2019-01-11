@@ -279,16 +279,16 @@ class Application:
     def setup_models(self):
         self.pre_setup_models()
 
-        logger.debug('\_ Models loading started.')
+        logger.debug('\\_ Models loading started.')
         for module in self.get_models_modules():
             importlib.import_module(module)
-            logger.debug('  \_ Models from `%s` loaded.' % module)
+            logger.debug('  \\_ Models from `%s` loaded.' % module)
 
         self.post_setup_models()
 
-        logger.debug('\_ Installed models:')
+        logger.debug('\\_ Installed models:')
         for model in self.get_models():
-            logger.debug('  \_ Model %s.' % class_name(model))
+            logger.debug('  \\_ Model %s.' % class_name(model))
 
         self.update_models()
 

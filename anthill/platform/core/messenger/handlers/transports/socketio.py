@@ -1,6 +1,10 @@
 from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
 import socketio
+import logging
+
+
+logger = logging.getLogger('anthill.application')
 
 
 class MessengerNamespace(socketio.AsyncNamespace):

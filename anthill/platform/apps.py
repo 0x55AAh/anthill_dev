@@ -32,8 +32,8 @@ class BaseAnthillApplication(Application):
         for api_module in self.get_internal_api_modules():
             import_module(api_module)
         internal_api.service = self.service
-        logger.debug('\_ Internal api methods: %s' % ', '.join(internal_api.methods))
-        logger.debug('\_ Internal api installed.')
+        logger.debug('\\_ Internal api methods: %s' % ', '.join(internal_api.methods))
+        logger.debug('\\_ Internal api installed.')
 
     def post_setup(self):
         self.setup_internal_api()
