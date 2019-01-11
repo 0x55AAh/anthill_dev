@@ -1,4 +1,5 @@
 from anthill.framework.handlers.socketio import SocketIOHandler
+from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
 import socketio
 import logging
@@ -105,7 +106,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
     # /System actions
 
 
-class MessengerHandler(SocketIOHandler):
+class MessengerHandler(SocketIOHandler, UserHandlerMixin):
     def check_origin(self, origin):
         return True
         # TODO: configuration from settings.py
