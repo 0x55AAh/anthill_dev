@@ -75,7 +75,7 @@ class UserHandlerMixin:
         self.app_logger = ApplicationLogger(self.current_user)
         try:
             self.messenger_client = self.application.create_messenger_client()
-        except AttributeError:
+        except KeyError:
             self.messenger_client = None
 
 

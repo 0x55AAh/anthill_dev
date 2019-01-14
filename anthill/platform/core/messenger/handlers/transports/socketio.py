@@ -33,6 +33,10 @@ class MessengerNamespace(socketio.AsyncNamespace):
         session = await self.get_session(sid)
         return session['client']
 
+    async def get_request_handler(self, sid):
+        session = await self.get_session(sid)
+        return session['request_handler']
+
     async def send_net_status(self, status: str) -> None:
         allowed = map(lambda x: x.value, self.NetStatus.__members__.values())
         if status not in allowed:
@@ -68,6 +72,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         await client.authenticate()
 
         session['client'] = client
+        session['request_handler'] = request_handler
 
         self.enter_groups(sid, await self.get_groups(sid))
         await self.notify_on_net_status_changed(self.NetStatus.ONLINE.value)
@@ -157,7 +162,9 @@ class MessengerNamespace(socketio.AsyncNamespace):
     async def on_sending_file_stopped(self, sid, data):
         client = await self.get_client(sid)
 
-    async def on_online(self, sid, data):
+    async def on_online(self, sid):
+        request_handler = await self.get_request_handler(sid)
+        user_agent = request_handler.request.headers.get('User-Agent')  # For device detection
         client = await self.get_client(sid)
 
     async def on_offline(self, sid):

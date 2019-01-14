@@ -153,7 +153,7 @@ $(function() {
 
     // General event handlers
     messenger.on('connect', function () {
-        messenger.emit('online', {device: null});
+        messenger.emit('online');
     });
     messenger.on('disconnect', function () {
         messenger.emit('offline');
