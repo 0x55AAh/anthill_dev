@@ -2,6 +2,7 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
+from user_agents import parse
 import socketio
 import logging
 import enum
@@ -139,22 +140,14 @@ class MessengerNamespace(socketio.AsyncNamespace):
     async def on_typing_started(self, sid, data):
         """Typing text message started."""
         client = await self.get_client(sid)
-        await self.emit(
-            'typing_started',
-            data={'user_id': client.get_user_id()},
-            room=data['group'],
-            skip_sid=sid
-        )
+        data = {'user_id': client.get_user_id()}
+        await self.emit('typing_started', data=data, room=data['group'], skip_sid=sid)
 
     async def on_typing_stopped(self, sid, data):
         """Typing text message stopped."""
         client = await self.get_client(sid)
-        await self.emit(
-            'typing_stopped',
-            data={'user_id': client.get_user_id()},
-            room=data['group'],
-            skip_sid=sid
-        )
+        data = {'user_id': client.get_user_id()}
+        await self.emit('typing_stopped', data=data, room=data['group'], skip_sid=sid)
 
     async def on_sending_file_started(self, sid, data):
         client = await self.get_client(sid)
@@ -164,11 +157,21 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     async def on_online(self, sid):
         request_handler = await self.get_request_handler(sid)
-        user_agent = request_handler.request.headers.get('User-Agent')  # For device detection
+        user_agent = request_handler.request.headers.get('User-Agent')
+        user_agent = parse(user_agent)
         client = await self.get_client(sid)
+        data = {
+            'user_id': client.get_user_id(),
+            'os': user_agent.os.family,
+        }
+        # TODO:
+        await self.emit('online', data=data, room=None, skip_sid=sid)
 
     async def on_offline(self, sid):
         client = await self.get_client(sid)
+        data = {'user_id': client.get_user_id()}
+        # TODO:
+        await self.emit('offline', data=data, room=None, skip_sid=sid)
 
     async def on_delivered(self, sid, data):
         pass
