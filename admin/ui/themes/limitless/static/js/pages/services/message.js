@@ -62,16 +62,23 @@ $(function() {
     });
 
 	// Keyboard typing listener
-    var timer;
+    var typing_timer;
+    function typing_started(group) {
+        messenger.emit('typing_started', {group: group});
+    }
+    function typing_stopped(group) {
+        typing_timer = 0;
+        messenger.emit('typing_stopped', {group: group});
+    }
     $("#message-form [name=text-message]").on("keyup keydown", function (event) {
-        if (timer) {
-            clearTimeout(timer);
+        var current_group = 'test';
+        if (typing_timer) {
+            clearTimeout(typing_timer);
         } else {
-            messenger.emit('typing_started', {group: '1'});
+            typing_started(current_group);
         }
-        timer = setTimeout(function() {
-            timer = 0;
-            messenger.emit('typing_stopped', {group: '1'});
+        typing_timer = setTimeout(function() {
+            typing_stopped(current_group);
         }, 3000);
     });
 
@@ -93,8 +100,18 @@ $(function() {
     // Send text message
     $("#message-form").on("submit", function (event, parentEvent) {
         event.preventDefault();
-        var form = this, $form = $(this);
-        $form.find("[name=text-message]").val(null);
+        var form = this, $form = $(this),
+            data = $form.find("[name=text-message]").val().trim();
+        var group = 'test';
+        if (data) {
+            typing_stopped(group); // Force stop typing
+            messenger.emit('create_message', {
+                group: group,
+                data: data,
+                content_type: 'text/plain'
+            });
+            $form.find("[name=text-message]").val(null);
+        }
     });
 
     // Scroll messages

@@ -50,6 +50,3 @@ class Client(BaseClient):
 
     async def read_messages(self, group: str, message_ids: list):
         pass
-
-    async def forward_messages(self, group: str, message_ids: list, group_to: str):
-        pass

@@ -75,11 +75,12 @@ class UpdateManager:
 class MessengerClient:
     def __init__(self, url, namespace='/messenger'):
         self.url = url
-        self.socketio_client = socketio_client
         self.namespace = namespace or '/'
-        self.socketio_client.register_namespace(self.Namespace(self.namespace))
+        self._client = socketio_client
+        self._client.register_namespace(
+            self._SocketIONamespace(self.namespace))
 
-    class Namespace(socketio.AsyncClientNamespace):
+    class _SocketIONamespace(socketio.AsyncClientNamespace):
         def on_connect(self):
             logger.debug('Connected to messenger.')
 
@@ -97,15 +98,15 @@ class MessengerClient:
         self.close()
 
     async def connect(self):
-        await self.socketio_client.connect(self.url, namespaces=[self.namespace])
+        await self._client.connect(self.url, namespaces=[self.namespace])
 
-    async def send(self, event, data=None, namespace=None, callback=None):
-        await self.socketio_client.emit(
+    async def emit(self, event, data=None, namespace=None, callback=None):
+        await self._client.emit(
             event, data=data, namespace=namespace or self.namespace, callback=callback)
         logger.debug('Message has been sent.')
 
     def close(self):
-        self.socketio_client.disconnect()
+        self._client.disconnect()
 
 
 class BaseService(CeleryMixin, _BaseService):

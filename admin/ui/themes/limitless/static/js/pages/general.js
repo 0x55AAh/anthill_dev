@@ -1,5 +1,7 @@
 $(function() {
 
+    var user_id = null;
+
     var AJAX_INTERVAL = 10;
     var UPDATE_INTERVAL = 1;
 
@@ -159,7 +161,9 @@ $(function() {
         messenger.emit('offline');
     });
     messenger.on('create_message', function (data) {
-        ion.sound.play("incoming_message");
+        if (data.user.id !== user_id) { // Filter out own messages
+            ion.sound.play("incoming_message");
+        }
     });
 
 });

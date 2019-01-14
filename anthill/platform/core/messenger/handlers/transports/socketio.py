@@ -1,3 +1,4 @@
+from anthill.framework.conf import settings
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
@@ -12,7 +13,7 @@ logger = logging.getLogger('anthill.application')
 
 
 class MessengerNamespace(socketio.AsyncNamespace):
-    groups = ['__messenger__', '1']        # Global groups. Must starts with `__` for security reason
+    groups = ['__messenger__']        # Global groups. Must starts with `__` for security reason
     direct_group_prefix = '__direct'  # Must starts with `__`
     client_class = None
     is_notify_on_net_status_changed = True
@@ -43,10 +44,29 @@ class MessengerNamespace(socketio.AsyncNamespace):
         if status not in allowed:
             raise ValueError('Status must be in %s' % allowed)
 
+    async def build_direct_group_with(self, user_id: str, sid, reverse: bool = False) -> str:
+        client = await self.get_client(sid)
+        items = [self.direct_group_prefix]
+        if reverse:
+            items += [user_id, client.get_user_id()]
+        else:
+            items += [client.get_user_id(), user_id]
+        return '.'.join(items)
+
     async def get_groups(self, sid) -> list:
         client = await self.get_client(sid)
         groups = self.groups or []
         groups += await client.get_groups() or []
+
+        # For testing purposes
+        if 'test' not in groups and settings.DEBUG:
+            groups.append('test')
+
+        # Personal group
+        personal_group = client.get_personal_group()
+        if personal_group not in groups:
+            groups.append(personal_group)
+
         return groups
 
     def enter_groups(self, sid, groups) -> None:
@@ -57,12 +77,24 @@ class MessengerNamespace(socketio.AsyncNamespace):
         for group in groups:
             self.leave_room(sid, group)
 
+    # noinspection PyMethodMayBeStatic
+    def retrieve_group(self, data):
+        group = data.get('group')
+        if group.startswith('__'):  # System group
+            raise ValueError('Not valid group name: %s' % group)
+        return group
+
     async def notify_on_net_status_changed(self, status: str) -> None:
         if self.is_notify_on_net_status_changed:
             await self.send_net_status(status)
 
-    async def online(self, user_id):
-        pass
+    async def online(self, sid, user_id):
+        """Check if user online."""
+        client = await self.get_client(sid)
+        group = client.get_personal_group(user_id)
+        result = next(self.server.manager.get_participants(
+            self.namespace, room=group), None)
+        return bool(result)
 
     async def on_connect(self, sid, environ):
         request_handler = environ['tornado.handler']
@@ -96,9 +128,10 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     async def on_delete_group(self, sid, data):
         client = await self.get_client(sid)
-        # TODO: remove group from storage first.
-        # TODO: emit event to all group participants.
-        await self.close_room(room=data['group'])
+        # TODO: remove group from storage first
+        # TODO: emit event to all group participants
+        group = self.retrieve_group(data)
+        await self.close_room(room=group)
 
     async def on_update_group(self, sid, data):
         client = await self.get_client(sid)
@@ -114,7 +147,23 @@ class MessengerNamespace(socketio.AsyncNamespace):
     # MESSAGES
 
     async def on_create_message(self, sid, data):
+        content_type = data.get('content_type', 'text/plain')
+        group = self.retrieve_group(data)
+        data = data.get('data')
         client = await self.get_client(sid)
+        # TODO: save message on db
+        message_id = None
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            },
+            'content_type': content_type,
+            'payload': {
+                'id': message_id,
+                'data': data
+            }
+        }
+        await self.emit('create_message', data=content, room=group)
 
     async def on_enumerate_group(self, sid, data):
         client = await self.get_client(sid)
@@ -140,14 +189,24 @@ class MessengerNamespace(socketio.AsyncNamespace):
     async def on_typing_started(self, sid, data):
         """Typing text message started."""
         client = await self.get_client(sid)
-        data = {'user_id': client.get_user_id()}
-        await self.emit('typing_started', data=data, room=data['group'], skip_sid=sid)
+        group = self.retrieve_group(data)
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        await self.emit('typing_started', data=content, room=group, skip_sid=sid)
 
     async def on_typing_stopped(self, sid, data):
         """Typing text message stopped."""
         client = await self.get_client(sid)
-        data = {'user_id': client.get_user_id()}
-        await self.emit('typing_stopped', data=data, room=data['group'], skip_sid=sid)
+        group = self.retrieve_group(data)
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        await self.emit('typing_stopped', data=content, room=group, skip_sid=sid)
 
     async def on_sending_file_started(self, sid, data):
         client = await self.get_client(sid)
@@ -161,16 +220,30 @@ class MessengerNamespace(socketio.AsyncNamespace):
         user_agent = parse(user_agent)
         client = await self.get_client(sid)
         data = {
-            'user_id': client.get_user_id(),
-            'os': user_agent.os.family,
+            'user': {
+                'id': client.get_user_id()
+            },
+            'device': {
+                'family': user_agent.device.family,
+                'brand': user_agent.device.brand,
+                'model': user_agent.device.model
+            },
+            'os': {
+                'family': user_agent.os.family,
+                'version': user_agent.os.version_string
+            }
         }
-        # TODO:
+        # TODO: emit multiple rooms
         await self.emit('online', data=data, room=None, skip_sid=sid)
 
     async def on_offline(self, sid):
         client = await self.get_client(sid)
-        data = {'user_id': client.get_user_id()}
-        # TODO:
+        data = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        # TODO: emit multiple rooms
         await self.emit('offline', data=data, room=None, skip_sid=sid)
 
     async def on_delivered(self, sid, data):
