@@ -151,8 +151,10 @@ class MessengerNamespace(socketio.AsyncNamespace):
         group = self.retrieve_group(data)
         data = data.get('data')
         client = await self.get_client(sid)
-        # TODO: save message on db
-        message_id = None
+        message_id = await client.create_message(group, {
+            'data': data,
+            'content_type': content_type
+        })
         content = {
             'user': {
                 'id': client.get_user_id()
