@@ -24,3 +24,5 @@ graphql-core==2.1
 graphql-relay==0.4.5
 PyJWT==1.6.4
 python-socketio
+aiohttp
+websockets

@@ -11,7 +11,7 @@ logger = logging.getLogger('anthill.application')
 
 
 class MessengerNamespace(socketio.AsyncNamespace):
-    groups = ['__messenger__']        # Global groups. Must starts with `__` for security reason
+    groups = ['__messenger__', '1']        # Global groups. Must starts with `__` for security reason
     direct_group_prefix = '__direct'  # Must starts with `__`
     client_class = None
     is_notify_on_net_status_changed = True
@@ -29,14 +29,17 @@ class MessengerNamespace(socketio.AsyncNamespace):
             raise ImproperlyConfigured('Client class is undefined')
         return self.client_class(user=user)
 
+    async def get_client(self, sid):
+        session = await self.get_session(sid)
+        return session['client']
+
     async def send_net_status(self, status: str) -> None:
         allowed = map(lambda x: x.value, self.NetStatus.__members__.values())
         if status not in allowed:
             raise ValueError('Status must be in %s' % allowed)
 
     async def get_groups(self, sid) -> list:
-        session = await self.get_session(sid)
-        client = session['client']
+        client = await self.get_client(sid)
         groups = self.groups or []
         groups += await client.get_groups() or []
         return groups
@@ -52,6 +55,9 @@ class MessengerNamespace(socketio.AsyncNamespace):
     async def notify_on_net_status_changed(self, status: str) -> None:
         if self.is_notify_on_net_status_changed:
             await self.send_net_status(status)
+
+    async def online(self, user_id):
+        pass
 
     async def on_connect(self, sid, environ):
         request_handler = environ['tornado.handler']
@@ -80,78 +86,82 @@ class MessengerNamespace(socketio.AsyncNamespace):
     # GROUPS
 
     async def on_create_group(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_delete_group(self, sid, data):
-        pass
+        client = await self.get_client(sid)
+        # TODO: remove group from storage first.
+        # TODO: emit event to all group participants.
+        await self.close_room(room=data['group'])
 
     async def on_update_group(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_join_group(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_leave_group(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     # /GROUPS
 
     # MESSAGES
 
     async def on_create_message(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_enumerate_group(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_get_messages(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_delete_messages(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_update_messages(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     async def on_read_messages(self, sid, data):
-        pass
-
-    async def on_forward_messages(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
     # /MESSAGES
-
-    # PING
-
-    async def on_ping_group(self, sid, data):
-        pass
-
-    async def on_pong_group(self, sid, data):
-        pass
-
-    # /PING
 
     # /Client actions
 
     # System actions
 
-    async def on_typing_start(self, sid, data):
-        pass
+    async def on_typing_started(self, sid, data):
+        """Typing text message started."""
+        client = await self.get_client(sid)
+        await self.emit(
+            'typing_started',
+            data={'user_id': client.get_user_id()},
+            room=data['group'],
+            skip_sid=sid
+        )
 
-    async def on_typing_finish(self, sid, data):
-        pass
+    async def on_typing_stopped(self, sid, data):
+        """Typing text message stopped."""
+        client = await self.get_client(sid)
+        await self.emit(
+            'typing_stopped',
+            data={'user_id': client.get_user_id()},
+            room=data['group'],
+            skip_sid=sid
+        )
 
-    async def on_sending_file_start(self, sid, data):
-        pass
+    async def on_sending_file_started(self, sid, data):
+        client = await self.get_client(sid)
 
-    async def on_sending_file_finish(self, sid, data):
-        pass
+    async def on_sending_file_stopped(self, sid, data):
+        client = await self.get_client(sid)
 
     async def on_online(self, sid, data):
-        pass
+        client = await self.get_client(sid)
 
-    async def on_offline(self, sid, data):
-        pass
+    async def on_offline(self, sid):
+        client = await self.get_client(sid)
 
     async def on_delivered(self, sid, data):
         pass

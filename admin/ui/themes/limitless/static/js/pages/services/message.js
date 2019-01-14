@@ -1,4 +1,6 @@
 $(function() {
+
+    var messenger = io('http://localhost:9609/messenger', {transports: ['websocket']});
 	var $messages = $('.chat-list');
 
 	function updateMessagesAreaHeight() {
@@ -65,11 +67,11 @@ $(function() {
         if (timer) {
             clearTimeout(timer);
         } else {
-            // code here
+            messenger.emit('typing_started', {group: '1'});
         }
         timer = setTimeout(function() {
             timer = 0;
-            // code here
+            messenger.emit('typing_stopped', {group: '1'});
         }, 3000);
     });
 
@@ -92,6 +94,7 @@ $(function() {
     $("#message-form").on("submit", function (event, parentEvent) {
         event.preventDefault();
         var form = this, $form = $(this);
+        $form.find("[name=text-message]").val(null);
     });
 
     // Scroll messages
@@ -104,6 +107,86 @@ $(function() {
         if (!$(this).hasClass('active')) {
             // code here
         }
+    });
+
+    ion.sound({
+        sounds: [
+            {
+                name: "button_tiny",
+                alias: "incoming_message"
+            }
+        ],
+        volume: 0.5,
+        path: "/static/js/plugins/sounds/ion.sound/sounds/",
+        preload: true
+    });
+
+    // General event handlers
+    messenger.on('connect', function () {
+        // ¯\_(ツ)_/¯
+    });
+    messenger.on('disconnect', function () {
+        // ¯\_(ツ)_/¯
+    });
+
+    // Group event handlers
+    messenger.on('create_group', function (data) {
+        console.log(data);
+    });
+    messenger.on('update_group', function (data) {
+        console.log(data);
+    });
+    messenger.on('delete_group', function (data) {
+        console.log(data);
+    });
+    messenger.on('join_group', function (data) {
+        console.log(data);
+    });
+    messenger.on('leave_group', function (data) {
+        console.log(data);
+    });
+
+    // Message event handlers
+    messenger.on('create_message', function (data) {
+        console.log(data);
+    });
+    messenger.on('enumerate_group', function (data) {
+        console.log(data);
+    });
+    messenger.on('list_messages', function (data) {
+        console.log(data);
+    });
+    messenger.on('delete_messages', function (data) {
+        console.log(data);
+    });
+    messenger.on('update_messages', function (data) {
+        console.log(data);
+    });
+    messenger.on('read_messages', function (data) {
+        console.log(data);
+    });
+
+    // System event handlers
+    messenger.on('typing_started', function (data) {
+        console.log(data);
+    });
+    messenger.on('typing_stopped', function (data) {
+        console.log(data);
+    });
+    messenger.on('sending_file_started', function (data) {
+        console.log(data);
+    });
+    messenger.on('sending_file_stopped', function (data) {
+        console.log(data);
+    });
+    messenger.on('online', function (data) {
+        console.log(data);
+    });
+    messenger.on('offline', function (data) {
+        console.log(data);
+    });
+    messenger.on('delivered', function (data) {
+        console.log(data);
     });
 
 });

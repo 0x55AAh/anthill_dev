@@ -5,9 +5,10 @@ from message import handlers
 from anthill.framework.handlers.socketio import socketio_server
 from anthill.platform.core.messenger.handlers.transports import socketio
 
-socketio_server.register_namespace(handlers.MessengerNamespace('/messenger'))
+MESSENGER_NAMESPACE = '/messenger'
+
+socketio_server.register_namespace(handlers.MessengerNamespace(MESSENGER_NAMESPACE))
 
 route_patterns = [
-    url(r'^/messenger/?$', handlers.MessengerHandler, name='messenger'),
     url(r'^/socket.io/$', socketio.MessengerHandler),
 ]

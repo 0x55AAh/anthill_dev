@@ -3,20 +3,6 @@ $(function() {
     var AJAX_INTERVAL = 10;
     var UPDATE_INTERVAL = 1;
 
-    var messenger_options = {
-        connectionTimeout: 1000,
-        maxRetries: 10,
-        debug: window.debug
-    };
-    var messenger_url = ws_url('http://localhost:9609/messenger/');
-    var messenger_client = new ReconnectingWebSocket(messenger_url, [], messenger_options);
-    messenger_client.addEventListener('message', function(event) {
-        // ¯\_(ツ)_/¯
-    });
-    messenger_client.addEventListener('error', function(event) {
-        // ¯\_(ツ)_/¯
-    });
-
     var utils_config = {
         hearbeat: 5000,
         sendCloseMessage: false,
@@ -164,14 +150,16 @@ $(function() {
     });
 
     var messenger = io('http://localhost:9609/messenger', {transports: ['websocket']});
+
+    // General event handlers
     messenger.on('connect', function () {
-        // ¯\_(ツ)_/¯
+        messenger.emit('online', {device: null});
     });
     messenger.on('disconnect', function () {
-        // ¯\_(ツ)_/¯
+        messenger.emit('offline');
     });
-    messenger.on('message', function (message) {
-        // ¯\_(ツ)_/¯
+    messenger.on('create_message', function (data) {
+        ion.sound.play("incoming_message");
     });
 
 });

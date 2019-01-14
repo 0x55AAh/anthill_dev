@@ -40,7 +40,6 @@ typing==3.6.4
 urllib3==1.24.1
 validators==0.12.2
 vine==1.1.4
-websocket-client==0.53.0
 flower==0.9.2
 babel==2.6.0
 GitPython

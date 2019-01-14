@@ -11,12 +11,9 @@ Example:
         ...
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
-from anthill.framework.utils.urls import reverse, build_absolute_uri
+from message.routes import MESSENGER_NAMESPACE
 
 
 @as_internal()
-async def get_messenger_url(api: InternalAPI, **options):
-    path = reverse('messenger')
-    host_url = api.service.app.registry_entry['external']
-    url = build_absolute_uri(host_url, path)
-    return url
+async def get_messenger_namespace(api: InternalAPI, **options):
+    return MESSENGER_NAMESPACE

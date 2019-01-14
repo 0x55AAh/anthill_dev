@@ -17,6 +17,10 @@ class SessionHandlerMixin:
         session_key = self.get_cookie(settings.SESSION_COOKIE_NAME)
         self.session = self.SessionStore(session_key)
 
+    @property
+    def _is_websocket(self):
+        return hasattr(self, 'ws_connection')
+
     def update_session(self):
         # If session was modified, or if the configuration is to save the
         # session every time, save the changes and set a session cookie or delete
@@ -30,7 +34,7 @@ class SessionHandlerMixin:
         else:
             # First check if we need to delete this cookie.
             # The session should be deleted only if the session is entirely empty
-            if settings.SESSION_COOKIE_NAME in self.cookies and empty:
+            if settings.SESSION_COOKIE_NAME in self.cookies and empty and not self._is_websocket:
                 self.clear_cookie(
                     settings.SESSION_COOKIE_NAME,
                     path=settings.SESSION_COOKIE_PATH,
@@ -57,13 +61,14 @@ class SessionHandlerMixin:
                                 "request completed. The user may have logged "
                                 "out in a concurrent request, for example."
                             )
-                        self.set_cookie(
-                            settings.SESSION_COOKIE_NAME,
-                            self.session.session_key,
-                            max_age=max_age,
-                            expires=expires,
-                            domain=settings.SESSION_COOKIE_DOMAIN,
-                            path=settings.SESSION_COOKIE_PATH,
-                            secure=settings.SESSION_COOKIE_SECURE or None,
-                            httponly=settings.SESSION_COOKIE_HTTPONLY or None
-                        )
+                        if not self._is_websocket:
+                            self.set_cookie(
+                                settings.SESSION_COOKIE_NAME,
+                                self.session.session_key,
+                                max_age=max_age,
+                                expires=expires,
+                                domain=settings.SESSION_COOKIE_DOMAIN,
+                                path=settings.SESSION_COOKIE_PATH,
+                                secure=settings.SESSION_COOKIE_SECURE or None,
+                                httponly=settings.SESSION_COOKIE_HTTPONLY or None
+                            )

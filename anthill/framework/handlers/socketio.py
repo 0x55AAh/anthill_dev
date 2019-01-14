@@ -7,7 +7,7 @@ import socketio
 import logging
 
 
-__all__ = ['BaseSocketIOHandler', 'SocketIOHandler', 'socketio_server']
+__all__ = ['BaseSocketIOHandler', 'SocketIOHandler', 'socketio_server', 'socketio_client']
 
 
 logger = logging.getLogger('anthill.application')
@@ -21,6 +21,7 @@ socketio_server = socketio.AsyncServer(
     max_http_buffer_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE,
     cookie=settings.SESSION_COOKIE_NAME
 )
+socketio_client = socketio.AsyncClient(logger=logger)
 BaseSocketIOHandler = socketio.get_tornado_handler(socketio_server)
 
 

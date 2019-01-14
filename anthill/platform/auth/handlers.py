@@ -74,7 +74,7 @@ class UserHandlerMixin:
         self.user_logger = get_user_logger(self.current_user)
         self.app_logger = ApplicationLogger(self.current_user)
         try:
-            self.messenger_client = MessengerClient(url=self.settings['messenger_url'])
+            self.messenger_client = self.application.create_messenger_client()
         except AttributeError:
             self.messenger_client = None
 
