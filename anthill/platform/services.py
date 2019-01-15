@@ -8,7 +8,6 @@ from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
 from anthill.framework.utils.geoip import GeoIP2
-from tornado.httpclient import HTTPClientError
 from functools import partial
 from tornado.web import url
 import socketio
@@ -98,7 +97,8 @@ class MessengerClient:
         self.close()
 
     async def connect(self):
-        await self._client.connect(self.url, namespaces=[self.namespace])
+        await self._client.connect(
+            self.url, namespaces=[self.namespace], transports=['websocket'])
 
     async def emit(self, event, data=None, namespace=None, callback=None):
         await self._client.emit(
