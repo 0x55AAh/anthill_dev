@@ -16,12 +16,18 @@ socketio_server = socketio.AsyncServer(
     client_manager=socketio.AsyncRedisManager('redis://', logger=logger),
     async_mode='tornado',
     engineio_logger=logger,
+    logger=logger,
     ping_timeout=settings.WEBSOCKET_PING_TIMEOUT,
     ping_interval=settings.WEBSOCKET_PING_INTERVAL,
     max_http_buffer_size=settings.WEBSOCKET_MAX_MESSAGE_SIZE,
     cookie=settings.SESSION_COOKIE_NAME
 )
-socketio_client = socketio.AsyncClient(logger=logger)
+socketio_client = socketio.AsyncClient(
+    logger=logger,
+    engineio_logger=logger,
+    reconnection_delay=1,
+    reconnection_delay_max=600
+)
 BaseSocketIOHandler = socketio.get_tornado_handler(socketio_server)
 
 

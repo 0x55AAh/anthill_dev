@@ -8,7 +8,7 @@ class BaseClient:
     user_id_key = 'id'
     personal_group_prefix = '__user'  # Must starts with `__` for security reason
 
-    def __init__(self, user: Optional[RemoteUser]=None):
+    def __init__(self, user: Optional[RemoteUser] = None):
         self.user = user or AnonymousUser()
 
     async def authenticate(self, user: Optional[RemoteUser] = None) -> None:
@@ -104,16 +104,6 @@ class BaseClient:
 
         :param group:
         :param message_ids:
-        :return:
-        """
-        raise NotImplementedError
-
-    async def forward_messages(self, group: str, message_ids: list, group_to: str):
-        """
-
-        :param group:
-        :param message_ids:
-        :param group_to:
         :return:
         """
         raise NotImplementedError

@@ -155,10 +155,10 @@ $(function() {
 
     // General event handlers
     messenger.on('connect', function () {
-        messenger.emit('online');
+        // ¯\_(ツ)_/¯
     });
     messenger.on('disconnect', function () {
-        messenger.emit('offline');
+        // ¯\_(ツ)_/¯
     });
     messenger.on('create_message', function (data) {
         if (data.user.id !== user_id) { // Filter out own messages

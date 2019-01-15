@@ -5,7 +5,7 @@ from typing import Optional
 
 class Client(BaseClient):
     async def authenticate(self, user: Optional[RemoteUser] = None) -> None:
-        # TODO: skiped so far...
+        # TODO: skipped so far...
         pass
 
     def get_user_serialized(self) -> dict:

@@ -202,8 +202,5 @@ $(function() {
     messenger.on('offline', function (data) {
         console.log(data);
     });
-    messenger.on('delivered', function (data) {
-        console.log(data);
-    });
 
 });

@@ -3,10 +3,9 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
-from user_agents import parse
+import user_agents
 import socketio
 import logging
-import enum
 
 
 logger = logging.getLogger('anthill.application')
@@ -21,10 +20,8 @@ class MessengerNamespace(socketio.AsyncNamespace):
     secure_groups = True
     clients = MessengerClientsWatcher(user_limit=0)
 
-    @enum.unique
-    class NetStatus(enum.Enum):
-        OFFLINE = 'offline'
-        ONLINE = 'online'
+    ONLINE = 'online'
+    OFFLINE = 'offline'
 
     def create_client(self, user=None):
         if self.client_class is None:
@@ -39,10 +36,12 @@ class MessengerNamespace(socketio.AsyncNamespace):
         session = await self.get_session(sid)
         return session['request_handler']
 
-    async def send_net_status(self, status: str) -> None:
-        allowed = map(lambda x: x.value, self.NetStatus.__members__.values())
+    async def send_net_status(self, sid, status: str) -> None:
+        allowed = [self.ONLINE, self.OFFLINE]
         if status not in allowed:
             raise ValueError('Status must be in %s' % allowed)
+        method = getattr(self, 'on_' + status)
+        await method(sid)
 
     async def build_direct_group_with(self, user_id: str, sid, reverse: bool = False) -> str:
         client = await self.get_client(sid)
@@ -84,10 +83,6 @@ class MessengerNamespace(socketio.AsyncNamespace):
             raise ValueError('Not valid group name: %s' % group)
         return group
 
-    async def notify_on_net_status_changed(self, status: str) -> None:
-        if self.is_notify_on_net_status_changed:
-            await self.send_net_status(status)
-
     async def online(self, sid, user_id):
         """Check if user online."""
         client = await self.get_client(sid)
@@ -108,11 +103,14 @@ class MessengerNamespace(socketio.AsyncNamespace):
         session['request_handler'] = request_handler
 
         self.enter_groups(sid, await self.get_groups(sid))
-        await self.notify_on_net_status_changed(self.NetStatus.ONLINE.value)
+
+        if self.is_notify_on_net_status_changed:
+            await self.send_net_status(sid, self.ONLINE)
 
     async def on_disconnect(self, sid):
+        if self.is_notify_on_net_status_changed:
+            await self.send_net_status(sid, self.OFFLINE)
         self.leave_groups(sid, self.rooms(sid))
-        await self.notify_on_net_status_changed(self.NetStatus.OFFLINE.value)
 
     async def on_message(self, sid, data):
         pass
@@ -128,9 +126,14 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     async def on_delete_group(self, sid, data):
         client = await self.get_client(sid)
-        # TODO: remove group from storage first
-        # TODO: emit event to all group participants
         group = self.retrieve_group(data)
+        await client.delete_group(group)
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        await self.emit('delete_group', data=content, room=group)
         await self.close_room(room=group)
 
     async def on_update_group(self, sid, data):
@@ -212,14 +215,30 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     async def on_sending_file_started(self, sid, data):
         client = await self.get_client(sid)
+        group = self.retrieve_group(data)
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            },
+            'content_type': None
+        }
+        await self.emit('sending_file_started', data=content, room=group, skip_sid=sid)
 
     async def on_sending_file_stopped(self, sid, data):
         client = await self.get_client(sid)
+        group = self.retrieve_group(data)
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            },
+            'content_type': None
+        }
+        await self.emit('sending_file_stopped', data=content, room=group, skip_sid=sid)
 
     async def on_online(self, sid):
         request_handler = await self.get_request_handler(sid)
         user_agent = request_handler.request.headers.get('User-Agent')
-        user_agent = parse(user_agent)
+        user_agent = user_agents.parse(user_agent)
         client = await self.get_client(sid)
         data = {
             'user': {
@@ -235,21 +254,21 @@ class MessengerNamespace(socketio.AsyncNamespace):
                 'version': user_agent.os.version_string
             }
         }
-        # TODO: emit multiple rooms
-        await self.emit('online', data=data, room=None, skip_sid=sid)
+        for group in self.rooms(sid):
+            await self.emit(self.ONLINE, data=data, room=group, skip_sid=sid)
 
     async def on_offline(self, sid):
         client = await self.get_client(sid)
+        user_id = client.get_user_id()
         data = {
             'user': {
-                'id': client.get_user_id()
+                'id': user_id
             }
         }
-        # TODO: emit multiple rooms
-        await self.emit('offline', data=data, room=None, skip_sid=sid)
-
-    async def on_delivered(self, sid, data):
-        pass
+        is_online = await self.online(sid, user_id)
+        if not is_online:
+            for group in self.rooms(sid):
+                await self.emit(self.OFFLINE, data=data, room=group, skip_sid=sid)
 
     # /System actions
 
