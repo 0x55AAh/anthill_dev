@@ -3,6 +3,7 @@ from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
+from anthill.platform.core.messenger.client.exceptions import ClientError
 import user_agents
 import socketio
 import logging
@@ -62,7 +63,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
             groups.append('test')
 
         # Personal group
-        personal_group = client.get_personal_group()
+        personal_group = client.create_personal_group()
         if personal_group not in groups:
             groups.append(personal_group)
 
@@ -86,7 +87,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
     async def online(self, sid, user_id):
         """Check if user online."""
         client = await self.get_client(sid)
-        group = client.get_personal_group(user_id)
+        group = client.create_personal_group(user_id)
         result = next(self.server.manager.get_participants(
             self.namespace, room=group), None)
         return bool(result)
@@ -153,22 +154,27 @@ class MessengerNamespace(socketio.AsyncNamespace):
         content_type = data.get('content_type', 'text/plain')
         group = self.retrieve_group(data)
         data = data.get('data')
+        event_id = data.get('event_id')
         client = await self.get_client(sid)
-        message_id = await client.create_message(group, {
-            'data': data,
-            'content_type': content_type
-        })
         content = {
             'user': {
                 'id': client.get_user_id()
             },
             'content_type': content_type,
-            'payload': {
-                'id': message_id,
-                'data': data
-            }
+            'event_id': event_id
         }
-        await self.emit('create_message', data=content, room=group)
+        try:
+            message_id = await client.create_message(group, {
+                'data': data,
+                'content_type': content_type
+            })
+        except ClientError as e:
+            content['error'] = str(e)
+            me = client.create_personal_group()
+            self.emit('create_message', data=content, room=me)
+        else:
+            content['payload'] = {'id': message_id, 'data': data}
+            await self.emit('create_message', data=content, room=group)
 
     async def on_enumerate_group(self, sid, data):
         client = await self.get_client(sid)
@@ -220,7 +226,8 @@ class MessengerNamespace(socketio.AsyncNamespace):
             'user': {
                 'id': client.get_user_id()
             },
-            'content_type': None
+            'content_type': None,
+            'event_id': None
         }
         await self.emit('sending_file_started', data=content, room=group, skip_sid=sid)
 
@@ -231,7 +238,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
             'user': {
                 'id': client.get_user_id()
             },
-            'content_type': None
+            'event_id': None
         }
         await self.emit('sending_file_stopped', data=content, room=group, skip_sid=sid)
 

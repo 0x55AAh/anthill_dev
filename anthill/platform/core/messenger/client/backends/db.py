@@ -1,4 +1,5 @@
 from anthill.platform.core.messenger.client.backends.base import BaseClient
+from anthill.platform.core.messenger.client.exceptions import ClientError
 from anthill.platform.auth import RemoteUser
 from typing import Optional
 

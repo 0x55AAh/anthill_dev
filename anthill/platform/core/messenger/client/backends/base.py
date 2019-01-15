@@ -20,7 +20,7 @@ class BaseClient:
         if isinstance(self.user, (type(None), AnonymousUser)):
             raise NotAuthenticatedError
 
-    def get_personal_group(self, user_id: str = None) -> str:
+    def create_personal_group(self, user_id: str = None) -> str:
         user_id = user_id if user_id is not None else self.get_user_id()
         return '.'.join([self.personal_group_prefix, str(user_id)])
 

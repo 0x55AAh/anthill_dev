@@ -3,6 +3,17 @@ $(function() {
     var messenger = io('http://localhost:9609/messenger', {transports: ['websocket']});
 	var $messages = $('.chat-list');
 
+	var Guid = (function() {
+        var Guid = {};
+        Guid.newGuid = function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        };
+        return Guid;
+    }());
+
 	function updateMessagesAreaHeight() {
 	    $messages.attr('style', 'min-height: 0px');
 		var availableHeight = $(window).height() - $('.page-container').offset().top - $('.content-group').outerHeight();
@@ -108,7 +119,8 @@ $(function() {
             messenger.emit('create_message', {
                 group: group,
                 data: data,
-                content_type: 'text/plain'
+                content_type: 'text/plain',
+                event_id: Guid.newGuid()
             });
             $form.find("[name=text-message]").val(null);
         }
