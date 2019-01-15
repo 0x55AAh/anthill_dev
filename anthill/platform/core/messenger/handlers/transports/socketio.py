@@ -170,8 +170,8 @@ class MessengerNamespace(socketio.AsyncNamespace):
             })
         except ClientError as e:
             content['error'] = str(e)
-            me = client.create_personal_group()
-            self.emit('create_message', data=content, room=me)
+            personal_group = client.create_personal_group()
+            self.emit('create_message', data=content, room=personal_group)
         else:
             content['payload'] = {'id': message_id, 'data': data}
             await self.emit('create_message', data=content, room=group)
