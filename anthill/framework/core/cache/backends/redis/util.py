@@ -1,43 +1,12 @@
-from importlib import import_module
-
-from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.utils.encoding import smart_text
+import six
 
 
-class CacheKey(object):
+class CacheKey(six.text_type):
     """
     A stub string class that we can use to check if a key was created already.
     """
-
-    def __init__(self, key):
-        self._key = key
-
-    def __str__(self):
-        return smart_text(self._key)
-
     def original_key(self):
-        key = self._key.rsplit(":", 1)[1]
-        return key
-
-
-def load_class(path):
-    """
-    Loads class from path.
-    """
-
-    mod_name, klass_name = path.rsplit('.', 1)
-
-    try:
-        mod = import_module(mod_name)
-    except AttributeError as e:
-        raise ImproperlyConfigured('Error importing {0}: "{1}"'.format(mod_name, e))
-
-    try:
-        klass = getattr(mod, klass_name)
-    except AttributeError:
-        raise ImproperlyConfigured('Module "{0}" does not define a "{1}" class'.format(mod_name, klass_name))
-
-    return klass
+        return self.rsplit(":", 1)[1]
 
 
 def default_reverse_key(key):

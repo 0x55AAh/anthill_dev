@@ -31,7 +31,7 @@ class StartApplication(TemplateCommand):
         except (ImportError, AttributeError):
             pass
 
-        project_name = options.pop('name')
+        entity_name = options.pop('name')
         target = options.pop('directory')
 
         # Create a random SECRET_KEY to put it in the main settings.
@@ -41,4 +41,4 @@ class StartApplication(TemplateCommand):
         options['server_hostname'] = options.pop('host')
         options['server_port'] = options.pop('port')
 
-        super().run('app', project_name, target, **options)
+        super().run('app', entity_name, target, **options)

@@ -1,5 +1,5 @@
-# Originated from https://github.com/niwinz/django-redis
-VERSION = (4, 9, 0)
+# Originated from https://github.com/niwibe/django-redis
+VERSION = (4, 10, 0)
 __version__ = '.'.join(map(str, VERSION))
 
 

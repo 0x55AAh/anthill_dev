@@ -85,6 +85,7 @@ setup(
         'anthill.login',
         'anthill.media',
         'anthill.message',
+        'anthill.moderation',
         'anthill.profile',
         'anthill.promo',
         'anthill.report',

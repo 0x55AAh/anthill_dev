@@ -2,19 +2,21 @@ import random
 import re
 import socket
 from collections import OrderedDict
-import six
 
 from anthill.framework.conf import settings
 from anthill.framework.core.cache.backends.base import DEFAULT_TIMEOUT, get_key_func
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.utils.encoding import smart_text
+from anthill.framework.utils.module_loading import import_string
 from redis.exceptions import ConnectionError, ResponseError, TimeoutError
+import six
 
 from .. import pool
 from ..exceptions import CompressorError, ConnectionInterrupted
-from ..util import CacheKey, load_class
+from ..util import CacheKey
 
 _main_exceptions = (TimeoutError, ResponseError, ConnectionError, socket.timeout)
+
 
 special_re = re.compile('([*?[])')
 
@@ -23,14 +25,16 @@ def glob_escape(s):
     return special_re.sub(r'[\1]', s)
 
 
-class DefaultClient:
+class DefaultClient(object):
     def __init__(self, server, params, backend):
         self._backend = backend
         self._server = server
         self._params = params
 
-        self.reverse_key = get_key_func(params.get("REVERSE_KEY_FUNCTION") or
-                                        "anthill.framework.core.cache.backends.redis.util.default_reverse_key")
+        self.reverse_key = get_key_func(
+            params.get("REVERSE_KEY_FUNCTION") or
+            "anthill.framework.core.cache.backends.redis.util.default_reverse_key"
+        )
 
         if not self._server:
             raise ImproperlyConfigured("Missing connections string")
@@ -44,11 +48,11 @@ class DefaultClient:
 
         serializer_path = self._options.get(
             "SERIALIZER", "anthill.framework.core.cache.backends.redis.serializers.pickle.PickleSerializer")
-        serializer_cls = load_class(serializer_path)
+        serializer_cls = import_string(serializer_path)
 
         compressor_path = self._options.get(
             "COMPRESSOR", "anthill.framework.core.cache.backends.redis.compressors.identity.IdentityCompressor")
-        compressor_cls = load_class(compressor_path)
+        compressor_cls = import_string(compressor_path)
 
         self._serializer = serializer_cls(options=self._options)
         self._compressor = compressor_cls(options=self._options)
@@ -310,7 +314,7 @@ class DefaultClient:
                 value = self._compressor.decompress(value)
             except CompressorError:
                 # Handle little values, chosen to be not compressed
-                ...
+                pass
             value = self._serializer.loads(value)
         return value
 
@@ -373,7 +377,7 @@ class DefaultClient:
         except _main_exceptions as e:
             raise ConnectionInterrupted(connection=client, parent=e)
 
-    def _incr(self, key, delta=1, version=None, client=None):
+    def _incr(self, key, delta=1, version=None, client=None, ignore_key_check=False):
         if client is None:
             client = self.get_client(write=True)
 
@@ -384,12 +388,17 @@ class DefaultClient:
                 # if key expired after exists check, then we get
                 # key with wrong value and ttl -1.
                 # use lua script for atomicity
-                lua = """
-                local exists = redis.call('EXISTS', KEYS[1])
-                if (exists == 1) then
+                if not ignore_key_check:
+                    lua = """
+                    local exists = redis.call('EXISTS', KEYS[1])
+                    if (exists == 1) then
+                        return redis.call('INCRBY', KEYS[1], ARGV[1])
+                    else return false end
+                    """
+                else:
+                    lua = """
                     return redis.call('INCRBY', KEYS[1], ARGV[1])
-                else return false end
-                """
+                    """
                 value = client.eval(lua, 1, key, delta)
                 if value is None:
                     raise ValueError("Key '%s' not found" % key)
@@ -407,25 +416,28 @@ class DefaultClient:
                 if timeout == -2:
                     raise ValueError("Key '%s' not found" % key)
                 value = self.get(key, version=version, client=client) + delta
-                self.set(key, value, version=version, timeout=timeout, client=client)
+                self.set(key, value, version=version, timeout=timeout,
+                         client=client)
         except _main_exceptions as e:
             raise ConnectionInterrupted(connection=client, parent=e)
 
         return value
 
-    def incr(self, key, delta=1, version=None, client=None):
+    def incr(self, key, delta=1, version=None, client=None, ignore_key_check=False):
         """
         Add delta to value in the cache. If the key does not exist, raise a
-        ValueError exception.
+        ValueError exception. if ignore_key_check=True then the key will be
+        created and set to the delta value by default.
         """
-        return self._incr(key=key, delta=delta, version=version, client=client)
+        return self._incr(key=key, delta=delta, version=version, client=client, ignore_key_check=ignore_key_check)
 
     def decr(self, key, delta=1, version=None, client=None):
         """
         Decreace delta to value in the cache. If the key does not exist, raise a
         ValueError exception.
         """
-        return self._incr(key=key, delta=-delta, version=version, client=client)
+        return self._incr(key=key, delta=-delta, version=version,
+                          client=client)
 
     def ttl(self, key, version=None, client=None):
         """
@@ -461,7 +473,7 @@ class DefaultClient:
 
         key = self.make_key(key, version=version)
         try:
-            return client.exists(key)
+            return client.exists(key) == 1
         except _main_exceptions as e:
             raise ConnectionInterrupted(connection=client, parent=e)
 
@@ -529,3 +541,15 @@ class DefaultClient:
                 for c in self._clients[i].connection_pool._available_connections:
                     c.disconnect()
                 self._clients[i] = None
+
+    def touch(self, key, timeout=DEFAULT_TIMEOUT, version=None, client=None):
+        """
+        Sets a new expiration for a key.
+        """
+
+        if client is None:
+            client = self.get_client(write=True)
+
+        key = self.make_key(key, version=version)
+
+        return client.expire(key, timeout)

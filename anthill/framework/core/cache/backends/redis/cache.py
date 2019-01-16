@@ -3,14 +3,15 @@ import logging
 
 from anthill.framework.conf import settings
 from anthill.framework.core.cache.backends.base import BaseCache
+from anthill.framework.utils.module_loading import import_string
 
 from .exceptions import ConnectionInterrupted
-from .util import load_class
 
 REDIS_IGNORE_EXCEPTIONS = getattr(settings, "REDIS_IGNORE_EXCEPTIONS", False)
 REDIS_LOG_IGNORED_EXCEPTIONS = getattr(settings, "REDIS_LOG_IGNORED_EXCEPTIONS", False)
 REDIS_LOGGER = getattr(settings, "REDIS_LOGGER", False)
 REDIS_SCAN_ITERSIZE = getattr(settings, "REDIS_SCAN_ITERSIZE", 10)
+
 
 if REDIS_LOG_IGNORED_EXCEPTIONS:
     logger = logging.getLogger((REDIS_LOGGER or __name__))
@@ -36,7 +37,6 @@ def omit_exception(method=None, return_value=None):
 
                 return return_value
             raise e.parent
-
     return _decorator
 
 
@@ -49,7 +49,7 @@ class RedisCache(BaseCache):
         options = params.get("OPTIONS", {})
         self._client_cls = options.get(
             "CLIENT_CLASS", "anthill.framework.core.cache.backends.redis.client.DefaultClient")
-        self._client_cls = load_class(self._client_cls)
+        self._client_cls = import_string(self._client_cls)
         self._client = None
 
         self._ignore_exceptions = options.get("IGNORE_EXCEPTIONS", REDIS_IGNORE_EXCEPTIONS)
@@ -81,7 +81,7 @@ class RedisCache(BaseCache):
             return self.client.get(key, default=default, version=version,
                                    client=client)
         except ConnectionInterrupted as e:
-            if REDIS_IGNORE_EXCEPTIONS or self._ignore_exceptions:
+            if self._ignore_exceptions:
                 if REDIS_LOG_IGNORED_EXCEPTIONS:
                     logger.error(str(e))
                 return default
@@ -151,3 +151,7 @@ class RedisCache(BaseCache):
     @omit_exception
     def close(self, **kwargs):
         self.client.close(**kwargs)
+
+    @omit_exception
+    def touch(self, key, timeout=None, version=None):
+        return self.client.touch(key, timeout=timeout, version=version)

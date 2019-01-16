@@ -37,7 +37,12 @@ if __name__ == '__main__':
             conf = importlib.import_module('conf')
             kwargs.update(root_templates_mod=conf.ROOT_TEMPLATES_MODULE)
             kwargs.update(extra_commands={
-                'startapp': StartApplication(root_templates_mod=conf.ROOT_TEMPLATES_MODULE)
+                'startapp': StartApplication(
+                    root_templates_mod=conf.ROOT_TEMPLATES_MODULE,
+                    ui_static_path=conf.ADMIN_STATIC_PATH,
+                    ui_template_path=conf.ADMIN_TEMPLATE_PATH,
+                    services_registry_file=conf.SERVICES_REGISTRY_FILE
+                )
             })
         except (ImportError, AttributeError):
             pass

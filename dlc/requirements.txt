@@ -1,1 +1,1 @@
-pyhash==0.9.1
+pyhash

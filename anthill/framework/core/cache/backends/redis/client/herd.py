@@ -12,9 +12,12 @@ from .default import DEFAULT_TIMEOUT, DefaultClient
 _main_exceptions = (ConnectionError, ResponseError, TimeoutError, socket.timeout)
 
 
-class Marker:
-    """Dummy class for use as marker for herded keys."""
-    ...
+class Marker(object):
+    """
+    Dummy class for use as
+    marker for herded keys.
+    """
+    pass
 
 
 CACHE_HERD_TIMEOUT = getattr(settings, 'CACHE_HERD_TIMEOUT', 60)
@@ -37,7 +40,7 @@ class HerdClient(DefaultClient):
 
     def _pack(self, value, timeout):
         herd_timeout = (timeout or self._backend.default_timeout) + int(time.time())
-        return self._marker, value, herd_timeout
+        return (self._marker, value, herd_timeout)
 
     def _unpack(self, value):
         try:

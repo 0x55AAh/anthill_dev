@@ -71,7 +71,18 @@ setup(
     ]},
     namespace_packages=['anthill'],
     install_requires=[
-
+        'celery>=4.2.1',
+        'flower',
+        'GitPython',
+        'pygdbmi',
+        'pyyaml',
+        'ua-parser',
+        'user-agents',
+        'psycopg2',
+        'psycopg2-binary',
+        'redis',
+        'aioredis',
+        'msgpack'
     ],
     extras_require={
 

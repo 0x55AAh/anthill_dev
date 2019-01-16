@@ -1,7 +1,14 @@
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from .base import BaseSerializer
 
-import pickle
+# Import the fastest implementation of
+# pickle package. This should be removed
+# when python3 come the unique supported
+# python version
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 
 class PickleSerializer(BaseSerializer):

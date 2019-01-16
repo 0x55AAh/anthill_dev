@@ -3,8 +3,8 @@ from collections import OrderedDict
 
 from anthill.framework.conf import settings
 from anthill.framework.utils.encoding import smart_text
-from six import text_type
 from redis.exceptions import ConnectionError
+from six import text_type
 
 from ..exceptions import ConnectionInterrupted
 from ..hash_ring import HashRing
@@ -50,7 +50,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self) \
+        return super(ShardClient, self)\
             .add(key=key, value=value, version=version, client=client, timeout=timeout)
 
     def get(self, key, default=None, version=None, client=None):
@@ -58,7 +58,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self) \
+        return super(ShardClient, self)\
             .get(key=key, default=default, version=version, client=client)
 
     def get_many(self, keys, version=None):
@@ -114,7 +114,7 @@ class ShardClient(DefaultClient):
 
         key = self.make_key(key, version=version)
         try:
-            return client.exists(key)
+            return client.exists(key) == 1
         except ConnectionError:
             raise ConnectionInterrupted(connection=client)
 
@@ -206,7 +206,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self) \
+        return super(ShardClient, self)\
             .incr(key=key, delta=delta, version=version, client=client)
 
     def decr(self, key, delta=1, version=None, client=None):
@@ -214,7 +214,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self) \
+        return super(ShardClient, self)\
             .decr(key=key, delta=delta, version=version, client=client)
 
     def iter_keys(self, key, version=None):
@@ -258,3 +258,11 @@ class ShardClient(DefaultClient):
             for client in self._serverdict.values():
                 for c in client.connection_pool._available_connections:
                     c.disconnect()
+
+    def touch(self, key, timeout=DEFAULT_TIMEOUT, version=None, client=None):
+        if client is None:
+            key = self.make_key(key, version=version)
+            client = self.get_server(key)
+
+        return super(ShardClient, self).touch(key=key, timeout=timeout,
+                                              version=version, client=client)

@@ -1,13 +1,14 @@
 from anthill.framework.conf import settings
+from anthill.framework.utils.module_loading import import_string
 from redis.connection import DefaultParser
-from . import util
 
 
 class ConnectionFactory(object):
+
     # Store connection pool by cache backend options.
     #
     # _pools is a process-global, as otherwise _pools is cleared every time
-    # ConnectionFactory is instiated, as framework creates new cache client
+    # ConnectionFactory is instiated, as Anthill creates new cache client
     # (DefaultClient) instance for every request.
 
     _pools = {}
@@ -15,12 +16,12 @@ class ConnectionFactory(object):
     def __init__(self, options):
         pool_cls_path = options.get("CONNECTION_POOL_CLASS",
                                     "redis.connection.ConnectionPool")
-        self.pool_cls = util.load_class(pool_cls_path)
+        self.pool_cls = import_string(pool_cls_path)
         self.pool_cls_kwargs = options.get("CONNECTION_POOL_KWARGS", {})
 
         redis_client_cls_path = options.get("REDIS_CLIENT_CLASS",
                                             "redis.client.StrictRedis")
-        self.redis_client_cls = util.load_class(redis_client_cls_path)
+        self.redis_client_cls = import_string(redis_client_cls_path)
         self.redis_client_cls_kwargs = options.get("REDIS_CLIENT_KWARGS", {})
 
         self.options = options
@@ -78,7 +79,7 @@ class ConnectionFactory(object):
         cls = self.options.get("PARSER_CLASS", None)
         if cls is None:
             return DefaultParser
-        return util.load_class(cls)
+        return import_string(cls)
 
     def get_or_create_connection_pool(self, params):
         """
@@ -117,5 +118,5 @@ def get_connection_factory(path=None, options=None):
         path = getattr(settings, "REDIS_CONNECTION_FACTORY",
                        "anthill.framework.core.cache.backends.redis.pool.ConnectionFactory")
 
-    cls = util.load_class(path)
+    cls = import_string(path)
     return cls(options or {})

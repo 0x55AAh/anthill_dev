@@ -38,12 +38,12 @@ class HashRing(object):
 
     def get_node_pos(self, key):
         if len(self.ring) == 0:
-            return None, None
+            return (None, None)
 
         _hash = hashlib.sha256(key.encode('utf-8')).hexdigest()
         idx = bisect.bisect(self.sorted_keys, _hash)
         idx = min(idx - 1, (self.replicas * len(self.nodes)) - 1)
-        return self.ring[self.sorted_keys[idx]], idx
+        return (self.ring[self.sorted_keys[idx]], idx)
 
     def iter_nodes(self, key):
         if len(self.ring) == 0:

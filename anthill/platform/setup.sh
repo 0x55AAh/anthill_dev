@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-REDIS_DATABASES=32
+REDIS_DATABASES=64
 
 function update_redis_databases {
     sed -iE "s/^databases [0-9]*$/databases ${REDIS_DATABASES}/" $1
