@@ -39,7 +39,11 @@ class StartApplication(BaseStartApplication):
             os.path.join(self.ui_static_path, 'js/pages/services/%(app_name)s.js' % {'app_name': app_name})
         ]
         for path in files:
-            Path(path).touch()
+            try:
+                Path(path).touch()
+            except FileNotFoundError:
+                # TODO:
+                pass
 
     def create_new_registry_entry(self, app_name, host, port):
         location = build_location('http', host, port)
