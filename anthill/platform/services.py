@@ -98,8 +98,7 @@ class MessengerClient:
         self.close()
 
     async def connect(self):
-        await self._client.connect(
-            self.url, namespaces=[self.namespace], transports=['websocket'])
+        await self._client.connect(self.url, namespaces=[self.namespace])
 
     async def emit(self, event, data=None, namespace=None, callback=None):
         await self._client.emit(

@@ -151,7 +151,11 @@ $(function() {
         preload: true
     });
 
-    var messenger = io('http://localhost:9609/messenger', {transports: ['websocket']});
+    var messenger = io('http://localhost:9609/messenger', {
+        query: {
+            _xsrf: Cookies.get('_xsrf')
+        }
+    });
 
     // General event handlers
     messenger.on('connect', function () {

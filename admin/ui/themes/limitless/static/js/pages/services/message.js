@@ -1,6 +1,10 @@
 $(function() {
 
-    var messenger = io('http://localhost:9609/messenger', {transports: ['websocket']});
+    var messenger = io('http://localhost:9609/messenger', {
+        query: {
+            _xsrf: Cookies.get('_xsrf')
+        }
+    });
 	var $messages = $('.chat-list');
 
 	var Guid = (function() {
