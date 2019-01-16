@@ -3,7 +3,6 @@
 from tornado.web import url
 from admin.handlers import exec as handlers
 
-
 route_patterns = [
 
 ]

@@ -2,12 +2,12 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from profile import models
 
-
 PAGINATED_BY = 50
 
 
 class Profile(SQLAlchemyObjectType):
     """Profile model entity."""
+
     class Meta:
         model = models.Profile
 

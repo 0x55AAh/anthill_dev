@@ -166,7 +166,7 @@ $(function () {
                 legend: {
                     orient: 'vertical',
                     x: 'left',
-                    data: ['Internet Explorer','Opera','Safari','Firefox','Chrome']
+                    data: ['Internet Explorer', 'Opera', 'Safari', 'Firefox', 'Chrome']
                 },
 
                 // Display toolbox
@@ -278,7 +278,7 @@ $(function () {
                 legend: {
                     orient: 'vertical',
                     x: 'left',
-                    data: ['Italy','Spain','Austria','Germany','Poland','Denmark','Hungary','Portugal','France','Netherlands']
+                    data: ['Italy', 'Spain', 'Austria', 'Germany', 'Poland', 'Denmark', 'Hungary', 'Portugal', 'France', 'Netherlands']
                 },
 
                 // Display toolbox
@@ -447,7 +447,7 @@ $(function () {
                     y: 30,
                     x: '55%',
                     itemGap: 15,
-                    data: ['60% Definitely yes','30% Could be better','10% Not at the moment']
+                    data: ['60% Definitely yes', '30% Could be better', '10% Not at the moment']
                 },
 
                 // Add series
@@ -473,13 +473,13 @@ $(function () {
 
                     {
                         name: '2',
-                        type:'pie',
+                        type: 'pie',
                         clockWise: false,
                         radius: ['60%', '75%'],
                         itemStyle: dataStyle,
                         data: [
                             {
-                                value: 30, 
+                                value: 30,
                                 name: '30% Could be better'
                             },
                             {
@@ -498,7 +498,7 @@ $(function () {
                         itemStyle: dataStyle,
                         data: [
                             {
-                                value: 10, 
+                                value: 10,
                                 name: '10% Not at the moment'
                             },
                             {
@@ -536,7 +536,7 @@ $(function () {
                     x: 'left',
                     y: 'top',
                     orient: 'vertical',
-                    data: ['January','February','March','April','May','June','July','August','September','October','November','December']
+                    data: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
                 },
 
                 // Display toolbox
@@ -658,7 +658,7 @@ $(function () {
                     x: 'left',
                     y: 'top',
                     orient: 'vertical',
-                    data: ['January','February','March','April','May','June','July','August','September','October','November','December']
+                    data: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
                 },
 
                 // Display toolbox
@@ -762,7 +762,7 @@ $(function () {
                 legend: {
                     x: 'left',
                     orient: 'vertical',
-                    data: ['Chrome','Firefox','Safari','IE9+','IE8-']
+                    data: ['Chrome', 'Firefox', 'Safari', 'IE9+', 'IE8-']
                 },
 
                 // Enable drag recalculate
@@ -790,11 +790,11 @@ $(function () {
                             radius: [i * 3.6 + 40, i * 3.6 + 43],
                             center: ['50%', '55%'],
                             data: [
-                                {value: i * 128 + 80,  name: 'Chrome'},
-                                {value: i * 64  + 160,  name: 'Firefox'},
-                                {value: i * 32  + 320,  name: 'Safari'},
-                                {value: i * 16  + 640,  name: 'IE9+'},
-                                {value: i * 8  + 1280, name: 'IE8-'}
+                                {value: i * 128 + 80, name: 'Chrome'},
+                                {value: i * 64 + 160, name: 'Firefox'},
+                                {value: i * 32 + 320, name: 'Safari'},
+                                {value: i * 16 + 640, name: 'IE9+'},
+                                {value: i * 8 + 1280, name: 'IE8-'}
                             ]
                         })
                     }
@@ -816,12 +816,12 @@ $(function () {
                     x2: 10,
                     data: [
                         '2014-01-01', '2014-02-01', '2014-03-01', '2014-04-01', '2014-05-01',
-                        { name:'2014-06-01', symbol: 'emptyStar2', symbolSize: 8 },
+                        {name: '2014-06-01', symbol: 'emptyStar2', symbolSize: 8},
                         '2014-07-01', '2014-08-01', '2014-09-01', '2014-10-01', '2014-11-01',
-                        { name:'2014-12-01', symbol: 'star2', symbolSize: 8 }
+                        {name: '2014-12-01', symbol: 'star2', symbolSize: 8}
                     ],
                     label: {
-                        formatter: function(s) {
+                        formatter: function (s) {
                             return s.slice(0, 7);
                         }
                     },
@@ -850,7 +850,7 @@ $(function () {
                         legend: {
                             x: 'left',
                             orient: 'vertical',
-                            data: ['Chrome','Firefox','Safari','IE9+','IE8-']
+                            data: ['Chrome', 'Firefox', 'Safari', 'IE9+', 'IE8-']
                         },
 
                         // Display toolbox
@@ -921,11 +921,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -934,11 +934,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -947,11 +947,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -960,11 +960,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -973,11 +973,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -986,11 +986,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -999,11 +999,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -1012,11 +1012,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -1025,11 +1025,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -1038,11 +1038,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     },
@@ -1051,11 +1051,11 @@ $(function () {
                             name: 'Browser',
                             type: 'pie',
                             data: [
-                                {value: idx * 128 + 80,  name:'Chrome'},
-                                {value: idx * 64  + 160,  name:'Firefox'},
-                                {value: idx * 32  + 320,  name:'Safari'},
-                                {value: idx * 16  + 640,  name:'IE9+'},
-                                {value: idx++ * 8  + 1280, name:'IE8-'}
+                                {value: idx * 128 + 80, name: 'Chrome'},
+                                {value: idx * 64 + 160, name: 'Firefox'},
+                                {value: idx * 32 + 320, name: 'Safari'},
+                                {value: idx * 16 + 640, name: 'IE9+'},
+                                {value: idx++ * 8 + 1280, name: 'IE8-'}
                             ]
                         }]
                     }
@@ -1146,7 +1146,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 46, itemStyle: labelBottom},
-                            {name: 'GoogleMaps', value: 54,itemStyle: labelTop}
+                            {name: 'GoogleMaps', value: 54, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1156,7 +1156,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 56, itemStyle: labelBottom},
-                            {name: 'Facebook', value: 44,itemStyle: labelTop}
+                            {name: 'Facebook', value: 44, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1166,7 +1166,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 65, itemStyle: labelBottom},
-                            {name: 'Youtube', value: 35,itemStyle: labelTop}
+                            {name: 'Youtube', value: 35, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1176,7 +1176,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 70, itemStyle: labelBottom},
-                            {name: 'Google+', value: 30,itemStyle: labelTop}
+                            {name: 'Google+', value: 30, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1185,8 +1185,8 @@ $(function () {
                         radius: radius,
                         itemStyle: labelFromatter,
                         data: [
-                            {name:'other', value:73, itemStyle: labelBottom},
-                            {name:'Weixin', value:27,itemStyle: labelTop}
+                            {name: 'other', value: 73, itemStyle: labelBottom},
+                            {name: 'Weixin', value: 27, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1196,7 +1196,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 78, itemStyle: labelBottom},
-                            {name: 'Twitter', value: 22,itemStyle: labelTop}
+                            {name: 'Twitter', value: 22, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1206,7 +1206,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 78, itemStyle: labelBottom},
-                            {name: 'Skype', value: 22,itemStyle: labelTop}
+                            {name: 'Skype', value: 22, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1216,7 +1216,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 78, itemStyle: labelBottom},
-                            {name: 'Messenger', value: 22,itemStyle: labelTop}
+                            {name: 'Messenger', value: 22, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1226,7 +1226,7 @@ $(function () {
                         itemStyle: labelFromatter,
                         data: [
                             {name: 'other', value: 83, itemStyle: labelBottom},
-                            {name: 'Whatsapp', value: 17,itemStyle: labelTop}
+                            {name: 'Whatsapp', value: 17, itemStyle: labelTop}
                         ]
                     },
                     {
@@ -1235,13 +1235,12 @@ $(function () {
                         radius: radius,
                         itemStyle: labelFromatter,
                         data: [
-                            {name:'other', value:89, itemStyle: labelBottom},
-                            {name:'Instagram', value:11,itemStyle: labelTop}
+                            {name: 'other', value: 89, itemStyle: labelBottom},
+                            {name: 'Instagram', value: 11, itemStyle: labelTop}
                         ]
                     }
                 ]
             };
-
 
 
             // Apply options
@@ -1258,12 +1257,11 @@ $(function () {
             multiple_donuts.setOption(multiple_donuts_options);
 
 
-
             // Resize charts
             // ------------------------------
 
             window.onresize = function () {
-                setTimeout(function (){
+                setTimeout(function () {
                     basic_pie.resize();
                     basic_donut.resize();
                     nested_pie.resize();

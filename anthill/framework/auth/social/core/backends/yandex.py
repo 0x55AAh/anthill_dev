@@ -23,9 +23,9 @@ class YandexOpenId(OpenIdAuth):
     def get_user_details(self, response):
         """Generate username from identity url"""
         values = super(YandexOpenId, self).get_user_details(response)
-        values['username'] = values.get('username') or\
-                             urlsplit(response.identity_url)\
-                                    .path.strip('/')
+        values['username'] = values.get('username') or \
+                             urlsplit(response.identity_url) \
+                                 .path.strip('/')
         values['email'] = values.get('email', '')
         return values
 

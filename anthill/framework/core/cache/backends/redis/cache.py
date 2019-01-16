@@ -12,7 +12,6 @@ REDIS_LOG_IGNORED_EXCEPTIONS = getattr(settings, "REDIS_LOG_IGNORED_EXCEPTIONS",
 REDIS_LOGGER = getattr(settings, "REDIS_LOGGER", False)
 REDIS_SCAN_ITERSIZE = getattr(settings, "REDIS_SCAN_ITERSIZE", 10)
 
-
 if REDIS_LOG_IGNORED_EXCEPTIONS:
     logger = logging.getLogger((REDIS_LOGGER or __name__))
 
@@ -37,6 +36,7 @@ def omit_exception(method=None, return_value=None):
 
                 return return_value
             raise e.parent
+
     return _decorator
 
 

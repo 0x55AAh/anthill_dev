@@ -3,9 +3,7 @@ from anthill.framework.conf import settings
 from anthill.framework.http import Http404
 from functools import wraps, partial
 
-
 INTERNAL_IPS = getattr(settings, 'INTERNAL_IPS', [])
-
 
 __all__ = ['is_awailable', 'awailable', 'is_internal', 'internal']
 
@@ -27,7 +25,9 @@ def awailable(pool=None):
                 # Attacker shouldn't even know this page exists
                 raise Http404
             return method(self, *args, **kwargs)
+
         return wrapper
+
     return decorator
 
 

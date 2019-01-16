@@ -14,20 +14,20 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", { packages:["corechart"] });
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawSteppedAreaChart);
-    
+
 
 // Chart settings
 function drawSteppedAreaChart() {
 
     // Data
     var data = google.visualization.arrayToDataTable([
-        ['Director (Year)',  'Rotten Tomatoes', 'IMDB'],
-        ['Alfred Hitchcock (1935)', 8.4,         7.9],
-        ['Ralph Thomas (1959)',     6.9,         6.5],
-        ['Don Sharp (1978)',        6.5,         6.4],
-        ['James Hawes (2008)',      4.4,         6.2]
+        ['Director (Year)', 'Rotten Tomatoes', 'IMDB'],
+        ['Alfred Hitchcock (1935)', 8.4, 7.9],
+        ['Ralph Thomas (1959)', 6.9, 6.5],
+        ['Don Sharp (1978)', 6.5, 6.4],
+        ['James Hawes (2008)', 4.4, 6.2]
     ]);
 
     // Options
@@ -56,7 +56,7 @@ function drawSteppedAreaChart() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },

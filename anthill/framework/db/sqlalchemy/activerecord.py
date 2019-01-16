@@ -30,6 +30,7 @@ def _memoize(f):
         __CACHE.setdefault(mapper, {})
         __CACHE[mapper][key] = f(obj)
         return __CACHE[mapper][key]
+
     return wrapper
 
 

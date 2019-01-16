@@ -32,7 +32,6 @@ $(function () {
         var format = d3.format(",.0f");
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -46,7 +45,6 @@ $(function () {
 
         // Colors
         var colors = d3.scale.category20();
-
 
 
         // Create axes
@@ -65,7 +63,6 @@ $(function () {
             .tickSize(5);
 
 
-
         // Create chart
         // ------------------------------
 
@@ -77,28 +74,35 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Load data
         // ------------------------------
 
-        d3.csv("assets/demo_data/d3/bars/bars_horizontal.csv", function(data) {
+        d3.csv("assets/demo_data/d3/bars/bars_horizontal.csv", function (data) {
 
             // Parse numbers, and sort by value.
-            data.forEach(function(d) { d.value = +d.value; });
-            data.sort(function(a, b) { return b.value - a.value; });
+            data.forEach(function (d) {
+                d.value = +d.value;
+            });
+            data.sort(function (a, b) {
+                return b.value - a.value;
+            });
 
 
             // Set input domains
             // ------------------------------
 
             // Horizontal
-            x.domain([0, d3.max(data, function(d) { return d.value; })]);
+            x.domain([0, d3.max(data, function (d) {
+                return d.value;
+            })]);
 
             // Verticals
-            y.domain(data.map(function(d) { return d.name; }));
+            y.domain(data.map(function (d) {
+                return d.name;
+            }));
 
 
             //
@@ -130,29 +134,38 @@ $(function () {
                 .data(data)
                 .enter()
                 .append("g")
-                    .attr("class", "d3-bar-group")
-                    .attr("fill", function(d, i) { return colors(i); })
-                    .attr("transform", function(d) { return "translate(0," + y(d.name) + ")"; });
+                .attr("class", "d3-bar-group")
+                .attr("fill", function (d, i) {
+                    return colors(i);
+                })
+                .attr("transform", function (d) {
+                    return "translate(0," + y(d.name) + ")";
+                });
 
             // Add bar
             bar.append("rect")
                 .attr("class", "d3-bar")
-                .attr("width", function(d) { return x(d.value); })
+                .attr("width", function (d) {
+                    return x(d.value);
+                })
                 .attr("height", y.rangeBand());
 
             // Add text label
             bar.append("text")
                 .attr("class", "d3-label-value")
-                .attr("x", function(d) { return x(d.value); })
+                .attr("x", function (d) {
+                    return x(d.value);
+                })
                 .attr("y", y.rangeBand() / 2)
                 .attr("dx", -10)
                 .attr("dy", ".35em")
                 .style("text-anchor", "end")
                 .style("fill", "#fff")
                 .style("font-size", 12)
-                .text(function(d) { return format(d.value); });
+                .text(function (d) {
+                    return format(d.value);
+                });
         });
-
 
 
         // Resize chart
@@ -199,11 +212,15 @@ $(function () {
             // -------------------------
 
             // Line path
-            svg.selectAll('.d3-bar').attr("width", function(d) { return x(d.value); })
+            svg.selectAll('.d3-bar').attr("width", function (d) {
+                return x(d.value);
+            })
 
             // Text label
-            svg.selectAll('.d3-label-value').attr("x", function(d) { return x(d.value); });
+            svg.selectAll('.d3-label-value').attr("x", function (d) {
+                return x(d.value);
+            });
         }
 
-}
+    }
 });

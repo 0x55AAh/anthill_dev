@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // Note: This example requires that you consent to location sharing when
     // prompted by your browser. If you see a blank space instead of the map, this
@@ -29,8 +29,8 @@ $(function() {
         map = new google.maps.Map($('.map-geolocation')[0], mapOptions);
 
         // Try HTML5 geolocation
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
                 var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
                 // Info window
@@ -41,7 +41,7 @@ $(function() {
                 });
 
                 map.setCenter(pos);
-            }, function() {
+            }, function () {
                 handleNoGeolocation(true);
             });
         }

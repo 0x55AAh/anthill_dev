@@ -39,7 +39,7 @@ $(function () {
 
         // Horizontal
         var x = myChart.addCategoryAxis("x", "Month");
-            x.addOrderRule("Date");
+        x.addOrderRule("Date");
 
         // Vertical
         var y = myChart.addPctAxis("y", "Unit Sales");

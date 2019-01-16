@@ -2,12 +2,12 @@ from anthill.framework.auth import get_user_model
 from graphene_sqlalchemy import SQLAlchemyObjectType
 import graphene
 
-
 PAGINATED_BY = 50
 
 
 class User(SQLAlchemyObjectType):
     """User model entity."""
+
     class Meta:
         model = get_user_model()
 

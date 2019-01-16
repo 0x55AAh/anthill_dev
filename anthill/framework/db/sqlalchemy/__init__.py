@@ -57,6 +57,7 @@ def _make_table(db):
         info.setdefault('bind_key', None)
         kwargs['info'] = info
         return sqlalchemy.Table(*args, **kwargs)
+
     return _make_table
 
 
@@ -75,6 +76,7 @@ def _wrap_with_default_query_class(fn, cls):
                 backref = (backref, {})
             _set_default_query_class(backref[1], cls)
         return fn(*args, **kwargs)
+
     return newfn
 
 
@@ -665,8 +667,8 @@ class SQLAlchemy(object):
         of an application not initialized that way or connections will leak.
         """
         if (
-            not getattr(app.config, 'SQLALCHEMY_DATABASE_URI', None) and
-            not getattr(app.config, 'SQLALCHEMY_BINDS', None)
+                not getattr(app.config, 'SQLALCHEMY_DATABASE_URI', None) and
+                not getattr(app.config, 'SQLALCHEMY_BINDS', None)
         ):
             warnings.warn(
                 'Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. '
@@ -696,6 +698,7 @@ class SQLAlchemy(object):
             value = getattr(app.config, configkey, None)
             if value is not None:
                 options[optionkey] = value
+
         _setdefault('pool_size', 'SQLALCHEMY_POOL_SIZE')
         _setdefault('pool_timeout', 'SQLALCHEMY_POOL_TIMEOUT')
         _setdefault('pool_recycle', 'SQLALCHEMY_POOL_RECYCLE')

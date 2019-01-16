@@ -34,7 +34,6 @@ from cryptography.hazmat.primitives import serialization
 from jwt import DecodeError, ExpiredSignature, decode as jwt_decode
 from jwt.utils import base64url_decode
 
-
 try:
     from jwt.algorithms import RSAAlgorithm
 except ImportError as e:

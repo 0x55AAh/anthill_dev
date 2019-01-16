@@ -54,7 +54,6 @@ $(function () {
             var chord_scale = ec.init(document.getElementById('chord_scale'), limitless);
 
 
-
             // Charts setup
             // ------------------------------                    
 
@@ -128,7 +127,7 @@ $(function () {
                     x: 'left',
                     y: 75,
                     orient: 'vertical',
-                    data: ['Internet Explorer','Opera','Safari','Firefox','Chrome']
+                    data: ['Internet Explorer', 'Opera', 'Safari', 'Firefox', 'Chrome']
                 },
 
                 // Enable drag recalculate
@@ -232,7 +231,7 @@ $(function () {
                     x: 'left',
                     y: 75,
                     orient: 'vertical',
-                    data: ['Internet Explorer','Opera','Safari','Firefox','Chrome']
+                    data: ['Internet Explorer', 'Opera', 'Safari', 'Firefox', 'Chrome']
                 },
 
                 // Enable drag recalculate
@@ -337,7 +336,7 @@ $(function () {
                     orient: 'vertical',
                     x: 'left',
                     y: 75,
-                    data: ['Internet Explorer','Opera','Safari','Firefox','Chrome']
+                    data: ['Internet Explorer', 'Opera', 'Safari', 'Firefox', 'Chrome']
                 },
 
                 // Enable drag recalculate
@@ -436,7 +435,7 @@ $(function () {
                     orient: 'vertical',
                     x: 'left',
                     y: 75,
-                    data: ['Internet Explorer','Opera','Safari','Firefox','Chrome']
+                    data: ['Internet Explorer', 'Opera', 'Safari', 'Firefox', 'Chrome']
                 },
 
                 // Enable drag recalculate
@@ -534,7 +533,7 @@ $(function () {
 
                 // Add legend
                 legend: {
-                    data: ['Chrome','Opera','Safari','Firefox','IE'],
+                    data: ['Chrome', 'Opera', 'Safari', 'Firefox', 'IE'],
                     orient: 'vertical',
                     x: 'left',
                     y: 75
@@ -673,7 +672,7 @@ $(function () {
                     orient: 'vertical',
                     x: 'left',
                     y: '40%',
-                    data: ['Chrome','Opera','Safari','Firefox','IE','','Android','Windows','OS X','BlackBerry','Others']
+                    data: ['Chrome', 'Opera', 'Safari', 'Firefox', 'IE', '', 'Android', 'Windows', 'OS X', 'BlackBerry', 'Others']
                 },
 
                 // Enable drag recalculate
@@ -759,7 +758,7 @@ $(function () {
                 legend: {
                     x: 'left',
                     orient: 'vertical',
-                    data: ['Group1','Group2', 'Group3', 'Group4']
+                    data: ['Group1', 'Group2', 'Group3', 'Group4']
                 },
 
                 // Add series
@@ -780,10 +779,10 @@ $(function () {
                             }
                         },
                         matrix: [
-                            [11975,  5871, 8916, 2868],
-                            [ 1951, 10048, 2060, 6171],
-                            [ 8010, 16145, 8090, 8045],
-                            [ 1013,   990,  940, 6907]
+                            [11975, 5871, 8916, 2868],
+                            [1951, 10048, 2060, 6171],
+                            [8010, 16145, 8090, 8045],
+                            [1013, 990, 940, 6907]
                         ]
                     }
                 ]
@@ -819,7 +818,7 @@ $(function () {
                 legend: {
                     x: 'left',
                     orient: 'vertical',
-                    data: ['Group1','Group2', 'Group3', 'Group4']
+                    data: ['Group1', 'Group2', 'Group3', 'Group4']
                 },
 
                 // Add series
@@ -843,10 +842,10 @@ $(function () {
                             }
                         },
                         matrix: [
-                            [11975,  5871, 8916, 2868],
-                            [ 1951, 10048, 2060, 6171],
-                            [ 8010, 16145, 8090, 8045],
-                            [ 1013,   990,  940, 6907]
+                            [11975, 5871, 8916, 2868],
+                            [1951, 10048, 2060, 6171],
+                            [8010, 16145, 8090, 8045],
+                            [1013, 990, 940, 6907]
                         ]
                     }
                 ]
@@ -1066,7 +1065,6 @@ $(function () {
             };
 
 
-
             // Apply options
             // ------------------------------
 
@@ -1083,12 +1081,11 @@ $(function () {
             chord_scale.setOption(chord_scale_options);
 
 
-
             // Resize charts
             // ------------------------------
 
             window.onresize = function () {
-                setTimeout(function (){
+                setTimeout(function () {
                     funnel_asc.resize();
                     funnel_desc.resize();
                     funnel_left.resize();

@@ -23,23 +23,28 @@
         <div class="panel-heading">
             <div class="panel-title">
                 {% if entry.debug %}
-                <span class="label bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">{{ _('debug') }}</span>
+                <span class="label bg-success"
+                      style="font-weight: 400;font-size: 9px;line-height: normal;">{{ _('debug') }}</span>
                 {% end %}
-                <span class="label" id="services-cards__entry__{{ entry.name }}_uptime" style="font-weight: 400;font-size: 10px;line-height: normal;color: gray;"></span>
+                <span class="label" id="services-cards__entry__{{ entry.name }}_uptime"
+                      style="font-weight: 400;font-size: 10px;line-height: normal;color: gray;"></span>
             </div>
             <div class="heading-elements">
                 <ul class="icons-list text-muted">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="update_service"><a href="javascript:void(0);"><i class="icon-download"></i> {{ _('Update') }}</a></li>
+                            <li class="update_service"><a href="javascript:void(0);"><i
+                                    class="icon-download"></i> {{ _('Update') }}</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="panel-body text-center">
-            <a href="{{ reverse_url('service:index', entry.name) }}" class="icon-object border-{{ entry.color }} text-{{ entry.color }} btn btn-flat">
+            <a href="{{ reverse_url('service:index', entry.name) }}"
+               class="icon-object border-{{ entry.color }} text-{{ entry.color }} btn btn-flat">
                 <i class="{{ entry.icon_class }}"></i>
             </a>
             <h5 class="text-semibold">{{ entry.title }}</h5>

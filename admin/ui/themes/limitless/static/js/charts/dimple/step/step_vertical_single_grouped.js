@@ -45,7 +45,7 @@ $(function () {
 
         // Vertical
         var y = myChart.addCategoryAxis("y", ["Owner", "Month"]);
-            y.addGroupOrderRule("Date");
+        y.addGroupOrderRule("Date");
 
 
         // Construct layout
@@ -59,7 +59,7 @@ $(function () {
         // Line space
         s.barGap = 0.05;
 
-        
+
         // Add styles
         // ------------------------------
 

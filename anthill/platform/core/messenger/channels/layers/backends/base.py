@@ -50,8 +50,8 @@ class BaseChannelLayer:
     channel_name_regex = re.compile(r"^[a-zA-Z\d\-_.]+(\![\d\w\-_.]*)?$")
     group_name_regex = re.compile(r"^[a-zA-Z\d\-_.]+$")
     invalid_name_error = (
-        "{} name must be a valid unicode string containing only ASCII " +
-        "alphanumerics, hyphens, underscores, or periods."
+            "{} name must be a valid unicode string containing only ASCII " +
+            "alphanumerics, hyphens, underscores, or periods."
     )
 
     def valid_channel_name(self, name, receive=False):

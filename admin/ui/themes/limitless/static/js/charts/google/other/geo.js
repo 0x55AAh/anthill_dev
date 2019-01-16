@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["geochart"]});
+google.load("visualization", "1", {packages: ["geochart"]});
 google.setOnLoadCallback(drawRegionsMap);
 
 

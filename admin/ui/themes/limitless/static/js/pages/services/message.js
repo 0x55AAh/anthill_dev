@@ -1,16 +1,16 @@
-$(function() {
+$(function () {
 
     var messenger = io('http://localhost:9609/messenger', {
         query: {
             _xsrf: Cookies.get('_xsrf')
         }
     });
-	var $messages = $('.chat-list');
+    var $messages = $('.chat-list');
 
-	var Guid = (function() {
+    var Guid = (function () {
         var Guid = {};
-        Guid.newGuid = function() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        Guid.newGuid = function () {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
@@ -18,9 +18,9 @@ $(function() {
         return Guid;
     }());
 
-	function updateMessagesAreaHeight() {
-	    $messages.attr('style', 'min-height: 0px');
-		var availableHeight = $(window).height() - $('.page-container').offset().top - $('.content-group').outerHeight();
+    function updateMessagesAreaHeight() {
+        $messages.attr('style', 'min-height: 0px');
+        var availableHeight = $(window).height() - $('.page-container').offset().top - $('.content-group').outerHeight();
         $messages.attr('style', 'min-height:' + availableHeight + 'px');
         // Scroll to bottom of the chat. Mainly for demo.
         $messages.scrollTop($messages[0].scrollHeight);
@@ -28,36 +28,36 @@ $(function() {
 
     updateMessagesAreaHeight();
 
-	// Nice scroll
+    // Nice scroll
     // ------------------------------
 
-	// Setup
-	function initScroll() {
-	    $messages.niceScroll({
-			cursoropacitymax: 0.7,
-	        mousescrollstep: 40,
+    // Setup
+    function initScroll() {
+        $messages.niceScroll({
+            cursoropacitymax: 0.7,
+            mousescrollstep: 40,
             scrollspeed: 10,
             cursorcolor: '#ccc',
             cursorborder: '',
             cursorwidth: 6,
             hidecursordelay: 100,
-	        autohidemode: true,
-	        horizrailenabled: false,
-	        preservenativescrolling: false,
-	        railpadding: {
-	        	right: 0.5,
-	        	top: 1.5,
-	        	bottom: -1.5
-	        }
-	    });
-	}
+            autohidemode: true,
+            horizrailenabled: false,
+            preservenativescrolling: false,
+            railpadding: {
+                right: 0.5,
+                top: 1.5,
+                bottom: -1.5
+            }
+        });
+    }
 
     // Initialize
     initScroll();
 
-	$(window).on('resize', function() {
-        setTimeout(function() {
-            if($(window).width() <= 768) {
+    $(window).on('resize', function () {
+        setTimeout(function () {
+            if ($(window).width() <= 768) {
                 $('body').addClass('sidebar-mobile-secondary');
                 $('.content-group').hide();
             }
@@ -68,23 +68,26 @@ $(function() {
         }, 100);
     }).resize();
 
-	$(window).on('resize', function() {
-        setTimeout(function() {
-            if($(window).width() > 768) {
+    $(window).on('resize', function () {
+        setTimeout(function () {
+            if ($(window).width() > 768) {
                 updateMessagesAreaHeight();
             }
         }, 100);
     });
 
-	// Keyboard typing listener
+    // Keyboard typing listener
     var typing_timer;
+
     function typing_started(group) {
         messenger.emit('typing_started', {group: group});
     }
+
     function typing_stopped(group) {
         typing_timer = 0;
         messenger.emit('typing_stopped', {group: group});
     }
+
     $("#message-form [name=text-message]").on("keyup keydown", function (event) {
         var current_group = 'test';
         if (typing_timer) {
@@ -92,7 +95,7 @@ $(function() {
         } else {
             typing_started(current_group);
         }
-        typing_timer = setTimeout(function() {
+        typing_timer = setTimeout(function () {
             typing_stopped(current_group);
         }, 3000);
     });
@@ -131,12 +134,12 @@ $(function() {
     });
 
     // Scroll messages
-    $messages.on("scroll", function(event) {
+    $messages.on("scroll", function (event) {
         // code here
     });
 
     // Select group
-    $(document).on("click", ".sidebar-category li.media", function(event) {
+    $(document).on("click", ".sidebar-category li.media", function (event) {
         if (!$(this).hasClass('active')) {
             // code here
         }

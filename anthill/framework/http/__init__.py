@@ -9,7 +9,6 @@ from anthill.framework.http.errors import (
     Http404
 )
 
-
 __all__ = [
     'HttpBadRequestError', 'HttpUnauthorizedError', 'HttpForbiddenError',
     'HttpNotFoundError', 'HttpNotAllowedError', 'HttpGoneError', 'HttpServerError',

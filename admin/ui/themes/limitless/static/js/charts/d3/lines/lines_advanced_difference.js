@@ -31,7 +31,6 @@ $(function () {
         var parseDate = d3.time.format("%Y%m%d").parse;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -42,7 +41,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -60,7 +58,6 @@ $(function () {
             .orient("left");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -72,8 +69,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -82,26 +78,33 @@ $(function () {
         // Line
         var line = d3.svg.area()
             .interpolate("basis")
-            .x(function(d) { return x(d.date); })
-            .y(function(d) { return y(d["New York"]); });
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y(function (d) {
+                return y(d["New York"]);
+            });
 
         // Area
         var area = d3.svg.area()
             .interpolate("basis")
-            .x(function(d) { return x(d.date); })
-            .y1(function(d) { return y(d["New York"]); });
-
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y1(function (d) {
+                return y(d["New York"]);
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/lines/lines_difference.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/lines/lines_difference.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
-                d["New York"]= +d["New York"];
+                d["New York"] = +d["New York"];
                 d["San Francisco"] = +d["San Francisco"];
             });
 
@@ -113,12 +116,18 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(d3.extent(data, function(d) { return d.date; }));
+            x.domain(d3.extent(data, function (d) {
+                return d.date;
+            }));
 
             // Vertical
             y.domain([
-                d3.min(data, function(d) { return Math.min(d["New York"], d["San Francisco"]); }),
-                d3.max(data, function(d) { return Math.max(d["New York"], d["San Francisco"]); })
+                d3.min(data, function (d) {
+                    return Math.min(d["New York"], d["San Francisco"]);
+                }),
+                d3.max(data, function (d) {
+                    return Math.max(d["New York"], d["San Francisco"]);
+                })
             ]);
 
 
@@ -130,26 +139,28 @@ $(function () {
             // ------------------------------
 
             svg.append("clipPath")
-              .attr("id", "clip-below")
-              .append("path")
+                .attr("id", "clip-below")
+                .append("path")
                 .attr("d", area.y0(height));
 
             svg.append("clipPath")
-              .attr("id", "clip-above")
-              .append("path")
+                .attr("id", "clip-above")
+                .append("path")
                 .attr("d", area.y0(0));
 
             svg.append("path")
-              .attr("class", "area mask-above")
-              .attr("clip-path", "url(#clip-above)")
-              .attr("fill", "#FF8A65")
-              .attr("d", area.y0(function(d) { return y(d["San Francisco"]); }));
+                .attr("class", "area mask-above")
+                .attr("clip-path", "url(#clip-above)")
+                .attr("fill", "#FF8A65")
+                .attr("d", area.y0(function (d) {
+                    return y(d["San Francisco"]);
+                }));
 
             svg.append("path")
-              .attr("class", "area mask-below")
-              .attr("clip-path", "url(#clip-below)")
-              .attr("fill", "#9CCC65")
-              .attr("d", area);
+                .attr("class", "area mask-below")
+                .attr("clip-path", "url(#clip-below)")
+                .attr("fill", "#9CCC65")
+                .attr("d", area);
 
 
             // Add line
@@ -157,7 +168,6 @@ $(function () {
                 .attr("class", "d3-line d3-line-medium")
                 .style("stroke", "#558B2F")
                 .attr("d", line);
-
 
 
             // Append axes
@@ -184,7 +194,6 @@ $(function () {
                 .style("font-size", 12)
                 .text("Temperature (ºF)");
         });
-
 
 
         // Resize chart
@@ -242,7 +251,9 @@ $(function () {
 
 
             // Top mask
-            svg.select('.mask-above').attr("d", area.y0(function(d) { return y(d["San Francisco"]); }))
+            svg.select('.mask-above').attr("d", area.y0(function (d) {
+                return y(d["San Francisco"]);
+            }))
 
             // Bottom mask
             svg.select('.mask-below').attr("d", area);

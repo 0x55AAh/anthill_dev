@@ -4,7 +4,6 @@ from functools import partial
 import dateutil.parser
 import logging
 
-
 logger = logging.getLogger('anthill.application')
 
 
@@ -87,6 +86,7 @@ class RemoteProfile:
     we need to get user profile info from remote service to use it locally.
     That's why the RemoteProfile need.
     """
+
     def __init__(self, user: RemoteUser, **kwargs):
         kwargs['payload'] = json_decode(kwargs.pop('payload', '{}'))
         self.__dict__.update(kwargs)

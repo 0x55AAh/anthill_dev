@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawHistogram);
 
 
@@ -78,14 +78,14 @@ function drawHistogram() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },
             minValue: 0
         },
         hAxis: {
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5'
             },
             minValue: 0

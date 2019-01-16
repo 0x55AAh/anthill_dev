@@ -36,7 +36,7 @@ $(function () {
             .attr("width", radius * 2)
             .attr("height", radius * 2)
             .append("g")
-                .attr("transform", "translate(" + radius + "," + radius + ")");
+            .attr("transform", "translate(" + radius + "," + radius + ")");
 
 
         // Construct chart layout
@@ -50,16 +50,18 @@ $(function () {
         // Pie
         var pie = d3.layout.pie()
             .sort(null)
-            .value(function(d) { return d.population; });
+            .value(function (d) {
+                return d.population;
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.csv("assets/demo_data/d3/pies/pies_basic.csv", function(error, data) {
+        d3.csv("assets/demo_data/d3/pies/pies_basic.csv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.population = +d.population;
             });
 
@@ -73,22 +75,28 @@ $(function () {
                 .data(pie(data))
                 .enter()
                 .append("g")
-                    .attr("class", "d3-arc");
+                .attr("class", "d3-arc");
 
             // Add arc path
             g.append("path")
                 .attr("d", arc)
                 .style("stroke", "#fff")
-                .style("fill", function(d) { return color(d.data.age); });
+                .style("fill", function (d) {
+                    return color(d.data.age);
+                });
 
             // Add text labels
             g.append("text")
-                .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+                .attr("transform", function (d) {
+                    return "translate(" + arc.centroid(d) + ")";
+                })
                 .attr("dy", ".35em")
                 .style("fill", "#fff")
                 .style("font-size", 12)
                 .style("text-anchor", "middle")
-                .text(function(d) { return d.data.age; });
+                .text(function (d) {
+                    return d.data.age;
+                });
         });
     }
 });

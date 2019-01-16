@@ -149,7 +149,6 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # }
 HTTPS = None
 
-
 ############
 # GRAPHENE #
 ############

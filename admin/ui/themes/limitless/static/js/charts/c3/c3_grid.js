@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------------------- */
 
 $(function () {
-    
+
 
     // Grid lines
     // ------------------------------
@@ -18,7 +18,7 @@ $(function () {
     // Generate chart
     var grid_lines = c3.generate({
         bindto: '#c3-grid-lines',
-        size: { height: 400 },
+        size: {height: 400},
         color: {
             pattern: ['#2196F3']
         },
@@ -38,14 +38,13 @@ $(function () {
     });
 
 
-
     // Optional X grid lines
     // ------------------------------
 
     // Generate chart
     var grid_lines_x = c3.generate({
         bindto: '#c3-grid-lines-x',
-        size: { height: 400 },
+        size: {height: 400},
         color: {
             pattern: ['#4CAF50']
         },
@@ -62,14 +61,13 @@ $(function () {
     });
 
 
-
     // Optional Y grid lines
     // ------------------------------
 
     // Generate chart
     var grid_lines_y = c3.generate({
         bindto: '#c3-grid-lines-y',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['sample', 30, 200, 100, 400, 150, 250],
@@ -95,14 +93,13 @@ $(function () {
     });
 
 
-
     // Rects on chart
     // ------------------------------
 
     // Generate chart
     var grid_region = c3.generate({
         bindto: '#c3-grid-region',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['data1', 30, 200, 100, 400, 150, 250, 400],
@@ -134,14 +131,13 @@ $(function () {
     });
 
 
-
     // Data regions
     // ------------------------------
 
     // Generate chart
     var grid_region_chart = c3.generate({
         bindto: '#c3-grid-chart-region',
-        size: { height: 400 },
+        size: {height: 400},
         color: {
             pattern: ['#009688', '#9C27B0']
         },
@@ -151,16 +147,15 @@ $(function () {
                 ['data2', 50, 20, 10, 40, 15, 25]
             ],
             regions: {
-                'data1': [{'start':1, 'end':2, 'style':'dashed'},{'start':3}], // currently 'dashed' style only
-                'data2': [{'end':3}]
+                'data1': [{'start': 1, 'end': 2, 'style': 'dashed'}, {'start': 3}], // currently 'dashed' style only
+                'data2': [{'end': 3}]
             }
         }
     });
 
 
-
     // Resize chart on sidebar width change
-    $(".sidebar-control").on('click', function() {
+    $(".sidebar-control").on('click', function () {
         grid_lines.resize();
         grid_lines_x.resize();
         grid_lines_y.resize();

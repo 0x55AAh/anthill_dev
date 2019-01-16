@@ -9,23 +9,23 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
-	// Initialize
-	function initialize() {
+    // Initialize
+    function initialize() {
 
-		// Options
-		var mapOptions = {
-			zoom: 12,
-			center: new google.maps.LatLng(48.858, 2.347),
-			disableDefaultUI: true
-		}
+        // Options
+        var mapOptions = {
+            zoom: 12,
+            center: new google.maps.LatLng(48.858, 2.347),
+            disableDefaultUI: true
+        }
 
-		// Apply options
-		var map = new google.maps.Map($('.map-ui-disabled')[0], mapOptions);
-	}
+        // Apply options
+        var map = new google.maps.Map($('.map-ui-disabled')[0], mapOptions);
+    }
 
-	// Load map
-	google.maps.event.addDomListener(window, 'load', initialize);
+    // Load map
+    google.maps.event.addDomListener(window, 'load', initialize);
 
 });

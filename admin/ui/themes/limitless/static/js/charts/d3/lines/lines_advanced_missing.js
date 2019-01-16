@@ -28,10 +28,9 @@ $(function () {
             height = height - margin.top - margin.bottom - 5;
 
         // Data set
-        var data = d3.range(60).map(function(i) {
-          return {x: i / 59, y: i % 5 ? (Math.sin(i / 3) + 2) / 4 : null};
+        var data = d3.range(60).map(function (i) {
+            return {x: i / 59, y: i % 5 ? (Math.sin(i / 3) + 2) / 4 : null};
         });
-
 
 
         // Construct scales
@@ -44,7 +43,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -65,10 +63,9 @@ $(function () {
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d) {
+            .html(function (d) {
                 return d.x;
             });
-
 
 
         // Create chart
@@ -83,9 +80,8 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                .call(tip);
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .call(tip);
 
 
         // Construct chart layout
@@ -93,9 +89,15 @@ $(function () {
 
         // Line
         var line = d3.svg.line()
-            .defined(function(d) { return d.y != null; })
-            .x(function(d) { return x(d.x); })
-            .y(function(d) { return y(d.y); });
+            .defined(function (d) {
+                return d.y != null;
+            })
+            .x(function (d) {
+                return x(d.x);
+            })
+            .y(function (d) {
+                return y(d.y);
+            });
 
         // Area
         var area = d3.svg.area()
@@ -142,19 +144,20 @@ $(function () {
 
         // Add dots
         svg.selectAll(".d3-dot")
-            .data(data.filter(function(d) { return d.y; }))
+            .data(data.filter(function (d) {
+                return d.y;
+            }))
             .enter()
             .append("circle")
-                .attr("class", "d3-dot")
-                .attr("cx", line.x())
-                .attr("cy", line.y())
-                .attr("r", 3)
-                .style("fill", "#fff")
-                .style("stroke", "#43A047")
-                .style("stroke-width", 1.5)
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide);
-
+            .attr("class", "d3-dot")
+            .attr("cx", line.x())
+            .attr("cy", line.y())
+            .attr("r", 3)
+            .style("fill", "#fff")
+            .style("stroke", "#43A047")
+            .style("stroke-width", 1.5)
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
 
         // Resize chart

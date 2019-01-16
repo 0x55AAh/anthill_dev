@@ -9,7 +9,6 @@ import inspect
 import hashlib
 import re
 
-
 __all__ = [
     'cached', 'cached_method', 'request_handler_cache_key',
     'patch_vary_headers'
@@ -52,12 +51,12 @@ def _cached(timeout, key, cache=cache, key_prefix=None, handler_method=False, ht
             return wrapper_async
         else:
             return wrapper
+
     return decorator
 
 
 cached = partial(_cached, handler_method=False, http_method=None)
 cached_method = partial(_cached, handler_method=True, http_method='GET')
-
 
 _CC_DELIMITER_RE = re.compile(r'\s*,\s*')
 

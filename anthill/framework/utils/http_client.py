@@ -14,11 +14,11 @@ async def multipart_producer(boundary, filenames, write):
         filename_bytes = filename.encode()
         mtype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
         buf = (
-            (b'--%s\r\n' % boundary_bytes) +
-            (b'Content-Disposition: form-data; name="%s"; filename="%s"\r\n' %
-             (filename_bytes, filename_bytes)) +
-            (b'Content-Type: %s\r\n' % mtype.encode()) +
-            b'\r\n'
+                (b'--%s\r\n' % boundary_bytes) +
+                (b'Content-Disposition: form-data; name="%s"; filename="%s"\r\n' %
+                 (filename_bytes, filename_bytes)) +
+                (b'Content-Type: %s\r\n' % mtype.encode()) +
+                b'\r\n'
         )
         await write(buf)
         with open(filename, 'rb') as f:

@@ -36,7 +36,7 @@ $(function () {
             .attr("width", radius * 2)
             .attr("height", radius * 2)
             .append("g")
-                .attr("transform", "translate(" + radius + "," + radius + ")");
+            .attr("transform", "translate(" + radius + "," + radius + ")");
 
 
         // Construct chart layout
@@ -66,22 +66,22 @@ $(function () {
             .attr("d", arc);
 
         // Start a transition to a new random angle
-        setInterval(function() {
-          foreground.transition()
-              .duration(750)
-              .call(arcTween, Math.random() * τ);
+        setInterval(function () {
+            foreground.transition()
+                .duration(750)
+                .call(arcTween, Math.random() * τ);
         }, 1500);
 
         // Creates a tween on the specified transition's "d" attribute, transitioning
         // any selected arcs from their current angle to the specified new angle.
         function arcTween(transition, newAngle) {
-            transition.attrTween("d", function(d) {
+            transition.attrTween("d", function (d) {
 
                 // Interpolate between the two angles
                 var interpolate = d3.interpolate(d.endAngle, newAngle);
 
                 // Return value of the attrTween
-                return function(t) {
+                return function (t) {
 
                     // Calculate the current arc angle based on the transition time, t
                     d.endAngle = interpolate(t);

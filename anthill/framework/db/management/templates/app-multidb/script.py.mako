@@ -1,5 +1,5 @@
 <%!
-import re
+    import re
 
 %>"""${message}
 
@@ -20,11 +20,11 @@ depends_on = ${repr(depends_on)}
 
 
 def upgrade(engine_name):
-    globals()["upgrade_%s" % engine_name]()
+globals()["upgrade_%s" % engine_name]()
 
 
 def downgrade(engine_name):
-    globals()["downgrade_%s" % engine_name]()
+globals()["downgrade_%s" % engine_name]()
 
 <%
     from anthill.framework.conf import settings
@@ -36,11 +36,11 @@ def downgrade(engine_name):
 
 % for db_name in db_names:
 
-def upgrade_${db_name}():
+    def upgrade_${db_name}():
     ${context.get("%s_upgrades" % db_name, "pass")}
 
 
-def downgrade_${db_name}():
+    def downgrade_${db_name}():
     ${context.get("%s_downgrades" % db_name, "pass")}
 
 % endfor

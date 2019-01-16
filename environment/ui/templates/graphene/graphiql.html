@@ -15,11 +15,12 @@
             width: 100%;
             overflow: hidden;
         }
+
         #graphiql {
             height: 100vh;
         }
     </style>
-    <link href="//cdn.jsdelivr.net/npm/graphiql@0.11.11/graphiql.css" rel="stylesheet" />
+    <link href="//cdn.jsdelivr.net/npm/graphiql@0.11.11/graphiql.css" rel="stylesheet"/>
     <script src="//cdn.jsdelivr.net/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
     <script src="//cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
     <script src="//cdn.jsdelivr.net/react/15.4.2/react.min.js"></script>
@@ -44,6 +45,7 @@
                 decodeURIComponent(entry.slice(eq + 1));
         }
     });
+
     // Produce a Location query string from a parameter object.
     function locationQuery(params) {
         return '?' + Object.keys(params).map(function (key) {
@@ -51,6 +53,7 @@
                 encodeURIComponent(params[key]);
         }).join('&');
     }
+
     // Derive a fetch URL from the current URL, sans the GraphQL parameters.
     var graphqlParamNames = {
         query: true,
@@ -80,17 +83,21 @@
         parameters.query = newQuery;
         updateURL();
     }
+
     function onEditVariables(newVariables) {
         parameters.variables = newVariables;
         updateURL();
     }
+
     function onEditOperationName(newOperationName) {
         parameters.operationName = newOperationName;
         updateURL();
     }
+
     function updateURL() {
         history.replaceState(null, null, locationQuery(parameters));
     }
+
     function graphQLFetcher(graphQLParams) {
         var headers = {
             'Accept': 'application/json',
@@ -114,6 +121,7 @@
             }
         });
     }
+
     // Render <GraphiQL /> into the body.
     ReactDOM.render(
         React.createElement(GraphiQL, {

@@ -9,128 +9,125 @@
 *
 * ---------------------------------------------------------------------------- */
 
-
 // Basic styles
 // -------------------------
 
 .pager {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 0;
 
-    // Pager nav item
-    li {
+  // Pager nav item
+  li {
 
-        // Links
-        > a,
-        > span {
-            padding: @padding-base-vertical @padding-base-horizontal;
-            color: @gray-dark;
-            font-size: @font-size-base;
-        }
-
-        // Hover/focus states
-        > a:hover,
-        > a:focus {
-            border-color: @pager-hover-bg;
-            color: #fff;
-        }
+    // Links
+    > a,
+    > span {
+      padding: @padding-base-vertical @padding-base-horizontal;
+      color: @gray-dark;
+      font-size: @font-size-base;
     }
 
-    // Add space between items
-    li + li {
-        margin-left: @content-padding-small;
+    // Hover/focus states
+    > a:hover,
+    > a:focus {
+      border-color: @pager-hover-bg;
+      color: #fff;
     }
+  }
 
-    // Disabled state
-    .disabled {
-        > a,
-        > a:hover,
-        > a:focus,
-        > span {
-            border-color: @pager-border;
-        }
-    }
+  // Add space between items
+  li + li {
+    margin-left: @content-padding-small;
+  }
 
-    // Text alignment
-    &.text-left {
-        text-align: left;
+  // Disabled state
+  .disabled {
+    > a,
+    > a:hover,
+    > a:focus,
+    > span {
+      border-color: @pager-border;
     }
-    &.text-right {
-        text-align: right;
-    }
+  }
+
+  // Text alignment
+  &.text-left {
+    text-align: left;
+  }
+  &.text-right {
+    text-align: right;
+  }
 }
-
 
 // Optional sizing
 // -------------------------
 
 // Large
 .pager-lg {
-    li > a,
-    li > span {
-        padding: @padding-large-vertical @padding-large-horizontal;
-        font-size: @font-size-large;
-        line-height: @line-height-large;
-    }
+  li > a,
+  li > span {
+    padding: @padding-large-vertical @padding-large-horizontal;
+    font-size: @font-size-large;
+    line-height: @line-height-large;
+  }
 }
 
 // Small
 .pager-sm {
-    li > a,
-    li > span {
-        padding: @padding-small-vertical @padding-small-horizontal;
-        font-size: @font-size-small;
-        line-height: @line-height-small;
-    }
+  li > a,
+  li > span {
+    padding: @padding-small-vertical @padding-small-horizontal;
+    font-size: @font-size-small;
+    line-height: @line-height-small;
+  }
 }
 
 // Mini
 .pager-xs {
-    li > a,
-    li > span {
-        padding: @padding-xs-vertical @padding-xs-horizontal;
-        font-size: @font-size-small;
-        line-height: @line-height-small;
-    }
+  li > a,
+  li > span {
+    padding: @padding-xs-vertical @padding-xs-horizontal;
+    font-size: @font-size-small;
+    line-height: @line-height-small;
+  }
 }
-
 
 // Optional styling
 // -------------------------
 
 // Rounded pager
 .pager-rounded {
-    li > a,
-    li > span {
-        border-radius: 100px;
-    }
+  li > a,
+  li > span {
+    border-radius: 100px;
+  }
 }
 
 // Linked pager
 .pager-linked {
-    li {
-        > a,
-        > span {
-            border-color: transparent;
-            color: @link-color;
-        }
-
-        // Hover state
-        > a:hover,
-        > span:hover {
-            background-color: @brand-primary;
-            color: #fff;
-        }
+  li {
+    > a,
+    > span {
+      border-color: transparent;
+      color: @link-color;
     }
 
-    // Disabled state
-    .disabled {
-        > a,
-        > a:hover,
-        > a:focus,
-        > span {
-            border-color: transparent;
-        }
+    // Hover state
+    > a:hover,
+    > span:hover {
+      background-color: @brand-primary;
+      color: #fff;
     }
+  }
+
+  // Disabled state
+  .disabled {
+    > a,
+    > a:hover,
+    > a:focus,
+    > span {
+      border-color: transparent;
+    }
+  }
 }

@@ -28,7 +28,6 @@ $(function () {
             height = height - margin.top - margin.bottom - 5;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -42,7 +41,6 @@ $(function () {
 
         // Color
         var color = d3.scale.category20c();
-
 
 
         // Create axes
@@ -60,7 +58,6 @@ $(function () {
             .ticks(10, "%");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -72,8 +69,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Create tooltip
@@ -83,7 +79,7 @@ $(function () {
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d) {
+            .html(function (d) {
                 return d.frequency;
             });
 
@@ -91,14 +87,13 @@ $(function () {
         svg.call(tip);
 
 
-
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/bars/bars_tooltip.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/bars/bars_tooltip.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.frequency = +d.frequency;
             });
 
@@ -107,10 +102,14 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(data.map(function(d) { return d.letter; }));
+            x.domain(data.map(function (d) {
+                return d.letter;
+            }));
 
             // Vertical
-            y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+            y.domain([0, d3.max(data, function (d) {
+                return d.frequency;
+            })]);
 
 
             //
@@ -147,16 +146,23 @@ $(function () {
                 .data(data)
                 .enter()
                 .append("rect")
-                    .attr("class", "d3-bar")
-                    .style("fill", function(d) { return color(d.letter); })
-                    .attr("x", function(d) { return x(d.letter); })
-                    .attr("width", x.rangeBand())
-                    .attr("y", function(d) { return y(d.frequency); })
-                    .attr("height", function(d) { return height - y(d.frequency); })
-                    .on('mouseover', tip.attr('class', 'tooltip-inner in').show)
-                    .on('mouseout', tip.hide);
+                .attr("class", "d3-bar")
+                .style("fill", function (d) {
+                    return color(d.letter);
+                })
+                .attr("x", function (d) {
+                    return x(d.letter);
+                })
+                .attr("width", x.rangeBand())
+                .attr("y", function (d) {
+                    return y(d.frequency);
+                })
+                .attr("height", function (d) {
+                    return height - y(d.frequency);
+                })
+                .on('mouseover', tip.attr('class', 'tooltip-inner in').show)
+                .on('mouseout', tip.hide);
         });
-
 
 
         // Resize chart
@@ -203,7 +209,9 @@ $(function () {
             // -------------------------
 
             // Bars
-            svg.selectAll('.d3-bar').attr("x", function(d) { return x(d.letter); }).attr("width", x.rangeBand());
+            svg.selectAll('.d3-bar').attr("x", function (d) {
+                return x(d.letter);
+            }).attr("width", x.rangeBand());
         }
     }
 });

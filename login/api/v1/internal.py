@@ -16,14 +16,12 @@ from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.framework.utils.urls import reverse, build_absolute_uri
 from typing import Optional
 
-
 User = get_user_model()
-
 
 PAGINATED_BY = 50
 
 
-async def _get_user_data(user: User, include_profile: bool=False, **options) -> Optional[dict]:
+async def _get_user_data(user: User, include_profile: bool = False, **options) -> Optional[dict]:
     if user is not None:
         data = user.dump().data
         if include_profile:
@@ -31,13 +29,13 @@ async def _get_user_data(user: User, include_profile: bool=False, **options) -> 
         return data
 
 
-async def _get_user(user_id: str, include_profile: bool=False, **options) -> dict:
+async def _get_user(user_id: str, include_profile: bool = False, **options) -> dict:
     user = await thread_pool_exec(User.query.get, user_id)
     return await _get_user_data(user, include_profile)
 
 
-async def _get_users(request=None, include_profiles: bool=False,
-                     pagination: int=None, page: int=None, filter_by: dict=None, **options) -> dict:
+async def _get_users(request=None, include_profiles: bool = False,
+                     pagination: int = None, page: int = None, filter_by: dict = None, **options) -> dict:
     filter_by = filter_by or {}
     pagination_kwargs = {
         'page': page,
@@ -60,7 +58,7 @@ async def _get_users(request=None, include_profiles: bool=False,
 async def get_user(
         api: InternalAPI,
         user_id: str,
-        include_profile: bool=False,
+        include_profile: bool = False,
         **options) -> dict:
     return await _get_user(user_id, include_profile)
 
@@ -69,10 +67,10 @@ async def get_user(
 async def get_users(
         api: InternalAPI,
         request=None,
-        include_profiles: bool=False,
-        pagination: int=None,
-        page: int=None,
-        filter_by: dict=None,
+        include_profiles: bool = False,
+        pagination: int = None,
+        page: int = None,
+        filter_by: dict = None,
         **options) -> dict:
     return await _get_users(request, include_profiles, pagination, page, filter_by)
 

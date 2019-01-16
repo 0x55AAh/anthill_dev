@@ -27,14 +27,14 @@ class ChannelLayer(BaseChannelLayer):
     queue_get_timeout = 10
 
     def __init__(
-        self,
-        hosts=None,
-        prefix="anthill",
-        expiry=60,
-        group_expiry=86400,
-        capacity=100,
-        channel_capacity=None,
-        symmetric_encryption_keys=None,
+            self,
+            hosts=None,
+            prefix="anthill",
+            expiry=60,
+            group_expiry=86400,
+            capacity=100,
+            channel_capacity=None,
+            symmetric_encryption_keys=None,
     ):
         # Store basic information
         self.expiry = expiry

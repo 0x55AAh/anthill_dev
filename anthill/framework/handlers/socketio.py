@@ -6,9 +6,7 @@ from anthill.framework.handlers.base import (
 import socketio
 import logging
 
-
 __all__ = ['BaseSocketIOHandler', 'SocketIOHandler', 'socketio_server', 'socketio_client']
-
 
 logger = logging.getLogger('anthill.application')
 

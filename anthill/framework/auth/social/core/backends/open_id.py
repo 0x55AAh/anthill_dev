@@ -11,9 +11,8 @@ from ..utils import url_add_parameters, cache
 from .base import BaseAuth
 from .oauth import BaseOAuth2
 from ..exceptions import AuthException, AuthFailed, AuthCanceled, \
-                         AuthUnknownError, AuthMissingParameter, \
-                         AuthTokenError
-
+    AuthUnknownError, AuthMissingParameter, \
+    AuthTokenError
 
 # OpenID configuration
 OLD_AX_ATTRS = [
@@ -72,7 +71,7 @@ class OpenIdAuth(BaseAuth):
             resp = sreg.SRegResponse.fromSuccessResponse(response)
             if resp:
                 values.update((alias, resp.get(name) or '')
-                                    for name, alias in sreg_names)
+                              for name, alias in sreg_names)
 
         # Use Attribute Exchange attributes if provided
         if ax_names:
@@ -245,7 +244,7 @@ class OpenIdAuth(BaseAuth):
         """Return openid request"""
         try:
             return self.consumer().begin(url_add_parameters(self.openid_url(),
-                                         params))
+                                                            params))
         except DiscoveryFailure as err:
             raise AuthException(self, 'OpenID discovery error: {0}'.format(
                 err

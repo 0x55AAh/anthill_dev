@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", '1.1', {packages:['corechart']});
+google.load("visualization", '1.1', {packages: ['corechart']});
 google.setOnLoadCallback(drawChart);
 
 

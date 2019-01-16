@@ -28,7 +28,6 @@ $(function () {
             height = height - margin.top - margin.bottom - 5;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -42,7 +41,6 @@ $(function () {
 
         // Color
         var color = d3.scale.category20c();
-
 
 
         // Create axes
@@ -60,7 +58,6 @@ $(function () {
             .ticks(10, "%");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -72,17 +69,16 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/bars/bars_basic.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/bars/bars_basic.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.frequency = +d.frequency;
             });
 
@@ -91,10 +87,14 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(data.map(function(d) { return d.letter; }));
+            x.domain(data.map(function (d) {
+                return d.letter;
+            }));
 
             // Vertical
-            y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+            y.domain([0, d3.max(data, function (d) {
+                return d.frequency;
+            })]);
 
 
             //
@@ -131,14 +131,21 @@ $(function () {
                 .data(data)
                 .enter()
                 .append("rect")
-                    .attr("class", "d3-bar")
-                    .attr("x", function(d) { return x(d.letter); })
-                    .attr("width", x.rangeBand())
-                    .attr("y", function(d) { return y(d.frequency); })
-                    .attr("height", function(d) { return height - y(d.frequency); })
-                    .style("fill", function(d) { return color(d.letter); });
+                .attr("class", "d3-bar")
+                .attr("x", function (d) {
+                    return x(d.letter);
+                })
+                .attr("width", x.rangeBand())
+                .attr("y", function (d) {
+                    return y(d.frequency);
+                })
+                .attr("height", function (d) {
+                    return height - y(d.frequency);
+                })
+                .style("fill", function (d) {
+                    return color(d.letter);
+                });
         });
-
 
 
         // Resize chart
@@ -185,7 +192,9 @@ $(function () {
             // -------------------------
 
             // Line path
-            svg.selectAll('.d3-bar').attr("x", function(d) { return x(d.letter); }).attr("width", x.rangeBand());
+            svg.selectAll('.d3-bar').attr("x", function (d) {
+                return x(d.letter);
+            }).attr("width", x.rangeBand());
         }
     }
 });

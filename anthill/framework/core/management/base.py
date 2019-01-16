@@ -8,6 +8,7 @@ class OutputWrapper(TextIOBase):
     """
     Wrapper around stdout/stderr
     """
+
     @property
     def style_func(self):
         return self._style_func
@@ -222,7 +223,7 @@ class Command:
             else:
                 parser.add_argument(*option.args, **option.kwargs)
 
-        parser.set_defaults(func_stack=func_stack+(self,))
+        parser.set_defaults(func_stack=func_stack + (self,))
 
         self.parser = parser
         self.parent = parent

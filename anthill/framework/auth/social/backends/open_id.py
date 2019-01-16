@@ -16,7 +16,6 @@ from ..core.exceptions import (
 )
 from anthill.framework.utils.asynchronous import as_future
 
-
 # OpenID configuration
 OLD_AX_ATTRS = [
     ('http://schema.openid.net/contact/email', 'old_email'),
@@ -163,7 +162,7 @@ class OpenIdAuth(BaseAuth):
     def trust_root(self):
         """Return trust-root option."""
         return self.setting('OPENID_TRUST_ROOT') or \
-            self.strategy.absolute_uri('/')
+               self.strategy.absolute_uri('/')
 
     async def continue_pipeline(self, partial):
         """Continue previous halted pipeline."""
@@ -246,7 +245,7 @@ class OpenIdAuth(BaseAuth):
         """Return openid request."""
         try:
             return self.consumer().begin(url_add_parameters(self.openid_url(),
-                                         params))
+                                                            params))
         except DiscoveryFailure as err:
             raise AuthException(self, 'OpenID discovery error: {0}'.format(
                 err

@@ -8,7 +8,6 @@ from celery.utils.nodenames import anon_nodename
 from celery.worker.consumer import Consumer
 from typing import Iterable, Any, Union
 
-
 worker_starting = Signal(
     name='worker_starting',
     providing_args={},
@@ -53,12 +52,12 @@ def ping() -> str:
 
 @contextmanager
 def start_worker(app: Celery,
-                 concurrency: int=None,
-                 pool: str=None,
-                 loglevel: Union[str, int]=None,
-                 logfile: str=None,
-                 perform_ping_check: bool=True,
-                 ping_task_timeout: float=10.0,
+                 concurrency: int = None,
+                 pool: str = None,
+                 loglevel: Union[str, int] = None,
+                 logfile: str = None,
+                 perform_ping_check: bool = True,
+                 ping_task_timeout: float = 10.0,
                  **kwargs: Any) -> Iterable:
     """Start embedded worker.
 
@@ -83,11 +82,11 @@ def start_worker(app: Celery,
 
 @contextmanager
 def _start_worker_thread(app: Celery,
-                         concurrency: int=None,
-                         pool: str=None,
-                         loglevel: Union[str, int]=None,
-                         logfile: str=None,
-                         work_controller: Any=WorkController,
+                         concurrency: int = None,
+                         pool: str = None,
+                         loglevel: Union[str, int] = None,
+                         logfile: str = None,
+                         work_controller: Any = WorkController,
                          **kwargs: Any) -> Iterable:
     """Start Celery worker in a thread.
 
@@ -130,10 +129,10 @@ def _start_worker_thread(app: Celery,
 
 @contextmanager
 def _start_worker_process(app: Celery,
-                          concurrency: int=1,
-                          pool: str='solo',
-                          loglevel: Union[int, str]='info',
-                          logfile: str=None,
+                          concurrency: int = 1,
+                          pool: str = 'solo',
+                          loglevel: Union[int, str] = 'info',
+                          logfile: str = None,
                           **kwargs: Any) -> Iterable:
     """Start worker in separate process.
 

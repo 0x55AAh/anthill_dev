@@ -33,7 +33,7 @@ var ui_theme_dir = 'themes/limitless/';
 
 
 // Lint task
-gulp.task('lint', function() {
+gulp.task('lint', function () {
     return gulp
         .src(ui_theme_dir + 'static/js/core/app.js')                 // lint core JS file. Or specify another path
         .pipe(jshint())
@@ -42,29 +42,29 @@ gulp.task('lint', function() {
 
 
 // Browserify task
-gulp.task('browserify', function() {
-    var browserified = through2.obj(function (file, enc, next){
-            browserify(file.path)
-                .bundle(function(err, res){
-                    file.contents = res;
-                    next(null, file);
-                });
-        });
-  return gulp.src([
-      ui_theme_dir + 'static/js/plugins/extensions/reconnecting-websocket.js',
-      ui_theme_dir + 'static/js/plugins/extensions/kurento-jsonrpc.js'
-  ])
-  .pipe(browserified)
-  .pipe(rename({
-        suffix: ".min"
-  }))
-  .pipe(uglify())
-  .pipe(gulp.dest(ui_theme_dir + 'static/js/plugins/extensions'));
+gulp.task('browserify', function () {
+    var browserified = through2.obj(function (file, enc, next) {
+        browserify(file.path)
+            .bundle(function (err, res) {
+                file.contents = res;
+                next(null, file);
+            });
+    });
+    return gulp.src([
+        ui_theme_dir + 'static/js/plugins/extensions/reconnecting-websocket.js',
+        ui_theme_dir + 'static/js/plugins/extensions/kurento-jsonrpc.js'
+    ])
+        .pipe(browserified)
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest(ui_theme_dir + 'static/js/plugins/extensions'));
 });
 
 
 // Compile less files of a full version
-gulp.task('less_full', function() {
+gulp.task('less_full', function () {
     return gulp
         .src(ui_theme_dir + 'static/less/_main_full/*.less')         // locate /less/ folder root to grab 4 main files
         .pipe(less())                                 // compile
@@ -94,7 +94,7 @@ gulp.task('less_full', function() {
 
 
 // Minify template's core JS file
-gulp.task('minify_core', function() {
+gulp.task('minify_core', function () {
     return gulp
         .src(ui_theme_dir + 'static/js/core/app.js')                 // path to app.js file
         .pipe(uglify())                               // compress JS
@@ -106,12 +106,12 @@ gulp.task('minify_core', function() {
 
 
 // Watch files for changes
-gulp.task('watch', function() {
+gulp.task('watch', function () {
     gulp.watch(ui_theme_dir + 'static/js/core/app.js', [             // listen for changes in app.js file and automatically compress
         'lint',                                       // lint
         //'concatenate',                              // concatenate & minify JS files (uncomment if in use)
         'minify_core'                                 // compress app.js
-    ]); 
+    ]);
     gulp.watch(ui_theme_dir + 'static/less/**/*.less', ['less_full']);    // listen for changes in all LESS files and automatically re-compile
 });
 

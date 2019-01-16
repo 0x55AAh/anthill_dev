@@ -34,6 +34,7 @@ def wrap(text, width):
     Don't wrap long words, thus the output text may have lines longer than
     ``width``.
     """
+
     def _generator():
         for line in text.splitlines(True):  # True keeps trailing linebreaks
             max_width = min((line.endswith('\n') and width + 1 or width), width)
@@ -50,6 +51,7 @@ def wrap(text, width):
                 max_width = min((line.endswith('\n') and width + 1 or width), width)
             if line:
                 yield line
+
     return ''.join(_generator())
 
 

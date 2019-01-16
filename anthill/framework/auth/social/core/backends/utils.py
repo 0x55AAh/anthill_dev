@@ -4,7 +4,6 @@ from .base import BaseAuth
 from ..exceptions import MissingBackend
 from ..utils import module_member, user_is_authenticated
 
-
 # Cache for discovered backends.
 BACKENDSCACHE = OrderedDict()
 

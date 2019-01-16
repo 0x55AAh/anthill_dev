@@ -1,7 +1,6 @@
 from anthill.framework.auth import get_user_model
 from anthill.framework.core.exceptions import ObjectDoesNotExist
 
-
 UserModel = get_user_model()
 
 

@@ -21,6 +21,7 @@ def _update_method_wrapper(_wrapper, decorator):
     @decorator
     def dummy(*args, **kwargs):
         pass
+
     update_wrapper(_wrapper, dummy)
 
 
@@ -57,6 +58,7 @@ def method_decorator(decorator, name=''):
     """
     Convert a function decorator into a method decorator
     """
+
     # 'obj' can be a class or a function. If 'obj' is a function at the time it
     # is passed to _dec,  it will eventually be a method of the class it is
     # defined on. If 'obj' is a class, the 'name' is required to be the name
@@ -192,6 +194,7 @@ def auth_generic_route(uri, template, handler):
     :param: handler: a subclass of tornado.web.RequestHandler that provides all
             the necessary methods for resolving current_user
     """
+
     @route(uri, name=uri)
     class AuthHandler(handler):
         _template = template
@@ -208,6 +211,7 @@ def authenticated(methods=None):
     Extension for tornado.web.authenticated decorator.
     :param methods: http method names list for tornado.web.authenticated decorator to apply
     """
+
     def decorator(wrapped):
         if issubclass(wrapped, RequestHandler):
             supported_methods = RequestHandler.SUPPORTED_METHODS
@@ -217,14 +221,14 @@ def authenticated(methods=None):
             return wrapped
         else:
             _authenticated(wrapped)
+
     return decorator
 
 
 def retry(max_retries=3, delay=3, on_exception=None, on_finish=None,
           raise_exception=False, exception_types=None):
-
-    exception_types = exception_types or (Exception, )
-    if not isinstance(exception_types, (tuple, )):
+    exception_types = exception_types or (Exception,)
+    if not isinstance(exception_types, (tuple,)):
         raise ValueError(
             '`exception_types` must be a tuple, %s passed.' % type(exception_types))
 

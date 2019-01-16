@@ -51,7 +51,6 @@ CONTEXT_PROCESSORS = [
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/10"
 CACHES["default"]["KEY_PREFIX"] = "admin.anthill"
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -151,7 +150,6 @@ LOGGING = {
 
 GEOIP_PATH = os.path.join(BASE_DIR, '../')
 
-
 #########
 # HTTPS #
 #########
@@ -162,9 +160,7 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # }
 HTTPS = None
 
-
 PUBLIC_API_URL = '/api/'
-
 
 ############
 # GRAPHENE #
@@ -174,6 +170,5 @@ GRAPHENE = {
     'SCHEMA': 'admin.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
-
 
 LOGIN_REDIRECT_URL = 'index'

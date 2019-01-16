@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // This example creates a simple polygon representing the Bermuda Triangle.
     // Note that the code specifies only three LatLng coordinates for the

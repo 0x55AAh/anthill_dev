@@ -145,13 +145,11 @@ LOGGING = {
     }
 }
 
-
 #########
 # GEOIP #
 #########
 
 GEOIP_PATH = os.path.join(BASE_DIR, '../')
-
 
 #########
 # HTTPS #
@@ -162,7 +160,6 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 #     'crt_file': os.path.join(BASE_DIR, '../server.crt'),
 # }
 HTTPS = None
-
 
 ############
 # GRAPHENE #

@@ -6,13 +6,13 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     var logo =
-        "    _          _   _     _ _ _ \n"    +
-        "   / \\   _ __ | |_| |__ (_) | |\n"   +
+        "    _          _   _     _ _ _ \n" +
+        "   / \\   _ __ | |_| |__ (_) | |\n" +
         "  / _ \\ | '_ \\| __| '_ \\| | | |\n" +
-        " / ___ \\| | | | |_| | | | | | |\n"   +
+        " / ___ \\| | | | |_| | | | | | |\n" +
         "/_/   \\_\\_| |_|\\__|_| |_|_|_|_|";
 
     var config = {
@@ -21,10 +21,14 @@ $(function() {
         ws: {
             uri: ws_url('/debug-session/'),
             useSockJS: false,
-            onconnected: function() {},
-            ondisconnect: function() {},
-            onreconnecting: function() {},
-            onreconnected: function() {}
+            onconnected: function () {
+            },
+            ondisconnect: function () {
+            },
+            onreconnecting: function () {
+            },
+            onreconnected: function () {
+            }
         },
         rpc: {
             requestTimeout: 15000
@@ -41,12 +45,12 @@ $(function() {
         }
     }
 
-    $('.console').terminal(function(raw_command, term) {
+    $('.console').terminal(function (raw_command, term) {
         var parsed_command = parse_command(raw_command);
         var command = parsed_command.command,
             params = parsed_command.params;
         if (command !== '') {
-            client.send(command, params, function(error, response) {
+            client.send(command, params, function (error, response) {
                 if (error) {
                     term.echo(error.message);
                 } else if (response) {

@@ -32,11 +32,10 @@ $(function () {
             n = Math.round(n);
             var result = n;
             if (Math.abs(n) > 1000) {
-                result = Math.round(n/1000) + 'K';
+                result = Math.round(n / 1000) + 'K';
             }
             return '$' + result;
         }
-
 
 
         // Construct scales
@@ -51,7 +50,6 @@ $(function () {
             .range([height, 0]);
 
 
-
         // Create axes
         // ------------------------------
 
@@ -64,8 +62,9 @@ $(function () {
         var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
-            .tickFormat(function(d) { return dollarFormatter(d); });
-
+            .tickFormat(function (d) {
+                return dollarFormatter(d);
+            });
 
 
         // Create chart
@@ -78,18 +77,17 @@ $(function () {
         var svg = container
             .attr('width', width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Load data
         // ------------------------------
 
-        d3.csv("assets/demo_data/d3/other/waterfall.csv", function(error, data) {
+        d3.csv("assets/demo_data/d3/other/waterfall.csv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.value = +d.value;
             });
 
@@ -99,7 +97,7 @@ $(function () {
                 data[i].start = cumulative;
                 cumulative += data[i].value;
                 data[i].end = cumulative;
-                data[i].class = ( data[i].value >= 0 ) ? 'positive' : 'negative'
+                data[i].class = (data[i].value >= 0) ? 'positive' : 'negative'
             }
             data.push({
                 name: 'Total',
@@ -113,11 +111,14 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(data.map(function(d) { return d.name; }));
+            x.domain(data.map(function (d) {
+                return d.name;
+            }));
 
             // Vertical
-            y.domain([0, d3.max(data, function(d) { return d.end; })]);
-
+            y.domain([0, d3.max(data, function (d) {
+                return d.end;
+            })]);
 
 
             //
@@ -132,13 +133,13 @@ $(function () {
                 .attr("class", "d3-axis d3-axis-horizontal d3-axis-strong")
                 .attr("transform", "translate(0," + height + ")")
                 .call(xAxis)
-                .selectAll("text")  
-                    .style("text-anchor", "end")
-                    .attr("dx", "-15px")
-                    .attr("dy", "-6px")
-                    .attr("transform", function(d) {
-                        return "rotate(-90)" 
-                    });
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-15px")
+                .attr("dy", "-6px")
+                .attr("transform", function (d) {
+                    return "rotate(-90)"
+                });
 
             // Vertical
             svg.append("g")
@@ -154,41 +155,66 @@ $(function () {
                 .data(data)
                 .enter()
                 .append("g")
-                    .attr("class", function(d) { return "d3-waterfall-bar " + d.class })
-                    .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+                .attr("class", function (d) {
+                    return "d3-waterfall-bar " + d.class
+                })
+                .attr("transform", function (d) {
+                    return "translate(" + x(d.name) + ",0)";
+                });
 
             // Append bar rects
             bar.append("rect")
-                .attr("y", function(d) { return y( Math.max(d.start, d.end) ); })
-                .attr("height", function(d) { return Math.abs( y(d.start) - y(d.end) ); })
+                .attr("y", function (d) {
+                    return y(Math.max(d.start, d.end));
+                })
+                .attr("height", function (d) {
+                    return Math.abs(y(d.start) - y(d.end));
+                })
                 .attr("width", x.rangeBand());
 
             // Append text
             bar.append("text")
                 .attr("x", x.rangeBand() / 2)
-                .attr("y", function(d) { return y(d.end) + 5; })
-                .attr("dy", function(d) { return ((d.class=='negative') ? '-' : '') + "1.5em" })
+                .attr("y", function (d) {
+                    return y(d.end) + 5;
+                })
+                .attr("dy", function (d) {
+                    return ((d.class == 'negative') ? '-' : '') + "1.5em"
+                })
                 .style("fill", "#fff")
                 .style("text-anchor", "middle")
-                .text(function(d) { return dollarFormatter(d.end - d.start);});
+                .text(function (d) {
+                    return dollarFormatter(d.end - d.start);
+                });
 
             // Apply colors
-            bar.filter(function(d) { return d.class == "positive" }).select('rect').style("fill", "#EF5350");
-            bar.filter(function(d) { return d.class == "negative" }).select('rect').style("fill", "#66BB6A");
-            bar.filter(function(d) { return d.class == "total" }).select('rect').style("fill", "#42A5F5");
+            bar.filter(function (d) {
+                return d.class == "positive"
+            }).select('rect').style("fill", "#EF5350");
+            bar.filter(function (d) {
+                return d.class == "negative"
+            }).select('rect').style("fill", "#66BB6A");
+            bar.filter(function (d) {
+                return d.class == "total"
+            }).select('rect').style("fill", "#42A5F5");
 
             // Add connector line
-            bar.filter(function(d) { return d.class != "total" })
+            bar.filter(function (d) {
+                return d.class != "total"
+            })
                 .append("line")
-                    .attr("class", "d3-waterfall-connector")
-                    .attr("x1", x.rangeBand() + 5 )
-                    .attr("y1", function(d) { return y(d.end) })
-                    .attr("x2", x.rangeBand() / ( 1 - padding) - 5)
-                    .attr("y2", function(d) { return y(d.end) })
-                    .style("stroke", "#999")
-                    .style("stroke-dasharray", 3);
+                .attr("class", "d3-waterfall-connector")
+                .attr("x1", x.rangeBand() + 5)
+                .attr("y1", function (d) {
+                    return y(d.end)
+                })
+                .attr("x2", x.rangeBand() / (1 - padding) - 5)
+                .attr("y2", function (d) {
+                    return y(d.end)
+                })
+                .style("stroke", "#999")
+                .style("stroke-dasharray", 3);
         });
-
 
 
         // Resize chart
@@ -235,7 +261,9 @@ $(function () {
             // -------------------------
 
             // Bar group
-            svg.selectAll(".d3-waterfall-bar").attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+            svg.selectAll(".d3-waterfall-bar").attr("transform", function (d) {
+                return "translate(" + x(d.name) + ",0)";
+            });
 
             // Bar rect
             svg.selectAll(".d3-waterfall-bar rect").attr("width", x.rangeBand());
@@ -244,7 +272,7 @@ $(function () {
             svg.selectAll(".d3-waterfall-bar text").attr("x", x.rangeBand() / 2);
 
             // Connector line
-            svg.selectAll(".d3-waterfall-connector").attr("x1", x.rangeBand() + 5 ).attr("x2", x.rangeBand() / ( 1 - padding) - 5 );
+            svg.selectAll(".d3-waterfall-connector").attr("x1", x.rangeBand() + 5).attr("x2", x.rangeBand() / (1 - padding) - 5);
         }
     }
 });

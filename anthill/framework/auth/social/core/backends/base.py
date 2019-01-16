@@ -68,7 +68,7 @@ class BaseAuth(object):
         # don't match the username/password calling conventions of
         # authenticate.
         if 'backend' not in kwargs or kwargs['backend'].name != self.name or \
-           'strategy' not in kwargs or 'response' not in kwargs:
+                'strategy' not in kwargs or 'response' not in kwargs:
             return None
 
         self.strategy = kwargs.get('strategy') or self.strategy
@@ -103,8 +103,8 @@ class BaseAuth(object):
         out.setdefault('details', {})
 
         if not isinstance(pipeline_index, int) or \
-           pipeline_index < 0 or \
-           pipeline_index >= len(pipeline):
+                pipeline_index < 0 or \
+                pipeline_index >= len(pipeline):
             pipeline_index = 0
 
         for idx, name in enumerate(pipeline[pipeline_index:]):

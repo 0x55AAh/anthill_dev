@@ -15,7 +15,6 @@ from anthill.platform.auth import RemoteUser
 from anthill.platform.services import MessengerClient
 from wtforms import ValidationError
 
-
 __all__ = [
     'UserHandlerMixin',
     'LoginHandlerMixin',

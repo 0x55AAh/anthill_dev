@@ -131,7 +131,6 @@ LOGGING = {
     }
 }
 
-
 #########
 # GEOIP #
 #########
@@ -148,7 +147,6 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # }
 HTTPS = None
 
-
 ############
 # GRAPHENE #
 ############
@@ -157,7 +155,6 @@ GRAPHENE = {
     'SCHEMA': 'login.api.v1.public.schema',
     'MIDDLEWARE': ()
 }
-
 
 ##################
 # AUTHENTICATION #

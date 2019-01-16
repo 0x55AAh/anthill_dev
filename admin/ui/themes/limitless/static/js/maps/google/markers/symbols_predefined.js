@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // This example uses a symbol to add a vector-based icon to a marker.
     // The symbol uses one of the predefined vector paths ('CIRCLE') supplied by the

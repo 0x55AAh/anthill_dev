@@ -25,17 +25,17 @@ $(function () {
 
     // Overlaps
     var overlaps = [
-        {sets: [0,1], size: 1},
-        {sets: [0,2], size: 1},
-        {sets: [0,3], size: 14},
-        {sets: [1,2], size: 6},
-        {sets: [1,3], size: 0},
-        {sets: [2,3], size: 1},
-        {sets: [0,2,3], size: 1},
-        {sets: [0,1,2], size: 0},
-        {sets: [0,1,3], size: 0},
-        {sets: [1,2,3], size: 0},
-        {sets: [0,1,2,3], size: 0}
+        {sets: [0, 1], size: 1},
+        {sets: [0, 2], size: 1},
+        {sets: [0, 3], size: 14},
+        {sets: [1, 2], size: 6},
+        {sets: [1, 3], size: 0},
+        {sets: [2, 3], size: 1},
+        {sets: [0, 2, 3], size: 1},
+        {sets: [0, 1, 2], size: 0},
+        {sets: [0, 1, 3], size: 0},
+        {sets: [1, 2, 3], size: 0},
+        {sets: [0, 1, 2, 3], size: 0}
     ];
 
 
@@ -59,8 +59,8 @@ $(function () {
     var tooltip = d3.select("body").append("div")
         .attr("class", "venntooltip");
 
-    d3.selection.prototype.moveParentToFront = function() {
-        return this.each(function(){
+    d3.selection.prototype.moveParentToFront = function () {
+        return this.each(function () {
             this.parentNode.parentNode.appendChild(this.parentNode);
         });
     };
@@ -78,11 +78,11 @@ $(function () {
 
     // Add events
     diagram.nodes
-        .on("mousemove", function() {
+        .on("mousemove", function () {
             tooltip.style("left", (d3.event.pageX + 20) + "px")
-                   .style("top", (d3.event.pageY - 15) + "px");
+                .style("top", (d3.event.pageY - 15) + "px");
         })
-        .on("mouseover", function(d, i) {
+        .on("mouseover", function (d, i) {
             var selection = d3.select(this).select("circle");
             selection.moveParentToFront()
                 .transition()
@@ -93,7 +93,7 @@ $(function () {
             tooltip.transition().style("display", "block");
             tooltip.text(d.size + " users");
         })
-        .on("mouseout", function(d, i) {
+        .on("mouseout", function (d, i) {
             d3.select(this).select("circle").transition()
                 .style("fill-opacity", .7)
                 .style("stroke-opacity", 0);
@@ -102,36 +102,38 @@ $(function () {
         });
 
 
-        // Draw a path around each intersection area, add hover there as well
-        diagram.svg.selectAll("path")
-            .data(overlaps)
-            .enter()
-            .append("path")
-            .attr("d", function(d) { 
-                return venn.intersectionAreaPath(d.sets.map(function(j) { return sets[j]; })); 
-            })
-            .style("fill-opacity","0")
-            .style("fill", "#333")
-            .style("stroke-opacity", 0)
-            .style("stroke", "white")
-            .style("stroke-width", "2")
-            .on("mouseover", function(d, i) {
-                d3.select(this).transition()
-                    .style("fill-opacity", .1)
-                    .style("stroke-opacity", 1);
+    // Draw a path around each intersection area, add hover there as well
+    diagram.svg.selectAll("path")
+        .data(overlaps)
+        .enter()
+        .append("path")
+        .attr("d", function (d) {
+            return venn.intersectionAreaPath(d.sets.map(function (j) {
+                return sets[j];
+            }));
+        })
+        .style("fill-opacity", "0")
+        .style("fill", "#333")
+        .style("stroke-opacity", 0)
+        .style("stroke", "white")
+        .style("stroke-width", "2")
+        .on("mouseover", function (d, i) {
+            d3.select(this).transition()
+                .style("fill-opacity", .1)
+                .style("stroke-opacity", 1);
 
-                tooltip.transition().style("display", "block");
-                tooltip.text(d.size + " users");
-            })
-            .on("mouseout", function(d, i) {
-                d3.select(this).transition()
-                    .style("fill-opacity", 0)
-                    .style("stroke-opacity", 0);
+            tooltip.transition().style("display", "block");
+            tooltip.text(d.size + " users");
+        })
+        .on("mouseout", function (d, i) {
+            d3.select(this).transition()
+                .style("fill-opacity", 0)
+                .style("stroke-opacity", 0);
 
-                tooltip.transition().style("display", "none");
-            })
-            .on("mousemove", function() {
-                tooltip.style("left", (d3.event.pageX + 20) + "px")
-                       .style("top", (d3.event.pageY - 15) + "px");
-            });
+            tooltip.transition().style("display", "none");
+        })
+        .on("mousemove", function () {
+            tooltip.style("left", (d3.event.pageX + 20) + "px")
+                .style("top", (d3.event.pageY - 15) + "px");
+        });
 });

@@ -1,52 +1,61 @@
 <form method="post" action="">
-	{% module xsrf_form_html() %}
+    {% module xsrf_form_html() %}
 
-	<div class="panel panel-body login-form">
-		<div class="text-center">
-			<div class="icon-object border-slate-300 text-slate-300"><i class="icon-reading"></i></div>
-			<h5 class="content-group">{{ _('Login to your account') }} <small class="display-block">{{ _('Your credentials') }}</small></h5>
-		</div>
+    <div class="panel panel-body login-form">
+        <div class="text-center">
+            <div class="icon-object border-slate-300 text-slate-300"><i class="icon-reading"></i></div>
+            <h5 class="content-group">{{ _('Login to your account') }}
+                <small class="display-block">{{ _('Your credentials') }}</small>
+            </h5>
+        </div>
 
-		<div class="form-group has-feedback has-feedback-left">
-			{% raw form.username(class_="form-control") %}
-			<div class="form-control-feedback">
-				<i class="icon-user text-muted"></i>
-			</div>
-			<!--{% raw form.username.label(class_="validation-error-label") %}-->
-		</div>
+        <div class="form-group has-feedback has-feedback-left">
+            {% raw form.username(class_="form-control") %}
+            <div class="form-control-feedback">
+                <i class="icon-user text-muted"></i>
+            </div>
+            <!--{% raw form.username.label(class_="validation-error-label") %}-->
+        </div>
 
-		<div class="form-group has-feedback has-feedback-left">
-			{% raw form.password(class_="form-control") %}
-			<div class="form-control-feedback">
-				<i class="icon-lock2 text-muted"></i>
-			</div>
-			<!--{% raw form.password.label(class_="validation-error-label") %}-->
-		</div>
+        <div class="form-group has-feedback has-feedback-left">
+            {% raw form.password(class_="form-control") %}
+            <div class="form-control-feedback">
+                <i class="icon-lock2 text-muted"></i>
+            </div>
+            <!--{% raw form.password.label(class_="validation-error-label") %}-->
+        </div>
 
-		<div class="form-group login-options">
-			<div class="row">
-				<div class="col-sm-6">
-					<label class="checkbox-inline">
-						<input type="checkbox" class="styled"> {{ _('Remember') }}
-					</label>
-				</div>
+        <div class="form-group login-options">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="styled"> {{ _('Remember') }}
+                    </label>
+                </div>
 
-				<div class="col-sm-6 text-right">
-					<a href="#">{{ _('Forgot password?') }}</a>
-				</div>
-			</div>
-		</div>
+                <div class="col-sm-6 text-right">
+                    <a href="#">{{ _('Forgot password?') }}</a>
+                </div>
+            </div>
+        </div>
 
-		<div class="form-group">
-			<button type="submit" class="btn bg-blue btn-block">{{ _('Login') }}</button>
-		</div>
+        <div class="form-group">
+            <button type="submit" class="btn bg-blue btn-block">{{ _('Login') }}</button>
+        </div>
 
-		<div class="content-divider text-muted form-group"><span>{{ _('or sign in with') }}</span></div>
-		<ul class="list-inline form-group list-inline-condensed text-center social-auth">
-			<li><a data-social-auth-name="facebook" data-popup-size="450,500" class="btn border-indigo text-indigo btn-flat btn-icon btn-rounded"><i class="icon-facebook"></i></a></li>
-			<li><a data-social-auth-name="google-oauth2" data-popup-size="450,500" class="btn border-danger text-danger btn-flat btn-icon btn-rounded"><i class="icon-google"></i></a></li>
-			<li><a data-social-auth-name="steam" data-popup-size="450,500" class="btn border-info text-info btn-flat btn-icon btn-rounded"><i class="icon-steam"></i></a></li>
-			<li><a data-social-auth-name="github" data-popup-size="450,500" class="btn border-violet text-violet btn-flat btn-icon btn-rounded"><i class="icon-github"></i></a></li>
-		</ul>
-	</div>
+        <div class="content-divider text-muted form-group"><span>{{ _('or sign in with') }}</span></div>
+        <ul class="list-inline form-group list-inline-condensed text-center social-auth">
+            <li><a data-social-auth-name="facebook" data-popup-size="450,500"
+                   class="btn border-indigo text-indigo btn-flat btn-icon btn-rounded"><i class="icon-facebook"></i></a>
+            </li>
+            <li><a data-social-auth-name="google-oauth2" data-popup-size="450,500"
+                   class="btn border-danger text-danger btn-flat btn-icon btn-rounded"><i class="icon-google"></i></a>
+            </li>
+            <li><a data-social-auth-name="steam" data-popup-size="450,500"
+                   class="btn border-info text-info btn-flat btn-icon btn-rounded"><i class="icon-steam"></i></a></li>
+            <li><a data-social-auth-name="github" data-popup-size="450,500"
+                   class="btn border-violet text-violet btn-flat btn-icon btn-rounded"><i class="icon-github"></i></a>
+            </li>
+        </ul>
+    </div>
 </form>

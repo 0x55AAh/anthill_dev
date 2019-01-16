@@ -42,7 +42,7 @@ $(function () {
 
         // Vertical
         var y = myChart.addCategoryAxis("y", ["Price Tier", "Channel"]);
-            y.showGridlines = true;
+        y.showGridlines = true;
 
 
         // Construct layout

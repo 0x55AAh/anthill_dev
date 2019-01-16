@@ -3,7 +3,6 @@ from .core.backends.utils import get_backend
 from anthill.framework.conf import settings
 from functools import wraps
 
-
 BACKENDS = settings.AUTHENTICATION_BACKENDS
 STRATEGY = getattr(settings, setting_name('STRATEGY'),
                    'anthill.framework.auth.social.strategy.TornadoStrategy')
@@ -32,5 +31,7 @@ def psa(redirect_uri=None):
             self.strategy = load_strategy(self)
             self.backend = load_backend(self.strategy, backend, uri)
             return func(self, backend, *args, **kwargs)
+
         return wrapper
+
     return decorator

@@ -4,7 +4,6 @@ from tornado.process import cpu_count
 from tornado.ioloop import IOLoop
 from functools import wraps
 
-
 __all__ = [
     'ThreadPoolExecution', 'thread_pool_exec', 'as_future'
 ]
@@ -36,6 +35,7 @@ class ThreadPoolExecution:
         @wraps(blocking_func)
         def wrapper(*args, **kwargs):
             return self._as_future(blocking_func, *args, **kwargs)
+
         return wrapper
 
 

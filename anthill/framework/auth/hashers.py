@@ -320,7 +320,7 @@ class Argon2PasswordHasher(BasePasswordHasher):
 
     def safe_summary(self, encoded):
         (algorithm, variety, version, time_cost, memory_cost, parallelism,
-            salt, data) = self._decode(encoded)
+         salt, data) = self._decode(encoded)
         assert algorithm == self.algorithm
         return OrderedDict([
             ('algorithm', algorithm),
@@ -335,14 +335,14 @@ class Argon2PasswordHasher(BasePasswordHasher):
 
     def must_update(self, encoded):
         (algorithm, variety, version, time_cost, memory_cost, parallelism,
-            salt, data) = self._decode(encoded)
+         salt, data) = self._decode(encoded)
         assert algorithm == self.algorithm
         argon2 = self._load_library()
         return (
-            argon2.low_level.ARGON2_VERSION != version or
-            self.time_cost != time_cost or
-            self.memory_cost != memory_cost or
-            self.parallelism != parallelism
+                argon2.low_level.ARGON2_VERSION != version or
+                self.time_cost != time_cost or
+                self.memory_cost != memory_cost or
+                self.parallelism != parallelism
         )
 
     def harden_runtime(self, password, encoded):
@@ -435,7 +435,7 @@ class BCryptSHA256PasswordHasher(BasePasswordHasher):
         salt = data[:29]  # Length of the salt in bcrypt.
         rounds = data.split('$')[2]
         # work factor is logarithmic, adding one doubles the load.
-        diff = 2**(self.rounds - int(rounds)) - 1
+        diff = 2 ** (self.rounds - int(rounds)) - 1
         while diff > 0:
             self.encode(password, force_bytes(salt))
             diff -= 1

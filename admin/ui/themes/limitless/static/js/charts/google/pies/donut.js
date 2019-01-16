@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawDonut);
 
 
@@ -24,11 +24,11 @@ function drawDonut() {
     // Data
     var data = google.visualization.arrayToDataTable([
         ['Task', 'Hours per Day'],
-        ['Work',     11],
-        ['Eat',      2],
-        ['Commute',  2],
+        ['Work', 11],
+        ['Eat', 2],
+        ['Commute', 2],
         ['Watch TV', 2],
-        ['Sleep',    7]
+        ['Sleep', 7]
     ]);
 
 
@@ -44,7 +44,7 @@ function drawDonut() {
             height: '90%'
         }
     };
-    
+
 
     // Instantiate and draw our chart, passing in some options.
     var donut = new google.visualization.PieChart($('#google-donut')[0]);

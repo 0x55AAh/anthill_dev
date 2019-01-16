@@ -50,7 +50,7 @@ async def do_complete(backend, login, user=None, redirect_name='next', *args, **
     # pop redirect value before the session is trashed on login(), but after
     # the pipeline so that the pipeline can change the redirect if needed
     redirect_value = backend.strategy.session_get(redirect_name, '') or \
-        data.get(redirect_name, '')
+                     data.get(redirect_name, '')
 
     # check if the output value is something else than a user and just
     # return it to the client
@@ -89,13 +89,13 @@ async def do_complete(backend, login, user=None, redirect_name='next', *args, **
     if redirect_value and redirect_value != url:
         redirect_value = quote(redirect_value)
         url += ('&' if '?' in url else '?') + \
-            '{0}={1}'.format(redirect_name, redirect_value)
+               '{0}={1}'.format(redirect_name, redirect_value)
 
     if backend.setting('SANITIZE_REDIRECTS', True):
         allowed_hosts = backend.setting('ALLOWED_REDIRECT_HOSTS', []) + \
                         [backend.strategy.request_host()]
         url = sanitize_redirect(allowed_hosts, url) or \
-            backend.setting('LOGIN_REDIRECT_URL')
+              backend.setting('LOGIN_REDIRECT_URL')
     return backend.strategy.redirect(url)
 
 
@@ -121,7 +121,7 @@ async def do_disconnect(backend, user, association_id=None, redirect_name='next'
             allowed_hosts = backend.setting('ALLOWED_REDIRECT_HOSTS', []) + \
                             [backend.strategy.request_host()]
             url = sanitize_redirect(allowed_hosts, url) or \
-                backend.setting('DISCONNECT_REDIRECT_URL') or \
-                backend.setting('LOGIN_REDIRECT_URL')
+                  backend.setting('DISCONNECT_REDIRECT_URL') or \
+                  backend.setting('LOGIN_REDIRECT_URL')
         response = backend.strategy.redirect(url)
     return response

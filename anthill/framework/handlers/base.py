@@ -244,7 +244,7 @@ class JSONHandlerMixin:
                 error_message = http_error.log_message
             self.write_json(status_code=status_code, message=error_message)
 
-    def write_json(self, status_code: int=200, message: str=None, data: any=None) -> None:
+    def write_json(self, status_code: int = 200, message: str = None, data: any = None) -> None:
         """
         Writes json response to client, decoding `data` to json with HTTP-header.
 
@@ -423,6 +423,7 @@ class TemplateHandler(TemplateMixin, ContextMixin, RequestHandler):
     """
     Render a template. Pass keyword arguments to the context.
     """
+
     async def get(self, *args, **kwargs):
         context = await self.get_context_data(**kwargs)
         self.render(**context)

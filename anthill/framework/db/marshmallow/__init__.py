@@ -19,7 +19,6 @@ __all__ = [
     'pprint'
 ]
 
-
 logger = logging.getLogger('anthill.application')
 
 EXTENSION_NAME = 'marshmallow'

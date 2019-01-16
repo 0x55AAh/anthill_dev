@@ -2,11 +2,13 @@
 <div class="breadcrumb-line breadcrumb-line-component">
     <ul class="breadcrumb">
         {% for i, entry in enumerate(entries) %}
-            {% if i == len(entries) - 1 %}
-                <li class="active">{% if entry.icon_class %}<i class="{{ entry.icon_class }} position-left"></i> {% end %}{{ entry.title }}</li>
-            {% else %}
-                <li><a href="{{ entry.url }}">{% if entry.icon_class %}<i class="{{ entry.icon_class }} position-left"></i> {% end %}{{ entry.title }}</a></li>
-            {% end %}
+        {% if i == len(entries) - 1 %}
+        <li class="active">{% if entry.icon_class %}<i class="{{ entry.icon_class }} position-left"></i>
+            {% end %}{{ entry.title }}</li>
+        {% else %}
+        <li><a href="{{ entry.url }}">{% if entry.icon_class %}<i class="{{ entry.icon_class }} position-left"></i>
+            {% end %}{{ entry.title }}</a></li>
+        {% end %}
         {% end %}
     </ul>
     <ul class="breadcrumb-elements"></ul>

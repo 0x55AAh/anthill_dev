@@ -42,7 +42,7 @@ $(function () {
 
         // Horizontal
         var x = myChart.addCategoryAxis("x", ["Owner", "Month"]);
-            x.addGroupOrderRule("Date");
+        x.addGroupOrderRule("Date");
 
         // Vertical
         var y = myChart.addMeasureAxis("y", "Unit Sales");
@@ -59,7 +59,7 @@ $(function () {
         // Line space
         s.barGap = 0.05;
 
-        
+
         // Add styles
         // ------------------------------
 

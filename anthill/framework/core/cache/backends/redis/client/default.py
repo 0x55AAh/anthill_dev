@@ -16,7 +16,6 @@ from ..util import CacheKey, load_class
 
 _main_exceptions = (TimeoutError, ResponseError, ConnectionError, socket.timeout)
 
-
 special_re = re.compile('([*?[])')
 
 

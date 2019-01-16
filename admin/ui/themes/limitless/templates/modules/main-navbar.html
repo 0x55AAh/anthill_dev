@@ -29,7 +29,8 @@
 
     <div class="navbar-collapse collapse" id="navbar-mobile">
         <ul class="nav navbar-nav">
-            <li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+            <li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a>
+            </li>
             {% if metadata['debug'] %}
             <li><p class="navbar-text"><span class="label bg-success">{{ _('debug') }}</span></p></li>
             {% end %}
@@ -76,7 +77,9 @@
 
                         <li class="media">
                             <div class="media-left">
-                                 <a href="#" class="btn border-success text-success btn-flat btn-icon btn-rounded btn-sm"><i class="icon-calendar"></i></a>
+                                <a href="#"
+                                   class="btn border-success text-success btn-flat btn-icon btn-rounded btn-sm"><i
+                                        class="icon-calendar"></i></a>
                                 <span class="badge bg-danger-400 media-badge">4</span>
                             </div>
 
@@ -91,7 +94,8 @@
                         </li>
 
                         <li class="media">
-                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt=""></div>
+                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}"
+                                                         class="img-circle img-sm" alt=""></div>
                             <div class="media-body">
                                 <a href="#" class="media-heading">
                                     <span class="text-semibold">Jeremy Victorino</span>
@@ -104,7 +108,9 @@
 
                         <li class="media">
                             <div class="media-left">
-                                <a href="#" class="btn border-purple text-purple btn-flat btn-icon btn-rounded btn-sm"><i class="icon-steam"></i></a>
+                                <a href="#"
+                                   class="btn border-purple text-purple btn-flat btn-icon btn-rounded btn-sm"><i
+                                        class="icon-steam"></i></a>
                             </div>
                             <div class="media-body">
                                 <a href="#" class="media-heading">
@@ -117,7 +123,8 @@
                         </li>
 
                         <li class="media">
-                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}" class="img-circle img-sm" alt=""></div>
+                            <div class="media-left"><img src="{{ static_url('images/placeholder.jpg') }}"
+                                                         class="img-circle img-sm" alt=""></div>
                             <div class="media-body">
                                 <a href="#" class="media-heading">
                                     <span class="text-semibold">Richard Vango</span>
@@ -138,7 +145,8 @@
             </li>
             <li class="dropdown dropdown-user">
                 <a class="dropdown-toggle" data-toggle="dropdown">
-                    <img src="{{ static_url('images/placeholder.jpg') }}" alt=""> <span>Vladimir</span> <i class="caret"></i>
+                    <img src="{{ static_url('images/placeholder.jpg') }}" alt=""> <span>Vladimir</span> <i
+                        class="caret"></i>
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-right">
@@ -152,7 +160,8 @@
                         <a href="{{ reverse_url('audit-log') }}"><i class="icon-history"></i> {{ _('History') }}</a>
                     </li>
                     <li class="{% if page == 'update_manager' %}active{% end %}">
-                        <a href="{{ reverse_url('update-manager') }}"><i class="icon-download"></i> {{ _('Updates') }}</a>
+                        <a href="{{ reverse_url('update-manager') }}"><i class="icon-download"></i> {{ _('Updates') }}
+                        </a>
                     </li>
                     <li class="divider"></li>
                     <li><a href="{{ reverse_url('logout') }}"><i class="icon-switch2"></i> {{ _('Logout') }}</a></li>

@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // Map settings
     function initialize() {
@@ -31,16 +31,16 @@ $(function() {
         });
 
         // "Change" event
-        google.maps.event.addListener(map, 'center_changed', function() {
+        google.maps.event.addListener(map, 'center_changed', function () {
 
             // 3 seconds after the center of the map has changed, pan back to the marker
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 map.panTo(marker.getPosition());
             }, 3000);
         });
 
         // "Click" event
-        google.maps.event.addListener(marker, 'click', function() {
+        google.maps.event.addListener(marker, 'click', function () {
             map.setZoom(14);
             map.setCenter(marker.getPosition());
         });

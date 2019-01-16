@@ -2,7 +2,6 @@ from uuid import uuid4
 
 from ..utils import slugify, module_member
 
-
 USER_FIELDS = ['username', 'email']
 
 
@@ -82,7 +81,7 @@ def user_details(strategy, details, user=None, *args, **kwargs):
 
     changed = False  # flag to track changes
     protected = ('username', 'id', 'pk', 'email') + \
-        tuple(strategy.setting('PROTECTED_USER_FIELDS', []))
+                tuple(strategy.setting('PROTECTED_USER_FIELDS', []))
 
     # Update user model attributes with the new data sent by the current
     # provider. Update on some attributes is disabled by default, for

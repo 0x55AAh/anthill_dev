@@ -152,6 +152,7 @@ class SingleObjectTemplateMixin(TemplateMixin):
 
 class DetailHandler(SingleObjectMixin, SingleObjectTemplateMixin, RequestHandler):
     """A base handler for displaying a single object."""
+
     async def get(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()

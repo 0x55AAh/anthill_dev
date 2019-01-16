@@ -49,7 +49,6 @@ $(function () {
             var columns_timeline = ec.init(document.getElementById('columns_timeline'), limitless);
 
 
-
             // Charts setup
             // ------------------------------
 
@@ -318,8 +317,8 @@ $(function () {
                     },
                     formatter: function (params) {
                         return params[0].name + '<br/>'
-                        + params[0].seriesName + ': ' + params[0].value + '<br/>'
-                        + params[1].seriesName + ': ' + (params[1].value + params[0].value);
+                            + params[0].seriesName + ': ' + params[0].value + '<br/>'
+                            + params[1].seriesName + ': ' + (params[1].value + params[0].value);
                     }
                 },
 
@@ -386,7 +385,7 @@ $(function () {
                                 barBorderWidth: 6,
                                 barBorderRadius: 0,
                                 label: {
-                                    show: true, 
+                                    show: true,
                                     position: 'top',
                                     formatter: function (params) {
                                         for (var i = 0, l = thermometer_columns_options.xAxis[0].data.length; i < l; i++) {
@@ -411,7 +410,7 @@ $(function () {
                                 }
                             }
                         },
-                        data:[40, 80, 50, 80,80, 70, 60, 90, 120]
+                        data: [40, 80, 50, 80, 80, 70, 60, 90, 120]
                     }
                 ]
             };
@@ -470,7 +469,7 @@ $(function () {
                                 color: 'rgba(0,0,0,0)'
                             }
                         },
-                        data:[0, 3500, 3000, 2300, 1700, 900, 400, 0]
+                        data: [0, 3500, 3000, 2300, 1700, 900, 400, 0]
                     },
                     {
                         name: 'Cost of living',
@@ -529,13 +528,13 @@ $(function () {
 
                 // Add legend
                 legend: {
-                    data: ['Expenses','Income']
+                    data: ['Expenses', 'Income']
                 },
 
                 // Horizontal axis
                 xAxis: [{
                     type: 'category',
-                    data: ['January','February','March','April','May','June','July','August','September','October','November','December']
+                    data: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
                 }],
 
                 // Vertical axis
@@ -565,15 +564,15 @@ $(function () {
                         name: 'Income',
                         type: 'bar',
                         stack: 'Total',
-                        itemStyle: { normal: {label: {show: true, position: 'top'}}},
+                        itemStyle: {normal: {label: {show: true, position: 'top'}}},
                         data: [900, 345, 393, '-', '-', 135, 178, 286, '-', '-', '-']
                     },
                     {
                         name: 'Expenses',
                         type: 'bar',
                         stack: 'Total',
-                        itemStyle: { normal: {label: {show: true, position: 'bottom'}}},
-                        data: ['-', '-', '-', 108, 154, '-', '-', '-', 119, 361, 203,300]
+                        itemStyle: {normal: {label: {show: true, position: 'bottom'}}},
+                        data: ['-', '-', '-', 108, 154, '-', '-', '-', 119, 361, 203, 300]
                     }
                 ]
             };
@@ -591,7 +590,7 @@ $(function () {
                     x: 10,
                     x2: 10,
                     label: {
-                        formatter: function(s) {
+                        formatter: function (s) {
                             return s.slice(0, 4);
                         }
                     },
@@ -618,14 +617,14 @@ $(function () {
 
                         // Add legend
                         legend: {
-                            data: ['GDP','Financial','Real Estate','Primary industry','Secondary industry','Third industry']
+                            data: ['GDP', 'Financial', 'Real Estate', 'Primary industry', 'Secondary industry', 'Third industry']
                         },
 
                         // Add toolbox
                         toolbox: {
                             show: true,
                             orient: 'vertical',
-                            x: 'right', 
+                            x: 'right',
                             y: 70,
                             feature: {
                                 mark: {
@@ -673,7 +672,7 @@ $(function () {
                             axisLabel: {
                                 interval: 0
                             },
-                            data: ['Paris','Budapest','Prague','Madrid','Amsterdam','Berlin','Bratislava','Munich','Hague','Rome','Milan']
+                            data: ['Paris', 'Budapest', 'Prague', 'Madrid', 'Amsterdam', 'Berlin', 'Bratislava', 'Munich', 'Hague', 'Rome', 'Milan']
                         }],
 
                         // Vertical axis
@@ -695,7 +694,7 @@ $(function () {
                                 name: 'GDP',
                                 type: 'bar',
                                 markLine: {
-                                    symbol: ['arrow','none'],
+                                    symbol: ['arrow', 'none'],
                                     symbolSize: [4, 2],
                                     itemStyle: {
                                         normal: {
@@ -703,7 +702,7 @@ $(function () {
                                             barBorderColor: 'orange',
                                             label: {
                                                 position: 'left',
-                                                formatter: function(params) {
+                                                formatter: function (params) {
                                                     return Math.round(params.value);
                                                 },
                                                 textStyle: {color: 'orange'}
@@ -820,8 +819,8 @@ $(function () {
                 // Add legends
                 legend: {
                     data: [
-                        'Version 1.7 - 2k data','Version 1.7 - 2w data','Version 1.7 - 20w data','',
-                        'Version 2.0 - 2k data','Version 2.0 - 2w data','Version 2.0 - 20w data'
+                        'Version 1.7 - 2k data', 'Version 1.7 - 2w data', 'Version 1.7 - 20w data', '',
+                        'Version 2.0 - 2k data', 'Version 2.0 - 2w data', 'Version 2.0 - 20w data'
                     ]
                 },
 
@@ -832,23 +831,23 @@ $(function () {
                 xAxis: [
                     {
                         type: 'category',
-                        data: ['Line','Bar','Scatter','Pies','Map']
+                        data: ['Line', 'Bar', 'Scatter', 'Pies', 'Map']
                     },
                     {
                         type: 'category',
-                        axisLine: {show:false},
-                        axisTick: {show:false},
-                        axisLabel: {show:false},
-                        splitArea: {show:false},
-                        splitLine: {show:false},
-                        data: ['Line','Bar','Scatter','Pies','Map']
+                        axisLine: {show: false},
+                        axisTick: {show: false},
+                        axisLabel: {show: false},
+                        splitArea: {show: false},
+                        splitLine: {show: false},
+                        data: ['Line', 'Bar', 'Scatter', 'Pies', 'Map']
                     }
                 ],
 
                 // Vertical axis
                 yAxis: [{
                     type: 'value',
-                    axisLabel: {formatter:'{value} ms'},
+                    axisLabel: {formatter: '{value} ms'},
                     axisLine: {
                         lineStyle: {
                             color: '#dc143c'
@@ -909,7 +908,7 @@ $(function () {
                                 label: {
                                     show: true,
                                     textStyle: {
-                                        color:'#fff'
+                                        color: '#fff'
                                     }
                                 }
                             },
@@ -930,7 +929,9 @@ $(function () {
                                 color: '#E57373',
                                 label: {
                                     show: true,
-                                    formatter: function(p) {return p.value > 0 ? (p.value +'\n'):'';}
+                                    formatter: function (p) {
+                                        return p.value > 0 ? (p.value + '\n') : '';
+                                    }
                                 }
                             },
                             emphasis: {
@@ -969,7 +970,9 @@ $(function () {
                                 color: '#64B5F6',
                                 label: {
                                     show: true,
-                                    formatter: function(p){return p.value > 0 ? (p.value +'+'):'';}
+                                    formatter: function (p) {
+                                        return p.value > 0 ? (p.value + '+') : '';
+                                    }
                                 }
                             },
                             emphasis: {
@@ -984,7 +987,6 @@ $(function () {
             };
 
 
-
             // Apply options
             // ------------------------------
 
@@ -995,7 +997,6 @@ $(function () {
             compositive_waterfall.setOption(compositive_waterfall_options);
             change_waterfall.setOption(change_waterfall_options);
             columns_timeline.setOption(columns_timeline_options);
-
 
 
             // Resize charts

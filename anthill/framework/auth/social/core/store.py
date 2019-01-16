@@ -12,6 +12,7 @@ from openid.store.nonce import SKEW
 # noinspection PyAbstractClass
 class OpenIdStore(BaseOpenIDStore):
     """Storage class."""
+
     def __init__(self, strategy):
         """Init method."""
         super(OpenIdStore, self).__init__()

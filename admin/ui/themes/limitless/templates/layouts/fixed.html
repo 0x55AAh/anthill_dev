@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{ _('Anthill Platform Admin Tool') }}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ _('Anthill Platform Admin Tool') }}</title>
 
     <link rel="shortcut icon" id="favicon" href="{{ static_url('favicon.ico') }}">
 
-	{% block meta %}{% end %}
+    {% block meta %}{% end %}
 
-	<!-- Global stylesheets -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-	<link href="{{ static_url('css/icons/icomoon/styles.css') }}" rel="stylesheet" type="text/css">
-	<link href="{{ static_url('css/bootstrap.css') }}" rel="stylesheet" type="text/css">
-	<link href="{{ static_url('css/core.css') }}" rel="stylesheet" type="text/css">
-	<link href="{{ static_url('css/components.css') }}" rel="stylesheet" type="text/css">
-	<link href="{{ static_url('css/colors.css') }}" rel="stylesheet" type="text/css">
-	<!-- /global stylesheets -->
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
+          type="text/css">
+    <link href="{{ static_url('css/icons/icomoon/styles.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ static_url('css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ static_url('css/core.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ static_url('css/components.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ static_url('css/colors.css') }}" rel="stylesheet" type="text/css">
+    <!-- /global stylesheets -->
 
-	{% block css %}{% end %}
+    {% block css %}{% end %}
 
-	<!-- Core JS files -->
-	<script type="text/javascript" src="{{ static_url('js/core/libraries/jquery.min.js') }}"></script>
-	<script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
-	<!-- /core JS files -->
+    <!-- Core JS files -->
+    <script type="text/javascript" src="{{ static_url('js/core/libraries/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
+    <!-- /core JS files -->
 
     <script>
         var public_api_url = "{{ admin_metadata['public_api_url'] }}";
@@ -35,26 +36,27 @@
         window.log_url = log_url;
     </script>
 
-	<!-- Theme JS files -->
-	<script type="text/javascript" src="{{ static_url('js/core/app.js') }}"></script>
+    <!-- Theme JS files -->
+    <script type="text/javascript" src="{{ static_url('js/core/app.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/ui/nicescroll.min.js') }}"></script>
-	<script type="text/javascript" src="{{ static_url('js/plugins/uploaders/dropzone.min.js') }}"></script>
-	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/cookie.js') }}"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/easytimer.min.js') }}"></script>
-	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/kurento-jsonrpc.min.js') }}"></script>
-	<script type="text/javascript" src="{{ static_url('js/plugins/extensions/reconnecting-websocket.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/plugins/uploaders/dropzone.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/plugins/extensions/cookie.js') }}"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script type="text/javascript" src="{{ static_url('js/plugins/extensions/easytimer.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/plugins/extensions/kurento-jsonrpc.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ static_url('js/plugins/extensions/reconnecting-websocket.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/notifications/sweet_alert.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/sounds/ion.sound/ion.sound.js') }}"></script>
 
-	<script type="text/javascript" src="{{ static_url('js/utils/datastorage.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/utils/datastorage.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/utils/websocket.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/pages/layout_fixed_custom.js') }}"></script>
-	<script type="text/javascript" src="{{ static_url('js/pages/general.js') }}"></script>
-	<!-- /theme JS files -->
+    <script type="text/javascript" src="{{ static_url('js/pages/general.js') }}"></script>
+    <!-- /theme JS files -->
 
     {% block js %}{% end %}
-	{% block js_header %}{% end %}
+    {% block js_header %}{% end %}
 </head>
 
 <body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}">
@@ -69,43 +71,43 @@
 <!-- Page container -->
 <div class="page-container">
 
-	<!-- Page content -->
-	<div class="page-content">
+    <!-- Page content -->
+    <div class="page-content">
 
-		<!-- Main sidebar -->
-		{% block main-sidebar %}
+        <!-- Main sidebar -->
+        {% block main-sidebar %}
         {% module MainSidebar(main_sidebar_entries, metadata, page) %}
         {% end %}
-		<!-- /main sidebar -->
+        <!-- /main sidebar -->
 
         <!-- Secondary sidebar -->
         {% block secondary-sidebar %}{% end %}
         <!-- /secondary sidebar -->
 
-		<!-- Main content -->
-		<div class="content-wrapper">
+        <!-- Main content -->
+        <div class="content-wrapper">
 
-			<!-- Page header -->
-			{% block header %}{% end %}
-			<!-- /page header -->
+            <!-- Page header -->
+            {% block header %}{% end %}
+            <!-- /page header -->
 
-			<div class="content">
-				<!-- Content area -->
-				{% block content %}{% end %}
+            <div class="content">
+                <!-- Content area -->
+                {% block content %}{% end %}
 
-				<!-- Footer -->
-				{% block footer %}
-				{% module Template('modules/footer.html', centered=False, metadata=metadata, now=now) %}
-				{% end %}
-				<!-- /footer -->
-				<!-- /content area -->
-			</div>
+                <!-- Footer -->
+                {% block footer %}
+                {% module Template('modules/footer.html', centered=False, metadata=metadata, now=now) %}
+                {% end %}
+                <!-- /footer -->
+                <!-- /content area -->
+            </div>
 
-		</div>
-		<!-- /main content -->
+        </div>
+        <!-- /main content -->
 
-	</div>
-	<!-- /page content -->
+    </div>
+    <!-- /page content -->
 
 </div>
 <!-- /page container -->

@@ -6,7 +6,6 @@ from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
 from io import BytesIO
 
-
 __all__ = [
     'UploadFileException', 'FileUploadHandler',
     'TemporaryFileUploadHandler', 'MemoryFileUploadHandler', 'load_handler',

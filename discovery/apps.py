@@ -9,7 +9,7 @@ logger = logging.getLogger('anthill.application')
 
 class AnthillApplication(BaseAnthillApplication):
     """Anthill application."""
-    
+
     def __init__(self):
         super().__init__()
         self.load_services()

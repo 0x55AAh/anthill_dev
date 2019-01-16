@@ -34,7 +34,6 @@ $(function () {
         var formatCount = d3.format(",.0f");
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -50,12 +49,13 @@ $(function () {
 
         // Vertical
         var y = d3.scale.linear()
-            .domain([0, d3.max(data, function(d) { return d.y; })])
+            .domain([0, d3.max(data, function (d) {
+                return d.y;
+            })])
             .range([height, 0]);
 
         // Colors
         var color = d3.scale.ordinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
 
 
         // Create axes
@@ -65,7 +65,6 @@ $(function () {
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
-
 
 
         // Create chart
@@ -79,8 +78,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Add tooltip
@@ -90,7 +88,7 @@ $(function () {
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-25, 0])
-            .html(function(d) {
+            .html(function (d) {
                 return "Current value: " + "<span class='text-semibold'>" + formatCount(d.y) + "</span>";
             })
 
@@ -110,17 +108,23 @@ $(function () {
             .data(data)
             .enter()
             .append("g")
-                .attr("class", "d3-bar")
-                .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide);
+            .attr("class", "d3-bar")
+            .attr("transform", function (d) {
+                return "translate(" + x(d.x) + "," + y(d.y) + ")";
+            })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
         // Append bars
         bar.append("rect")
             .attr("x", 1)
             .attr("width", x(data[0].dx) - 3)
-            .attr("height", function(d) { return height - y(d.y); })
-            .style("fill", function(d) { return color(d); });
+            .attr("height", function (d) {
+                return height - y(d.y);
+            })
+            .style("fill", function (d) {
+                return color(d);
+            });
 
         // Append text
         bar.append("text")
@@ -129,7 +133,9 @@ $(function () {
             .attr("x", x(data[0].dx) / 2)
             .style("text-anchor", "middle")
             .style("fill", "#333")
-            .text(function(d) { return formatCount(d.y); });
+            .text(function (d) {
+                return formatCount(d.y);
+            });
 
         // Append axes
         // ------------------------------
@@ -139,7 +145,6 @@ $(function () {
             .attr("class", "d3-axis d3-axis-horizontal d3-axis-strong")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
-
 
 
         // Resize chart
@@ -186,7 +191,9 @@ $(function () {
             // -------------------------
 
             // Bar group
-            svg.selectAll('.d3-bar').attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+            svg.selectAll('.d3-bar').attr("transform", function (d) {
+                return "translate(" + x(d.x) + "," + y(d.y) + ")";
+            });
 
             // Bar rect
             svg.selectAll('.d3-bar rect').attr("x", 1).attr("width", x(data[0].dx) - 3);

@@ -3,10 +3,8 @@ from distutils.sysconfig import get_python_lib
 import os
 import sys
 
-
 CURRENT_PYTHON = sys.version_info[:2]
 REQUIRED_PYTHON = (3, 5)
-
 
 if CURRENT_PYTHON < REQUIRED_PYTHON:
     sys.stderr.write("""
@@ -24,7 +22,6 @@ This will install the latest version of anthill-framework which works on your
 version of Python.
 """.format(*(REQUIRED_PYTHON + CURRENT_PYTHON)))
     sys.exit(1)
-
 
 # Warn if we are installing over top of an existing installation. This can
 # cause issues where files that were deleted from a more recent anthill-framework
@@ -53,13 +50,11 @@ def read(fname):
 # Dynamically calculate the version based on anthill.framework.VERSION.
 version = __import__('anthill.framework').get_version()
 
-
 EXCLUDE_FROM_PACKAGES = [
     'anthill.framework.conf.project_template',
     'anthill.framework.conf.app_template',
     'anthill.framework.bin'
 ]
-
 
 setup(
     name='anthill.framework',

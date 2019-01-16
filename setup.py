@@ -3,10 +3,8 @@ from distutils.sysconfig import get_python_lib
 import os
 import sys
 
-
 CURRENT_PYTHON = sys.version_info[:2]
 REQUIRED_PYTHON = (3, 5)
-
 
 if CURRENT_PYTHON < REQUIRED_PYTHON:
     sys.stderr.write("""
@@ -24,7 +22,6 @@ This will install the latest version of anthill-gaming which works on your
 version of Python.
 """.format(*(REQUIRED_PYTHON + CURRENT_PYTHON)))
     sys.exit(1)
-
 
 # Warn if we are installing over top of an existing installation. This can
 # cause issues where files that were deleted from a more recent anthill-gaming
@@ -53,7 +50,6 @@ def read(fname):
 EXCLUDE_FROM_PACKAGES = [
 
 ]
-
 
 setup(
     name='anthill.gaming',

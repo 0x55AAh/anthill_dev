@@ -14,6 +14,7 @@ from ..exceptions import AuthTokenError
 
 class OpenIdConnectAssociation(object):
     """ Use Association model to save the nonce by force."""
+
     def __init__(self, handle, secret='', issued=0, lifetime=0, assoc_type=''):
         self.handle = handle  # as nonce
         self.secret = secret.encode()  # not use
@@ -50,27 +51,27 @@ class OpenIdConnectAuth(BaseOAuth2):
 
     def authorization_url(self):
         return self.AUTHORIZATION_URL or \
-            self.oidc_config().get('authorization_endpoint')
+               self.oidc_config().get('authorization_endpoint')
 
     def access_token_url(self):
         return self.ACCESS_TOKEN_URL or \
-            self.oidc_config().get('token_endpoint')
+               self.oidc_config().get('token_endpoint')
 
     def revoke_token_url(self, token, uid):
         return self.REVOKE_TOKEN_URL or \
-            self.oidc_config().get('revocation_endpoint')
+               self.oidc_config().get('revocation_endpoint')
 
     def id_token_issuer(self):
         return self.ID_TOKEN_ISSUER or \
-            self.oidc_config().get('issuer')
+               self.oidc_config().get('issuer')
 
     def userinfo_url(self):
         return self.USERINFO_URL or \
-            self.oidc_config().get('userinfo_endpoint')
+               self.oidc_config().get('userinfo_endpoint')
 
     def jwks_uri(self):
         return self.JWKS_URI or \
-            self.oidc_config().get('jwks_uri')
+               self.oidc_config().get('jwks_uri')
 
     @cache(ttl=86400)
     def oidc_config(self):

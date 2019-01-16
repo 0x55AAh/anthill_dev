@@ -6,12 +6,13 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     var LOG_RE = /^(\[.*?\])\s+(.+)$/;
     var LOG_STRIPPED_PREFIX_RE = /^\[(.+)\]$/;
 
-    var term = $('.console').terminal(function() {}, {
+    var term = $('.console').terminal(function () {
+    }, {
         enable: false,
         greetings: null,
         name: 'log',
@@ -26,7 +27,7 @@ $(function() {
     };
     var url = ws_url(window.log_url);
     var client = new ReconnectingWebSocket(url, [], options);
-    client.addEventListener('message', function(event) {
+    client.addEventListener('message', function (event) {
         var parsed = event.data.match(LOG_RE);
         var prefix = parsed[1],
             prefix_stripped = prefix.match(LOG_STRIPPED_PREFIX_RE)[1],
@@ -48,7 +49,7 @@ $(function() {
         var prefix_stripped_colored = "[[;" + colors[level] + ";] " + prefix_stripped + "]";
         term.echo(prefix_stripped_colored + " " + message);
     });
-    client.addEventListener('error', function(event) {
+    client.addEventListener('error', function (event) {
         // ¯\_(ツ)_/¯
     });
 

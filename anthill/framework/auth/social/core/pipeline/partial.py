@@ -22,6 +22,7 @@ def partial_step(save_to_session):
     PARTIAL_TOKEN_SESSION_NAME (partial_pipeline_token) key when the
     save_to_session parameter is True.
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(strategy, backend, pipeline_index, *args, **kwargs):
@@ -39,7 +40,9 @@ def partial_step(save_to_session):
                 if save_to_session:
                     strategy.session_set(PARTIAL_TOKEN_SESSION_NAME, current_partial.token)
             return out
+
         return wrapper
+
     return decorator
 
 

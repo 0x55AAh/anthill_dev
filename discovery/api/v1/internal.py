@@ -14,7 +14,7 @@ from anthill.platform.api.internal import as_internal, InternalAPI
 
 
 @as_internal()
-async def get_service(api: InternalAPI, name: str, network: str=None, **options) -> dict:
+async def get_service(api: InternalAPI, name: str, network: str = None, **options) -> dict:
     if network is not None:
         network = [network]
     result = await api.service.get_service(name, network)

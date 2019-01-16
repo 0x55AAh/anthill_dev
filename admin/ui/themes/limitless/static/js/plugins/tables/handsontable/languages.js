@@ -224,10 +224,10 @@
         },
         ordinal: function (number) {
             var b = number % 10;
-            return (~~ (number % 100 / 10) === 1) ? 'th' :
+            return (~~(number % 100 / 10) === 1) ? 'th' :
                 (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 2) ? 'nd' :
+                        (b === 3) ? 'rd' : 'th';
         },
         currency: {
             symbol: '£',
@@ -278,10 +278,10 @@
         },
         ordinal: function (number) {
             var b = number % 10;
-            return (~~ (number % 100 / 10) === 1) ? 'th' :
+            return (~~(number % 100 / 10) === 1) ? 'th' :
                 (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 2) ? 'nd' :
+                        (b === 3) ? 'rd' : 'th';
         },
         currency: {
             symbol: 'R',
@@ -334,9 +334,9 @@
             var b = number % 10;
             return (b === 1 || b === 3) ? 'er' :
                 (b === 2) ? 'do' :
-                (b === 7 || b === 0) ? 'mo' :
-        (b === 8) ? 'vo' :
-        (b === 9) ? 'no' : 'to';
+                    (b === 7 || b === 0) ? 'mo' :
+                        (b === 8) ? 'vo' :
+                            (b === 9) ? 'no' : 'to';
         },
         currency: {
             symbol: '$',
@@ -585,10 +585,10 @@
         },
         ordinal: function (number) {
             var b = number % 10;
-            return (~~ (number % 100 / 10) === 1) ? 'th' :
+            return (~~(number % 100 / 10) === 1) ? 'th' :
                 (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 2) ? 'nd' :
+                        (b === 3) ? 'rd' : 'th';
         },
         currency: {
             symbol: '₱'
@@ -627,13 +627,13 @@
             billion: 'G',
             trillion: 'T'
         },
-        ordinal : function (number) {
+        ordinal: function (number) {
             return number === 1 ? 'er' : 'ème';
         },
         currency: {
             symbol: '$',
             position: 'postfix',
-            spaceSeparated : true
+            spaceSeparated: true
         },
         defaults: {
             currencyFormat: ',4 a'
@@ -678,7 +678,7 @@
             billion: 'b',
             trillion: 't'
         },
-        ordinal : function (number) {
+        ordinal: function (number) {
             return number === 1 ? 'er' : 'ème';
         },
         currency: {
@@ -728,7 +728,7 @@
             billion: 'b',
             trillion: 't'
         },
-        ordinal : function (number) {
+        ordinal: function (number) {
             return number === 1 ? 'er' : 'ème';
         },
         currency: {
@@ -1049,7 +1049,7 @@
  * locale: Norway
  * author : Benjamin Van Ryseghem
  */
-(function() {
+(function () {
     'use strict';
 
     var language = {
@@ -1104,15 +1104,15 @@
         cultureCode: 'nl-BE',
         delimiters: {
             thousands: ' ',
-            decimal  : ','
+            decimal: ','
         },
         abbreviations: {
-            thousand : 'k',
-            million  : 'mln',
-            billion  : 'mld',
-            trillion : 'bln'
+            thousand: 'k',
+            million: 'mln',
+            billion: 'mld',
+            trillion: 'bln'
         },
-        ordinal : function (number) {
+        ordinal: function (number) {
             var remainder = number % 100;
             return (number !== 0 && remainder <= 1 || remainder === 8 || remainder >= 20) ? 'ste' : 'de';
         },
@@ -1155,15 +1155,15 @@
         cultureCode: 'nl-NL',
         delimiters: {
             thousands: '.',
-            decimal  : ','
+            decimal: ','
         },
         abbreviations: {
-            thousand : 'k',
-            million  : 'mln',
-            billion  : 'mrd',
-            trillion : 'bln'
+            thousand: 'k',
+            million: 'mln',
+            billion: 'mrd',
+            trillion: 'bln'
         },
-        ordinal : function (number) {
+        ordinal: function (number) {
             var remainder = number % 100;
             return (number !== 0 && remainder <= 1 || remainder === 8 || remainder >= 20) ? 'ste' : 'de';
         },
@@ -1314,7 +1314,7 @@
             billion: 'b',
             trillion: 't'
         },
-        ordinal : function () {
+        ordinal: function () {
             return 'º';
         },
         currency: {
@@ -1504,7 +1504,7 @@
  * locale : Sweden
  * author : Benjamin Van Ryseghem (benjamin.vanryseghem.com)
  */
-(function() {
+(function () {
     'use strict';
 
     var language = {
@@ -1603,7 +1603,7 @@
  *          Erhan Gundogan : https://github.com/erhangundogan,
  *          Burak Yiğit Kaya: https://github.com/BYK
  */
-(function() {
+(function () {
     'use strict';
 
     var suffixes = {
@@ -1644,7 +1644,7 @@
                 billion: 'milyar',
                 trillion: 'trilyon'
             },
-            ordinal: function(number) {
+            ordinal: function (number) {
                 if (number === 0) {  // special case for zero
                     return '\'ıncı';
                 }

@@ -9,192 +9,187 @@
 *
 * ---------------------------------------------------------------------------- */
 
-
 // Core
 // ------------------------------
 
 .bootstrap-duallistbox-container {
 
-    //
-    // Layout
-    //
+  //
+  // Layout
+  //
 
-    // Add bottom spacing to the first box
-    .box1 {
-        margin-bottom: @line-height-computed;
-    }
+  // Add bottom spacing to the first box
+  .box1 {
+    margin-bottom: @line-height-computed;
+  }
 
-    // Select
-    select.form-control {
-        padding: @list-spacing;
-        .border-top-radius(0);
-    }
-    option {
-        display: block;
-        padding: @padding-base-vertical @padding-base-horizontal;
-        border-radius: @border-radius-small;
-    }
+  // Select
+  select.form-control {
+    padding: @list-spacing;
+    .border-top-radius(0);
+  }
+  option {
+    display: block;
+    padding: @padding-base-vertical @padding-base-horizontal;
+    border-radius: @border-radius-small;
+  }
 
-    // Move option on select
-    &.moveonselect {
+  // Move option on select
+  &.moveonselect {
 
-        // Hide "Move single" button
-        .move,
-        .remove {
-            display: none;
-        }
-
-        // Visible buttons
-        .moveall,
-        .removeall {
-            width: 100%;
-            .border-top-radius(@border-radius-base)!important;
-        }
-
-        // Add border to the next buttons
-        .btn-group {
-            .btn + .btn {
-                border-left-width: 1px;
-            }
-        }
-    }
-
-
-    //
-    // Buttons
-    //
-
-    // Main buttons
-    .buttons {
-        width: 100%;
-        margin-bottom: -1px;
-    }
-
-    // Clear buttons
-    .clear1,
-    .clear2 {
-        display: none;
-        margin-top: @line-height-computed;
-
-        // Reset styles
-        &,
-        &:hover,
-        &:focus {
-            background-color: transparent;
-            border: 0;
-            color: @link-color;
-            padding: 0;
-            .box-shadow(none);
-        }
-    }
-    .box1.filtered .clear1,
-    .box2.filtered .clear2 {
-        display: inline-block;
-    }
-
-    // Control buttons
+    // Hide "Move single" button
     .move,
-    .remove,
+    .remove {
+      display: none;
+    }
+
+    // Visible buttons
     .moveall,
     .removeall {
-        width: 50%;
+      width: 100%;
+      .border-top-radius(@border-radius-base) !important;
     }
 
-    // Button group
-    .btn-group .btn {
-        margin: 0;
-        .border-bottom-radius(0);
+    // Add border to the next buttons
+    .btn-group {
+      .btn + .btn {
+        border-left-width: 1px;
+      }
+    }
+  }
 
-        // Borders
-        & + .btn {
-            border-left-width: 0;
-        }
+  //
+  // Buttons
+  //
 
-        // Icons
-        > i {
-            float: none;
-            text-align: center;
+  // Main buttons
+  .buttons {
+    width: 100%;
+    margin-bottom: -1px;
+  }
 
-            // Reduce spacing between icons
-            + i {
-                margin-left: -14px;
-            }
-        }
+  // Clear buttons
+  .clear1,
+  .clear2 {
+    display: none;
+    margin-top: @line-height-computed;
+
+    // Reset styles
+    &,
+    &:hover,
+    &:focus {
+      background-color: transparent;
+      border: 0;
+      color: @link-color;
+      padding: 0;
+      .box-shadow(none);
+    }
+  }
+  .box1.filtered .clear1,
+  .box2.filtered .clear2 {
+    display: inline-block;
+  }
+
+  // Control buttons
+  .move,
+  .remove,
+  .moveall,
+  .removeall {
+    width: 50%;
+  }
+
+  // Button group
+  .btn-group .btn {
+    margin: 0;
+    .border-bottom-radius(0);
+
+    // Borders
+    & + .btn {
+      border-left-width: 0;
     }
 
+    // Icons
+    > i {
+      float: none;
+      text-align: center;
 
-    //
-    // Elements
-    //
+      // Reduce spacing between icons
+      + i {
+        margin-left: -14px;
+      }
+    }
+  }
 
-    // Filter
-    .filter {
-        margin-bottom: @line-height-computed;
-        position: relative;
+  //
+  // Elements
+  //
 
-        &.placeholder {
-            color: @input-color-placeholder;
-        }
+  // Filter
+  .filter {
+    margin-bottom: @line-height-computed;
+    position: relative;
+
+    &.placeholder {
+      color: @input-color-placeholder;
+    }
+  }
+
+  // Bottom info
+  .info-container {
+    .info {
+      display: inline-block;
+      margin-top: @line-height-computed;
+
+      .label {
+        margin-right: @element-horizontal-spacing;
+      }
+    }
+  }
+
+  //
+  // Inside sidebar
+  //
+
+  .sidebar & {
+    text-align: center;
+
+    .box1,
+    .box2 {
+      float: none;
+      width: 100%;
     }
 
-    // Bottom info
-    .info-container {
-        .info {
-            display: inline-block;
-            margin-top: @line-height-computed;
+    .box1 {
+      padding-bottom: 5px;
 
-            .label {
-                margin-right: @element-horizontal-spacing;
-            }
-        }
+      &:after {
+        content: '\e9c9';
+        font-size: @icon-font-size;
+        font-family: 'icomoon';
+        display: block;
+        text-align: center;
+        line-height: 1;
+        margin: 10px 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        .opacity(0.5);
+      }
     }
+  }
 
+  //
+  // Responsive stuff
+  //
 
-    //
-    // Inside sidebar
-    //
+  @media (min-width: @screen-md) {
+    .box1 {
+      margin-bottom: 0;
+    }
 
     .sidebar & {
-        text-align: center;
-
-        .box1,
-        .box2 {
-            float: none;
-            width: 100%;
-        }
-
-        .box1 {
-            padding-bottom: 5px;
-
-            &:after {
-                content: '\e9c9';
-                font-size: @icon-font-size;
-                font-family: 'icomoon';
-                display: block;
-                text-align: center;
-                line-height: 1;
-                margin: 10px 0;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                .opacity(0.5);
-            }
-        }
+      .box1 {
+        margin-bottom: 0;
+      }
     }
-
-
-    //
-    // Responsive stuff
-    //
-
-    @media (min-width: @screen-md) {
-        .box1 {
-            margin-bottom: 0;
-        }
-
-        .sidebar & {
-            .box1 {
-                margin-bottom: 0;
-            }
-        }
-    }
+  }
 }

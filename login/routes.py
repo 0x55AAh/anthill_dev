@@ -6,7 +6,6 @@ from discovery.api.compat.rest import routes as rest_routes
 from anthill.framework.auth.social import routes as social_auth_routes
 from anthill.framework.utils.urls import include
 
-
 route_patterns = [
     url(r'^/', include(rest_routes.route_patterns, namespace='api')),  # for compatibility only
     url(r'^/social/', include(social_auth_routes.route_patterns, namespace='social')),

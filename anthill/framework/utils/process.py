@@ -3,7 +3,6 @@ from typing import Tuple, Union, Optional
 from tornado.gen import multi
 import shlex
 
-
 __all__ = ['call_subprocess']
 
 

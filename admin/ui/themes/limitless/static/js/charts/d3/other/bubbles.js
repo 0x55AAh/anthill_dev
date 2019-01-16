@@ -28,7 +28,6 @@ $(function () {
         color = d3.scale.category10();
 
 
-
         // Create chart
         // ------------------------------
 
@@ -38,7 +37,6 @@ $(function () {
             .attr("class", "bubble");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -46,13 +44,13 @@ $(function () {
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-5, 0])
-            .html(function(d) {
-                return d.className + ": " + format(d.value);;
+            .html(function (d) {
+                return d.className + ": " + format(d.value);
+                ;
             });
 
         // Initialize tooltip
         svg.call(tip);
-
 
 
         // Construct chart layout
@@ -65,11 +63,10 @@ $(function () {
             .padding(1.5);
 
 
-
         // Load data
         // ------------------------------
 
-        d3.json("assets/demo_data/d3/other/bubble.json", function(error, root) {
+        d3.json("assets/demo_data/d3/other/bubble.json", function (error, root) {
 
 
             //
@@ -79,16 +76,24 @@ $(function () {
             // Bind data
             var node = svg.selectAll(".d3-bubbles-node")
                 .data(bubble.nodes(classes(root))
-                .filter(function(d) { return !d.children; }))
+                    .filter(function (d) {
+                        return !d.children;
+                    }))
                 .enter()
                 .append("g")
-                    .attr("class", "d3-bubbles-node")
-                    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+                .attr("class", "d3-bubbles-node")
+                .attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
 
             // Append circles
             node.append("circle")
-                .attr("r", function(d) { return d.r; })
-                .style("fill", function(d) { return color(d.packageName); })
+                .attr("r", function (d) {
+                    return d.r;
+                })
+                .style("fill", function (d) {
+                    return color(d.packageName);
+                })
                 .on('mouseover', tip.show)
                 .on('mouseout', tip.hide);
 
@@ -98,7 +103,9 @@ $(function () {
                 .style("fill", "#fff")
                 .style("font-size", 12)
                 .style("text-anchor", "middle")
-                .text(function(d) { return d.className.substring(0, d.r / 3); });
+                .text(function (d) {
+                    return d.className.substring(0, d.r / 3);
+                });
         });
 
 
@@ -107,7 +114,9 @@ $(function () {
             var classes = [];
 
             function recurse(name, node) {
-                if (node.children) node.children.forEach(function(child) { recurse(node.name, child); });
+                if (node.children) node.children.forEach(function (child) {
+                    recurse(node.name, child);
+                });
                 else classes.push({packageName: name, className: node.name, value: node.size});
             }
 

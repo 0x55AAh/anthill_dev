@@ -48,7 +48,6 @@ $(function () {
             var timeline_scatter = ec.init(document.getElementById('timeline_scatter'), limitless);
 
 
-
             // Charts setup
             // ------------------------------                    
 
@@ -73,15 +72,15 @@ $(function () {
                     formatter: function (params) {
                         if (params.value.length > 1) {
                             return params.seriesName + ':<br/>'
-                            + params.value[0] + 'cm ' 
-                            + params.value[1] + 'kg ';
+                                + params.value[0] + 'cm '
+                                + params.value[1] + 'kg ';
                         }
                         else {
                             return params.seriesName + ':<br/>'
-                            + params.name + ': '
-                            + params.value + 'kg ';
+                                + params.name + ': '
+                                + params.value + 'kg ';
                         }
-                    },  
+                    },
                     axisPointer: {
                         show: true,
                         type: 'cross',
@@ -94,7 +93,7 @@ $(function () {
 
                 // Add legend
                 legend: {
-                    data: ['Women','Men']
+                    data: ['Women', 'Men']
                 },
 
                 // Horizontal axis
@@ -253,9 +252,9 @@ $(function () {
             // Bubble size control options
             //
 
-            function random(){
+            function random() {
                 var r = Math.round(Math.random() * 100);
-                return (r * (r % 2 == 0 ? 1: -1));
+                return (r * (r % 2 == 0 ? 1 : -1));
             }
 
             function randomDataArray() {
@@ -297,7 +296,7 @@ $(function () {
 
                 // Add legend
                 legend: {
-                    data: ['Scatter1','Scatter2']
+                    data: ['Scatter1', 'Scatter2']
                 },
 
                 // Add toolbox
@@ -475,7 +474,7 @@ $(function () {
                                 x = (Math.random() * 10).toFixed(3) - 0;
                                 d.push([
                                     x,
-                                    (Math.sin(x) - x * (len % 2 ? 0.1: -0.1) * Math.random()).toFixed(3) - 0
+                                    (Math.sin(x) - x * (len % 2 ? 0.1 : -0.1) * Math.random()).toFixed(3) - 0
                                 ]);
                             }
                             return d;
@@ -494,7 +493,7 @@ $(function () {
                                 x = (Math.random() * 10).toFixed(3) - 0;
                                 d.push([
                                     x,
-                                    (Math.cos(x) - x * (len % 2 ? 0.1: -0.1) * Math.random()).toFixed(3) - 0
+                                    (Math.cos(x) - x * (len % 2 ? 0.1 : -0.1) * Math.random()).toFixed(3) - 0
                                 ]);
                             }
                             return d;
@@ -569,8 +568,8 @@ $(function () {
                     max: 100,
                     y: 'bottom',
                     x: 'center',
-                    text: ['High','Low'],
-                    color: ['#FB8C00','#FFE0B2'],
+                    text: ['High', 'Low'],
+                    color: ['#FB8C00', '#FFE0B2'],
                     calculable: true,
                     itemWidth: 30,
                     orient: 'horizontal'
@@ -600,10 +599,10 @@ $(function () {
                             var len = 500;
                             var value;
                             while (len--) {
-                                value = (Math.random()*100).toFixed(2) - 0;
+                                value = (Math.random() * 100).toFixed(2) - 0;
                                 d.push([
-                                    (Math.random()*value + value).toFixed(2) - 0,
-                                    (Math.random()*value).toFixed(2) - 0,
+                                    (Math.random() * value + value).toFixed(2) - 0,
+                                    (Math.random() * value).toFixed(2) - 0,
                                     value
                                 ]);
                             }
@@ -690,16 +689,16 @@ $(function () {
                         tooltip: {
                             trigger: 'item',
                             formatter: function (params) {
-                                return params.seriesName + ' （'  + 'Category' + params.value[0] + '）<br/>'
-                                + params.value[1] + ', ' 
-                                + params.value[2]; 
+                                return params.seriesName + ' （' + 'Category' + params.value[0] + '）<br/>'
+                                    + params.value[1] + ', '
+                                    + params.value[2];
                             },
                             axisPointer: {
                                 show: true
                             }
                         },
                         symbolSize: function (value) {
-                            return Math.round(value[2]/10);
+                            return Math.round(value[2] / 10);
                         },
                         data: (function () {
                             var d = [];
@@ -708,8 +707,8 @@ $(function () {
                             while (len++ < 500) {
                                 d.push([
                                     len,
-                                    (Math.random()*30).toFixed(2) - 0,
-                                    (Math.random()*100).toFixed(2) - 0
+                                    (Math.random() * 30).toFixed(2) - 0,
+                                    (Math.random() * 100).toFixed(2) - 0
                                 ]);
                             }
                             return d;
@@ -722,16 +721,16 @@ $(function () {
                         tooltip: {
                             trigger: 'item',
                             formatter: function (params) {
-                                return params.seriesName + ' （'  + 'Category' + params.value[0] + '）<br/>'
-                                + params.value[1] + ', ' 
-                                + params.value[2]; 
+                                return params.seriesName + ' （' + 'Category' + params.value[0] + '）<br/>'
+                                    + params.value[1] + ', '
+                                    + params.value[2];
                             },
-                            axisPointer:{
+                            axisPointer: {
                                 show: true
                             }
                         },
                         symbolSize: function (value) {
-                            return Math.round(value[2]/10);
+                            return Math.round(value[2] / 10);
                         },
                         data: (function () {
                             var d = [];
@@ -740,8 +739,8 @@ $(function () {
                             while (len++ < 500) {
                                 d.push([
                                     len,
-                                    (Math.random()*30).toFixed(2) - 0,
-                                    (Math.random()*100).toFixed(2) - 0
+                                    (Math.random() * 30).toFixed(2) - 0,
+                                    (Math.random() * 100).toFixed(2) - 0
                                 ]);
                             }
                             return d;
@@ -798,7 +797,7 @@ $(function () {
                     orient: 'horizontal',
                     y: 35,
                     x: 'center',
-                    color: ['#8BC34A','#F1F8E9'],
+                    color: ['#8BC34A', '#F1F8E9'],
                     splitNumber: 5
                 },
 
@@ -822,16 +821,16 @@ $(function () {
                             trigger: 'axis',
                             formatter: function (params) {
                                 var date = new Date(params.value[0]);
-                                return params.seriesName 
-                                + ' （'
-                                + date.getFullYear() + '-'
-                                + (date.getMonth() + 1) + '-'
-                                + date.getDate() + ' '
-                                + date.getHours() + ':'
-                                + date.getMinutes()
-                                +  '）<br/>'
-                                + params.value[1] + ', ' 
-                                + params.value[2];
+                                return params.seriesName
+                                    + ' （'
+                                    + date.getFullYear() + '-'
+                                    + (date.getMonth() + 1) + '-'
+                                    + date.getDate() + ' '
+                                    + date.getHours() + ':'
+                                    + date.getMinutes()
+                                    + '）<br/>'
+                                    + params.value[1] + ', '
+                                    + params.value[2];
                             },
                             axisPointer: {
                                 type: 'cross',
@@ -842,7 +841,7 @@ $(function () {
                             }
                         },
                         symbolSize: function (value) {
-                            return Math.round(value[2]/10);
+                            return Math.round(value[2] / 10);
                         },
                         data: (function () {
                             var d = [];
@@ -851,9 +850,9 @@ $(function () {
                             var value;
                             while (len++ < 1500) {
                                 d.push([
-                                    new Date(2014, 9, 1, 0, Math.round(Math.random()*10000)),
-                                    (Math.random()*30).toFixed(2) - 0,
-                                    (Math.random()*100).toFixed(2) - 0
+                                    new Date(2014, 9, 1, 0, Math.round(Math.random() * 10000)),
+                                    (Math.random() * 30).toFixed(2) - 0,
+                                    (Math.random() * 100).toFixed(2) - 0
                                 ]);
                             }
                             return d;
@@ -871,11 +870,11 @@ $(function () {
 
                 // Setup timeline
                 timeline: {
-                    data: ['2010-01-01','2011-01-01','2012-01-01','2013-01-01','2014-01-01'],
+                    data: ['2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01'],
                     x: 10,
                     x2: 10,
                     label: {
-                        formatter: function(s) {
+                        formatter: function (s) {
                             return s.slice(0, 4);
                         }
                     },
@@ -988,7 +987,6 @@ $(function () {
             };
 
 
-
             // Apply options
             // ------------------------------
 
@@ -1001,12 +999,11 @@ $(function () {
             timeline_scatter.setOption(timeline_scatter_options);
 
 
-
             // Resize charts
             // ------------------------------
 
             window.onresize = function () {
-                setTimeout(function (){
+                setTimeout(function () {
                     basic_scatter.resize();
                     bubble_size.resize();
                     large_scale.resize();

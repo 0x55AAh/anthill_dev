@@ -34,5 +34,4 @@ Example:
 """
 from anthill.framework.core.management import Command, Option, Manager
 
-
 # Create your management commands here.

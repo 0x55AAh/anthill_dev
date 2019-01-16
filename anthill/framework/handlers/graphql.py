@@ -13,12 +13,10 @@ import inspect
 import importlib
 import six
 
-
 DEFAULTS = {
     'SCHEMA': None,
     'MIDDLEWARE': ()
 }
-
 
 # List of settings that may be in string import notation.
 IMPORT_STRINGS = (
@@ -180,7 +178,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             else:
                 result, status_code = await self.get_graphql_response(data)
         except Exception as e:
-            if isinstance(e, (HTTPError, )):
+            if isinstance(e, (HTTPError,)):
                 app_log.error('{0}'.format(e))
             else:
                 app_log.exception('{0}'.format(e))

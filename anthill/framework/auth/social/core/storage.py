@@ -14,7 +14,6 @@ from openid.association import Association as OpenIdAssociation
 from .exceptions import MissingBackend
 from .backends.utils import get_backend
 
-
 NO_ASCII_REGEX = re.compile(r'[^\x00-\x7F]+')
 NO_SPECIAL_REGEX = re.compile(r'[^\w.@+_-]+', re.UNICODE)
 
@@ -103,7 +102,7 @@ class UserMixin:
         """Return true / false if access token is already expired."""
         expiration = self.expiration_timedelta()
         return expiration and \
-            expiration.total_seconds() <= self.ACCESS_TOKEN_EXPIRED_THRESHOLD
+               expiration.total_seconds() <= self.ACCESS_TOKEN_EXPIRED_THRESHOLD
 
     def get_access_token(self, strategy):
         """Returns a valid access token."""

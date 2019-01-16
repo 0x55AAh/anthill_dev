@@ -8,6 +8,7 @@ class CacheKey(object):
     """
     A stub string class that we can use to check if a key was created already.
     """
+
     def __init__(self, key):
         self._key = key
 

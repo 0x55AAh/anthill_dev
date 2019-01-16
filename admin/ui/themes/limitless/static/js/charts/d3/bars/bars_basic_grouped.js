@@ -28,7 +28,6 @@ $(function () {
             height = height - margin.top - margin.bottom - 5;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -45,8 +44,7 @@ $(function () {
 
         // Colors
         var color = d3.scale.ordinal()
-        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
+            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
 
 
         // Create axes
@@ -64,7 +62,6 @@ $(function () {
             .tickFormat(d3.format(".2s"));
 
 
-
         // Create chart
         // ------------------------------
 
@@ -76,20 +73,24 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Load data
         // ------------------------------
 
-        d3.csv("assets/demo_data/d3/bars/bars_grouped.csv", function(error, data) {
+        d3.csv("assets/demo_data/d3/bars/bars_grouped.csv", function (error, data) {
 
             // Filter values by key
-            var ageNames = d3.keys(data[0]).filter(function(key) { return key !== "State"; });
+            var ageNames = d3.keys(data[0]).filter(function (key) {
+                return key !== "State";
+            });
 
             // Pull out values
-            data.forEach(function(d) {
-                d.ages = ageNames.map(function(name) { return {name: name, value: +d[name]}; });
+            data.forEach(function (d) {
+                d.ages = ageNames.map(function (name) {
+                    return {name: name, value: +d[name]};
+                });
             });
 
 
@@ -97,11 +98,17 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x0.domain(data.map(function(d) { return d.State; }));
+            x0.domain(data.map(function (d) {
+                return d.State;
+            }));
             x1.domain(ageNames).rangeRoundBands([0, x0.rangeBand()]);
 
             // Vertical
-            y.domain([0, d3.max(data, function(d) { return d3.max(d.ages, function(d) { return d.value; }); })]);
+            y.domain([0, d3.max(data, function (d) {
+                return d3.max(d.ages, function (d) {
+                    return d.value;
+                });
+            })]);
 
 
             //
@@ -141,20 +148,32 @@ $(function () {
                 .data(data)
                 .enter()
                 .append("g")
-                    .attr("class", "bar-group")
-                    .attr("transform", function(d) { return "translate(" + x0(d.State) + ",0)"; });
+                .attr("class", "bar-group")
+                .attr("transform", function (d) {
+                    return "translate(" + x0(d.State) + ",0)";
+                });
 
             // Append bars
             state.selectAll(".d3-bar")
-                .data(function(d) { return d.ages; })
+                .data(function (d) {
+                    return d.ages;
+                })
                 .enter()
                 .append("rect")
-                    .attr("class", "d3-bar")
-                    .attr("width", x1.rangeBand())
-                    .attr("x", function(d) { return x1(d.name); })
-                    .attr("y", function(d) { return y(d.value); })
-                    .attr("height", function(d) { return height - y(d.value); })
-                    .style("fill", function(d) { return color(d.name); });
+                .attr("class", "d3-bar")
+                .attr("width", x1.rangeBand())
+                .attr("x", function (d) {
+                    return x1(d.name);
+                })
+                .attr("y", function (d) {
+                    return y(d.value);
+                })
+                .attr("height", function (d) {
+                    return height - y(d.value);
+                })
+                .style("fill", function (d) {
+                    return color(d.name);
+                });
 
 
             // Add legend
@@ -165,8 +184,10 @@ $(function () {
                 .data(ageNames.slice().reverse())
                 .enter()
                 .append("g")
-                    .attr("class", "d3-legend")
-                    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                .attr("class", "d3-legend")
+                .attr("transform", function (d, i) {
+                    return "translate(0," + i * 20 + ")";
+                });
 
             // Legend indicator
             legend.append("rect")
@@ -182,9 +203,10 @@ $(function () {
                 .attr("dy", ".35em")
                 .style("text-anchor", "end")
                 .style("font-size", 12)
-                .text(function(d) { return d; });
+                .text(function (d) {
+                    return d;
+                });
         });
-
 
 
         // Resize chart
@@ -232,10 +254,14 @@ $(function () {
             // -------------------------
 
             // Bar group
-            svg.selectAll('.bar-group').attr("transform", function(d) { return "translate(" + x0(d.State) + ",0)"; });
+            svg.selectAll('.bar-group').attr("transform", function (d) {
+                return "translate(" + x0(d.State) + ",0)";
+            });
 
             // Bars
-            svg.selectAll('.d3-bar').attr("width", x1.rangeBand()).attr("x", function(d) { return x1(d.name); });
+            svg.selectAll('.d3-bar').attr("width", x1.rangeBand()).attr("x", function (d) {
+                return x1(d.name);
+            });
 
             // Legend
             svg.selectAll(".d3-legend text").attr("x", width - 24);

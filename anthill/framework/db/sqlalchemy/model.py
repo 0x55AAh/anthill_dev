@@ -22,8 +22,8 @@ def should_set_tablename(cls):
     found, the name will be unset.
     """
     if (
-        cls.__dict__.get('__abstract__', False)
-        or not any(isinstance(b, DeclarativeMeta) for b in cls.__mro__[1:])
+            cls.__dict__.get('__abstract__', False)
+            or not any(isinstance(b, DeclarativeMeta) for b in cls.__mro__[1:])
     ):
         return False
 
@@ -35,9 +35,9 @@ def should_set_tablename(cls):
             return False
 
         return not (
-            base is cls
-            or base.__dict__.get('__abstract__', False)
-            or not isinstance(base, DeclarativeMeta)
+                base is cls
+                or base.__dict__.get('__abstract__', False)
+                or not isinstance(base, DeclarativeMeta)
         )
 
     return True
@@ -68,9 +68,9 @@ class NameMetaMixin:
         # __table_cls__ has run at this point
         # if no table was created, use the parent table
         if (
-            '__tablename__' not in cls.__dict__
-            and '__table__' in cls.__dict__
-            and cls.__dict__['__table__'] is None
+                '__tablename__' not in cls.__dict__
+                and '__table__' in cls.__dict__
+                and cls.__dict__['__table__'] is None
         ):
             del cls.__table__
 
@@ -92,8 +92,8 @@ class NameMetaMixin:
         # joined-table inheritance
         for arg in args:
             if (
-                (isinstance(arg, sa.Column) and arg.primary_key)
-                or isinstance(arg, sa.PrimaryKeyConstraint)
+                    (isinstance(arg, sa.Column) and arg.primary_key)
+                    or isinstance(arg, sa.PrimaryKeyConstraint)
             ):
                 return sa.Table(*args, **kwargs)
 
@@ -113,8 +113,8 @@ class NameMetaMixin:
 class BindMetaMixin:
     def __init__(cls, name, bases, d):
         bind_key = (
-            d.pop('__bind_key__', None)
-            or getattr(cls, '__bind_key__', None)
+                d.pop('__bind_key__', None)
+                or getattr(cls, '__bind_key__', None)
         )
 
         super(BindMetaMixin, cls).__init__(name, bases, d)

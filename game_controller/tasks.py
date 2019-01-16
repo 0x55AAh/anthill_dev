@@ -8,5 +8,4 @@ Example:
 
 from anthill.platform.core.celery import app
 
-
 # Create your celery tasks here

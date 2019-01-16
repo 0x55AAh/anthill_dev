@@ -11,11 +11,13 @@
 signals_available = False
 try:
     from blinker import Namespace
+
     signals_available = True
 except ImportError:
     class Namespace(object):
         def signal(self, name, doc=None):
             return _FakeSignal(name, doc)
+
 
     class _FakeSignal(object):
         """If blinker is unavailable, create a fake class with the same
@@ -32,6 +34,7 @@ except ImportError:
             raise RuntimeError('signalling support is unavailable '
                                'because the blinker library is '
                                'not installed.')
+
         send = lambda *a, **kw: None
         connect = disconnect = has_receivers_for = receivers_for = \
             temporarily_connected_to = connected_to = _fail

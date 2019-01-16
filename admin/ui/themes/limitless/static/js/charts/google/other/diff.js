@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawDiff);
 
 
@@ -71,7 +71,7 @@ function drawDiff() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },

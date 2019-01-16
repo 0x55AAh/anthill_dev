@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // If you're adding a number of markers, you may want to
     // drop them on the map consecutively rather than all at once.
@@ -52,7 +52,7 @@ $(function() {
     // Drop markers
     function drop() {
         for (var i = 0; i < neighborhoods.length; i++) {
-            setTimeout(function() {
+            setTimeout(function () {
                 addMarker();
             }, i * 200);
         }
@@ -72,7 +72,7 @@ $(function() {
 
 
     // Drop markers on button click
-    $('.drop-markers').on('click', function() {
+    $('.drop-markers').on('click', function () {
         drop();
     });
 

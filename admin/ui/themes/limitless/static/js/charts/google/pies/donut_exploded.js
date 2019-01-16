@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawExplodedDonut);
 
 
@@ -52,7 +52,7 @@ function drawExplodedDonut() {
         },
         pieHole: 0.5,
         pieSliceText: 'label',
-        slices: {  
+        slices: {
             2: {offset: 0.15},
             8: {offset: 0.1},
             10: {offset: 0.15},

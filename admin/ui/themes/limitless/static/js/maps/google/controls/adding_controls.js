@@ -9,25 +9,25 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
-	// Initialize
-	function initialize() {
+    // Initialize
+    function initialize() {
 
-		// Options
-		var mapOptions = {
-			zoom: 11,
-			center: new google.maps.LatLng(48.136, 11.574),
-			panControl: false,
-			zoomControl: false,
-			scaleControl: true
-		}
+        // Options
+        var mapOptions = {
+            zoom: 11,
+            center: new google.maps.LatLng(48.136, 11.574),
+            panControl: false,
+            zoomControl: false,
+            scaleControl: true
+        }
 
-		// Apply options
-		var map = new google.maps.Map($('.map-adding-controls')[0], mapOptions);
-	}
+        // Apply options
+        var map = new google.maps.Map($('.map-adding-controls')[0], mapOptions);
+    }
 
-	// Load map
-	google.maps.event.addDomListener(window, 'load', initialize);
+    // Load map
+    google.maps.event.addDomListener(window, 'load', initialize);
 
 });

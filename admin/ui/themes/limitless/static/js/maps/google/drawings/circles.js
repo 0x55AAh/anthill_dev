@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // This example creates circles on the map, representing
     // populations in North America.
@@ -44,6 +44,7 @@ $(function() {
 
     // Initialize
     var cityCircle;
+
     function initialize() {
 
         // Options

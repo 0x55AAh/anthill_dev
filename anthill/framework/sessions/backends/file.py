@@ -17,6 +17,7 @@ class SessionStore(SessionBase):
     """
     Implement a file based session store.
     """
+
     def __init__(self, session_key=None):
         self.storage_path = type(self)._get_storage_path()
         self.file_prefix = settings.SESSION_COOKIE_NAME
@@ -66,7 +67,7 @@ class SessionStore(SessionBase):
         Return the expiry time of the file storing the session's content.
         """
         return session_data.get('_session_expiry') or (
-            self._last_modification() + datetime.timedelta(seconds=settings.SESSION_COOKIE_AGE)
+                self._last_modification() + datetime.timedelta(seconds=settings.SESSION_COOKIE_AGE)
         )
 
     def load(self):

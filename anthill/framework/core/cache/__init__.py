@@ -59,6 +59,7 @@ class CacheHandler:
 
     Ensure only one instance of each alias exists per thread.
     """
+
     def __init__(self):
         self._caches = local()
 
@@ -93,6 +94,7 @@ class DefaultCacheProxy:
     This allows the legacy `cache` object to be thread-safe using the new
     ``caches`` API.
     """
+
     def __getattr__(self, name):
         return getattr(caches[DEFAULT_CACHE_ALIAS], name)
 

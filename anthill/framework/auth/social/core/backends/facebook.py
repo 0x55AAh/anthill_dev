@@ -11,8 +11,7 @@ import hashlib
 from ..utils import parse_qs, constant_time_compare, handle_http_errors
 from .oauth import BaseOAuth2
 from ..exceptions import AuthException, AuthCanceled, AuthUnknownError, \
-                         AuthMissingParameter
-
+    AuthMissingParameter
 
 API_VERSION = 2.9
 
@@ -84,7 +83,7 @@ class FacebookOAuth2(BaseOAuth2):
         super(FacebookOAuth2, self).process_error(data)
         if data.get('error_code'):
             raise AuthCanceled(self, data.get('error_message') or
-                                     data.get('error_code'))
+                               data.get('error_code'))
 
     @handle_http_errors
     def auth_complete(self, *args, **kwargs):
@@ -229,5 +228,5 @@ class FacebookAppOAuth2(FacebookOAuth2):
                                     digestmod=hashlib.sha256).digest()
             # allow the signed_request to function for upto 1 day
             if constant_time_compare(sig, expected_sig) and \
-               data['issued_at'] > (time.time() - 86400):
+                    data['issued_at'] > (time.time() - 86400):
                 return data

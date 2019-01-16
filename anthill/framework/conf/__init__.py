@@ -22,6 +22,7 @@ class LazySettings(LazyObject):
     The user can manually configure settings prior to using them. Otherwise,
     framework uses the settings module pointed to by ANTHILL_SETTINGS_MODULE.
     """
+
     def _setup(self, name=None):
         """
         Load the settings module pointed to by the environment variable.
@@ -122,7 +123,7 @@ class Settings:
             # this file, no check happens and it's harmless.
             zoneinfo_root = '/usr/share/zoneinfo'
             if (os.path.exists(zoneinfo_root) and not
-                    os.path.exists(os.path.join(zoneinfo_root, *(self.TIME_ZONE.split('/'))))):
+            os.path.exists(os.path.join(zoneinfo_root, *(self.TIME_ZONE.split('/'))))):
                 raise ValueError("Incorrect timezone setting: %s" % self.TIME_ZONE)
             # Move the time zone info into os.environ. See ticket #2315 for why
             # we don't do this unconditionally (breaks Windows).

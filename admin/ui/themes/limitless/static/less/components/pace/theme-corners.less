@@ -9,7 +9,6 @@
  *
  * ---------------------------------------------------------------------------- */
 
-
 // Preloader template. Default dark background
 // ------------------------------
 
@@ -21,7 +20,7 @@
   width: 100%;
   height: 100%;
   background-color: @color-slate-800; // Change it to any suitable dark color
-  z-index: 9000; 
+  z-index: 9000;
   .opacity(0.9);
 }
 
@@ -39,7 +38,6 @@
     color: @color-teal-300;
   }
 }
-
 
 // Pace theme styles
 // ------------------------------
@@ -77,24 +75,43 @@
 
 // Animation
 @keyframes corners {
-    0% { transform: rotate(0deg); }
-    50% { transform: scale(1.5) rotate(180deg); border-radius: 0; }
-    100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    border-radius: 0;
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @-webkit-keyframes corners {
-    0% { -webkit-transform: rotate(0deg); }
-    50% { -webkit-transform: scale(2) rotate(180deg); border-radius: 0; }
-    100% { -webkit-transform: rotate(360deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  50% {
+    -webkit-transform: scale(2) rotate(180deg);
+    border-radius: 0;
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @-moz-keyframes corners {
-    0% { -moz-transform: rotate(0deg); }
-    50% { -moz-transform: scale(2) rotate(180deg); border-radius: 0; }
-    100% { -moz-transform: rotate(360deg); }
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  50% {
+    -moz-transform: scale(2) rotate(180deg);
+    border-radius: 0;
+  }
+  100% {
+    -moz-transform: rotate(360deg);
+  }
 }
-
-
 
 // Uncomment code below to show loader text with indicator
 

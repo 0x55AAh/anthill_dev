@@ -9,29 +9,29 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
-	// Initialize
-	function initialize() {
+    // Initialize
+    function initialize() {
 
-		// Set coordinates
-		var myLatlng = new google.maps.LatLng(47.377455, 8.536715);
+        // Set coordinates
+        var myLatlng = new google.maps.LatLng(47.377455, 8.536715);
 
-		// Options
-		var mapOptions = {
-			zoom: 14,
-			center: myLatlng
-		};
+        // Options
+        var mapOptions = {
+            zoom: 14,
+            center: myLatlng
+        };
 
-		// Apply options
-		var map = new google.maps.Map($('.map-layer-bicycling')[0], mapOptions);
+        // Apply options
+        var map = new google.maps.Map($('.map-layer-bicycling')[0], mapOptions);
 
-		// Add layers
-		var bikeLayer = new google.maps.BicyclingLayer();
-			bikeLayer.setMap(map);
-	}
+        // Add layers
+        var bikeLayer = new google.maps.BicyclingLayer();
+        bikeLayer.setMap(map);
+    }
 
-	// Load map
-	google.maps.event.addDomListener(window, 'load', initialize);
+    // Load map
+    google.maps.event.addDomListener(window, 'load', initialize);
 
 });

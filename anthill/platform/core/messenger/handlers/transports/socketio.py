@@ -7,13 +7,13 @@ from anthill.platform.core.messenger.client.exceptions import ClientError
 import user_agents
 import socketio
 import logging
-
+import copy
 
 logger = logging.getLogger('anthill.application')
 
 
 class MessengerNamespace(socketio.AsyncNamespace):
-    groups = ['__messenger__']        # Global groups. Must starts with `__` for security reason
+    groups = ['__messenger__']  # Global groups. Must starts with `__` for security reason
     direct_group_prefix = '__direct'  # Must starts with `__`
     client_class = None
     is_notify_on_net_status_changed = True
@@ -124,27 +124,83 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     async def on_create_group(self, sid, data):
         client = await self.get_client(sid)
-
-    async def on_delete_group(self, sid, data):
-        client = await self.get_client(sid)
-        group = self.retrieve_group(data)
-        await client.delete_group(group)
+        personal_group = client.create_personal_group()
+        group_name = data.get('name')
+        group_data = data.get('data')
         content = {
             'user': {
                 'id': client.get_user_id()
             }
         }
-        await self.emit('delete_group', data=content, room=group)
-        await self.close_room(room=group)
+        try:
+            await client.create_group(group_name, group_data)
+        except ClientError as e:
+            content['error'] = str(e)
+            await self.emit('create_group', data=content, room=personal_group)
+        else:
+            for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
+                self.enter_room(sid_, group_name)
+            await self.emit('create_group', data=content, room=group)
+
+    async def on_delete_group(self, sid, data):
+        client = await self.get_client(sid)
+        group = self.retrieve_group(data)
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        try:
+            await client.delete_group(group)
+        except ClientError as e:
+            content['error'] = str(e)
+            personal_group = client.create_personal_group()
+            await self.emit('delete_group', data=content, room=personal_group)
+        else:
+            await self.emit('delete_group', data=content, room=group)
+            await self.close_room(room=group)
 
     async def on_update_group(self, sid, data):
         client = await self.get_client(sid)
+        group = self.retrieve_group(data)
 
     async def on_join_group(self, sid, data):
         client = await self.get_client(sid)
+        group = self.retrieve_group(data)
+        personal_group = client.create_personal_group()
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        try:
+            await client.join_group(group)
+        except ClientError as e:
+            content['error'] = str(e)
+            await self.emit('join_group', data=content, room=personal_group)
+        else:
+            for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
+                self.enter_room(sid_, group)
+            await self.emit('join_group', data=content, room=group)
 
     async def on_leave_group(self, sid, data):
         client = await self.get_client(sid)
+        group = self.retrieve_group(data)
+        personal_group = client.create_personal_group()
+        content = {
+            'user': {
+                'id': client.get_user_id()
+            }
+        }
+        try:
+            await client.leave_group(group)
+        except ClientError as e:
+            content['error'] = str(e)
+            await self.emit('leave_group', data=content, room=personal_group)
+        else:
+            for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
+                self.leave_room(sid_, group)
+            await self.emit('leave_group', data=content, room=group)
 
     # /GROUPS
 
@@ -171,7 +227,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         except ClientError as e:
             content['error'] = str(e)
             personal_group = client.create_personal_group()
-            self.emit('create_message', data=content, room=personal_group)
+            await self.emit('create_message', data=content, room=personal_group)
         else:
             content['payload'] = {'id': message_id, 'data': data}
             await self.emit('create_message', data=content, room=group)
@@ -247,7 +303,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         user_agent = request_handler.request.headers.get('User-Agent')
         user_agent = user_agents.parse(user_agent)
         client = await self.get_client(sid)
-        data = {
+        content = {
             'user': {
                 'id': client.get_user_id()
             },
@@ -262,12 +318,12 @@ class MessengerNamespace(socketio.AsyncNamespace):
             }
         }
         for group in self.rooms(sid):
-            await self.emit(self.ONLINE, data=data, room=group, skip_sid=sid)
+            await self.emit(self.ONLINE, data=content, room=group, skip_sid=sid)
 
     async def on_offline(self, sid):
         client = await self.get_client(sid)
         user_id = client.get_user_id()
-        data = {
+        content = {
             'user': {
                 'id': user_id
             }
@@ -275,7 +331,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         is_online = await self.online(sid, user_id)
         if not is_online:
             for group in self.rooms(sid):
-                await self.emit(self.OFFLINE, data=data, room=group, skip_sid=sid)
+                await self.emit(self.OFFLINE, data=content, room=group, skip_sid=sid)
 
     # /System actions
 

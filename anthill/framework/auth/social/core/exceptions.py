@@ -23,6 +23,7 @@ class NotAllowedToDisconnect(SocialAuthBaseException):
 
 class AuthException(SocialAuthBaseException):
     """Auth process exception."""
+
     def __init__(self, backend, *args, **kwargs):
         self.backend = backend
         super(AuthException, self).__init__(*args, **kwargs)
@@ -30,6 +31,7 @@ class AuthException(SocialAuthBaseException):
 
 class AuthFailed(AuthException):
     """Auth process failed for some reason."""
+
     def __str__(self):
         msg = super(AuthFailed, self).__str__()
         if msg == 'access_denied':
@@ -39,6 +41,7 @@ class AuthFailed(AuthException):
 
 class AuthCanceled(AuthException):
     """Auth process was canceled by user."""
+
     def __init__(self, *args, **kwargs):
         self.response = kwargs.pop('response', None)
         super(AuthCanceled, self).__init__(*args, **kwargs)
@@ -52,6 +55,7 @@ class AuthCanceled(AuthException):
 
 class AuthUnknownError(AuthException):
     """Unknown auth process error."""
+
     def __str__(self):
         msg = super(AuthUnknownError, self).__str__()
         return 'An unknown error happened while authenticating {0}'.format(msg)
@@ -59,6 +63,7 @@ class AuthUnknownError(AuthException):
 
 class AuthTokenError(AuthException):
     """Auth token error."""
+
     def __str__(self):
         msg = super(AuthTokenError, self).__str__()
         return 'Token error: {0}'.format(msg)
@@ -66,6 +71,7 @@ class AuthTokenError(AuthException):
 
 class AuthMissingParameter(AuthException):
     """Missing parameter needed to start or complete the process."""
+
     def __init__(self, backend, parameter, *args, **kwargs):
         self.parameter = parameter
         super(AuthMissingParameter, self).__init__(backend, *args, **kwargs)
@@ -76,12 +82,14 @@ class AuthMissingParameter(AuthException):
 
 class AuthStateMissing(AuthException):
     """State parameter is incorrect."""
+
     def __str__(self):
         return 'Session value state missing.'
 
 
 class AuthStateForbidden(AuthException):
     """State parameter is incorrect."""
+
     def __str__(self):
         return 'Wrong state parameter given.'
 
@@ -92,18 +100,21 @@ class AuthAlreadyAssociated(AuthException):
 
 class AuthTokenRevoked(AuthException):
     """User revoked the access_token in the provider."""
+
     def __str__(self):
         return 'User revoke access to the token'
 
 
 class AuthForbidden(AuthException):
     """Authentication for this user is forbidden."""
+
     def __str__(self):
         return 'Your credentials aren\'t allowed'
 
 
 class AuthUnreachableProvider(AuthException):
     """Cannot reach the provider."""
+
     def __str__(self):
         return 'The authentication provider could not be reached'
 

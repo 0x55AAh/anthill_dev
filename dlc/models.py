@@ -14,6 +14,7 @@ import pyhash
 
 class Hasher:
     """Hashing class."""
+
     def __init__(self, data=None):
         self.data = data or b''
 

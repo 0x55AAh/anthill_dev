@@ -12,56 +12,56 @@
 $(function () {
 
     // Construct chart
-	var svg = dimple.newSvg("#dimple-pie-bubble", "100%", 500);
+    var svg = dimple.newSvg("#dimple-pie-bubble", "100%", 500);
 
 
     // Chart setup
     // ------------------------------
 
-	d3.tsv("assets/demo_data/dimple/demo_data.tsv", function (data) {
+    d3.tsv("assets/demo_data/dimple/demo_data.tsv", function (data) {
 
-		// Filter data
-		data = dimple.filterData(data, "Date", "01/12/2011");
+        // Filter data
+        data = dimple.filterData(data, "Date", "01/12/2011");
 
 
         // Create chart
         // ------------------------------
 
         // Define chart
-		var myChart = new dimple.chart(svg, data);
+        var myChart = new dimple.chart(svg, data);
 
-		// Set bounds
-		myChart.setBounds(0, 0, "100%", "100%");
+        // Set bounds
+        myChart.setBounds(0, 0, "100%", "100%");
 
-		// Set margins
-		myChart.setMargins(55, 35, 20, 45);
+        // Set margins
+        myChart.setMargins(55, 35, 20, 45);
 
 
         // Add axes
         // ------------------------------
 
         // Horizontal
-		var x = myChart.addMeasureAxis("x", "Price Monthly Change");
+        var x = myChart.addMeasureAxis("x", "Price Monthly Change");
 
         // Vertical
-		var y = myChart.addMeasureAxis("y", "Unit Sales Monthly Change");
+        var y = myChart.addMeasureAxis("y", "Unit Sales Monthly Change");
 
-		// Other axes
-		myChart.addMeasureAxis("p", "Operating Profit");
-		myChart.addMeasureAxis("z", "Operating Profit");
+        // Other axes
+        myChart.addMeasureAxis("p", "Operating Profit");
+        myChart.addMeasureAxis("z", "Operating Profit");
 
 
         // Construct layout
         // ------------------------------
 
         // Add pie
-		myChart.addSeries(["Owner", "Channel"], dimple.plot.pie);
+        myChart.addSeries(["Owner", "Channel"], dimple.plot.pie);
 
 
         // Add legend
         // ------------------------------
 
-		var myLegend = myChart.addLegend(0, 5, "100%", 0, "right");
+        var myLegend = myChart.addLegend(0, 5, "100%", 0, "right");
 
 
         // Add styles
@@ -107,5 +107,5 @@ $(function () {
             // Position legend text
             myLegend.shapes.selectAll("text").attr("dy", "1");
         }
-	});
+    });
 });

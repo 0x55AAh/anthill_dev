@@ -13,7 +13,6 @@ import types
 import warnings
 import logging
 
-
 __all__ = [
     "Command", "Shell", "Server", "Group", "Option", "Version", "add_help",
     "Manager", "EmptyManager", "InvalidCommand"
@@ -29,14 +28,13 @@ safe_actions = (
     argparse._CountAction
 )
 
-
 iteritems = lambda d: iter(d.items())
 
 logger = logging.getLogger('anthill.application')
 
-
 try:
     import argcomplete
+
     ARGCOMPLETE_IMPORTED = True
 except ImportError:
     ARGCOMPLETE_IMPORTED = False
@@ -83,7 +81,7 @@ class BaseManager:
                  help=None, description=None, disable_argcomplete=False):
 
         self.app = app
-        
+
         self.subparser_kwargs = dict()
 
         self._commands = OrderedDict()
@@ -298,7 +296,6 @@ class BaseManager:
             name = func.__name__
 
             if name not in self._commands:
-
                 command = Command()
                 command.run = func
                 command.__doc__ = func.__doc__
@@ -308,6 +305,7 @@ class BaseManager:
 
             self._commands[name].option_list.append(option)
             return func
+
         return decorate
 
     def shell(self, func):
@@ -339,7 +337,7 @@ class BaseManager:
     def handle(self, prog, args=None):
         self.set_defaults()
         app_parser = self.create_parser(prog)
-        
+
         args = list(args or [])
         app_namespace, remaining_args = app_parser.parse_known_args(args)
 

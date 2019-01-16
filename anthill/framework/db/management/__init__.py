@@ -7,9 +7,7 @@ from alembic.config import Config as AlembicConfig
 from alembic import command
 import logging
 
-
 logger = logging.getLogger('anthill.application')
-
 
 alembic_version = tuple([int(v) for v in __alembic_version__.split('.')[0:3]])
 

@@ -1,15 +1,19 @@
 .content {
     padding: 0;
 }
+
 .content:first-child {
     padding-top: 0;
 }
+
 .media-list-linked .media-link {
     padding: 12px 20px;
 }
+
 .media-list-linked .media-link .media-left {
     padding-right: 12px;
 }
+
 @media (min-width: 769px) {
     .sidebar-secondary {
         display: table-cell;
@@ -17,23 +21,28 @@
         width: 300px;
     }
 }
+
 .sidebar-content {
     position: relative;
     padding-bottom: 0;
 }
+
 .chat-list, .chat-stacked {
     max-height: 0;
     overflow: hidden;
 }
+
 @media (min-width: 769px) {
     .sidebar-fixed.sidebar-default .sidebar-content {
         width: 300px;
     }
 }
+
 .sidebar.sidebar-secondary > .sidebar-content .sidebar-category > .category-content > ul > li.active {
     background-color: #f5f5f5;
     border-right: 1px solid #ddd;
 }
+
 .media > .media-link > .media-left > .status-mark {
     width: 11px;
     height: 11px;
@@ -44,6 +53,7 @@
     top: 0;
     left: 0;
 }
+
 .media > .media-left > .status-mark {
     width: 10px;
     height: 10px;
@@ -54,9 +64,11 @@
     top: 0;
     left: 0;
 }
+
 .chat-list > li {
     cursor: pointer;
 }
+
 .status-mark-mobile {
     display: inline-block;
     position: absolute;
@@ -69,6 +81,7 @@
     border-radius: 2px;
     font-size: 12px;
 }
+
 .media-list-linked .media {
     padding-right: 1px;
 }

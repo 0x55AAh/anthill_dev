@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawPie);
 
 
@@ -24,11 +24,11 @@ function drawPie() {
     // Data
     var data = google.visualization.arrayToDataTable([
         ['Task', 'Hours per Day'],
-        ['Work',     11],
-        ['Eat',      2],
-        ['Commute',  2],
+        ['Work', 11],
+        ['Eat', 2],
+        ['Commute', 2],
         ['Watch TV', 2],
-        ['Sleep',    7]
+        ['Sleep', 7]
     ]);
 
     // Options
@@ -42,7 +42,7 @@ function drawPie() {
             height: '90%'
         }
     };
-    
+
 
     // Instantiate and draw our chart, passing in some options.
     var pie = new google.visualization.PieChart($('#google-pie')[0]);

@@ -58,6 +58,7 @@ class MultiValueDict(dict):
     'nonexistent'
     >>> d.setlist('lastname', ['Holovaty', 'Willison'])
     """
+
     def __init__(self, key_to_list_mapping=()):
         super().__init__(key_to_list_mapping)
 
@@ -255,6 +256,7 @@ class DictWrapper(dict):
     the specified prefix) are passed through a function before being returned.
     The prefix is removed before looking up the real value.
     """
+
     def __init__(self, data, func, prefix):
         super().__init__(data)
         self.func = func

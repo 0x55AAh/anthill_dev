@@ -1,7 +1,6 @@
 from uuid import uuid4
 from ..core.utils import slugify, module_member
 
-
 USER_FIELDS = ['username', 'email']
 
 

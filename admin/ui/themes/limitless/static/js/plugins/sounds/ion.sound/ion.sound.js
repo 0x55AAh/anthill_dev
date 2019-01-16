@@ -51,7 +51,6 @@
     };
 
 
-
     /**
      * DISABLE for unsupported browsers
      */
@@ -71,7 +70,6 @@
     }
 
 
-
     /**
      * CORE
      * - creating sounds collection
@@ -83,7 +81,6 @@
         settings = {},
         sounds = {},
         i;
-
 
 
     if (!settings.supported && is_iOS) {
@@ -185,7 +182,6 @@
     if ($) {
         $.ionSound = ion.sound;
     }
-
 
 
     /**
@@ -451,7 +447,6 @@
     };
 
 
-
     var Stream = function (options, sprite_part) {
         this.alias = options.alias;
         this.name = options.name;
@@ -635,7 +630,6 @@
     }
 
 
-
     /**
      * Fallback for HTML5 audio
      * - for not so modern browsers
@@ -671,7 +665,6 @@
         sound = null;
     };
     checkSupport();
-
 
 
     Sound.prototype = {
@@ -854,7 +847,6 @@
     };
 
 
-
     Stream = function (options, sprite_part) {
         this.name = options.name;
         this.alias = options.alias;
@@ -978,7 +970,8 @@
             } else {
                 try {
                     this.sound.currentTime = this.start;
-                } catch (e) {}
+                } catch (e) {
+                }
             }
 
             this.playing = true;
@@ -999,7 +992,8 @@
 
             try {
                 this.sound.currentTime = this.start;
-            } catch (e) {}
+            } catch (e) {
+            }
         },
 
         pause: function () {
@@ -1078,4 +1072,4 @@
         }
     };
 
-} (window, navigator, window.jQuery || window.$));
+}(window, navigator, window.jQuery || window.$));

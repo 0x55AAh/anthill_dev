@@ -203,7 +203,7 @@ class PlainService(BaseService):
         self.admin_request = partial(self.internal_request, self.admin_name)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
-                            on_exception=lambda func, e: logger.error('Service `discovery` is unreachable.'),))
+                            on_exception=lambda func, e: logger.error('Service `discovery` is unreachable.'), ))
     async def register_on_discovery(self) -> None:
         kwargs = dict(name=self.name, networks=self.app.registry_entry)
         await self.discovery_request('set_service_bulk', **kwargs)

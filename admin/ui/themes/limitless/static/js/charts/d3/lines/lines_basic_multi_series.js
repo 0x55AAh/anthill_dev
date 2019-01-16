@@ -34,7 +34,6 @@ $(function () {
         var color = d3.scale.category10();
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -45,7 +44,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -64,7 +62,6 @@ $(function () {
             .orient("left");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -76,8 +73,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -86,18 +82,21 @@ $(function () {
         // Line
         var line = d3.svg.line()
             .interpolate("basis")
-            .x(function(d) { return x(d.date); })
-            .y(function(d) { return y(d.temperature); });
-
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y(function (d) {
+                return y(d.temperature);
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/lines/lines_multi_series.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/lines/lines_multi_series.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
             });
 
@@ -106,32 +105,42 @@ $(function () {
             // ------------------------------
 
             // Filter by date
-            color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+            color.domain(d3.keys(data[0]).filter(function (key) {
+                return key !== "date";
+            }));
 
             // Set colors
-            var cities = color.domain().map(function(name) {
+            var cities = color.domain().map(function (name) {
                 return {
                     name: name,
-                    values: data.map(function(d) {
+                    values: data.map(function (d) {
                         return {date: d.date, temperature: +d[name]};
                     })
                 }
             });
 
 
-
             // Set input domains
             // ------------------------------
 
             // Horizontal
-            x.domain(d3.extent(data, function(d) { return d.date; }));
+            x.domain(d3.extent(data, function (d) {
+                return d.date;
+            }));
 
             // Vertical
             y.domain([
-                d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.temperature; }); }),
-                d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.temperature; }); })
+                d3.min(cities, function (c) {
+                    return d3.min(c.values, function (v) {
+                        return v.temperature;
+                    });
+                }),
+                d3.max(cities, function (c) {
+                    return d3.max(c.values, function (v) {
+                        return v.temperature;
+                    });
+                })
             ]);
-
 
 
             //
@@ -143,23 +152,32 @@ $(function () {
                 .data(cities)
                 .enter()
                 .append("g")
-                    .attr("class", "multiline-city");
+                .attr("class", "multiline-city");
 
             // Add line
             city.append("path")
                 .attr("class", "d3-line d3-line-medium")
-                .attr("d", function(d) { return line(d.values); })
-                .style("stroke", function(d) { return color(d.name); });
+                .attr("d", function (d) {
+                    return line(d.values);
+                })
+                .style("stroke", function (d) {
+                    return color(d.name);
+                });
 
             // Add text
             city.append("text")
-                .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-                .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+                .datum(function (d) {
+                    return {name: d.name, value: d.values[d.values.length - 1]};
+                })
+                .attr("transform", function (d) {
+                    return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")";
+                })
                 .attr("class", "d3-cities")
                 .attr("x", 10)
                 .attr("dy", ".35em")
-                .text(function(d) { return d.name; });
-        
+                .text(function (d) {
+                    return d.name;
+                });
 
 
             // Append axes
@@ -186,7 +204,6 @@ $(function () {
                 .style("font-size", 12)
                 .text("Temperature (ºF)");
         })
-
 
 
         // Resize chart
@@ -233,10 +250,14 @@ $(function () {
             // -------------------------
 
             // Line path
-            svg.selectAll('.d3-line').attr("d", function(d) { return line(d.values); });
+            svg.selectAll('.d3-line').attr("d", function (d) {
+                return line(d.values);
+            });
 
             // Text
-            svg.selectAll('.d3-cities').attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
+            svg.selectAll('.d3-cities').attr("transform", function (d) {
+                return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")";
+            })
         }
     }
 });

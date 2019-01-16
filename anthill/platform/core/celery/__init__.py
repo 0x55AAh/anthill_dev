@@ -7,7 +7,6 @@ __all__ = ['app', 'start_worker']
 
 SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
 
-
 app_label = settings.APPLICATION_NAME.rpartition('.')[2]
 default_entity_name = 'celery.%s' % app_label
 

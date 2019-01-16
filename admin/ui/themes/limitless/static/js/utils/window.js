@@ -7,8 +7,8 @@ function popup(url, title, w, h) {
     var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight
         ? document.documentElement.clientHeight : screen.height;
 
-    var left = width/2 - w/2 + dualScreenLeft;
-    var top = height/2 - h/2 + dualScreenTop;
+    var left = width / 2 - w / 2 + dualScreenLeft;
+    var top = height / 2 - h / 2 + dualScreenTop;
 
     var params = [
         'scrollbars=no',

@@ -17,11 +17,9 @@ from requests.packages.urllib3.poolmanager import PoolManager
 
 from .exceptions import AuthCanceled, AuthForbidden, AuthUnreachableProvider
 
-
 SETTING_PREFIX = 'SOCIAL_AUTH'
 
 PARTIAL_TOKEN_SESSION_NAME = 'partial_pipeline_token'
-
 
 social_logger = logging.getLogger('social')
 
@@ -31,6 +29,7 @@ class SSLHttpAdapter(HTTPAdapter):
     Transport adapter that allows to use any SSL protocol. Based on:
     http://requests.rtfd.org/latest/user/advanced/#example-specific-ssl-version
     """
+
     def __init__(self, ssl_protocol):
         self.ssl_protocol = ssl_protocol
         super(SSLHttpAdapter, self).__init__()
@@ -95,7 +94,7 @@ def sanitize_redirect(hosts, redirect_to):
     """
     # Avoid redirect on evil URLs like ///evil.com
     if not redirect_to or not hasattr(redirect_to, 'startswith') or \
-       redirect_to.startswith('///'):
+            redirect_to.startswith('///'):
         return None
 
     try:
@@ -141,8 +140,8 @@ def slugify(value):
     and trailing whitespace.
     """
     value = unicodedata.normalize('NFKD', six.text_type(value)) \
-                       .encode('ascii', 'ignore') \
-                       .decode('ascii')
+        .encode('ascii', 'ignore') \
+        .decode('ascii')
     value = re.sub(r'[^\w\s-]', '', value).strip().lower()
     return re.sub(r'[-\s]+', '-', value)
 
@@ -176,7 +175,7 @@ def partial_pipeline_data(backend, user=None, partial_token=None, *args, **kwarg
 
     partial_argument_name = backend.setting('PARTIAL_PIPELINE_TOKEN_NAME', 'partial_token')
     partial_token = partial_token or request_data.get(partial_argument_name) or \
-        backend.strategy.session_get(PARTIAL_TOKEN_SESSION_NAME, None)
+                    backend.strategy.session_get(PARTIAL_TOKEN_SESSION_NAME, None)
 
     if partial_token:
         partial = backend.strategy.partial_load(partial_token)
@@ -263,6 +262,7 @@ def handle_http_errors(func):
                 raise AuthUnreachableProvider(args[0])
             else:
                 raise
+
     return wrapper
 
 
@@ -294,6 +294,7 @@ class Cache:
 
     Does not work for methods with arguments.
     """
+
     def __init__(self, ttl):
         self.ttl = ttl
         self.cache = {}
@@ -314,6 +315,7 @@ class Cache:
                     if not cached_value:
                         raise
             return cached_value
+
         return wrapped
 
 

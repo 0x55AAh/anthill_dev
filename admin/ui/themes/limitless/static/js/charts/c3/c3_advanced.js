@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------------------- */
 
 $(function () {
-    
+
 
     // Chart transforms
     // ------------------------------
@@ -18,7 +18,7 @@ $(function () {
     // Generate chart
     var transform = c3.generate({
         bindto: '#c3-transform',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['data1', 30, 200, 100, 400, 150, 250],
@@ -63,14 +63,13 @@ $(function () {
     });
 
 
-
     // Zoomable chart
     // ------------------------------
 
     // Generate chart
     var zoomable_chart = c3.generate({
         bindto: '#c3-chart-zoomable',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['sample', 30, 120, 320, 180, 50, 250, 167, 279, 290, 400, 214, 190, 40, 400, 162, 289, 300, 200, 120, 320, 390, 110, 130, 400, 240, 189, 250, 30, 100, 200, 300, 250, 50, 100, 50, 300, 250, 20, 90, 150, 400, 320, 220, 150, 190, 270, 190, 350, 90, 300, 150, 220, 170, 40]
@@ -93,14 +92,13 @@ $(function () {
     });
 
 
-
     // Subchart (brushing)
     // ------------------------------
 
     // Generate chart
     var subchart = c3.generate({
         bindto: '#c3-subchart',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['sample', 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
@@ -120,14 +118,13 @@ $(function () {
     });
 
 
-
     // Label format
     // ------------------------------
 
     // Generate chart
     var label_format = c3.generate({
         bindto: '#c3-label-format',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['data1', 30, -200, -100, 400, 150, 250, 100, 120, 150],
@@ -160,14 +157,13 @@ $(function () {
     });
 
 
-
     // Data colors
     // ------------------------------
 
     // Generate chart
     var data_color = c3.generate({
         bindto: '#c3-data-color',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['data1', 30, 20, 50, 40, 60, 50],
@@ -189,9 +185,8 @@ $(function () {
     });
 
 
-
     // Resize chart on sidebar width change
-    $(".sidebar-control").on('click', function() {
+    $(".sidebar-control").on('click', function () {
         transform.resize();
         zoomable_chart.resize();
         subchart.resize();

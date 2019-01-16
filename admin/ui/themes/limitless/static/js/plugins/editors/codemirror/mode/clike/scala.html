@@ -10,22 +10,22 @@
 <script src="../../addon/edit/matchbrackets.js"></script>
 <script src="clike.js"></script>
 <div id=nav>
-  <a href="http://codemirror.net"><img id=logo src="../../doc/logo.png"></a>
+    <a href="http://codemirror.net"><img id=logo src="../../doc/logo.png"></a>
 
-  <ul>
-    <li><a href="../../index.html">Home</a>
-    <li><a href="../../doc/manual.html">Manual</a>
-    <li><a href="https://github.com/marijnh/codemirror">Code</a>
-  </ul>
-  <ul>
-    <li><a href="../index.html">Language modes</a>
-    <li><a class=active href="#">Scala</a>
-  </ul>
+    <ul>
+        <li><a href="../../index.html">Home</a>
+        <li><a href="../../doc/manual.html">Manual</a>
+        <li><a href="https://github.com/marijnh/codemirror">Code</a>
+    </ul>
+    <ul>
+        <li><a href="../index.html">Language modes</a>
+        <li><a class=active href="#">Scala</a>
+    </ul>
 </div>
 
 <article>
-<h2>Scala mode</h2>
-<form>
+    <h2>Scala mode</h2>
+    <form>
 <textarea id="code" name="code">
 
   /*                     __                                               *\
@@ -53,8 +53,8 @@
    *  implements the behavior common to all collections, in terms of a method
    *  `foreach` with signature:
    * {{{
-   *     def foreach[U](f: Elem => U): Unit
-   * }}}
+        *     def foreach[U](f: Elem => U): Unit
+        * }}}
    *  Collection classes mixing in this trait provide a concrete 
    *  `foreach` method which traverses all the
    *  elements contained in the collection, applying a given function to each.
@@ -754,14 +754,14 @@
 
 
 </textarea>
-</form>
+    </form>
 
     <script>
-      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        lineNumbers: true,
-        matchBrackets: true,
-        theme: "ambiance",
-        mode: "text/x-scala"
-      });
+        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            theme: "ambiance",
+            mode: "text/x-scala"
+        });
     </script>
-  </article>
+</article>

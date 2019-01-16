@@ -6,4 +6,3 @@ class MarshmallowMixin:
 
     def serialize(self, data):
         return self.get_schema().dump(data).data
-

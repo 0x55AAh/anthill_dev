@@ -5,7 +5,6 @@ Steam OpenId backend, docs at:
 from .open_id import OpenIdAuth
 from ..exceptions import AuthFailed
 
-
 USER_INFO = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?'
 
 

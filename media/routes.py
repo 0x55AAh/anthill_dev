@@ -3,7 +3,6 @@
 from tornado.web import url
 from media import handlers
 
-
 route_patterns = [
     url(r'/upload/?', handlers.UploadHandler, name='upload'),
 ]

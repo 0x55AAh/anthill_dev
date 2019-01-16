@@ -9,9 +9,9 @@ class AlchemyJSONEncoder(json.JSONEncoder):
         def dump_sqlalchemy_obj(sqlalchemy_obj):
             fields = {}
             for field in [x for x in dir(sqlalchemy_obj)
-                          if not x.startswith('_')      # sqlalch builtin attr
-                          and not x.startswith('rel_')  # for my attr, which are references to other tbls
-                          and x != 'metadata']:
+                          if not x.startswith('_')  # sqlalch builtin attr
+                             and not x.startswith('rel_')  # for my attr, which are references to other tbls
+                             and x != 'metadata']:
                 data = sqlalchemy_obj.__getattribute__(field)
                 try:
                     # this will fail on non-encodable values, like other classes

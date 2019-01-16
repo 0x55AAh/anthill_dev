@@ -146,6 +146,7 @@ class CallbackFilter(logging.Filter):
     takes the record-to-be-logged as its only parameter) to decide whether to
     log a record.
     """
+
     def __init__(self, callback):
         super().__init__()
         self.callback = callback

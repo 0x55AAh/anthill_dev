@@ -25,7 +25,6 @@ $(function () {
         var d3Container = d3.select(element);
 
 
-
         // Create chart
         // ------------------------------
 
@@ -37,8 +36,7 @@ $(function () {
             .attr("width", diameter)
             .attr("height", diameter - 140)
             .append("g")
-                .attr("transform", "translate(" + (diameter / 2) + "," + (diameter / 2) + ")");
-
+            .attr("transform", "translate(" + (diameter / 2) + "," + (diameter / 2) + ")");
 
 
         // Construct chart layout
@@ -47,17 +45,21 @@ $(function () {
         // Tree
         var tree = d3.layout.tree()
             .size([360, (diameter / 2) - 110])
-            .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; });
+            .separation(function (a, b) {
+                return (a.parent == b.parent ? 1 : 2) / a.depth;
+            });
 
         // Diagonal projection
         var diagonal = d3.svg.diagonal.radial()
-            .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; });
+            .projection(function (d) {
+                return [d.y, d.x / 180 * Math.PI];
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.json("assets/demo_data/d3/tree/tree_data_radial.json", function(error, root) {
+        d3.json("assets/demo_data/d3/tree/tree_data_radial.json", function (error, root) {
 
             var nodes = tree.nodes(root),
                 links = tree.links(nodes);
@@ -71,11 +73,11 @@ $(function () {
                 .data(links)
                 .enter()
                 .append("path")
-                    .attr("class", "d3-tree-link")
-                    .attr("d", diagonal)
-                    .style("fill", "none")
-                    .style("stroke", "#ddd")
-                    .style("stroke-width", 1.5);
+                .attr("class", "d3-tree-link")
+                .attr("d", diagonal)
+                .style("fill", "none")
+                .style("stroke", "#ddd")
+                .style("stroke-width", 1.5);
 
 
             // Nodes
@@ -86,8 +88,10 @@ $(function () {
                 .data(nodes)
                 .enter()
                 .append("g")
-                    .attr("class", "d3-tree-node")
-                    .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+                .attr("class", "d3-tree-node")
+                .attr("transform", function (d) {
+                    return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")";
+                })
 
             // Append circles
             node.append("circle")
@@ -99,10 +103,16 @@ $(function () {
             // Append text
             node.append("text")
                 .attr("dy", ".31em")
-                .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-                .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+                .attr("text-anchor", function (d) {
+                    return d.x < 180 ? "start" : "end";
+                })
+                .attr("transform", function (d) {
+                    return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)";
+                })
                 .style("font-size", 12)
-                .text(function(d) { return d.name; });
+                .text(function (d) {
+                    return d.name;
+                });
         });
     }
 });

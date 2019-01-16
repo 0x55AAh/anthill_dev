@@ -12,6 +12,7 @@ class UserPassesTest(ClassDecorator):
     passes the given test. The test should be a callable
     that takes the user object and returns True if the user passes.
     """
+
     def __init__(self, test_func: Callable):
         self.test_func = test_func
 
@@ -42,6 +43,7 @@ def ability_required(perm: Union[str, List[str]]):
         perms = (perm,) if isinstance(perm, str) else perm
         perms = Ability.query.filter(Ability.name.in_(perms)).all()
         return set(perms).issubset(user.abilities)
+
     actual_decorator = user_passes_test(test_func)
     return actual_decorator
 
@@ -50,5 +52,6 @@ def role_required(perm: Union[str, List[str]]):
     async def test_func(user):
         perms = (perm,) if isinstance(perm, str) else perm
         return all(map(lambda r: r in user.roles, perms))
+
     actual_decorator = user_passes_test(test_func)
     return actual_decorator

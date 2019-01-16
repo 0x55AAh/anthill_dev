@@ -43,12 +43,12 @@ class TemplateCommand(Command):
             Option(
                 '--extension', '-e', dest='extensions', action='append', default=['py'],
                 help='The file extension(s) to render (default: "py"). '
-                'Separate multiple extensions with commas, or use '
-                '-e multiple times.'),
+                     'Separate multiple extensions with commas, or use '
+                     '-e multiple times.'),
             Option(
                 '--name', '-n', dest='files', action='append', default=[],
                 help='The file name(s) to render. Separate multiple file names '
-                'with commas, or use -n multiple times.')
+                     'with commas, or use -n multiple times.')
         )
         return options
 
@@ -225,6 +225,7 @@ class TemplateCommand(Command):
         """
         Download the given URL and return the file name.
         """
+
         def cleanup_url(url):
             tmp = url.rstrip('/')
             filename = tmp.split('/')[-1]

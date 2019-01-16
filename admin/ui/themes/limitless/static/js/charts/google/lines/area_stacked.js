@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawAreaStackedChart);
 
 
@@ -24,10 +24,10 @@ function drawAreaStackedChart() {
     // Data
     var data = google.visualization.arrayToDataTable([
         ['Year', 'Cars', 'Trucks', 'Drones', 'Segways'],
-        ['2013',  870,  460, 310, 220],
-        ['2014',  460,   720, 220, 460],
-        ['2015',  930,  640, 340, 330],
-        ['2016',  1000,  400, 180, 500]
+        ['2013', 870, 460, 310, 220],
+        ['2014', 460, 720, 220, 460],
+        ['2015', 930, 640, 340, 330],
+        ['2016', 1000, 400, 180, 500]
     ]);
 
     // Options
@@ -57,7 +57,7 @@ function drawAreaStackedChart() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },

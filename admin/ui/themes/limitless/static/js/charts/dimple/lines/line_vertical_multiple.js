@@ -45,7 +45,7 @@ $(function () {
 
         // Vertical
         var y = myChart.addCategoryAxis("y", "Month");
-            y.addOrderRule("Date");
+        y.addOrderRule("Date");
 
 
         // Construct layout
@@ -103,7 +103,7 @@ $(function () {
 
         // Resize function
         function resize() {
-            setTimeout(function() {
+            setTimeout(function () {
 
                 // Redraw chart
                 myChart.draw(0, true);

@@ -47,7 +47,6 @@ $(function () {
             .range([height, 0]);
 
 
-
         // Create axes
         // ------------------------------
 
@@ -62,7 +61,6 @@ $(function () {
             .orient("left");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -74,8 +72,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -84,9 +81,12 @@ $(function () {
         // Line
         var line = d3.svg.line()
             .interpolate("basis")
-            .x(function(d, i) { return x(i); })
-            .y(function(d, i) { return y(d); });
-
+            .x(function (d, i) {
+                return x(i);
+            })
+            .y(function (d, i) {
+                return y(d);
+            });
 
 
         //
@@ -96,10 +96,10 @@ $(function () {
         // Add mask
         svg.append("defs")
             .append("clipPath")
-                .attr("id", "transition-clip")
-                .append("rect")
-                    .attr("width", width)
-                    .attr("height", height);
+            .attr("id", "transition-clip")
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
 
 
         // Append axes
@@ -121,10 +121,10 @@ $(function () {
         var path = svg.append("g")
             .attr("clip-path", "url(#transition-clip)")
             .append("path")
-                .datum(data)
-                .attr("d", line)
-                .attr("class", "d3-line d3-line-medium")
-                .style("stroke", "#607D8B");
+            .datum(data)
+            .attr("d", line)
+            .attr("class", "d3-line d3-line-medium")
+            .style("stroke", "#607D8B");
 
 
         // Transition
@@ -144,15 +144,14 @@ $(function () {
                 .attr("d", line)
                 .attr("transform", null)
                 .transition()
-                    .duration(500)
-                    .ease("linear")
-                    .attr("transform", "translate(" + x(0) + ",0)")
-                    .each("end", tick);
+                .duration(500)
+                .ease("linear")
+                .attr("transform", "translate(" + x(0) + ",0)")
+                .each("end", tick);
 
             // pop the old data point off the front
             data.shift();
         }
-
 
 
         // Resize chart

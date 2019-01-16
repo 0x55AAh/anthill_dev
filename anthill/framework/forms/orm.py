@@ -4,7 +4,6 @@ from anthill.framework.db import db
 from .form import Form
 import inspect
 
-
 BaseModelForm = model_form_factory(Form)
 
 
@@ -35,6 +34,7 @@ def converts(*args):
     def _inner(func):
         func._converter_for = frozenset(args)
         return func
+
     return _inner
 
 
@@ -317,4 +317,4 @@ def model_form(model, db_session=None, base_class=Form, only=None,
         model, db_session or db.session, only, exclude, field_args, converter,
         exclude_pk=exclude_pk, exclude_fk=exclude_fk
     )
-    return type(type_name, (base_class, ), field_dict)
+    return type(type_name, (base_class,), field_dict)

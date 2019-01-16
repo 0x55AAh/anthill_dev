@@ -6,9 +6,7 @@ import logging
 import functools
 import os
 
-
 __all__ = ['get_user_logger', 'ApplicationLogger']
-
 
 USER_LOGGING_ROOT_DIR = getattr(settings, 'USER_LOGGING_ROOT_DIR', '')
 

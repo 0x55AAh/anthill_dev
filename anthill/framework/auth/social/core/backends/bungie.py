@@ -6,7 +6,6 @@ from django.conf import settings
 
 
 class BungieOAuth2(BaseOAuth2):
-
     name = 'bungie'
     ID_KEY = 'membership_id'
     AUTHORIZATION_URL = 'https://www.bungie.net/en/oauth/authorize/'

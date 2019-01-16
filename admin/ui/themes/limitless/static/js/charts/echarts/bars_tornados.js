@@ -49,7 +49,6 @@ $(function () {
             var tornado_bars_staggered = ec.init(document.getElementById('tornado_bars_staggered'), limitless);
 
 
-
             // Charts setup
             // ------------------------------
 
@@ -92,7 +91,7 @@ $(function () {
                 // Vertical axis
                 yAxis: [{
                     type: 'category',
-                    data: ['Germany','France','Spain','Netherlands','Belgium']
+                    data: ['Germany', 'France', 'Spain', 'Netherlands', 'Belgium']
                 }],
 
                 // Add series
@@ -145,7 +144,7 @@ $(function () {
 
                 // Add legend
                 legend: {
-                    data:['Internet Explorer','Opera','Safari','Firefox','Chrome']
+                    data: ['Internet Explorer', 'Opera', 'Safari', 'Firefox', 'Chrome']
                 },
 
                 // Enable drag recalculate
@@ -183,7 +182,7 @@ $(function () {
                                 }
                             }
                         },
-                        data:[320, 302, 301, 334, 390, 330, 320]
+                        data: [320, 302, 301, 334, 390, 330, 320]
                     },
                     {
                         name: 'Opera',
@@ -204,7 +203,7 @@ $(function () {
                                 }
                             }
                         },
-                        data:[120, 132, 101, 134, 90, 230, 210]
+                        data: [120, 132, 101, 134, 90, 230, 210]
                     },
                     {
                         name: 'Safari',
@@ -225,7 +224,7 @@ $(function () {
                                 }
                             }
                         },
-                        data:[220, 182, 191, 234, 290, 330, 310]
+                        data: [220, 182, 191, 234, 290, 330, 310]
                     },
                     {
                         name: 'Firefox',
@@ -246,7 +245,7 @@ $(function () {
                                 }
                             }
                         },
-                        data:[150, 212, 201, 154, 190, 330, 410]
+                        data: [150, 212, 201, 154, 190, 330, 410]
                     },
                     {
                         name: 'Chrome',
@@ -267,7 +266,7 @@ $(function () {
                                 }
                             }
                         },
-                        data:[820, 832, 901, 934, 1290, 1330, 1320]
+                        data: [820, 832, 901, 934, 1290, 1330, 1320]
                     }
                 ]
             };
@@ -298,8 +297,8 @@ $(function () {
                 // Add legends
                 legend: {
                     data: [
-                        'Version 1.7 - 2k data','Version 1.7 - 2w data','Version 1.7 - 20w data','',
-                        'Version 2.0 - 2k data','Version 2.0 - 2w data','Version 2.0 - 20w data'
+                        'Version 1.7 - 2k data', 'Version 1.7 - 2w data', 'Version 1.7 - 20w data', '',
+                        'Version 2.0 - 2k data', 'Version 2.0 - 2w data', 'Version 2.0 - 20w data'
                     ]
                 },
 
@@ -310,7 +309,7 @@ $(function () {
                 yAxis: [
                     {
                         type: 'category',
-                        data: ['Line','Bar','Scatter','Pies']
+                        data: ['Line', 'Bar', 'Scatter', 'Pies']
                     },
                     {
                         type: 'category',
@@ -319,7 +318,7 @@ $(function () {
                         axisLabel: {show: false},
                         splitArea: {show: false},
                         splitLine: {show: false},
-                        data: ['Line','Bar','Scatter','Pies']
+                        data: ['Line', 'Bar', 'Scatter', 'Pies']
                     }
                 ],
 
@@ -340,7 +339,7 @@ $(function () {
                                 color: '#F44336',
                                 label: {
                                     show: true,
-                                    textStyle:{
+                                    textStyle: {
                                         color: '#fff'
                                     }
                                 }
@@ -447,7 +446,9 @@ $(function () {
                                 color: '#64B5F6',
                                 label: {
                                     show: true,
-                                    formatter: function(p) {return p.value > 0 ? (p.value +'+'):'';}
+                                    formatter: function (p) {
+                                        return p.value > 0 ? (p.value + '+') : '';
+                                    }
                                 }
                             },
                             emphasis: {
@@ -477,7 +478,7 @@ $(function () {
                     color: 'rgba(0,0,0,0)'
                 }
             };
-            var dataStyle = { 
+            var dataStyle = {
                 normal: {
                     label: {
                         show: true,
@@ -514,7 +515,7 @@ $(function () {
                 // Add legend
                 legend: {
                     itemGap: document.getElementById('floating_bars').offsetWidth / 8,
-                    data: ['GML', 'PYP','WTC', 'ZTW']
+                    data: ['GML', 'PYP', 'WTC', 'ZTW']
                 },
 
                 // Horizontal axis
@@ -620,14 +621,14 @@ $(function () {
                     },
                     formatter: function (params) {
                         return params.seriesName + ': [ '
-                        + params.value[0] + ', ' 
-                        + params.value[1] + ' ]';
+                            + params.value[0] + ', '
+                            + params.value[1] + ' ]';
                     }
                 },
 
                 // Add legend
                 legend: {
-                    data: ['Data set 1','Data set 2']
+                    data: ['Data set 1', 'Data set 2']
                 },
 
                 // Add toolbox
@@ -708,12 +709,34 @@ $(function () {
                             data: [
 
                                 // Default vertical axis
-                                {type: 'max', name: 'Maximum', symbol: 'emptyCircle', itemStyle: {normal: {color: '#FF7043',label: {position: 'top'}}}},
-                                {type: 'min', name: 'Minimum', symbol: 'emptyCircle', itemStyle: {normal: {color: '#FF7043',label: {position: 'top'}}}},
+                                {
+                                    type: 'max',
+                                    name: 'Maximum',
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#FF7043', label: {position: 'top'}}}
+                                },
+                                {
+                                    type: 'min',
+                                    name: 'Minimum',
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#FF7043', label: {position: 'top'}}}
+                                },
 
                                 // Horizontal axis
-                                {type: 'max', name: 'Maximum', valueIndex: 0, symbol: 'emptyCircle', itemStyle: {normal: {color: '#29B6F6',label: {position: 'right'}}}},
-                                {type: 'min', name: 'Minimum', valueIndex: 0, symbol: 'emptyCircle', itemStyle: {normal: {color: '#29B6F6',label: {position: 'left'}}}}
+                                {
+                                    type: 'max',
+                                    name: 'Maximum',
+                                    valueIndex: 0,
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#29B6F6', label: {position: 'right'}}}
+                                },
+                                {
+                                    type: 'min',
+                                    name: 'Minimum',
+                                    valueIndex: 0,
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#29B6F6', label: {position: 'left'}}}
+                                }
                             ]
                         },
                         markLine: {
@@ -727,7 +750,12 @@ $(function () {
                                 // Horizontal axis
                                 {type: 'max', name: 'Maximum', valueIndex: 0, itemStyle: {normal: {color: '#29B6F6'}}},
                                 {type: 'min', name: 'Minimum', valueIndex: 0, itemStyle: {normal: {color: '#29B6F6'}}},
-                                {type: 'average', name: 'Average', valueIndex: 0, itemStyle: {normal: {color: '#29B6F6'}}}
+                                {
+                                    type: 'average',
+                                    name: 'Average',
+                                    valueIndex: 0,
+                                    itemStyle: {normal: {color: '#29B6F6'}}
+                                }
                             ]
                         }
                     },
@@ -789,7 +817,7 @@ $(function () {
                     axisTick: {
                         show: false
                     },
-                    data: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+                    data: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
                 }],
 
                 // Add series
@@ -868,7 +896,7 @@ $(function () {
                     axisPointer: {
                         type: 'shadow'
                     },
-                    formatter: function(params) {
+                    formatter: function (params) {
                         return params[0].seriesName + ': ' + params[0].value + ' €';
                     }
                 },
@@ -918,7 +946,7 @@ $(function () {
                             {value: -680, itemStyle: labelRight},
                             {value: -300, itemStyle: labelRight},
                             690,
-                            900, 
+                            900,
                             {value: -390, itemStyle: labelRight},
                             600,
                             {value: -120, itemStyle: labelRight},
@@ -933,7 +961,6 @@ $(function () {
             };
 
 
-
             // Apply options
             // ------------------------------
 
@@ -946,12 +973,11 @@ $(function () {
             tornado_bars_staggered.setOption(tornado_bars_staggered_options);
 
 
-
             // Resize charts
             // ------------------------------
 
             window.onresize = function () {
-                setTimeout(function (){
+                setTimeout(function () {
                     basic_bars.resize();
                     stacked_bars.resize();
                     stacked_clustered_bars.resize();

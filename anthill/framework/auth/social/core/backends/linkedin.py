@@ -30,7 +30,7 @@ class BaseLinkedinAuth(object):
     def user_details_url(self):
         # use set() since LinkedIn fails when values are duplicated
         fields_selectors = list(set(['first-name', 'id', 'last-name'] +
-                                self.setting('FIELD_SELECTORS', [])))
+                                    self.setting('FIELD_SELECTORS', [])))
         # user sort to ease the tests URL mocking
         fields_selectors.sort()
         fields_selectors = ','.join(fields_selectors)
@@ -41,7 +41,7 @@ class BaseLinkedinAuth(object):
         if lang:
             return {
                 'Accept-Language': lang if lang is not True
-                                        else self.strategy.get_language()
+                else self.strategy.get_language()
             }
 
 

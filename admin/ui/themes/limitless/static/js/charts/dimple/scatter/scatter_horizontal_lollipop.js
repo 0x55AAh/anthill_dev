@@ -12,7 +12,7 @@
 $(function () {
 
     // Construct chart
-	var svg = dimple.newSvg("#dimple-scatter-lollipop-horizontal", "100%", 500);
+    var svg = dimple.newSvg("#dimple-scatter-lollipop-horizontal", "100%", 500);
 
 
     // Chart setup

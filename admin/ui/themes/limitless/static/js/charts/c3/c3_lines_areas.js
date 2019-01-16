@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------------------- */
 
 $(function () {
-    
+
 
     // Line chart
     // ------------------------------
@@ -18,10 +18,10 @@ $(function () {
     // Generate chart
     var line_chart = c3.generate({
         bindto: '#c3-line-chart',
-        point: { 
-            r: 4   
+        point: {
+            r: 4
         },
-        size: { height: 400 },
+        size: {height: 400},
         color: {
             pattern: ['#4CAF50', '#F4511E', '#1E88E5']
         },
@@ -61,14 +61,13 @@ $(function () {
     }, 9000);
 
 
-
     // Line chart with regions
     // ------------------------------
 
     // Generate chart
     var chart_line_regions = c3.generate({
         bindto: '#c3-line-regions-chart',
-        size: { height: 400 },
+        size: {height: 400},
         point: {
             r: 4
         },
@@ -81,8 +80,8 @@ $(function () {
                 ['data2', 50, 20, 10, 40, 15, 25]
             ],
             regions: {
-                'data1': [{'start':1, 'end':2, 'style':'dashed'},{'start':3}],
-                'data2': [{'end':3}]
+                'data1': [{'start': 1, 'end': 2, 'style': 'dashed'}, {'start': 3}],
+                'data2': [{'end': 3}]
             }
         },
         grid: {
@@ -93,14 +92,13 @@ $(function () {
     });
 
 
-
     // Area chart
     // ------------------------------
 
     // Generate chart
     var area_chart = c3.generate({
         bindto: '#c3-area-chart',
-        size: { height: 400 },
+        size: {height: 400},
         point: {
             r: 4
         },
@@ -125,14 +123,13 @@ $(function () {
     });
 
 
-
     // Stacked area chart
     // ------------------------------
 
     // Generate chart
     var area_stacked_chart = c3.generate({
         bindto: '#c3-area-stacked-chart',
-        size: { height: 400 },
+        size: {height: 400},
         color: {
             pattern: ['#1E88E5', '#F4511E']
         },
@@ -158,14 +155,13 @@ $(function () {
     });
 
 
-
     // Step chart
     // ------------------------------
 
     // Generate chart
     var step_chart = c3.generate({
         bindto: '#c3-step-chart',
-        size: { height: 400 },
+        size: {height: 400},
         color: {
             pattern: ['#6D4C41', '#039BE5']
         },
@@ -188,7 +184,7 @@ $(function () {
 
 
     // Resize chart on sidebar width change
-    $(".sidebar-control").on('click', function() {
+    $(".sidebar-control").on('click', function () {
         line_chart.resize();
         chart_line_regions.resize();
         area_chart.resize();

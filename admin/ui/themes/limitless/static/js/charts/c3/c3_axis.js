@@ -10,7 +10,7 @@
  * ---------------------------------------------------------------------------- */
 
 $(function () {
-    
+
 
     // Categorized axis
     // ------------------------------
@@ -18,7 +18,7 @@ $(function () {
     // Generate chart
     var axis_categorized = c3.generate({
         bindto: '#c3-axis-categorized',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['data1', 30, 200, 100, 400, 150, 250, 50, 100, 250]
@@ -41,14 +41,13 @@ $(function () {
     });
 
 
-
     // Additional axis
     // ------------------------------
 
     // Generate chart
     var axis_additional = c3.generate({
         bindto: '#c3-axis-additional',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['data1', 30, 200, 100, 400, 150, 250],
@@ -75,14 +74,13 @@ $(function () {
     });
 
 
-
     // Axis tick culling
     // ------------------------------
 
     // Generate chart
     var axis_tick_culling = c3.generate({
         bindto: '#c3-axis-tick-culling',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['sample', 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
@@ -104,16 +102,15 @@ $(function () {
     });
 
 
-
     // Text label rotation
     // ------------------------------
 
     // Generate chart
     var axis_tick_rotation = c3.generate({
         bindto: '#c3-axis-tick-rotation',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
-            x : 'x',
+            x: 'x',
             columns: [
                 ['x', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
                 ['pv', 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400],
@@ -140,14 +137,13 @@ $(function () {
     });
 
 
-
     // Axis labels
     // ------------------------------
 
     // Generate chart
     var axis_labels = c3.generate({
         bindto: '#c3-axis-labels',
-        size: { height: 400 },
+        size: {height: 400},
         data: {
             columns: [
                 ['sample', 30, 200, 100, 400, 150, 250],
@@ -175,9 +171,8 @@ $(function () {
     });
 
 
-
     // Resize chart on sidebar width change
-    $(".sidebar-control").on('click', function() {
+    $(".sidebar-control").on('click', function () {
         axis_categorized.resize();
         axis_additional.resize();
         axis_tick_culling.resize();

@@ -23,8 +23,7 @@ $(function () {
 
         // Define main variables
         var radius = Math.min(width, height) / 2;
-            color = d3.scale.category20c();
-
+        color = d3.scale.category20c();
 
 
         // Create chart
@@ -34,8 +33,7 @@ $(function () {
             .attr("width", width)
             .attr("height", height)
             .append("g")
-                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 
         // Construct chart layout
@@ -44,32 +42,43 @@ $(function () {
         // Partition layout
         var partition = d3.layout.partition()
             .size([2 * Math.PI, radius])
-            .value(function(d) { return d.size; });
+            .value(function (d) {
+                return d.size;
+            });
 
         // Arc
         var arc = d3.svg.arc()
-            .startAngle(function(d) { return d.x; })
-            .endAngle(function(d) { return d.x + d.dx; })
-            .innerRadius(function(d) { return d.y; })
-            .outerRadius(function(d) { return d.y + d.dy; });
-
+            .startAngle(function (d) {
+                return d.x;
+            })
+            .endAngle(function (d) {
+                return d.x + d.dx;
+            })
+            .innerRadius(function (d) {
+                return d.y;
+            })
+            .outerRadius(function (d) {
+                return d.y + d.dy;
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.json("assets/demo_data/d3/sunburst/sunburst_basic.json", function(root) {
+        d3.json("assets/demo_data/d3/sunburst/sunburst_basic.json", function (root) {
 
             // Add sunbirst
             path = svg.data([root]).selectAll("path")
                 .data(partition.nodes)
                 .enter()
                 .append("path")
-                    .attr("d", arc)
-                    .style("stroke", "#fff")
-                    .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
-                    .on("click", magnify)
-                    .each(stash);
+                .attr("d", arc)
+                .style("stroke", "#fff")
+                .style("fill", function (d) {
+                    return color((d.children ? d : d.parent).name);
+                })
+                .on("click", magnify)
+                .each(stash);
         });
 
 
@@ -80,10 +89,10 @@ $(function () {
                     x = parent.x,
                     k = .8;
 
-                parent.children.forEach(function(sibling) {
+                parent.children.forEach(function (sibling) {
                     x += reposition(sibling, x, sibling === node
-                    ? parent.dx * k / node.value
-                    : parent.dx * (1 - k) / (parent.value - node.value));
+                        ? parent.dx * k / node.value
+                        : parent.dx * (1 - k) / (parent.value - node.value));
                 });
             }
             else {
@@ -114,7 +123,7 @@ $(function () {
         // Interpolate the arcs in data space.
         function arcTween(a) {
             var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
-            return function(t) {
+            return function (t) {
                 var b = i(t);
                 a.x0 = b.x;
                 a.dx0 = b.dx;

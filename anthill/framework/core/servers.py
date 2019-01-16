@@ -8,7 +8,6 @@ import signal
 import logging
 import sys
 
-
 logger = logging.getLogger('anthill.application')
 
 

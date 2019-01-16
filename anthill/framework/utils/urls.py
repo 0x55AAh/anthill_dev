@@ -34,7 +34,7 @@ def to_list(route: Union[URLSpec, list]) -> list:
     return route
 
 
-def include(routes: Union[str, list], namespace: str=None) -> list:
+def include(routes: Union[str, list], namespace: str = None) -> list:
     new_routes = []
     if isinstance(routes, str):
         routes = import_string(routes)
@@ -57,7 +57,7 @@ def include(routes: Union[str, list], namespace: str=None) -> list:
     return new_routes
 
 
-def build_absolute_uri(host_url: str, path: str=None) -> str:
+def build_absolute_uri(host_url: str, path: str = None) -> str:
     """Build absolute URI with given (optional) path."""
     path = path or ''
     if path.startswith('http://') or path.startswith('https://'):

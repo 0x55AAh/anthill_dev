@@ -17,7 +17,6 @@ import cgi
 import base64
 import binascii
 
-
 PHASE_BOUNDARY = 1
 PHASE_HEADERS = 2
 PHASE_BODY = 3
@@ -39,6 +38,7 @@ class StreamingMultiPartParser:
     decorated with stream_request_body using self as the delegate and pass a chunk of data
     to `data_received` method.
     """
+
     def __init__(self, headers, upload_handlers, encoding=None):
         """
         Initialize the MultiPartParser object.

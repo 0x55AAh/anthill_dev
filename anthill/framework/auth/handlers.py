@@ -16,7 +16,6 @@ from anthill.framework.auth.models import AnonymousUser
 from anthill.framework.auth.log import get_user_logger, ApplicationLogger
 from anthill.framework.conf import settings
 
-
 __all__ = [
     'UserHandlerMixin',
     'LoginHandlerMixin',

@@ -2,7 +2,6 @@ from anthill.framework.utils.asynchronous import as_future
 from pygdbmi.gdbcontroller import GdbController
 import os
 
-
 REQUIRED_GDB_FLAGS = ["--interpreter=mi2"]
 
 

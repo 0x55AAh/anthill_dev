@@ -28,7 +28,6 @@ $(function () {
             height = height - margin.top - margin.bottom - 5;
 
 
-
         // Create chart
         // ------------------------------
 
@@ -40,8 +39,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -53,14 +51,15 @@ $(function () {
 
         // Diagonal projection
         var diagonal = d3.svg.diagonal()
-            .projection(function(d) { return [d.y, d.x]; });
-
+            .projection(function (d) {
+                return [d.y, d.x];
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.json("assets/demo_data/d3/tree/tree_data_dendrogram.json", function(error, root) {
+        d3.json("assets/demo_data/d3/tree/tree_data_dendrogram.json", function (error, root) {
 
             var nodes = cluster.nodes(root),
                 links = cluster.links(nodes);
@@ -78,11 +77,11 @@ $(function () {
                 .data(links)
                 .enter()
                 .append("path")
-                    .attr("class", "d3-tree-link")
-                    .style("fill", "none")
-                    .style("stroke", "#ddd")
-                    .style("stroke-width", 1.5)
-                    .attr("d", diagonal);
+                .attr("class", "d3-tree-link")
+                .style("fill", "none")
+                .style("stroke", "#ddd")
+                .style("stroke-width", 1.5)
+                .attr("d", diagonal);
 
 
             // Nodes
@@ -97,8 +96,10 @@ $(function () {
                 .data(nodes)
                 .enter()
                 .append("g")
-                    .attr("class", "d3-tree-node")
-                    .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+                .attr("class", "d3-tree-node")
+                .attr("transform", function (d) {
+                    return "translate(" + d.y + "," + d.x + ")";
+                })
 
             // Append node circles
             node.append("circle")
@@ -109,13 +110,18 @@ $(function () {
 
             // Append node text
             var text = node.append("text")
-                .attr("dx", function(d) { return d.children ? -10 : 10; })
+                .attr("dx", function (d) {
+                    return d.children ? -10 : 10;
+                })
                 .attr("dy", 4)
-                .style("text-anchor", function(d) { return d.children ? "end" : "start"; })
+                .style("text-anchor", function (d) {
+                    return d.children ? "end" : "start";
+                })
                 .style("font-size", 12)
                 .style("background-color", "#fff")
-                .text(function(d) { return d.name; });
-
+                .text(function (d) {
+                    return d.name;
+                });
 
 
             // Resize chart
@@ -137,8 +143,8 @@ $(function () {
 
                 // Layout variables
                 width = d3Container.node().getBoundingClientRect().width - margin.left - margin.right,
-                nodes = cluster.nodes(root),
-                links = cluster.links(nodes);
+                    nodes = cluster.nodes(root),
+                    links = cluster.links(nodes);
 
                 // Layout
                 // -------------------------
@@ -161,7 +167,9 @@ $(function () {
                 svg.selectAll(".d3-tree-link").attr("d", diagonal)
 
                 // Node paths
-                svg.selectAll(".d3-tree-node").attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+                svg.selectAll(".d3-tree-node").attr("transform", function (d) {
+                    return "translate(" + d.y + "," + d.x + ")";
+                });
             }
         });
     }

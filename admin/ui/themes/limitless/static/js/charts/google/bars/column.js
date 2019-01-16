@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawColumn);
 
 
@@ -24,10 +24,10 @@ function drawColumn() {
     // Data
     var data = google.visualization.arrayToDataTable([
         ['Year', 'Sales', 'Expenses'],
-        ['2004',  1000,      400],
-        ['2005',  1170,      460],
-        ['2006',  660,       1120],
-        ['2007',  1030,      540]
+        ['2004', 1000, 400],
+        ['2005', 1170, 460],
+        ['2006', 660, 1120],
+        ['2007', 1030, 540]
     ]);
 
 
@@ -53,7 +53,7 @@ function drawColumn() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },

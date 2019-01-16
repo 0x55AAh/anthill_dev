@@ -15,7 +15,7 @@ class LegacyAuth(BaseAuth):
 
     def uses_redirect(self):
         return self.setting('FORM_URL') and not \
-               self.setting('FORM_HTML')
+            self.setting('FORM_HTML')
 
     def auth_complete(self, *args, **kwargs):
         """Completes loging process, must return user instance"""

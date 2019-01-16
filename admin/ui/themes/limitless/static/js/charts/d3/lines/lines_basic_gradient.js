@@ -31,7 +31,6 @@ $(function () {
         var parseDate = d3.time.format("%Y%m%d").parse;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -42,7 +41,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -61,7 +59,6 @@ $(function () {
             .orient("left");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -73,7 +70,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -82,17 +79,21 @@ $(function () {
         // Line
         var line = d3.svg.line()
             .interpolate("basis")
-            .x(function(d) { return x(d.date); })
-            .y(function(d) { return y(d.temperature); });
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y(function (d) {
+                return y(d.temperature);
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/lines/lines_gradient.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/lines/lines_gradient.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
                 d.temperature = +d.temperature;
             });
@@ -105,7 +106,9 @@ $(function () {
             x.domain([data[0].date, data[data.length - 1].date]);
 
             // Vertical
-            y.domain(d3.extent(data, function(d) { return d.temperature; }));
+            y.domain(d3.extent(data, function (d) {
+                return d.temperature;
+            }));
 
 
             //
@@ -128,8 +131,12 @@ $(function () {
                 ])
                 .enter()
                 .append("stop")
-                    .attr("offset", function(d) { return d.offset; })
-                    .attr("stop-color", function(d) { return d.color; });
+                .attr("offset", function (d) {
+                    return d.offset;
+                })
+                .attr("stop-color", function (d) {
+                    return d.color;
+                });
 
             // Add line
             svg.append("path")
@@ -139,7 +146,6 @@ $(function () {
                 .attr("stroke", "url(#temperature-gradient)")
                 .attr("stroke-width", 2)
                 .attr("d", line);
-
 
 
             // Append axes
@@ -166,7 +172,6 @@ $(function () {
                 .style("font-size", 12)
                 .text("Temperature (ºF)");
         });
-
 
 
         // Resize chart
@@ -214,7 +219,7 @@ $(function () {
 
             // Line path
             svg.selectAll('.d3-line').attr("d", line);
-            }
+        }
 
-}
+    }
 });

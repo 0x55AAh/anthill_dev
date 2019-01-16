@@ -12,7 +12,7 @@
 $(function () {
 
     // Construct chart
-	var svg = dimple.newSvg("#dimple-pie-lollipop", "100%", 500);
+    var svg = dimple.newSvg("#dimple-pie-lollipop", "100%", 500);
 
 
     // Chart setup
@@ -45,7 +45,7 @@ $(function () {
 
         // Horizontal
         var x = myChart.addCategoryAxis("x", "Month");
-            x.addOrderRule("Date");
+        x.addOrderRule("Date");
 
         // Vertical
         var y = myChart.addMeasureAxis("y", "Unit Sales");

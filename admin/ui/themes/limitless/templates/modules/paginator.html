@@ -1,37 +1,37 @@
 <ul class="pagination pagination-flat{% if not style %} pagination-rounded{% else %}{{ style }}{% end %}">
     {% if page.has_previous %}
-        <li><a href="?page={{ page.previous_page_number }}{{ query_string }}">‹</a></li>
+    <li><a href="?page={{ page.previous_page_number }}{{ query_string }}">‹</a></li>
     {% else %}
-        <li class="disabled"><a href="javascript:void(0);">‹</a></li>
+    <li class="disabled"><a href="javascript:void(0);">‹</a></li>
     {% end %}
 
     {% for page_number in begin %}
-        <li class="{% if page.number == page_number %}active{% end %}">
-            <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
-        </li>
+    <li class="{% if page.number == page_number %}active{% end %}">
+        <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
+    </li>
     {% end %}
 
     {% if middle %}
-        <li class="disabled"><a href="javascript:void(0);">&hellip;</a></li>
-        {% for page_number in middle %}
-        <li class="{% if page.number == page_number %}active{% end %}">
-            <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
-        </li>
-        {% end %}
+    <li class="disabled"><a href="javascript:void(0);">&hellip;</a></li>
+    {% for page_number in middle %}
+    <li class="{% if page.number == page_number %}active{% end %}">
+        <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
+    </li>
+    {% end %}
     {% end %}
 
     {% if end %}
-        <li class="disabled"><a href="javascript:void(0);">&hellip;</a></li>
-        {% for page_number in end %}
-        <li class="{% if page.number == page_number %}active{% end %}">
-            <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
-        </li>
-        {% end %}
+    <li class="disabled"><a href="javascript:void(0);">&hellip;</a></li>
+    {% for page_number in end %}
+    <li class="{% if page.number == page_number %}active{% end %}">
+        <a href="?page={{ page_number }}{{ query_string }}">{{ page_number }}</a>
+    </li>
+    {% end %}
     {% end %}
 
     {% if page.has_next %}
-        <li><a href="?page={{ page.next_page_number }}{{ query_string }}">›</a></li>
+    <li><a href="?page={{ page.next_page_number }}{{ query_string }}">›</a></li>
     {% else %}
-        <li class="disabled"><a href="javascript:void(0);">›</a></li>
+    <li class="disabled"><a href="javascript:void(0);">›</a></li>
     {% end %}
 </ul>

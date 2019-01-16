@@ -47,7 +47,6 @@ $(function () {
             .range([height, 0]);
 
 
-
         // Create axes
         // ------------------------------
 
@@ -65,7 +64,6 @@ $(function () {
             .tickFormat(formatPercent);
 
 
-
         // Create chart
         // ------------------------------
 
@@ -77,8 +75,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -86,25 +83,30 @@ $(function () {
 
         // Area
         var area = d3.svg.area()
-            .x(function(d) { return x(d.date); })
-            .y0(function(d) { return y(d.y0); })
-            .y1(function(d) { return y(d.y0 + d.y); });
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y0(function (d) {
+                return y(d.y0);
+            })
+            .y1(function (d) {
+                return y(d.y0 + d.y);
+            });
 
         // Stack
         var stack = d3.layout.stack()
-            .values(function(d) { return d.values; });
-
-
-
+            .values(function (d) {
+                return d.values;
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/lines/lines_stacked.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/lines/lines_stacked.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
             });
 
@@ -113,13 +115,15 @@ $(function () {
             // ------------------------------
 
             // Filter by date
-            color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+            color.domain(d3.keys(data[0]).filter(function (key) {
+                return key !== "date";
+            }));
 
             // Set colors
-            var browsers = stack(color.domain().map(function(name) {
+            var browsers = stack(color.domain().map(function (name) {
                 return {
                     name: name,
-                    values: data.map(function(d) {
+                    values: data.map(function (d) {
                         return {date: d.date, y: d[name] / 100};
                     })
                 };
@@ -130,7 +134,9 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(d3.extent(data, function(d) { return d.date; }));
+            x.domain(d3.extent(data, function (d) {
+                return d.date;
+            }));
 
 
             //
@@ -142,24 +148,34 @@ $(function () {
                 .data(browsers)
                 .enter()
                 .append("g")
-                    .attr("class", "browser");
+                .attr("class", "browser");
 
             // Add area
             browser.append("path")
                 .attr("class", "d3-area")
-                .attr("d", function(d) { return area(d.values); })
-                .style("fill", function(d) { return color(d.name); });
+                .attr("d", function (d) {
+                    return area(d.values);
+                })
+                .style("fill", function (d) {
+                    return color(d.name);
+                });
 
             // Add text
             browser.append("text")
-                .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-                .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.y0 + d.value.y / 2) + ")"; })
+                .datum(function (d) {
+                    return {name: d.name, value: d.values[d.values.length - 1]};
+                })
+                .attr("transform", function (d) {
+                    return "translate(" + x(d.value.date) + "," + y(d.value.y0 + d.value.y / 2) + ")";
+                })
                 .attr("class", "d3-browsers")
                 .attr("x", -15)
                 .attr("dy", ".35em")
                 .style("fill", "#fff")
                 .style("text-anchor", "end")
-                .text(function(d) { return d.name; });
+                .text(function (d) {
+                    return d.name;
+                });
 
 
             // Append axes
@@ -176,7 +192,6 @@ $(function () {
                 .attr("class", "d3-axis d3-axis-vertical d3-axis-strong")
                 .call(yAxis);
         });
-
 
 
         // Resize chart
@@ -223,10 +238,14 @@ $(function () {
             // -------------------------
 
             // Line path
-            svg.selectAll('.d3-area').attr("d", function(d) { return area(d.values); });
+            svg.selectAll('.d3-area').attr("d", function (d) {
+                return area(d.values);
+            });
 
             // Text
-            svg.selectAll('.d3-browsers').attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.y0 + d.value.y / 2) + ")"; });
+            svg.selectAll('.d3-browsers').attr("transform", function (d) {
+                return "translate(" + x(d.value.date) + "," + y(d.value.y0 + d.value.y / 2) + ")";
+            });
         }
     }
 });

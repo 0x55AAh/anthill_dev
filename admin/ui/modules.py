@@ -59,8 +59,8 @@ class Paginator(TemplateModule):
         begin = page_range[:begin_pages]
         end = page_range[-end_pages:]
         middle = page_range[
-            max(page.number - before_pages - 1, 0):page.number + after_pages
-        ]
+                 max(page.number - before_pages - 1, 0):page.number + after_pages
+                 ]
 
         if set(begin) & set(middle):  # [1, 2, 3], [2, 3, 4], [...]
             begin = sorted(set(begin + middle))  # [1, 2, 3, 4]
@@ -120,7 +120,7 @@ class ServiceCard(TemplateModule):
     class Entry:
         def __init__(self, name, title,
                      description='', icon_class='', color='', version='',
-                     public_api_url='',  debug=False, uptime=0, log_url=''):
+                     public_api_url='', debug=False, uptime=0, log_url=''):
             self.name = name
             self.title = title
             self.description = description

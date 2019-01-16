@@ -53,8 +53,8 @@ $(function () {
 
         // Add bubbles
         var s = myChart.addSeries("Price Tier", dimple.plot.bubble);
-            s.aggregate = dimple.aggregateMethod.max;
-            z.overrideMax = 200;
+        s.aggregate = dimple.aggregateMethod.max;
+        z.overrideMax = 200;
 
 
         // Add legend

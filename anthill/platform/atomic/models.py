@@ -6,7 +6,6 @@ from anthill.platform.atomic.exceptions import (
 import enum
 import logging
 
-
 logger = logging.getLogger('anthill.application')
 
 

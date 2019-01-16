@@ -42,7 +42,7 @@ $(function () {
 
         // Horizontal
         var x = myChart.addCategoryAxis("x", "Month");
-            x.addOrderRule("Date");
+        x.addOrderRule("Date");
 
         // Vertical
         var y = myChart.addMeasureAxis("y", "Unit Sales");
@@ -59,7 +59,7 @@ $(function () {
 
         // Add legend
         // ------------------------------
-        
+
         var myLegend = myChart.addLegend(0, 5, "100%", 0, "right");
 
 

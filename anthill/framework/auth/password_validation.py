@@ -21,7 +21,7 @@ def get_password_validators(validator_config):
                   "Check your AUTH_PASSWORD_VALIDATORS setting."
             raise ImproperlyConfigured(msg % validator['NAME'])
         validators.append(klass(**validator.get('OPTIONS', {})))
-    
+
     return validators
 
 
@@ -72,6 +72,7 @@ class MinimumLengthValidator:
     """
     Validate whether the password is of a minimum length.
     """
+
     def __init__(self, min_length=8):
         self.min_length = min_length
 
@@ -124,6 +125,7 @@ class NumericPasswordValidator:
     """
     Validate whether the password is alphanumeric.
     """
+
     def validate(self, password, user=None):
         if password.isdigit():
             raise ValidationError(

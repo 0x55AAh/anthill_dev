@@ -29,24 +29,21 @@ from functools import wraps
 import threading
 import logging
 
-
 logger = logging.getLogger('anthill.rate_limit')
 cache = caches['rate_limit']
 
-
 RATE_LIMIT_ENABLE = getattr(settings, 'RATE_LIMIT_ENABLE', False)
 RATE_LIMIT_CONFIG = getattr(settings, 'RATE_LIMIT_CONFIG', {})
-
 
 __all__ = ['RateLimit', 'RateLimitException', 'default_rate_limit']
 
 
 class RateLimitConfig(dict):
     _PERIODS = {
-        's': 1,                # seconds
-        'm': 60,               # minutes
-        'h': 60 * 60,          # hours
-        'd': 24 * 60 * 60,     # days
+        's': 1,  # seconds
+        'm': 60,  # minutes
+        'h': 60 * 60,  # hours
+        'd': 24 * 60 * 60,  # days
         'w': 7 * 24 * 60 * 60  # weeks
     }
 
@@ -146,6 +143,7 @@ class RateLimit:
                         raise
 
             return wrapper
+
         return decorator
 
     def reset(self, storage_key):

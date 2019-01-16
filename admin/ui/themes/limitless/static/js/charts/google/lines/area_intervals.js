@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawAreaIntervals);
 
 
@@ -23,14 +23,14 @@ function drawAreaIntervals() {
 
     // Data
     var data = new google.visualization.DataTable();
-        data.addColumn('string', 'x');
-        data.addColumn('number', 'values');
-        data.addColumn({id:'i0', type:'number', role:'interval'});
-        data.addColumn({id:'i1', type:'number', role:'interval'});
-        data.addColumn({id:'i2', type:'number', role:'interval'});
-        data.addColumn({id:'i2', type:'number', role:'interval'});
-        data.addColumn({id:'i2', type:'number', role:'interval'});
-        data.addColumn({id:'i2', type:'number', role:'interval'});
+    data.addColumn('string', 'x');
+    data.addColumn('number', 'values');
+    data.addColumn({id: 'i0', type: 'number', role: 'interval'});
+    data.addColumn({id: 'i1', type: 'number', role: 'interval'});
+    data.addColumn({id: 'i2', type: 'number', role: 'interval'});
+    data.addColumn({id: 'i2', type: 'number', role: 'interval'});
+    data.addColumn({id: 'i2', type: 'number', role: 'interval'});
+    data.addColumn({id: 'i2', type: 'number', role: 'interval'});
 
     data.addRows([
         ['a', 100, 90, 110, 85, 96, 104, 120],
@@ -62,7 +62,7 @@ function drawAreaIntervals() {
             }
         },
         series: [{'color': '#43A047'}],
-        intervals: { 'style': 'area' }, // Use area intervals.
+        intervals: {'style': 'area'}, // Use area intervals.
         pointSize: 5,
         vAxis: {
             title: 'Number values',
@@ -70,7 +70,7 @@ function drawAreaIntervals() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },

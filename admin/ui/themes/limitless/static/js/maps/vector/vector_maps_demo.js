@@ -9,7 +9,7 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // World map
     $('.map-world').vectorMap({
@@ -42,7 +42,7 @@ $(function() {
                 'fill': '#336BB5',
                 'fill-opacity': 0.8,
                 'stroke': '#fff',
-                'stroke-width' : 1.5,
+                'stroke-width': 1.5,
                 'stroke-opacity': 0.9
             },
             hover: {
@@ -127,8 +127,8 @@ $(function() {
 
         // Values
         statesValues = jvm.values.apply({}, jvm.values(data.states)),
-        metroPopValues = Array.prototype.concat.apply([], jvm.values(data.metro.population)),
-        metroUnemplValues = Array.prototype.concat.apply([], jvm.values(data.metro.unemployment));
+            metroPopValues = Array.prototype.concat.apply([], jvm.values(data.metro.population)),
+            metroUnemplValues = Array.prototype.concat.apply([], jvm.values(data.metro.unemployment));
 
         // Configuration
         $('.map-unemployment').vectorMap({
@@ -140,7 +140,7 @@ $(function() {
                     r: 6,
                     'fill-opacity': 0.9,
                     'stroke': '#fff',
-                    'stroke-width' : 1.5,
+                    'stroke-width': 1.5,
                     'stroke-opacity': 0.95
                 },
                 hover: {
@@ -175,18 +175,18 @@ $(function() {
                 }]
             },
 
-            onMarkerLabelShow: function(event, label, index) {
+            onMarkerLabelShow: function (event, label, index) {
                 label.html(
-                    ''+data.metro.names[index]+'<br>'+
-                    'Population: '+data.metro.population[val][index]+'<br>'+
-                    'Unemployment rate: '+data.metro.unemployment[val][index]+'%'
+                    '' + data.metro.names[index] + '<br>' +
+                    'Population: ' + data.metro.population[val][index] + '<br>' +
+                    'Unemployment rate: ' + data.metro.unemployment[val][index] + '%'
                 );
             },
 
-            onRegionLabelShow: function(event, label, code) {
+            onRegionLabelShow: function (event, label, code) {
                 label.html(
-                    ''+label.html()+'<br>'+
-                    'Unemployment rate: '+data.states[val][code]+'%'
+                    '' + label.html() + '<br>' +
+                    'Unemployment rate: ' + data.states[val][code] + '%'
                 );
             }
         });
@@ -207,8 +207,8 @@ $(function() {
                 normalizeFunction: 'polynomial'
             }]
         },
-        onRegionLabelShow: function(e, el, code){
-            el.html(el.html()+'<br>'+'GDP - '+gdpData[code]);
+        onRegionLabelShow: function (e, el, code) {
+            el.html(el.html() + '<br>' + 'GDP - ' + gdpData[code]);
         }
     });
 
@@ -230,18 +230,18 @@ $(function() {
         {latLng: [51.45, 7.01], name: 'Essen'},
         {latLng: [53.07, 8.80], name: 'Bremen'}
     ],
-    cityAreaData = [
-        887.70,
-        755.16,
-        310.69,
-        405.17,
-        248.31,
-        207.35,
-        217.22,
-        280.71,
-        210.32,
-        325.42
-    ]
+        cityAreaData = [
+            887.70,
+            755.16,
+            310.69,
+            405.17,
+            248.31,
+            207.35,
+            217.22,
+            280.71,
+            210.32,
+            325.42
+        ]
 
     // Configuration
     var map = new jvm.WorldMap({
@@ -255,7 +255,7 @@ $(function() {
             initial: {
                 'fill': '#E77644',
                 'stroke': '#fff',
-                'stroke-width' : 1.5,
+                'stroke-width': 1.5,
                 'stroke-opacity': 0.9
             },
             hover: {
@@ -284,7 +284,7 @@ $(function() {
                 values: cityAreaData
             }]
         },
-        onRegionSelected: function(){
+        onRegionSelected: function () {
             if (window.localStorage) {
                 window.localStorage.setItem(
                     'jvectormap-selected-regions',
@@ -292,7 +292,7 @@ $(function() {
                 );
             }
         },
-        onMarkerSelected: function(){
+        onMarkerSelected: function () {
             if (window.localStorage) {
                 window.localStorage.setItem(
                     'jvectormap-selected-markers',
@@ -303,7 +303,7 @@ $(function() {
     });
 
     // Set regions
-    map.setSelectedRegions( JSON.parse( window.localStorage.getItem('jvectormap-selected-regions') || '[]' ) );
-    map.setSelectedMarkers( JSON.parse( window.localStorage.getItem('jvectormap-selected-markers') || '[]' ) );
+    map.setSelectedRegions(JSON.parse(window.localStorage.getItem('jvectormap-selected-regions') || '[]'));
+    map.setSelectedMarkers(JSON.parse(window.localStorage.getItem('jvectormap-selected-markers') || '[]'));
 
 });

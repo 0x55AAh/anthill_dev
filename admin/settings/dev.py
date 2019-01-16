@@ -3,7 +3,6 @@ from .base import *
 DEBUG = True
 EMAIL_BACKEND = 'anthill.framework.core.mail.backends.console.EmailBackend'
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

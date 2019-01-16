@@ -7,7 +7,7 @@
 * ---------------------------------------------------------------------------- */
 
 
-$(function() {
+$(function () {
 
     var UPDATE_INTERVAL = 1;
     var services_metadata_key = 'servicesMetadata';
@@ -29,7 +29,7 @@ $(function() {
     }
 
     function filter_services_cards(q, animation) {
-        $('.services-cards__entry').each(function() {
+        $('.services-cards__entry').each(function () {
             var service_name = $(this).data('name').toUpperCase();
             if (service_name.indexOf(q) === 0) {
                 if (animation) {
@@ -51,9 +51,9 @@ $(function() {
         });
         setCardsSameHeight();
         $('.panel-title').parent()
-                .has('> .heading-elements:not(.not-collapsible)')
-                .children('.panel-title')
-                .append('<a class="heading-elements-toggle"><i class="icon-more"></i></a>');
+            .has('> .heading-elements:not(.not-collapsible)')
+            .children('.panel-title')
+            .append('<a class="heading-elements-toggle"><i class="icon-more"></i></a>');
     }
 
     // Build services cards and main sidebar services section.
@@ -61,13 +61,13 @@ $(function() {
         var html_cards_list = '', html_card_entry;
         var entries = anthill_storage.getItem(services_metadata_key);
 
-        $.each(entries, function(index, entry) {
+        $.each(entries, function (index, entry) {
             html_card_entry =
-                '<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" style="display: none" data-name="' + entry.name +'">' +
+                '<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" style="display: none" data-name="' + entry.name + '">' +
                 '    <div class="panel panel-flat">' +
                 '        <div class="panel-heading">' +
                 '            <div class="panel-title">' +
-                             ((entry.debug) ? '<span class="label bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
+                ((entry.debug) ? '<span class="label bg-success" style="font-weight: 400;font-size: 9px;line-height: normal;">debug</span>' : '') +
                 '            </div>' +
                 '            <div class="heading-elements">' +
                 '                <ul class="icons-list text-muted">' +
@@ -104,7 +104,7 @@ $(function() {
         }
     }
 
-    $('input[name=search]').keyup(function() {
+    $('input[name=search]').keyup(function () {
         var query = $(this).val().toUpperCase();
         filter_services_cards(query, true);
     });

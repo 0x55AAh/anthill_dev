@@ -111,7 +111,7 @@ FILE_UPLOAD_HANDLERS = [
     'anthill.framework.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
 
-FILE_UPLOAD_MAX_BODY_SIZE = 1024 * 1024 * 16    # i.e. 16 MB
+FILE_UPLOAD_MAX_BODY_SIZE = 1024 * 1024 * 16  # i.e. 16 MB
 
 # Maximum size, in bytes, of a request before it will be streamed to the
 # file system instead of into memory.
@@ -135,7 +135,6 @@ FILE_UPLOAD_PERMISSIONS = None
 # see https://docs.python.org/3/library/os.html#files-and-directories.
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = None
 
-
 #########
 # CACHE #
 #########
@@ -146,7 +145,6 @@ CACHES = {
         'BACKEND': 'anthill.framework.core.cache.backends.locmem.LocMemCache',
     }
 }
-
 
 # People who get code error notifications.
 # In the format [('Full Name', 'email@example.com'), ('Full Name', 'anotheremail@example.com')]
@@ -176,13 +174,11 @@ SQLALCHEMY_MAX_OVERFLOW = None
 SQLALCHEMY_COMMIT_ON_TEARDOWN = False
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
 ###########
 # SIGNING #
 ###########
 
 SIGNING_BACKEND = 'anthill.framework.core.signing.TimestampSigner'
-
 
 ##################
 # AUTHENTICATION #
@@ -209,7 +205,6 @@ PASSWORD_HASHERS = [
 
 AUTH_PASSWORD_VALIDATORS = []
 
-
 ##########
 # SERVER #
 ##########
@@ -230,13 +225,11 @@ LOGIN_URL = None
 
 UI_MODULE = None
 
-
 ###########
 # COOKIES #
 ###########
 
 CSRF_COOKIES = False
-
 
 ##############
 # WEBSOCKETS #
@@ -259,7 +252,6 @@ WEBSOCKET_COMPRESSION_LEVEL = -1
 # but are faster and produce smaller output.
 WEBSOCKET_MEM_LEVEL = None
 
-
 #########
 # GEOIP #
 #########
@@ -268,16 +260,13 @@ GEOIP_PATH = None
 GEOIP_CITY = None
 GEOIP_COUNTRY = None
 
-
 ############
 # GRAPHENE #
 ############
 
 GRAPHENE = {}
 
-
 HIDE_SERVER_VERSION = False
-
 
 ############
 # SESSIONS #
@@ -308,7 +297,6 @@ SESSION_ENGINE = 'anthill.framework.sessions.backends.db'
 SESSION_FILE_PATH = None
 # class to serialize session data
 SESSION_SERIALIZER = 'anthill.framework.sessions.serializers.JSONSerializer'
-
 
 OUTPUT_TRANSFORMS = [
     'tornado.web.GZipContentEncoding',

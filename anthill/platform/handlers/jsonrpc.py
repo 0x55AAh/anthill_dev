@@ -1,16 +1,17 @@
 from anthill.framework.handlers import WebSocketJSONRPCHandler
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
 
-
 __all__ = ['JsonRPCSessionHandler', 'jsonrpc_method']
 
 
 def jsonrpc_method(**kwargs):
     """Marks session handler method as json-rpc method."""
+
     def decorator(func):
         func.jsonrpc_method = True
         func.kwargs = kwargs
         return func
+
     return decorator
 
 

@@ -50,7 +50,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self)\
+        return super(ShardClient, self) \
             .add(key=key, value=value, version=version, client=client, timeout=timeout)
 
     def get(self, key, default=None, version=None, client=None):
@@ -58,7 +58,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self)\
+        return super(ShardClient, self) \
             .get(key=key, default=default, version=version, client=client)
 
     def get_many(self, keys, version=None):
@@ -206,7 +206,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self)\
+        return super(ShardClient, self) \
             .incr(key=key, delta=delta, version=version, client=client)
 
     def decr(self, key, delta=1, version=None, client=None):
@@ -214,7 +214,7 @@ class ShardClient(DefaultClient):
             key = self.make_key(key, version=version)
             client = self.get_server(key)
 
-        return super(ShardClient, self)\
+        return super(ShardClient, self) \
             .decr(key=key, delta=delta, version=version, client=client)
 
     def iter_keys(self, key, version=None):

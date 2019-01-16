@@ -31,7 +31,6 @@ $(function () {
         var parseDate = d3.time.format("%Y%m%d").parse;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -42,7 +41,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -61,7 +59,6 @@ $(function () {
             .orient("left");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -73,8 +70,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -82,19 +78,24 @@ $(function () {
 
         // Area
         var area = d3.svg.area()
-            .x(function(d) { return x(d.date); })
-            .y0(function(d) { return y(d.low); })
-            .y1(function(d) { return y(d.high); });
-
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y0(function (d) {
+                return y(d.low);
+            })
+            .y1(function (d) {
+                return y(d.high);
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/lines/lines_bivariate.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/lines/lines_bivariate.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
                 d.low = +d.low;
                 d.high = +d.high;
@@ -105,11 +106,16 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(d3.extent(data, function(d) { return d.date; }));
+            x.domain(d3.extent(data, function (d) {
+                return d.date;
+            }));
 
             // Vertical
-            y.domain([d3.min(data, function(d) { return d.low; }), d3.max(data, function(d) { return d.high; })]);
-
+            y.domain([d3.min(data, function (d) {
+                return d.low;
+            }), d3.max(data, function (d) {
+                return d.high;
+            })]);
 
 
             //
@@ -148,7 +154,6 @@ $(function () {
                 .style("text-anchor", "end")
                 .text("Temperature (ºF)");
         });
-
 
 
         // Resize chart

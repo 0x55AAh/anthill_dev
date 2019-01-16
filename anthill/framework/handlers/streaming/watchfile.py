@@ -4,9 +4,7 @@ from tornado.escape import to_unicode
 from anthill.framework.conf import settings
 import logging
 
-
 __all__ = ['WatchFileHandler', 'WatchTextFileHandler', 'WatchLogFileHandler']
-
 
 logger = logging.getLogger('anthill.application')
 

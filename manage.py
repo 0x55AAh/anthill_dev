@@ -5,7 +5,6 @@ import importlib
 import os
 import sys
 
-
 if __name__ == '__main__':
     os.environ.setdefault("ANTHILL_SETTINGS_MODULE", "settings")
 
@@ -20,17 +19,20 @@ if __name__ == '__main__':
 
     try:
         import anthill.framework
+
         anthill.framework.setup()
     except (ImportError, ImproperlyConfigured):
         app = None
     else:
         from anthill.framework.apps import app
+
         del sys.argv[1:3]
 
     kwargs = dict(app=app)
 
     if app is None:
         from anthill.platform.management.commands import StartApplication
+
         try:
             conf = importlib.import_module('conf')
             kwargs.update(root_templates_mod=conf.ROOT_TEMPLATES_MODULE)

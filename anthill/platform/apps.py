@@ -5,7 +5,6 @@ from importlib import import_module
 from functools import lru_cache
 import logging
 
-
 logger = logging.getLogger('anthill.application')
 
 

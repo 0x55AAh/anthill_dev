@@ -133,6 +133,7 @@ class ModelFormHandler(ModelFormMixin, ProcessFormHandler):
 
 class CreatingMixin:
     """Provide the ability to create objects."""
+
     async def post(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = None
@@ -145,6 +146,7 @@ class CreateHandler(CreatingMixin, ProcessFormHandler):
 
 class UpdatingMixin:
     """Provide the ability to update objects."""
+
     async def put(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()
@@ -157,6 +159,7 @@ class UpdateHandler(UpdatingMixin, ProcessFormHandler):
 
 class DeletionMixin:
     """Provide the ability to delete objects."""
+
     async def delete(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()

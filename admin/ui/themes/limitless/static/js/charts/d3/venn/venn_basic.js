@@ -25,17 +25,17 @@ $(function () {
 
     // Overlaps
     var overlaps = [
-        {sets: [0,1], size: 1},
-        {sets: [0,2], size: 1},
-        {sets: [0,3], size: 14},
-        {sets: [1,2], size: 6},
-        {sets: [1,3], size: 0},
-        {sets: [2,3], size: 1},
-        {sets: [0,2,3], size: 1},
-        {sets: [0,1,2], size: 0},
-        {sets: [0,1,3], size: 0},
-        {sets: [1,2,3], size: 0},
-        {sets: [0,1,2,3], size: 0}
+        {sets: [0, 1], size: 1},
+        {sets: [0, 2], size: 1},
+        {sets: [0, 3], size: 14},
+        {sets: [1, 2], size: 6},
+        {sets: [1, 3], size: 0},
+        {sets: [2, 3], size: 1},
+        {sets: [0, 2, 3], size: 1},
+        {sets: [0, 1, 2], size: 0},
+        {sets: [0, 1, 3], size: 0},
+        {sets: [1, 2, 3], size: 0},
+        {sets: [0, 1, 2, 3], size: 0}
     ];
 
 

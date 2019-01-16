@@ -4,7 +4,6 @@ import logging
 
 logger = logging.getLogger('anthill.application')
 
-
 CELERY_ENABLE = getattr(settings, 'CELERY_ENABLE', False)
 TIME_ZONE = getattr(settings, 'TIME_ZONE', 'UTC')
 

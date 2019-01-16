@@ -15,6 +15,7 @@ try:
     using_sysrandom = True
 except NotImplementedError:
     import warnings
+
     warnings.warn('A secure pseudo-random number generator is not available '
                   'on your system. Falling back to Mersenne Twister.')
     using_sysrandom = False

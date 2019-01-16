@@ -173,6 +173,7 @@ class BaseCreateHandler(CreateModelFormMixin, ProcessFormHandler):
 
     Using this base class requires subclassing to provide a response mixin.
     """
+
     async def get(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = None
@@ -197,6 +198,7 @@ class BaseUpdateHandler(UpdateModelFormMixin, ProcessFormHandler):
 
     Using this base class requires subclassing to provide a response mixin.
     """
+
     async def get(self, *args, **kwargs):
         # noinspection PyAttributeOutsideInit
         self.object = await self.get_object()

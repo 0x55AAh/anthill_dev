@@ -31,7 +31,6 @@ $(function () {
         var parseDate = d3.time.format("%d-%b-%y").parse;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -42,7 +41,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -61,8 +59,6 @@ $(function () {
             .orient("left");
 
 
-
-
         // Create chart
         // ------------------------------
 
@@ -74,8 +70,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -83,19 +78,22 @@ $(function () {
 
         // Area
         var area = d3.svg.area()
-            .x(function(d) { return x(d.date); })
+            .x(function (d) {
+                return x(d.date);
+            })
             .y0(height)
-            .y1(function(d) { return y(d.close); });
-
+            .y1(function (d) {
+                return y(d.close);
+            });
 
 
         // Load data
         // ------------------------------
 
-        d3.tsv("assets/demo_data/d3/lines/lines_basic.tsv", function(error, data) {
+        d3.tsv("assets/demo_data/d3/lines/lines_basic.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
                 d.close = +d.close;
             });
@@ -105,10 +103,14 @@ $(function () {
             // ------------------------------
 
             // Horizontal
-            x.domain(d3.extent(data, function(d) { return d.date; }));
+            x.domain(d3.extent(data, function (d) {
+                return d.date;
+            }));
 
             // Vertical
-            y.domain([0, d3.max(data, function(d) { return d.close; })]);
+            y.domain([0, d3.max(data, function (d) {
+                return d.close;
+            })]);
 
 
             //
@@ -148,7 +150,6 @@ $(function () {
                 .text("Price ($)");
 
         });
-
 
 
         // Resize chart
@@ -197,5 +198,5 @@ $(function () {
             // Area path
             svg.selectAll('.d3-area').attr("d", area);
         }
-}
+    }
 });

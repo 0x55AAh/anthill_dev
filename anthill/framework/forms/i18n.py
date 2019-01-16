@@ -7,6 +7,7 @@ class Translations:
     A translations object for WTForms that gets its messages from
     Anthill's translations providers.
     """
+
     def __init__(self, code=settings.LOCALE):
         self.locale = locale.get(code)
 

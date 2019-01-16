@@ -41,7 +41,6 @@ $(function () {
         parseDate = d3.time.format("%Y%m%d").parse;
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -52,7 +51,6 @@ $(function () {
         // Vertical
         var y = d3.scale.linear()
             .range([height, 0]);
-
 
 
         // Create axes
@@ -71,7 +69,6 @@ $(function () {
             .orient("left");
 
 
-
         // Create chart
         // ------------------------------
 
@@ -83,8 +80,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Construct chart layout
@@ -93,18 +89,21 @@ $(function () {
         // Line
         var line = d3.svg.line()
             .interpolate("basis")
-            .x(function(d) { return x(d.date); })
-            .y(function(d) { return y(d[city]); });
-
+            .x(function (d) {
+                return x(d.date);
+            })
+            .y(function (d) {
+                return y(d[city]);
+            });
 
 
         // Load data
         // ------------------------------
-        
-        d3.tsv("assets/demo_data/d3/lines/lines_transitions.tsv", function(error, data) {
+
+        d3.tsv("assets/demo_data/d3/lines/lines_transitions.tsv", function (error, data) {
 
             // Pull out values
-            data.forEach(function(d) {
+            data.forEach(function (d) {
                 d.date = parseDate(d.date);
                 d["New York"] = +d["New York"];
                 d["San Francisco"] = +d["San Francisco"];
@@ -118,7 +117,9 @@ $(function () {
             x.domain([data[0].date, data[data.length - 1].date]);
 
             // Vertical
-            y.domain(d3.extent(data, function(d) { return d[city]; }));
+            y.domain(d3.extent(data, function (d) {
+                return d[city];
+            }));
 
 
             //
@@ -175,7 +176,7 @@ $(function () {
             d3.selectAll(".chained").on("change", change);
 
             // Set timeout for auto change
-            var timeout = setTimeout(function() {
+            var timeout = setTimeout(function () {
                 d3.select("input[value=\"San Francisco\"]").property("checked", true).each(change);
                 $.uniform.update();
             }, 3000);
@@ -191,7 +192,9 @@ $(function () {
                 t0.selectAll(".d3-city").attr("transform", transform).text(city);
 
                 // Then transition the y-axis.
-                y.domain(d3.extent(data, function(d) { return d[city]; }));
+                y.domain(d3.extent(data, function (d) {
+                    return d[city];
+                }));
                 var t1 = t0.transition();
                 t1.selectAll(".d3-line").attr("d", line);
                 t1.selectAll(".d3-city").attr("transform", transform);
@@ -202,7 +205,6 @@ $(function () {
             function transform(d) {
                 return "translate(" + x(d.date) + "," + y(d[city]) + ")";
             }
-
 
 
             // Resize chart

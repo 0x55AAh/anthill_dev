@@ -12,7 +12,6 @@ from tornado.escape import to_unicode
 from tornado.ioloop import IOLoop
 from dlc.exceptions import DeploymentError
 
-
 METHODS = getattr(settings, 'DEPLOYMENT_METHODS', [])
 
 

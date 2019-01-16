@@ -9,7 +9,7 @@
  *
  * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
 
     // Set paths
@@ -48,7 +48,6 @@ $(function() {
             var basic_area = ec.init(document.getElementById('basic_area'), limitless);
             var stacked_area = ec.init(document.getElementById('stacked_area'), limitless);
             var reversed_value = ec.init(document.getElementById('reversed_value'), limitless);
-
 
 
             // Charts setup
@@ -304,8 +303,8 @@ $(function() {
                     },
                     formatter: function (params) {
                         return params.seriesName + ': [ '
-                        + params.value[0] + ', ' 
-                        + params.value[1] + ' ]';
+                            + params.value[0] + ', '
+                            + params.value[1] + ' ]';
                     }
                 },
 
@@ -365,7 +364,7 @@ $(function() {
 
                 // Horizontal axis
                 xAxis: [{
-                type: 'value'
+                    type: 'value'
                 }],
 
                 // Vertical axis
@@ -392,12 +391,34 @@ $(function() {
                             data: [
 
                                 // Vertical
-                                {type: 'max', name: 'Maximum',symbol: 'emptyCircle', itemStyle: {normal: {color: '#EF5350',label: {position: 'top'}}}},
-                                {type: 'min', name: 'Minimum',symbol: 'emptyCircle', itemStyle: {normal: {color: '#EF5350',label: {position: 'bottom'}}}},
+                                {
+                                    type: 'max',
+                                    name: 'Maximum',
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#EF5350', label: {position: 'top'}}}
+                                },
+                                {
+                                    type: 'min',
+                                    name: 'Minimum',
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#EF5350', label: {position: 'bottom'}}}
+                                },
 
                                 // Horizontal
-                                {type: 'max', name: 'Maximum', valueIndex: 0, symbol: 'emptyCircle', itemStyle: {normal: {color: '#42A5F5',label: {position: 'right'}}}},
-                                {type: 'min', name: 'Minimum', valueIndex: 0, symbol: 'emptyCircle', itemStyle: {normal: {color: '#42A5F5',label: {position: 'left'}}}}
+                                {
+                                    type: 'max',
+                                    name: 'Maximum',
+                                    valueIndex: 0,
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#42A5F5', label: {position: 'right'}}}
+                                },
+                                {
+                                    type: 'min',
+                                    name: 'Minimum',
+                                    valueIndex: 0,
+                                    symbol: 'emptyCircle',
+                                    itemStyle: {normal: {color: '#42A5F5', label: {position: 'left'}}}
+                                }
                             ]
                         },
                         markLine: {
@@ -411,7 +432,12 @@ $(function() {
                                 // Horizontal
                                 {type: 'max', name: 'Maximum', valueIndex: 0, itemStyle: {normal: {color: '#42A5F5'}}},
                                 {type: 'min', name: 'Minimum', valueIndex: 0, itemStyle: {normal: {color: '#42A5F5'}}},
-                                {type: 'average', name: 'Average', valueIndex: 0, itemStyle: {normal: {color: '#42A5F5'}}}
+                                {
+                                    type: 'average',
+                                    name: 'Average',
+                                    valueIndex: 0,
+                                    itemStyle: {normal: {color: '#42A5F5'}}
+                                }
                             ]
                         }
                     },
@@ -585,10 +611,10 @@ $(function() {
                 // Add tooltip
                 tooltip: {
                     trigger: 'axis',
-                    formatter: function(params) {
+                    formatter: function (params) {
                         return params[0].name + '<br/>'
-                        + params[0].seriesName + ': ' + params[0].value + ' (m^3/s)<br/>'
-                        + params[1].seriesName + ': ' + -params[1].value + ' (mm)';
+                            + params[0].seriesName + ': ' + params[0].value + ' (m^3/s)<br/>'
+                            + params[1].seriesName + ': ' + -params[1].value + ' (mm)';
                     }
                 },
 
@@ -618,8 +644,8 @@ $(function() {
                         name: 'Rainfall(mm)',
                         type: 'value',
                         axisLabel: {
-                            formatter: function(v) {
-                                return - v;
+                            formatter: function (v) {
+                                return -v;
                             }
                         }
                     }
@@ -631,19 +657,19 @@ $(function() {
                         name: 'Flow',
                         type: 'line',
                         itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                        data:[100, 200, 240, 180, 90, 200, 130]
+                        data: [100, 200, 240, 180, 90, 200, 130]
                     },
                     {
                         name: 'Rainfall',
                         type: 'line',
                         yAxisIndex: 1,
                         itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                        data: (function() {
+                        data: (function () {
                             var oriData = [
                                 1, 2, 1.5, 7.4, 3.1, 4, 2
                             ];
                             var len = oriData.length;
-                            while(len--) {
+                            while (len--) {
                                 oriData[len] *= -1;
                             }
                             return oriData;
@@ -651,7 +677,6 @@ $(function() {
                     }
                 ]
             };
-
 
 
             // Apply options
@@ -664,7 +689,6 @@ $(function() {
             basic_area.setOption(basic_area_options);
             stacked_area.setOption(stacked_area_options);
             reversed_value.setOption(reversed_value_options);
-
 
 
             // Resize charts

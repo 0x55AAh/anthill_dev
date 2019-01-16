@@ -1,6 +1,5 @@
 import six
 
-
 SERIALIZABLE_TYPES = (dict, list, tuple, set, bool, type(None)) + \
                      six.integer_types + six.string_types + \
                      (six.text_type, six.binary_type,)

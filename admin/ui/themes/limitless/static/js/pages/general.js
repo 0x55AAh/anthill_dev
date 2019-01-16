@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
 
     var user_id = null;
 
@@ -11,10 +11,14 @@ $(function() {
         ws: {
             uri: ws_url('/utils-session/'),
             useSockJS: false,
-            onconnected: function() {},
-            ondisconnect: function() {},
-            onreconnecting: function() {},
-            onreconnected: function() {}
+            onconnected: function () {
+            },
+            ondisconnect: function () {
+            },
+            onreconnecting: function () {
+            },
+            onreconnected: function () {
+            }
         },
         rpc: {
             requestTimeout: 15000
@@ -24,7 +28,7 @@ $(function() {
     var utils_client = new JsonRpcClient(utils_config);
 
     $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
+        beforeSend: function (xhr, settings) {
             if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
                 // Only send the token to relative URLs i.e. locally.
                 xhr.setRequestHeader("X-CSRFToken", Cookies.get('_xsrf'));
@@ -69,10 +73,10 @@ $(function() {
     function update_services_registry() {
         api_request(
             services_metadata_query,
-            function(result) {
+            function (result) {
                 anthill_storage.setItem(services_metadata_key, result.data['servicesMetadata']);
             },
-            function(jqXHR, textStatus, errorThrown) {
+            function (jqXHR, textStatus, errorThrown) {
                 anthill_storage.setItem(services_metadata_key, []);
             }
         );
@@ -82,10 +86,10 @@ $(function() {
     function update_sidebar_services() {
         var html_sidebar_data = '', html_sidebar_entry;
         var entries = anthill_storage.getItem(services_metadata_key);
-        $.each(entries, function(index, entry) {
+        $.each(entries, function (index, entry) {
             var active = service_match(entry.name) ? 'active' : '';
             html_sidebar_entry =
-                '<li class="navigation-service ' + active + '" data-name="' + entry.name +'">' +
+                '<li class="navigation-service ' + active + '" data-name="' + entry.name + '">' +
                 '    <a href="/services/' + entry.name + '/"><i class="' + entry.iconClass + '"></i> <span>' + entry.title + '</span></a>' +
                 '</li>';
             html_sidebar_data += html_sidebar_entry;
@@ -97,7 +101,7 @@ $(function() {
     }
 
     // Update service
-    $(document).on('click', '.services-cards__entry .update_service a, .sidebar-main .update_service a', function(e) {
+    $(document).on('click', '.services-cards__entry .update_service a, .sidebar-main .update_service a', function (e) {
         e.preventDefault();
         var service_name = $(this).closest('.services-cards__entry').data('name') || window.service_name;
         swal({
@@ -111,10 +115,10 @@ $(function() {
                 closeOnConfirm: false,
                 closeOnCancel: true
             },
-            function(isConfirm) {
+            function (isConfirm) {
                 if (isConfirm) {
                     var args = {service_name: service_name, version: null};
-                    utils_client.send('update', args, function(error, response) {
+                    utils_client.send('update', args, function (error, response) {
                         if (error) { // ¯\_(ツ)_/¯
                             swal({
                                 title: "Error",

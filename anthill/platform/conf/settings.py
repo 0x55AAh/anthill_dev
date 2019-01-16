@@ -39,13 +39,11 @@ REDIS_LOG_IGNORED_EXCEPTIONS = False
 REDIS_LOGGER = False
 REDIS_SCAN_ITERSIZE = 10
 
-
 # HTTPS = {
 #     'key_file': 'key_file_path',
 #     'crt_file': 'crt_file_path',
 # }
 HTTPS = None
-
 
 ##########
 # CELERY #
@@ -72,7 +70,6 @@ CELERY_SETTINGS = {
 
 CELERY_ENABLE = False
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'anthill.framework.auth.password_validation.MinimumLengthValidator',
@@ -94,7 +91,6 @@ LOG_STREAMING = {
     },
     'path': '/log/',
 }
-
 
 ##############
 # RATE LIMIT #
@@ -140,7 +136,6 @@ RATE_LIMIT_ENABLE = False
 # }
 RATE_LIMIT_CONFIG = {}
 
-
 ##############
 # WEBSOCKETS #
 ##############
@@ -150,7 +145,6 @@ WEBSOCKET_PING_TIMEOUT = 30
 WEBSOCKET_MAX_MESSAGE_SIZE = 10 * 1024 * 1024  # 10MiB
 WEBSOCKET_COMPRESSION_LEVEL = -1
 WEBSOCKET_MEM_LEVEL = 6
-
 
 #############################
 # WEBSOCKET CLIENTS WATCHER #
@@ -167,7 +161,6 @@ CACHES['websocket_clients_watcher'] = {
     },
     "KEY_PREFIX": "websocket_clients_watcher"
 }
-
 
 ############
 # CHANNELS #
@@ -188,14 +181,12 @@ CHANNEL_LAYERS = {
     },
 }
 
-
 #######
 # API #
 #######
 
 INTERNAL_API_CONF = 'api.v1.internal'
 PUBLIC_API_URL = None
-
 
 #########
 # GEOIP #
@@ -205,9 +196,7 @@ GEOIP_PATH = None
 GEOIP_CITY = 'GeoLite2-City.mmdb'
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
-
 COMPRESS_RESPONSE = True
-
 
 SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
 

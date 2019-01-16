@@ -35,7 +35,6 @@ $(function () {
         var dataset = [40.5, 33.1, 31.6, 31.0, 29.9, 28.9, 25.2, 25.2, 24.8, 24.3, 24.0, 22.6, 20.5, 19.5, 19.0, 18.9, 18.8, 18.5, 18.4, 17.6, 17.1];
 
 
-
         // Construct scales
         // ------------------------------
 
@@ -53,7 +52,6 @@ $(function () {
         var colors = d3.scale.category20();
 
 
-
         // Create axes
         // ------------------------------
 
@@ -61,7 +59,6 @@ $(function () {
         var xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom");
-
 
 
         // Create chart
@@ -75,8 +72,7 @@ $(function () {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
         // Add tooltip
@@ -86,7 +82,9 @@ $(function () {
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
-            .html(function(d) { return d })
+            .html(function (d) {
+                return d
+            })
 
         // Initialize tooltip
         svg.call(tip);
@@ -104,22 +102,30 @@ $(function () {
             .data(dataset)
             .enter()
             .append("rect")
-                .attr("class", "d3-bar")
-                .attr("x", function(d, i) { return x(i) })
-                .attr("width", x.rangeBand())
-                .attr("height", 0)
-                .attr("y", height)
-                .attr("fill", function(d, i) { return colors(i); })
-                .style("cursor", "pointer")
-                .on('mouseover', tip.show)
-                .on('mouseout', tip.hide)
+            .attr("class", "d3-bar")
+            .attr("x", function (d, i) {
+                return x(i)
+            })
+            .attr("width", x.rangeBand())
+            .attr("height", 0)
+            .attr("y", height)
+            .attr("fill", function (d, i) {
+                return colors(i);
+            })
+            .style("cursor", "pointer")
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide)
 
         // Add bar transition
         drawBars.transition()
             .delay(200)
             .duration(1000)
-            .attr("height", function(d) { return y(d) })
-            .attr("y", function(d) { return height - y(d) })
+            .attr("height", function (d) {
+                return y(d)
+            })
+            .attr("y", function (d) {
+                return height - y(d)
+            })
 
 
         // Add text labels
@@ -127,20 +133,25 @@ $(function () {
             .data(dataset)
             .enter()
             .append("text")
-                .attr("class", "value-label")
-                .attr("x", function(d, i) { return x(i) + x.rangeBand() / 2 })
-                .attr("y", function(d) { return height - y(d) + 25; })
-                .style('opacity', 0)
-                .style("text-anchor", "middle")
-                .style("fill", "white")
-                .text(function(d) {return d;});
+            .attr("class", "value-label")
+            .attr("x", function (d, i) {
+                return x(i) + x.rangeBand() / 2
+            })
+            .attr("y", function (d) {
+                return height - y(d) + 25;
+            })
+            .style('opacity', 0)
+            .style("text-anchor", "middle")
+            .style("fill", "white")
+            .text(function (d) {
+                return d;
+            });
 
         // Add text label transition
         drawLabels.transition()
             .delay(1000)
             .duration(500)
             .style('opacity', 1);
-
 
 
         // Create axes
@@ -152,12 +163,11 @@ $(function () {
             .orient("bottom");
 
 
-
         // Change data sets
         // ------------------------------
 
-        $('.toggle-dataset').on('change', function() {
-            if(this.checked) {
+        $('.toggle-dataset').on('change', function () {
+            if (this.checked) {
 
                 dataset = [8.4, 12.1, 25.5, 10.3, 11.7, 10.9, 13.3, 23.1, 15.4, 12.3, 17.8, 18.8, 14.7, 8.8, 11.2, 10.2, 17.1, 14.5, 11.9, 7.3, 7.4];
 
@@ -165,20 +175,30 @@ $(function () {
                 svg.selectAll("rect")
                     .data(dataset)
                     .transition()
-                        .delay(0)
-                        .duration(1000)
-                        .ease('cubic-in-out')
-                        .attr("y", function(d) { return height - y(d) })
-                        .attr("height", function(d) { return y(d) })
-                        .style("fill", colors)
+                    .delay(0)
+                    .duration(1000)
+                    .ease('cubic-in-out')
+                    .attr("y", function (d) {
+                        return height - y(d)
+                    })
+                    .attr("height", function (d) {
+                        return y(d)
+                    })
+                    .style("fill", colors)
 
                 // Update labels
                 var drawNewlabels = svg.selectAll("text")
                     .data(dataset)
-                    .attr("x", function(d, i) {return x(i) + x.rangeBand() / 2 })
-                    .attr("y", function(d) {return height - y(d) + 25 })
+                    .attr("x", function (d, i) {
+                        return x(i) + x.rangeBand() / 2
+                    })
+                    .attr("y", function (d) {
+                        return height - y(d) + 25
+                    })
                     .style('opacity', 0)
-                    .text(function(d) {return d;});
+                    .text(function (d) {
+                        return d;
+                    });
 
                 // Transition
                 drawNewlabels.transition()
@@ -194,21 +214,33 @@ $(function () {
                 svg.selectAll("rect")
                     .data(dataset)
                     .transition()
-                        .delay(0)
-                        .duration(1000)
-                        .ease('cubic-in-out')
-                        .attr("y", function(d) { return height - y(d) })
-                        .attr("height", function(d) { return y(d) })
-                        .style("fill", function(d, i) { return colors(i); });
+                    .delay(0)
+                    .duration(1000)
+                    .ease('cubic-in-out')
+                    .attr("y", function (d) {
+                        return height - y(d)
+                    })
+                    .attr("height", function (d) {
+                        return y(d)
+                    })
+                    .style("fill", function (d, i) {
+                        return colors(i);
+                    });
 
 
                 /* Update labels */
                 var drawFirstlabels = svg.selectAll("text")
                     .data(dataset)
-                    .attr("x", function(d, i) {return x(i) + x.rangeBand() / 2 })
-                    .attr("y", function(d) {return height - y(d) + 25 })
+                    .attr("x", function (d, i) {
+                        return x(i) + x.rangeBand() / 2
+                    })
+                    .attr("y", function (d) {
+                        return height - y(d) + 25
+                    })
                     .style('opacity', 0)
-                    .text(function(d) {return d;});
+                    .text(function (d) {
+                        return d;
+                    });
 
                 drawFirstlabels.transition()
                     .delay(1000)
@@ -262,10 +294,14 @@ $(function () {
             // -------------------------
 
             // Bars
-            svg.selectAll('.d3-bar').attr("x", function(d, i) { return x(i) }).attr("width", x.rangeBand());
+            svg.selectAll('.d3-bar').attr("x", function (d, i) {
+                return x(i)
+            }).attr("width", x.rangeBand());
 
             // Text label
-            svg.selectAll(".value-label").attr("x", function(d, i) { return x(i) + x.rangeBand() / 2 });
+            svg.selectAll(".value-label").attr("x", function (d, i) {
+                return x(i) + x.rangeBand() / 2
+            });
         }
     }
 });

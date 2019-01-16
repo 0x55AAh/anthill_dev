@@ -10,6 +10,7 @@ def auth_required(func):
         if isinstance(user, (type(None), AnonymousUser)):
             raise NotAuthenticatedError('Authentication required')
         return await func(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -18,4 +19,5 @@ def action(**kwargs):
         func.action = True
         func.kwargs = kwargs
         return func
+
     return decorator

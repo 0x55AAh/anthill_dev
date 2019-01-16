@@ -1,97 +1,97 @@
 {
-    "admin": {
-        "internal": "http://localhost:9600",
-        "external": "http://localhost:9600",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "discovery": {
-        "internal": "http://localhost:9602",
-        "external": "http://localhost:9602",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "dlc": {
-        "internal": "http://localhost:9605",
-        "external": "http://localhost:9605",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "event": {
-        "internal": "http://localhost:9606",
-        "external": "http://localhost:9606",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "login": {
-        "internal": "http://localhost:9607",
-        "external": "http://localhost:9607",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "profile": {
-        "internal": "http://localhost:9608",
-        "external": "http://localhost:9608",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "message": {
-        "internal": "http://localhost:9609",
-        "external": "http://localhost:9609",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "exec": {
-        "internal": "http://localhost:9610",
-        "external": "http://localhost:9610",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "config": {
-        "internal": "http://localhost:9611",
-        "external": "http://localhost:9611",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "promo": {
-        "internal": "http://localhost:9612",
-        "external": "http://localhost:9612",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "store": {
-        "internal": "http://localhost:9613",
-        "external": "http://localhost:9613",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "social": {
-        "internal": "http://localhost:9614",
-        "external": "http://localhost:9614",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "media": {
-        "internal": "http://localhost:9615",
-        "external": "http://localhost:9615",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "apigw": {
-        "internal": "http://localhost:9616",
-        "external": "http://localhost:9616",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "environment": {
-        "internal": "http://localhost:9617",
-        "external": "http://localhost:9617",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "game_master": {
-        "internal": "http://localhost:9618",
-        "external": "http://localhost:9618",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "report": {
-        "internal": "http://localhost:9620",
-        "external": "http://localhost:9620",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "leaderboard": {
-        "internal": "http://localhost:9621",
-        "external": "http://localhost:9621",
-        "broker": "amqp://guest:guest@localhost:5672"
-    },
-    "log": {
-        "internal": "http://localhost:9622",
-        "external": "http://localhost:9622",
-        "broker": "amqp://guest:guest@localhost:5672"
-    }
+  "admin": {
+    "internal": "http://localhost:9600",
+    "external": "http://localhost:9600",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "discovery": {
+    "internal": "http://localhost:9602",
+    "external": "http://localhost:9602",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "dlc": {
+    "internal": "http://localhost:9605",
+    "external": "http://localhost:9605",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "event": {
+    "internal": "http://localhost:9606",
+    "external": "http://localhost:9606",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "login": {
+    "internal": "http://localhost:9607",
+    "external": "http://localhost:9607",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "profile": {
+    "internal": "http://localhost:9608",
+    "external": "http://localhost:9608",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "message": {
+    "internal": "http://localhost:9609",
+    "external": "http://localhost:9609",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "exec": {
+    "internal": "http://localhost:9610",
+    "external": "http://localhost:9610",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "config": {
+    "internal": "http://localhost:9611",
+    "external": "http://localhost:9611",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "promo": {
+    "internal": "http://localhost:9612",
+    "external": "http://localhost:9612",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "store": {
+    "internal": "http://localhost:9613",
+    "external": "http://localhost:9613",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "social": {
+    "internal": "http://localhost:9614",
+    "external": "http://localhost:9614",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "media": {
+    "internal": "http://localhost:9615",
+    "external": "http://localhost:9615",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "apigw": {
+    "internal": "http://localhost:9616",
+    "external": "http://localhost:9616",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "environment": {
+    "internal": "http://localhost:9617",
+    "external": "http://localhost:9617",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "game_master": {
+    "internal": "http://localhost:9618",
+    "external": "http://localhost:9618",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "report": {
+    "internal": "http://localhost:9620",
+    "external": "http://localhost:9620",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "leaderboard": {
+    "internal": "http://localhost:9621",
+    "external": "http://localhost:9621",
+    "broker": "amqp://guest:guest@localhost:5672"
+  },
+  "log": {
+    "internal": "http://localhost:9622",
+    "external": "http://localhost:9622",
+    "broker": "amqp://guest:guest@localhost:5672"
+  }
 }

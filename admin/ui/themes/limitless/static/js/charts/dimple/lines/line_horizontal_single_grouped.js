@@ -42,7 +42,7 @@ $(function () {
 
         // Horizontal
         var x = myChart.addCategoryAxis("x", ["Owner", "Month"]);
-            x.addGroupOrderRule("Date");
+        x.addGroupOrderRule("Date");
 
         // Vertical
         var y = myChart.addMeasureAxis("y", "Unit Sales");
@@ -93,7 +93,7 @@ $(function () {
 
         // Resize function
         function resize() {
-            setTimeout(function() {
+            setTimeout(function () {
 
                 // Redraw chart
                 myChart.draw(0, true);

@@ -5,7 +5,6 @@ from anthill.framework.utils.functional import cached_property
 from anthill.framework.utils import timezone
 import logging
 
-
 logger = logging.getLogger('anthill.application')
 
 
@@ -13,6 +12,7 @@ class SessionStore(SessionBase):
     """
     Implement database session store.
     """
+
     def __init__(self, session_key=None):
         super().__init__(session_key)
 

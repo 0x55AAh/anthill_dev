@@ -6,10 +6,10 @@ from oauthlib.oauth1 import SIGNATURE_TYPE_AUTH_HEADER
 from six.moves.urllib_parse import urlencode, unquote
 
 from ..utils import url_add_parameters, parse_qs, handle_http_errors, \
-                    constant_time_compare
+    constant_time_compare
 from ..exceptions import AuthFailed, AuthCanceled, AuthUnknownError, \
-                         AuthMissingParameter, AuthStateMissing, \
-                         AuthStateForbidden, AuthTokenError
+    AuthMissingParameter, AuthStateMissing, \
+    AuthStateForbidden, AuthTokenError
 from .base import BaseAuth
 
 
@@ -142,7 +142,7 @@ class OAuthAuth(BaseAuth):
             params = self.revoke_token_params(token, uid)
             headers = self.revoke_token_headers(token, uid)
             data = urlencode(params) if self.REVOKE_TOKEN_METHOD != 'GET' \
-                                     else None
+                else None
             response = self.request(url, params=params, headers=headers,
                                     data=data, method=self.REVOKE_TOKEN_METHOD)
             return self.process_revoke_token_response(response)
@@ -377,7 +377,7 @@ class BaseOAuth2(OAuthAuth):
             if data['error'] == 'denied' or data['error'] == 'access_denied':
                 raise AuthCanceled(self, data.get('error_description', ''))
             raise AuthFailed(self, data.get('error_description') or
-                                   data['error'])
+                             data['error'])
         elif 'denied' in data:
             raise AuthCanceled(self, data['denied'])
 

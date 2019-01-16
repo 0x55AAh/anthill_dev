@@ -28,5 +28,6 @@ class BundleHandler(CreatingMixin, UpdatingMixin, DeletionMixin, DetailMixin,
             class Meta(form_class.Meta):
                 all_fields_optional = True
                 assign_required = False
+
             form_class.Meta = Meta
         return form_class

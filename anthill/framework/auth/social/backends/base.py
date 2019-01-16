@@ -8,6 +8,7 @@ class BaseAuth(base.BaseAuth):
     A authentication backend that authenticates the user based on
     the provider response.
     """
+
     async def start(self):
         if await self.uses_redirect():
             return self.strategy.redirect(self.auth_url())
@@ -34,7 +35,7 @@ class BaseAuth(base.BaseAuth):
         # don't match the username/password calling conventions of
         # authenticate.
         if 'backend' not in kwargs or kwargs['backend'].name != self.name or \
-           'strategy' not in kwargs or 'response' not in kwargs:
+                'strategy' not in kwargs or 'response' not in kwargs:
             return None
 
         self.strategy = kwargs.get('strategy') or self.strategy
@@ -69,7 +70,7 @@ class BaseAuth(base.BaseAuth):
         out.setdefault('details', {})
 
         if not isinstance(pipeline_index, int) or \
-           pipeline_index < 0 or pipeline_index >= len(pipeline):
+                pipeline_index < 0 or pipeline_index >= len(pipeline):
             pipeline_index = 0
 
         for idx, name in enumerate(pipeline[pipeline_index:]):

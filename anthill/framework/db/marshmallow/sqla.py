@@ -54,6 +54,7 @@ class HyperlinkRelated(msqla.fields.Related):
     :param bool external: Set to `True` if absolute URLs should be used,
                           instead of relative URLs.
     """
+
     def __init__(self, endpoint, external=False, **kwargs):
         super(HyperlinkRelated, self).__init__(**kwargs)
         self.endpoint = endpoint

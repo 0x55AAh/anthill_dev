@@ -3,12 +3,15 @@
         background-color: rgb(43, 175, 164);
     }
 }
+
 .page-header .breadcrumb-line-component {
     margin-top: 20px;
 }
+
 .nav-tabs {
     margin-bottom: 0;
 }
+
 .nav-tabs {
     border-bottom: unset;
 }

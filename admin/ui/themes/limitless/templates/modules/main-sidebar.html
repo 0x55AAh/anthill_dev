@@ -7,23 +7,29 @@
                         <span>{{ _('Services') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     {% for entry in entries %}
-                    <li class="{% if metadata['name'] == entry.name %}active {% end %}navigation-service" data-name="{{ entry.name }}">
-                        <a href="{{ reverse_url('service:index', entry.name) }}"><i class="{{ entry.icon_class }}"></i> <span>{{ entry.title }}</span></a>
+                    <li class="{% if metadata['name'] == entry.name %}active {% end %}navigation-service"
+                        data-name="{{ entry.name }}">
+                        <a href="{{ reverse_url('service:index', entry.name) }}"><i class="{{ entry.icon_class }}"></i>
+                            <span>{{ entry.title }}</span></a>
                     </li>
                     {% end %}
                     <li class="navigation-header navigation-header-utils">
                         <span>{{ _('Utils') }}</span> <i class="icon-menu" title="" data-original-title=""></i>
                     </li>
                     <li class="{% if page == 'debug' %}active{% end %}">
-                        <a href="{{ reverse_url('debug') }}" target="_blank"><i class="icon-bug2"></i> <span>{{ _('Console') }}</span></a>
+                        <a href="{{ reverse_url('debug') }}" target="_blank"><i class="icon-bug2"></i>
+                            <span>{{ _('Console') }}</span></a>
                     </li>
                     {% if metadata['debug'] and metadata['public_api_url'] %}
                     <li>
-                        <a href="{{ metadata['public_api_url'] }}" target="_blank"><i class="icon-puzzle3"></i> <span>{{ _('API') }}</span></a>
+                        <a href="{{ metadata['public_api_url'] }}" target="_blank"><i class="icon-puzzle3"></i>
+                            <span>{{ _('API') }}</span></a>
                     </li>
                     {% end %}
-                    <li class="update_service"><a href="#" target="_blank"><i class="icon-download"></i> <span>{{ _('Update') }}</span></a></li>
-                    <li><a href="http://localhost:9600/services/admin/log/" target="_blank"><i class="icon-clipboard6"></i> <span>{{ _('Log') }}</span></a></li>
+                    <li class="update_service"><a href="#" target="_blank"><i class="icon-download"></i>
+                        <span>{{ _('Update') }}</span></a></li>
+                    <li><a href="http://localhost:9600/services/admin/log/" target="_blank"><i
+                            class="icon-clipboard6"></i> <span>{{ _('Log') }}</span></a></li>
                 </ul>
             </div>
         </div>

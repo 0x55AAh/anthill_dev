@@ -6,7 +6,6 @@ from anthill.framework.utils.translation import translate as _
 from anthill.framework.auth.api import exceptions
 import six
 
-
 # Header encoding (see RFC5987)
 HTTP_HEADER_ENCODING = 'iso-8859-1'
 

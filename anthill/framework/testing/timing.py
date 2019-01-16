@@ -2,7 +2,6 @@ import time
 import logging
 import functools
 
-
 default_logger = logging.getLogger('anthill.application')
 
 

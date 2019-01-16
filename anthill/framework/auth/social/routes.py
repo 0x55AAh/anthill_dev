@@ -1,7 +1,6 @@
 from tornado.web import url
 from .handlers import AuthHandler, CompleteHandler, DisconnectHandler
 
-
 route_patterns = [
     url(r'/login/(?P<backend>[^/]+)/?', AuthHandler, name='begin'),
     url(r'/complete/(?P<backend>[^/]+)/', CompleteHandler, name='complete'),

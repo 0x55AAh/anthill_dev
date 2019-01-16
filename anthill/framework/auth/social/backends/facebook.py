@@ -13,7 +13,6 @@ from .oauth import BaseOAuth2
 from ..core.exceptions import (
     AuthException, AuthCanceled, AuthUnknownError, AuthMissingParameter)
 
-
 API_VERSION = 2.9
 
 
@@ -228,5 +227,5 @@ class FacebookAppOAuth2(FacebookOAuth2):
                                     digestmod=hashlib.sha256).digest()
             # allow the signed_request to function for upto 1 day
             if constant_time_compare(sig, expected_sig) and \
-               data['issued_at'] > (time.time() - 86400):
+                    data['issued_at'] > (time.time() - 86400):
                 return data

@@ -31,9 +31,9 @@ extra_routes = map(import_module, extra_routes)
 extra_route_patterns = map(lambda mod: getattr(mod, 'route_patterns', []), extra_routes)
 
 service_route_patterns = [
-    url(r'^/?$', handlers.ServiceRequestHandler, name='index'),
-    url(r'^/log/?$', handlers.LogRequestHandler, name='log'),
-] + list(itertools.chain.from_iterable(extra_route_patterns))
+                             url(r'^/?$', handlers.ServiceRequestHandler, name='index'),
+                             url(r'^/log/?$', handlers.LogRequestHandler, name='log'),
+                         ] + list(itertools.chain.from_iterable(extra_route_patterns))
 
 route_patterns = [
     url(r'^/?$', handlers.HomeHandler, name='index'),

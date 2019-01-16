@@ -5,7 +5,6 @@ import logging
 
 logger = logging.getLogger('anthill.application')
 
-
 __all__ = ['app']
 
 

@@ -112,8 +112,8 @@ class VKOAuth2(BaseOAuth2):
     def user_data(self, access_token, *args, **kwargs):
         """Loads user data from service."""
         request_data = [
-            'first_name', 'last_name', 'screen_name', 'nickname', 'photo'
-        ] + self.setting('EXTRA_DATA', [])
+                           'first_name', 'last_name', 'screen_name', 'nickname', 'photo'
+                       ] + self.setting('EXTRA_DATA', [])
 
         fields = ','.join(set(request_data))
         data = vk_api(self, 'users.get', {

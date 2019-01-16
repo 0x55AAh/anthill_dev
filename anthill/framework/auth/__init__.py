@@ -4,7 +4,6 @@ from anthill.framework.core.exceptions import ImproperlyConfigured, PermissionDe
 from anthill.framework.utils.module_loading import import_string
 import inspect
 
-
 SESSION_KEY = '_auth_user_id'
 BACKEND_SESSION_KEY = '_auth_user_backend'
 HASH_SESSION_KEY = '_auth_user_hash'

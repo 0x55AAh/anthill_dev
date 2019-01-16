@@ -9,12 +9,12 @@
 *
 * ---------------------------------------------------------------------------- */
 
-$(function() {
+$(function () {
 
     // Variables
     var map;
     var TILE_SIZE = 256;
-    var chicago = new google.maps.LatLng(41.850033,-87.6500523);
+    var chicago = new google.maps.LatLng(41.850033, -87.6500523);
 
     // Minimum and maximum values
     function bound(value, opt_min, opt_max) {
@@ -41,7 +41,7 @@ $(function() {
     }
 
     // From latitude to longitude
-    MercatorProjection.prototype.fromLatLngToPoint = function(latLng, opt_point) {
+    MercatorProjection.prototype.fromLatLngToPoint = function (latLng, opt_point) {
         var me = this;
         var point = opt_point || new google.maps.Point(0, 0);
         var origin = me.pixelOrigin_;
@@ -56,7 +56,7 @@ $(function() {
     };
 
     // From longitude to latitude
-    MercatorProjection.prototype.fromPointToLatLng = function(point) {
+    MercatorProjection.prototype.fromPointToLatLng = function (point) {
         var me = this;
         var origin = me.pixelOrigin_;
         var lng = (point.x - origin.x) / me.pixelsPerLonDegree_;
@@ -72,8 +72,8 @@ $(function() {
         var worldCoordinate = projection.fromLatLngToPoint(chicago);
         var pixelCoordinate = new google.maps.Point(worldCoordinate.x * numTiles, worldCoordinate.y * numTiles);
         var tileCoordinate = new google.maps.Point(
-        Math.floor(pixelCoordinate.x / TILE_SIZE),
-        Math.floor(pixelCoordinate.y / TILE_SIZE));
+            Math.floor(pixelCoordinate.x / TILE_SIZE),
+            Math.floor(pixelCoordinate.y / TILE_SIZE));
 
         return [
             'Chicago, IL',
@@ -103,7 +103,7 @@ $(function() {
         coordInfoWindow.open(map);
 
         // Add "Change" event
-        google.maps.event.addListener(map, 'zoom_changed', function() {
+        google.maps.event.addListener(map, 'zoom_changed', function () {
             coordInfoWindow.setContent(createInfoWindowContent());
             coordInfoWindow.open(map);
         });

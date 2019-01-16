@@ -5,7 +5,6 @@ from . import handlers
 from discovery.api.compat.rest import routes as rest_routes
 from anthill.framework.utils.urls import include
 
-
 route_patterns = [
     url(r'^/', include(rest_routes.route_patterns, namespace='api')),  # for compatibility only
 ]

@@ -11,5 +11,3 @@ Example:
         ...
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
-
-

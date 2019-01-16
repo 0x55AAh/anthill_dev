@@ -44,7 +44,7 @@ $(function () {
         var x = myChart.addMeasureAxis("x", "Unit Sales Monthly Change");
 
         // Vertical
-        var y =  myChart.addMeasureAxis("y", "Price Monthly Change");
+        var y = myChart.addMeasureAxis("y", "Price Monthly Change");
 
         // Other axes
         myChart.addMeasureAxis("p", "Operating Profit");

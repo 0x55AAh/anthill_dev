@@ -14,7 +14,7 @@
 // ------------------------------
 
 // Initialize chart
-google.load("visualization", "1", {packages:["corechart"]});
+google.load("visualization", "1", {packages: ["corechart"]});
 google.setOnLoadCallback(drawColumnStacked);
 
 
@@ -23,7 +23,7 @@ function drawColumnStacked() {
 
     // Data
     var data = google.visualization.arrayToDataTable([
-        ['Genre', 'Fantasy & Sci Fi', 'Romance', 'Mystery/Crime', 'General', 'Western', 'Literature', { role: 'annotation' } ],
+        ['Genre', 'Fantasy & Sci Fi', 'Romance', 'Mystery/Crime', 'General', 'Western', 'Literature', {role: 'annotation'}],
         ['2000', 20, 30, 35, 40, 45, 30, ''],
         ['2005', 14, 20, 25, 30, 48, 30, ''],
         ['2010', 10, 24, 20, 32, 18, 5, ''],
@@ -57,7 +57,7 @@ function drawColumnStacked() {
                 fontSize: 13,
                 italic: false
             },
-            gridlines:{
+            gridlines: {
                 color: '#e5e5e5',
                 count: 10
             },

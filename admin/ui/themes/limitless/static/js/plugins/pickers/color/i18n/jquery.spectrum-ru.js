@@ -2,13 +2,13 @@
 // Russian (ru) localization
 // https://github.com/bgrins/spectrum
 
-(function ( $ ) {
+(function ($) {
 
     var localization = $.spectrum.localization["ru"] = {
-		cancelText: "отмена",
-		chooseText: "выбрать"
-	};
+        cancelText: "отмена",
+        chooseText: "выбрать"
+    };
 
     $.extend($.fn.spectrum.defaults, localization);
 
-})( jQuery );
+})(jQuery);

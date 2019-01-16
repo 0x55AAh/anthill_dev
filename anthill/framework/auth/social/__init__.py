@@ -1,8 +1,8 @@
 # Originated from https://github.com/python-social-auth/social-app-tornado.git
 __version__ = '1.0.0'
 
-
 from anthill.framework.auth.social.core.backends.base import BaseAuth
+
 
 # django.contrib.auth.load_backend() will import and instanciate the
 # authentication backend ignoring the possibility that it might
@@ -15,6 +15,7 @@ def baseauth_init_workaround(original_init):
     def fake_init(self, strategy=None, *args, **kwargs):
         from .utils import load_strategy
         original_init(self, strategy or load_strategy(), *args, **kwargs)
+
     return fake_init
 
 

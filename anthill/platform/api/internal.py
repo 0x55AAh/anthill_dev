@@ -21,14 +21,12 @@ import logging
 import os
 import signal
 
-
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
     'as_internal', 'api', 'InternalAPI', 'InternalAPIMixin', 'InternalAPIConnector',
     'InternalAPIError', 'RequestTimeoutError', 'RequestError', 'connector',
     'ServiceDoesNotExist'
 ]
-
 
 logger = logging.getLogger('anthill.application')
 
@@ -194,7 +192,7 @@ class BaseInternalConnection(Singleton):
         self._current_request_id += 1
         return self._current_request_id
 
-    async def request(self, service: str, method: str, timeout: int=None, **kwargs) -> dict:
+    async def request(self, service: str, method: str, timeout: int = None, **kwargs) -> dict:
         """Request for method and wait for result."""
         raise NotImplementedError
 
@@ -270,7 +268,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
         if registered_services is not None and service not in registered_services:
             raise ServiceDoesNotExist
 
-    async def request(self, service: str, method: str, timeout: int=None, registered_services=None, **kwargs) -> dict:
+    async def request(self, service: str, method: str, timeout: int = None, registered_services=None, **kwargs) -> dict:
         self.check_service(service, registered_services)
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
             kwargs.update(service=self.service.name)

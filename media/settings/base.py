@@ -132,7 +132,6 @@ LOGGING = {
     }
 }
 
-
 #########
 # GEOIP #
 #########
@@ -149,7 +148,6 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # }
 HTTPS = None
 
-
 ############
 # GRAPHENE #
 ############
@@ -159,15 +157,14 @@ GRAPHENE = {
     'MIDDLEWARE': ()
 }
 
-
 #############
 # THUMBNAIL #
 #############
 
 THUMBNAIL_DEFAULT_OPTIONS = {
-    'resize': 'fill',     # 'fill', 'fit', 'stretch'
+    'resize': 'fill',  # 'fill', 'fit', 'stretch'
     'upscale': True,
-    'format': None,       # 'JPEG', 'PNG'
+    'format': None,  # 'JPEG', 'PNG'
     'quality': 90,
     'progressive': True,
     'orientation': True,

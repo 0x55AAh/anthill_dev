@@ -4,7 +4,6 @@ import tarfile
 import functools
 import os
 
-
 products = ['City', 'Country']
 link_base = 'http://geolite.maxmind.com/download/geoip/database'
 link_tpl = '/'.join([link_base, 'GeoLite2-%(product)s.tar.gz'])
@@ -26,7 +25,9 @@ def _progress(message, width=PROGRESS_WIDTH, logger=None):
                 print('OK')
             else:
                 logger.info('  \_ %s %s OK' % (message, '.' * dots))
+
         return wrapper
+
     return decorator
 
 

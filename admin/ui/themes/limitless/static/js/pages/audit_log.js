@@ -12,7 +12,7 @@
 
 // Create an array with the values of all the input boxes in a column
 $.fn.dataTable.ext.order['dom-text'] = function (settings, col) {
-    return this.api().column(col, {order:'index'}).nodes().map( function (td, i) {
+    return this.api().column(col, {order: 'index'}).nodes().map(function (td, i) {
         return $('input', td).val();
     });
 };
@@ -20,13 +20,13 @@ $.fn.dataTable.ext.order['dom-text'] = function (settings, col) {
 
 // Create an array with the values of all the select options in a column
 $.fn.dataTable.ext.order['dom-select'] = function (settings, col) {
-    return this.api().column(col, {order:'index'}).nodes().map( function (td, i) {
+    return this.api().column(col, {order: 'index'}).nodes().map(function (td, i) {
         return $('select', td).val();
     });
 };
 
 
-$(function() {
+$(function () {
 
 
     // Table setup
@@ -73,26 +73,26 @@ $(function() {
                 targets: [4, 5, 6]
             }
         ],
-        order: [[ 0, 'desc' ]],
+        order: [[0, 'desc']],
         dom: '<"datatable-header"fl><"datatable-scroll-lg"t><"datatable-footer"ip>',
         language: {
             search: '<span>Filter:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
-            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            paginate: {'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;'}
         },
-        lengthMenu: [ 15, 25, 50, 75, 100 ],
+        lengthMenu: [15, 25, 50, 75, 100],
         displayLength: 25,
         drawCallback: function (settings) {
             var api = this.api();
-            var rows = api.rows({page:'current'}).nodes();
-            var last=null;
+            var rows = api.rows({page: 'current'}).nodes();
+            var last = null;
 
             // Grouod rows
-            api.column(1, {page:'current'}).data().each(function (group, i) {
+            api.column(1, {page: 'current'}).data().each(function (group, i) {
                 if (last !== group) {
                     $(rows).eq(i).before(
-                        '<tr class="active border-double"><td colspan="8" class="text-semibold">'+group+'</td></tr>'
+                        '<tr class="active border-double"><td colspan="8" class="text-semibold">' + group + '</td></tr>'
                     );
 
                     last = group;
@@ -114,7 +114,7 @@ $(function() {
             // Reverse last 3 dropdowns orientation
             $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').addClass('dropup');
         },
-        preDrawCallback: function(settings) {
+        preDrawCallback: function (settings) {
 
             // Reverse last 3 dropdowns orientation
             $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').removeClass('dropup');
@@ -125,7 +125,6 @@ $(function() {
     });
 
 
-
     // External table additions
     // ------------------------------
 
@@ -134,5 +133,5 @@ $(function() {
         minimumResultsForSearch: Infinity,
         width: 'auto'
     });
-    
+
 });

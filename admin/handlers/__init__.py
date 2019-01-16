@@ -15,7 +15,6 @@ from typing import Optional
 import logging
 import inspect
 
-
 logger = logging.getLogger('anthill.application')
 
 

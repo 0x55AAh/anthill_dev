@@ -25,6 +25,7 @@ OID_USERID = "urn:oid:0.9.2342.19200300.100.1.1"
 
 class SAMLIdentityProvider(object):
     """Wrapper around configuration for a SAML Identity provider"""
+
     def __init__(self, name, **kwargs):
         """Load and parse configuration"""
         self.name = name
@@ -120,6 +121,7 @@ class DummySAMLIdentityProvider(SAMLIdentityProvider):
     If OneLogin_Saml2_Auth is modified to not always require IdP
     config, this can be removed.
     """
+
     def __init__(self):
         super(DummySAMLIdentityProvider, self).__init__(
             'dummy',
