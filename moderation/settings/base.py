@@ -31,7 +31,7 @@ CACHES["default"]["KEY_PREFIX"] = "moderation.anthill"
 APPLICATION_NAME = 'moderation'
 APPLICATION_VERBOSE_NAME = _('Moderation')
 APPLICATION_DESCRIPTION = _('Service description')
-APPLICATION_ICON_CLASS = 'icon-question6'
+APPLICATION_ICON_CLASS = 'icon-lock'
 APPLICATION_COLOR = 'purple'
 
 # SERVICE_CLASS = 'moderation.services.Service'

@@ -107,3 +107,6 @@ class BaseClient:
         :return:
         """
         raise NotImplementedError
+
+    def __eq__(self, other):
+        return self.user == other.user

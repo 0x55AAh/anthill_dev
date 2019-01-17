@@ -1,13 +1,15 @@
 from anthill.framework.conf import settings
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.handlers.socketio import SocketIOHandler
+from anthill.framework.core.mail.asynchronous import send_mail
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
 from anthill.platform.core.messenger.client.exceptions import ClientError
+from tornado import template
 import user_agents
 import socketio
 import logging
-import copy
+
 
 logger = logging.getLogger('anthill.application')
 
@@ -19,6 +21,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
     is_notify_on_net_status_changed = True
     secure_direct = True
     secure_groups = True
+    email_on_incoming_message = True
     clients = MessengerClientsWatcher(user_limit=0)
 
     ONLINE = 'online'
@@ -140,7 +143,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         else:
             for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
                 self.enter_room(sid_, group_name)
-            await self.emit('create_group', data=content, room=group)
+            await self.emit('create_group', data=content, room=group_name)
 
     async def on_delete_group(self, sid, data):
         client = await self.get_client(sid)
@@ -206,6 +209,20 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     # MESSAGES
 
+    async def send_email_on_incoming_message(self, data, group, my_client):
+        participants = self.server.manager.get_participants(self.namespace, room=group)
+        clients = set(await self.get_client(s) for s in participants)
+        clients.discard(my_client)
+        recipient_list = (c.user.email for c in clients)
+        loader = template.Loader(settings.TEMPLATE_PATH)
+        subject = 'New incoming message'
+        message = loader.load("incoming_message_email.txt").generate(data)
+        html_message = loader.load("incoming_message_email.html").generate(data)
+        from_email = 'root'
+        await send_mail(
+            subject, message, from_email, recipient_list,
+            fail_silently=False, html_message=html_message)
+
     async def on_create_message(self, sid, data):
         content_type = data.get('content_type', 'text/plain')
         group = self.retrieve_group(data)
@@ -231,6 +248,8 @@ class MessengerNamespace(socketio.AsyncNamespace):
         else:
             content['payload'] = {'id': message_id, 'data': data}
             await self.emit('create_message', data=content, room=group)
+            if self.email_on_incoming_message:
+                await self.send_email_on_incoming_message(data, group, client)
 
     async def on_enumerate_group(self, sid, data):
         client = await self.get_client(sid)

@@ -27,12 +27,6 @@ class StartApplication(BaseStartApplication):
         self.ui_template_path = ui_template_path
 
     def generate_ui_templates(self, app_name):
-        dirs = [
-            os.path.join(self.ui_template_path, 'services/%(app_name)s' % {'app_name': app_name}),
-        ]
-        for d in dirs:
-            Path(d).mkdir()
-
         files = [
             os.path.join(self.ui_template_path, 'services/%(app_name)s/index.html' % {'app_name': app_name}),
             os.path.join(self.ui_static_path, 'css/pages/services/%(app_name)s.css' % {'app_name': app_name}),
@@ -42,8 +36,8 @@ class StartApplication(BaseStartApplication):
             try:
                 Path(path).touch()
             except FileNotFoundError:
-                # TODO:
-                pass
+                Path(os.path.basedir(path)).mkdir(mode=0o755, parents=False)
+                Path(path).touch()
 
     def create_new_registry_entry(self, app_name, host, port):
         location = build_location('http', host, port)

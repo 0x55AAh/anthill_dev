@@ -28,7 +28,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 APPLICATION_NAME = 'leaderboard'
 APPLICATION_VERBOSE_NAME = _('Leaderboard')
 APPLICATION_DESCRIPTION = _('See and edit player ranking')
-APPLICATION_ICON_CLASS = 'icon-sort-numeric-asc'
+APPLICATION_ICON_CLASS = 'icon-trophy2'
 APPLICATION_COLOR = 'indigo'
 
 # SERVICE_CLASS = 'leaderboard.services.Service'
