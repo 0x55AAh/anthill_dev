@@ -27,10 +27,12 @@ class StartApplication(BaseStartApplication):
         self.ui_template_path = ui_template_path
 
     def generate_ui_templates(self, app_name):
+        def build_path(base, path_template):
+            return os.path.join(base, path_template % {'app_name': app_name})
         files = [
-            os.path.join(self.ui_template_path, 'services/%(app_name)s/index.html' % {'app_name': app_name}),
-            os.path.join(self.ui_static_path, 'css/pages/services/%(app_name)s.css' % {'app_name': app_name}),
-            os.path.join(self.ui_static_path, 'js/pages/services/%(app_name)s.js' % {'app_name': app_name})
+            build_path(self.ui_template_path, 'services/%(app_name)s/index.html'),
+            build_path(self.ui_static_path, 'css/pages/services/%(app_name)s.css'),
+            build_path(self.ui_static_path, 'js/pages/services/%(app_name)s.js')
         ]
         for path in files:
             try:

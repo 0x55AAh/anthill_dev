@@ -174,4 +174,20 @@ $(function () {
         }
     });
 
+    var timer = new easytimer.Timer();
+    var uptime = window.service_uptime;
+
+    function updateUptime() {
+        var newValue = timer.getTimeValues().toString();
+        var data = '<i class="icon-history text-warning position-left"></i> ' + newValue;
+        $('#navbar-uptime .heading-text').html(data);
+    }
+
+    timer.start({precision: 'seconds', startValues: {seconds: uptime}});
+
+    updateUptime();
+    timer.addEventListener('secondsUpdated', function (e) {
+        updateUptime();
+    });
+
 });

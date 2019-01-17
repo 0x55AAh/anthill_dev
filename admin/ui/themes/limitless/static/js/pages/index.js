@@ -115,6 +115,27 @@ $(function () {
 
     $(window).on('resize', setCardsSameHeight).resize();
 
+    $(".services-cards__entry").each(function () {
+        var name = $(this).data("name");
+        var uptime = $(this).data("uptime");
+
+        var timer = new easytimer.Timer();
+
+        function updateUptime() {
+            var newValue = timer.getTimeValues().toString();
+            var data = '<i class="icon-history text-warning position-left"></i>';
+            var $item = $('#' + "services-cards__entry__" + name + "_uptime");
+            $item.html(data).attr('title', newValue);
+        }
+
+        timer.start({precision: 'seconds', startValues: {seconds: uptime}});
+
+        updateUptime();
+        timer.addEventListener('minutesUpdated', function (e) {
+            updateUptime();
+        });
+    });
+
     setInterval(update_services_cards, UPDATE_INTERVAL * 1000);
 
 });

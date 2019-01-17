@@ -9,4 +9,5 @@ class ModerationAction(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer)
+    moderator_id = db.Column(db.Integer)
     reason = db.Column(db.String(512), nullable=False)

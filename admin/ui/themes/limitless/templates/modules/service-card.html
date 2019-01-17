@@ -1,24 +1,4 @@
-<script>
-    $(function () {
-        var timer = new easytimer.Timer();
-        var uptime = "{{ entry.uptime }}";
-
-        function updateUptime() {
-            var newValue = timer.getTimeValues().toString();
-            var data = '<i class="icon-history text-warning position-left"></i>';
-            var $item = $('#' + "services-cards__entry__{{ entry.name }}_uptime");
-            $item.html(data).attr('title', newValue);
-        }
-
-        timer.start({precision: 'seconds', startValues: {seconds: parseInt(uptime)}});
-
-        updateUptime();
-        timer.addEventListener('minutesUpdated', function (e) {
-            updateUptime();
-        });
-    })
-</script>
-<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" data-name="{{ entry.name }}">
+<div class="col-lg-2 col-md-3 col-sm-6 services-cards__entry" data-name="{{ entry.name }}" data-uptime="{{ entry.uptime }}">
     <div class="panel panel-flat">
         <div class="panel-heading">
             <div class="panel-title">

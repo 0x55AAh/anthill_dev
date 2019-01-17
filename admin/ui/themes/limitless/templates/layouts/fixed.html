@@ -33,6 +33,7 @@
         window.public_api_url = new URL(public_api_url).pathname;
         window.debug = {{ json_encode(debug) }};
         window.service_name = "{{ metadata['name'] }}";
+        window.service_uptime = {{ metadata['uptime'] }};
         window.log_url = log_url;
     </script>
 
