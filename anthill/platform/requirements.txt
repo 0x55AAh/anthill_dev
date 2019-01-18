@@ -12,3 +12,4 @@ psycopg2-binary
 redis>=2.10.0
 aioredis
 msgpack
+python-socketio

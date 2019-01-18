@@ -82,7 +82,8 @@ setup(
         'psycopg2-binary',
         'redis',
         'aioredis',
-        'msgpack'
+        'msgpack',
+        'python-socketio'
     ],
     extras_require={
 
