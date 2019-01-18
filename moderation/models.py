@@ -25,7 +25,7 @@ class ModerationAction(InternalAPIMixin, db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
     finish_at = db.Column(db.DateTime)
     reason = db.Column(db.String(512), nullable=False)
-    payload = db.Column(JSONType, nullable=False, default={})
+    extra_data = db.Column(JSONType, nullable=False, default={})
 
     async def get_user(self):
         return await self.internal_request(
