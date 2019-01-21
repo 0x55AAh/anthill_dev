@@ -180,12 +180,17 @@ class BaseInternalConnection(Singleton):
             self.channel_group_name(), self.channel_name)
         logger.debug('Internal api connection status: DISCONNECTED.')
 
-    async def send(self, service: str, message: dict) -> None:
+    async def group_send(self, service: str, message: dict) -> None:
         """Send message to service channel group."""
         try:
             await self.channel_layer.group_send(self.channel_group_name(service), message)
         except AttributeError:
-            raise InvalidChannelLayerError("BACKEND is not configured or doesn't support groups")
+            raise InvalidChannelLayerError(
+                "BACKEND is not configured or doesn't support groups")
+
+    async def send(self, channel: str, message: dict) -> None:
+        """Send message to service channel."""
+        await self.channel_layer.send(channel, message)
 
     def next_request_id(self):
         """Generate and save new request id."""
@@ -212,7 +217,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             self.dispatcher.add_method(getattr(api, method_name))
 
     async def on_message(self, message: dict) -> None:
-        service, payload = message['service'], message['payload']
+        payload = message['payload']
 
         if has_keys(payload, ('result', 'error')):
             result = None
@@ -244,13 +249,13 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             if response is None:
                 return
 
-            message = {
+            msg = {
                 'type': self.message_type,
                 'service': self.service.name,
                 'payload': response.data
             }
 
-            await self.send(service, message)
+            await self.send(message['channel'], msg)
 
         else:
             raise ValueError('Invalid message: %s' % message)
@@ -276,6 +281,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             message = {
                 'type': self.message_type,
                 'service': self.service.name,
+                'channel': self.channel_name,
                 'payload': {
                     'jsonrpc': self.json_rpc_ver,
                     'method': method,
@@ -284,7 +290,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
                 }
             }
             self._responses[request_id] = future = Future()
-            await self.send(service, message)
+            await self.group_send(service, message)
             timeout = timeout or self.request_timeout
             try:
                 result = await with_timeout(datetime.timedelta(seconds=timeout), future)
@@ -312,7 +318,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
                     'params': kwargs
                 }
             }
-            await self.send(service, message)
+            await self.group_send(service, message)
 
 
 InternalConnection = JSONRPCInternalConnection  # More simple alias
