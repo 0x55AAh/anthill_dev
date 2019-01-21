@@ -13,12 +13,13 @@ def settings(name):
             "Couldn't import anthill framework. Are you sure it's installed "
             "and available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?")
-    global _conf
-    if _conf is None:
-        _conf = importlib.import_module('anthill.framework.conf')
     else:
-        importlib.reload(_conf)
-    return _conf.settings
+        global _conf
+        if _conf is None:
+            _conf = importlib.import_module('anthill.framework.conf')
+        else:
+            importlib.reload(_conf)
+        return _conf.settings
 
 
 ROOT_TEMPLATES_MODULE = 'anthill.platform.conf'
