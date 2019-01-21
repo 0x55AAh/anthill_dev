@@ -5,7 +5,6 @@ if __name__ == "__main__":
     os.environ.setdefault("ANTHILL_SETTINGS_MODULE", "settings")
     try:
         import anthill.framework
-
         anthill.framework.setup()
     except ImportError:
         raise ImportError(

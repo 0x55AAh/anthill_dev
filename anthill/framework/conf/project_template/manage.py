@@ -19,7 +19,6 @@ if __name__ == '__main__':
 
     try:
         import anthill.framework
-
         anthill.framework.setup()
     except (ImportError, ImproperlyConfigured):
         app = None

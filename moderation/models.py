@@ -43,10 +43,20 @@ class ModerationAction(InternalAPIMixin, db.Model):
         self.is_active = False
         self.save(commit)
 
-    @property
     def time_limited(self):
         return self.finish_at is not None
 
     def finish_in(self):
-        if self.time_limited:
+        if self.time_limited():
             return self.finish_at - timezone.now
+
+    def finished(self):
+        finish_in = self.finish_in()
+        if finish_in:
+            return finish_in.days < 0
+
+    def active(self):
+        finished = self.finished()
+        if finished is None:
+            return self.is_active
+        return self.is_active and not finished

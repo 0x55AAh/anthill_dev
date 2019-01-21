@@ -5,7 +5,6 @@ _conf = None
 
 
 def settings(name):
-    global _conf
     os.environ["ANTHILL_SETTINGS_MODULE"] = "%s.settings" % name
     try:
         import anthill.framework
@@ -14,6 +13,7 @@ def settings(name):
             "Couldn't import anthill framework. Are you sure it's installed "
             "and available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?")
+    global _conf
     if _conf is None:
         _conf = importlib.import_module('anthill.framework.conf')
     else:
