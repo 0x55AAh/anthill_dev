@@ -193,7 +193,7 @@ class BaseInternalConnection(Singleton):
         await self.channel_layer.send(channel, message)
 
     def next_request_id(self):
-        """Generate and save new request id."""
+        """Generate new request id."""
         self._current_request_id += 1
         return self._current_request_id
 
