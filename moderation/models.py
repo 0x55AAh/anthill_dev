@@ -55,7 +55,7 @@ class ModerationAction(InternalAPIMixin, db.Model):
 
     def finished(self) -> Optional[bool]:
         if self.time_limited():
-            return self.finish_at > timezone.now()
+            return self.finish_at <= timezone.now()
 
     def active(self) -> bool:
         finished = self.finished()
