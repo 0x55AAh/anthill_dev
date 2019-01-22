@@ -216,47 +216,58 @@ class JSONRPCInternalConnection(BaseInternalConnection):
         for method_name in api:
             self.dispatcher.add_method(getattr(api, method_name))
 
+    async def on_request(self, payload: dict, channel: str) -> None:
+        payload = json.dumps(payload)
+        try:
+            json_rpc_request = JSONRPCRequest.from_json(payload)
+        except (TypeError, ValueError, JSONRPCInvalidRequestException):
+            response = await JSONRPCResponseManager.handle(payload, self.dispatcher)
+        else:
+            json_rpc_request.params = json_rpc_request.params or {}
+            response = await JSONRPCResponseManager.handle_request(
+                json_rpc_request, self.dispatcher)
+
+        # No reply needed if response is None (in case of push).
+        if response is None:
+            return
+
+        msg = {
+            'type': self.message_type,
+            'service': self.service.name,
+            'payload': response.data
+        }
+
+        await self.send(channel, msg)
+
+    async def on_result(self, payload: dict) -> None:
+        result = payload['result']
+        request_id = payload.get('id')
+        try:
+            future = self._responses[request_id]
+        except KeyError:
+            pass  # ¯\_(ツ)_/¯
+        else:
+            future.set_result(result)
+
+    async def on_error(self, payload: dict) -> None:
+        del payload['error']['code']
+        result = {'error': payload['error']}
+        request_id = payload.get('id')
+        try:
+            future = self._responses[request_id]
+        except KeyError:
+            pass  # ¯\_(ツ)_/¯
+        else:
+            future.set_result(result)
+
     async def on_message(self, message: dict) -> None:
         payload = message['payload']
-
-        if has_keys(payload, ('result', 'error')):
-            result = None
-            if 'result' in payload:
-                result = payload['result']
-            elif 'error' in payload:
-                del payload['error']['code']
-                result = {'error': payload['error']}
-            request_id = payload.get('id')
-            try:
-                future = self._responses[request_id]
-            except KeyError:
-                pass  # ¯\_(ツ)_/¯
-            else:
-                future.set_result(result)
-
+        if 'result' in payload:
+            await self.on_result(payload)
+        elif 'error' in payload:
+            await self.on_error(payload)
         elif 'method' in payload:
-            payload = json.dumps(payload)
-            try:
-                json_rpc_request = JSONRPCRequest.from_json(payload)
-            except (TypeError, ValueError, JSONRPCInvalidRequestException):
-                response = await JSONRPCResponseManager.handle(payload, self.dispatcher)
-            else:
-                json_rpc_request.params = json_rpc_request.params or {}
-                response = await JSONRPCResponseManager.handle_request(
-                    json_rpc_request, self.dispatcher)
-
-            # No reply needed if response is None (in case of push).
-            if response is None:
-                return
-
-            msg = {
-                'type': self.message_type,
-                'service': self.service.name,
-                'payload': response.data
-            }
-
-            await self.send(message['channel'], msg)
-
+            await self.on_request(payload, channel=message['channel'])
         else:
             raise ValueError('Invalid message: %s' % message)
 
