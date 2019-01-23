@@ -161,9 +161,6 @@ class BaseInternalConnection(Singleton):
                 message = await self.channel_receive()
                 await self.on_message(message)
 
-    async def on_message(self, message: dict) -> None:
-        raise NotImplementedError
-
     async def connect(self) -> None:
         IOLoop.current().add_callback(self.channel_receive_callback)
         self.channel_layer = get_channel_layer(alias=self.channel_alias)
@@ -196,6 +193,18 @@ class BaseInternalConnection(Singleton):
         """Generate new request id."""
         self._current_request_id += 1
         return self._current_request_id
+
+    async def on_request(self, payload: dict, channel: str) -> None:
+        raise NotImplementedError
+
+    async def on_result(self, payload: dict) -> None:
+        raise NotImplementedError
+
+    async def on_error(self, payload: dict) -> None:
+        raise NotImplementedError
+
+    async def on_message(self, message: dict) -> None:
+        raise NotImplementedError
 
     async def request(self, service: str, method: str, timeout: int = None, **kwargs) -> dict:
         """Request for method and wait for result."""
