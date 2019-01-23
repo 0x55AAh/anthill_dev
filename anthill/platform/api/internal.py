@@ -237,28 +237,28 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             'payload': response.data
         }
 
-        await self.send(channel, msg)
+        await self.send(channel, msg)  # send response
 
     async def on_result(self, payload: dict) -> None:
-        result = payload['result']
         request_id = payload.get('id')
         try:
             future = self._responses[request_id]
         except KeyError:
             pass  # ¯\_(ツ)_/¯
         else:
+            result = payload['result']
             future.set_result(result)
 
     async def on_error(self, payload: dict) -> None:
-        del payload['error']['code']
-        result = {'error': payload['error']}
         request_id = payload.get('id')
         try:
             future = self._responses[request_id]
         except KeyError:
             pass  # ¯\_(ツ)_/¯
         else:
-            future.set_result(result)
+            del payload['error']['code']
+            error = dict(error=payload['error'])
+            future.set_result(error)
 
     async def on_message(self, message: dict) -> None:
         payload = message['payload']
