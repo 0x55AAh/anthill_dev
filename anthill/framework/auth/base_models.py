@@ -33,6 +33,10 @@ class BaseAbstractUser(db.Model):
         return True
 
     @property
+    def is_superuser(self):
+        return False
+
+    @property
     def is_authenticated(self):
         return True
 
@@ -76,6 +80,7 @@ class AbstractUser(BaseAbstractUser):
 
     username = db.Column(db.String(128), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
+    is_superuser = db.Column(db.Boolean, nullable=False, default=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     USERNAME_FIELD = 'username'

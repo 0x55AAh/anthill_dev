@@ -20,6 +20,7 @@ from anthill.framework.db import db
 from sqlalchemy import case, cast, func, Text
 from sqlalchemy.sql import Alias, ColumnElement
 from sqlalchemy.ext.compiler import compiles
+from abc import ABCMeta, abstractmethod
 import functools
 
 from .models import (
@@ -34,8 +35,6 @@ from .models import (
     role_membership as role_membership_table,
     role_permission as role_permission_table,
 )
-
-from .account import abcs as account_abcs
 
 # -------------------------------------------------------
 # Following is a recipe used to address postgres-json related shortcomings
@@ -67,7 +66,36 @@ def session_context(fn):
     return wrap
 
 
-class AlchemyAccountStore(account_abcs.AuthorizationAccountStore):
+class BaseAccountStore(metaclass=ABCMeta):
+    pass
+
+#    @abstractmethod
+#    def get_account(self, request):
+#        """
+#        Obtains the most complete Account object available from the AccountStore,
+#        consisting of both authentication AND authorization related information
+#        when they are available.
+#
+#        :param request:  the request object defining the criteria by which
+#                         to query the account store
+#        :type request:  AuthenticationToken or Account
+#
+#        :returns: Account
+#        """
+#        pass
+
+
+class AuthorizationAccountStore(BaseAccountStore):
+    @abstractmethod
+    def get_authz_permissions(self, identifiers):
+        pass
+
+    @abstractmethod
+    def get_authz_roles(self, identifiers):
+        pass
+
+
+class AlchemyStore(AuthorizationAccountStore):
     """
     AccountStore provides the realm-facing API to the relational database
     that is managed through the SQLAlchemy ORM.

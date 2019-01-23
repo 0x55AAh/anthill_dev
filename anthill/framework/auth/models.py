@@ -1,6 +1,7 @@
 class AnonymousUser:
     id = None
     is_active = False
+    is_superuser = False
     username = ''
 
     def __str__(self):
