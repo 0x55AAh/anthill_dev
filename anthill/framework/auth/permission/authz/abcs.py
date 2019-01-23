@@ -6,7 +6,9 @@ regarding copyright ownership.  The ASF licenses this file
 to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
 with the License.  You may obtain a copy of the License at
+
     http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an
 "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,7 +21,6 @@ from abc import ABCMeta, abstractmethod
 
 
 class Authorizer(metaclass=ABCMeta):
-
     """
     An ``Authorizer`` performs authorization (access control) operations
     for any given Subject (aka 'application user').
@@ -51,7 +52,6 @@ class Authorizer(metaclass=ABCMeta):
                   indicating whether the permission is granted, True if the
                   corresponding Subject/user is permitted, False otherwise
         """
-        pass
 
     @abstractmethod
     def is_permitted_collective(self, identifiers, permission_s, logical_operator):
@@ -72,7 +72,6 @@ class Authorizer(metaclass=ABCMeta):
         :type logical_operator:  function  (stdlib)
         :rtype:  bool
         """
-        pass
 
     @abstractmethod
     def check_permission(self, identifiers, permission_s, logical_operator):
@@ -94,7 +93,6 @@ class Authorizer(metaclass=ABCMeta):
         :raises  AuthorizationException:  if the user does not have sufficient
                                           permission
         """
-        pass
 
     @abstractmethod
     def has_role(self, identifiers, role_s):
@@ -109,7 +107,6 @@ class Authorizer(metaclass=ABCMeta):
                   a member of that Role
                   - the tuple format is: (role, Boolean)
         """
-        pass
 
     @abstractmethod
     def has_role_collective(self, identifiers, role_s, logical_operator):
@@ -133,7 +130,6 @@ class Authorizer(metaclass=ABCMeta):
         :type logical_operator:  function  (stdlib)
         :rtype:  bool
         """
-        pass
 
     @abstractmethod
     def check_role(self, identifiers, role_s, logical_operator):
@@ -155,11 +151,9 @@ class Authorizer(metaclass=ABCMeta):
         :raises  AuthorizationException:  if the user does not have sufficient
                                           role membership
         """
-        pass
 
 
 class Permission(metaclass=ABCMeta):
-
     """
     A ``Permission`` represents the ability to perform an action or access a
     resource.  A ``Permission`` is the most granular, or atomic, unit in a system's
@@ -222,11 +216,9 @@ class Permission(metaclass=ABCMeta):
              defined by permission2.
         :returns: bool
         """
-        pass
 
 
 class PermissionVerifier(metaclass=ABCMeta):
-
     @abstractmethod
     def is_permitted_from_json(self, required_perm, serialized_perms):
         pass

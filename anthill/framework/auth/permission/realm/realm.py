@@ -6,7 +6,9 @@ regarding copyright ownership.  The ASF licenses this file
 to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
 with the License.  You may obtain a copy of the License at
+
     http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an
 "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -15,11 +17,10 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from ..authz.authz import DefaultPermissionVerifier
+from ..authz.authz import DefaultPermissionVerifier, Permission
 import logging
 from uuid import uuid4
 from . import abcs
-import time
 
 
 logger = logging.getLogger('anthill.application')
@@ -28,41 +29,26 @@ logger = logging.getLogger('anthill.application')
 class AccountStoreRealm(abcs.AuthorizingRealm):
     """
     A Realm interprets information from a datastore.
-    Differences between yosai.core.and shiro include:
-        1) yosai.core.uses two AccountStoreRealm interfaces to specify authentication
-           and authorization
-        2) yosai.core.includes support for authorization within the AccountStoreRealm
-            - as of shiro v2 alpha rev1693638, shiro doesn't (yet)
     """
 
-    def __init__(self,
-                 name='AccountStoreRealm_' + str(uuid4()),
-                 account_store=None,
-                 permission_verifier=DefaultPermissionVerifier()):
-        """
-        :authc_verifiers: tuple of Verifier objects
-        """
+    def __init__(self, name='AccountStoreRealm_' + str(uuid4()),
+                 account_store=None, permission_verifier=DefaultPermissionVerifier()):
         self.name = name
         self.account_store = account_store
         self.permission_verifier = permission_verifier
-
         self.cache_handler = None
-
-    # --------------------------------------------------------------------------
-    # Authorization
-    # --------------------------------------------------------------------------
 
     def get_authzd_permissions(self, identifier, perm_domain):
         """
         :type identifier:  str
-        :type domain:  str
+        :type perm_domain:  str
         :returns: a list of relevant json blobs, each a list of permission dicts
         """
         related_perms = []
         keys = ['*', perm_domain]
 
         def query_permissions(self):
-            msg = ("Could not obtain cached permissions for [{0}].  "
+            msg = ("Could not obtain cached permissions for [{0}]. "
                    "Will try to acquire permissions from account store."
                    .format(identifier))
             logger.debug(msg)
@@ -70,15 +56,12 @@ class AccountStoreRealm(abcs.AuthorizingRealm):
             # permissions is a dict:  {'domain': json blob of lists of dicts}
             permissions = self.account_store.get_authz_permissions(identifier)
             if not permissions:
-                msg = "Could not get permissions from account_store for {0}".\
-                    format(identifier)
-                raise ValueError(msg)
+                raise ValueError(
+                    "Could not get permissions from account_store for {0}".format(identifier))
             return permissions
 
         try:
-            msg2 = ("Attempting to get cached authz_info for [{0}]"
-                    .format(identifier))
-            logger.debug(msg2)
+            logger.debug("Attempting to get cached authz_info for [{0}]".format(identifier))
 
             domain = 'authorization:permissions:' + self.name
 
@@ -91,16 +74,17 @@ class AccountStoreRealm(abcs.AuthorizingRealm):
                                 creator_func=query_permissions,
                                 creator=self)
         except ValueError:
-            msg3 = ("No permissions found for identifiers [{0}].  "
-                    "Returning None.".format(identifier))
-            logger.warning(msg3)
+            logger.warning(
+                "No permissions found for identifiers [{0}]. Returning None.".format(identifier))
 
         except AttributeError:
             # this means the cache_handler isn't configured
             queried_permissions = query_permissions(self)
 
-            related_perms = [queried_permissions.get('*'),
-                             queried_permissions.get(perm_domain)]
+            related_perms = [
+                queried_permissions.get('*'),
+                queried_permissions.get(perm_domain)
+            ]
 
         return related_perms
 
@@ -108,21 +92,18 @@ class AccountStoreRealm(abcs.AuthorizingRealm):
         roles = []
 
         def query_roles(self):
-            msg = ("Could not obtain cached roles for [{0}].  "
+            msg = ("Could not obtain cached roles for [{0}]. "
                    "Will try to acquire roles from account store."
                    .format(identifier))
             logger.debug(msg)
 
             roles = self.account_store.get_authz_roles(identifier)
             if not roles:
-                msg = "Could not get roles from account_store for {0}".\
-                    format(identifier)
-                raise ValueError(msg)
+                raise ValueError(
+                    "Could not get roles from account_store for {0}".format(identifier))
             return roles
         try:
-            msg2 = ("Attempting to get cached roles for [{0}]"
-                    .format(identifier))
-            logger.debug(msg2)
+            logger.debug("Attempting to get cached roles for [{0}]".format(identifier))
 
             roles = self.cache_handler.get_or_create(
                 domain='authorization:roles:' + self.name,
@@ -133,9 +114,8 @@ class AccountStoreRealm(abcs.AuthorizingRealm):
             # this means the cache_handler isn't configured
             roles = query_roles(self)
         except ValueError:
-            msg3 = ("No roles found for identifiers [{0}].  "
-                    "Returning None.".format(identifier))
-            logger.warning(msg3)
+            logger.warning(
+                "No roles found for identifiers [{0}]. Returning None.".format(identifier))
 
         return set(roles)
 
@@ -181,9 +161,8 @@ class AccountStoreRealm(abcs.AuthorizingRealm):
         assigned_role_s = self.get_authzd_roles(identifier)
 
         if not assigned_role_s:
-            msg = 'has_role:  no roles obtained from account_store for [{0}]'.\
-                format(identifier)
-            logger.warning(msg)
+            logger.warning(
+                'has_role:  no roles obtained from account_store for [{0}]'.format(identifier))
             for role in required_role_s:
                 yield (role, False)
         else:
