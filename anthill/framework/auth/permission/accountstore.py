@@ -110,12 +110,12 @@ class AlchemyAccountStore(account_abcs.AuthorizationAccountStore):
                           theresource.label('resource'),
                           action_agg.label('action')).
             select_from(User).
-            join(role_membership_table, User.pk_id == role_membership_table.c.user_id).
+            join(role_membership_table, User.id == role_membership_table.c.user_id).
             join(role_permission_table, role_membership_table.c.role_id == role_permission_table.c.role_id).
-            join(Permission, role_permission_table.c.permission_id == Permission.pk_id).
-            outerjoin(Domain, Permission.domain_id == Domain.pk_id).
-            outerjoin(Action, Permission.action_id == Action.pk_id).
-            outerjoin(Resource, Permission.resource_id == Resource.pk_id).
+            join(Permission, role_permission_table.c.permission_id == Permission.id).
+            outerjoin(Domain, Permission.domain_id == Domain.id).
+            outerjoin(Action, Permission.action_id == Action.id).
+            outerjoin(Resource, Permission.resource_id == Resource.id).
             filter(User.identifier == identifier).
             group_by(Permission.domain_id, Domain.name, Permission.resource_id, Resource.name)).subquery()
 
@@ -140,14 +140,14 @@ class AlchemyAccountStore(account_abcs.AuthorizationAccountStore):
         :type identifier: string
         """
         return (session.query(Role).
-                join(role_membership_table, Role.pk_id == role_membership_table.c.role_id).
-                join(User, role_membership_table.c.user_id == User.pk_id).
+                join(role_membership_table, Role.id == role_membership_table.c.role_id).
+                join(User, role_membership_table.c.user_id == User.id).
                 filter(User.identifier == identifier))
 
     def _get_credential_query(self, session, identifier):
         return (session.query(CredentialType.title, Credential.credential).
-                join(Credential, CredentialType.pk_id == Credential.credential_type_id).
-                join(User, Credential.user_id == User.pk_id).
+                join(Credential, CredentialType.id == Credential.credential_type_id).
+                join(User, Credential.user_id == User.id).
                 filter(User.identifier == identifier))
 
     @session_context
