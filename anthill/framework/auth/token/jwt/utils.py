@@ -7,7 +7,7 @@ from anthill.framework.auth import get_user_model
 from calendar import timegm
 from datetime import datetime
 
-from anthill.framework.auth.api.jwt.settings import settings as api_settings
+from anthill.framework.auth.token.jwt.settings import settings as api_settings
 
 
 def get_username_field():

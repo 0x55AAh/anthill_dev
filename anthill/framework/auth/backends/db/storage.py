@@ -21,12 +21,12 @@ from sqlalchemy import case, cast, func, Text
 from sqlalchemy.sql import Alias, ColumnElement
 from sqlalchemy.ext.compiler import compiles
 from abc import ABCMeta, abstractmethod
+from anthill.framework.auth import get_user_model
 import functools
 
 from .models import (
     Credential,
     CredentialType,
-    User,
     Domain,
     Action,
     Resource,
@@ -35,6 +35,8 @@ from .models import (
     role_membership as role_membership_table,
     role_permission as role_permission_table,
 )
+
+User = get_user_model()
 
 # -------------------------------------------------------
 # Following is a recipe used to address postgres-json related shortcomings
@@ -71,21 +73,6 @@ def session_context(fn):
 
 class BaseAccountStore(metaclass=ABCMeta):
     pass
-
-#    @abstractmethod
-#    def get_account(self, request):
-#        """
-#        Obtains the most complete Account object available from the AccountStore,
-#        consisting of both authentication AND authorization related information
-#        when they are available.
-#
-#        :param request:  the request object defining the criteria by which
-#                         to query the account store
-#        :type request:  AuthenticationToken or Account
-#
-#        :returns: Account
-#        """
-#        pass
 
 
 class AuthorizationAccountStore(BaseAccountStore):
@@ -194,38 +181,3 @@ class AlchemyStore(AuthorizationAccountStore):
             return [r.title for r in self._get_roles_query(session, identifier).all()]
         except (AttributeError, TypeError):
             return None
-
-#    @session_context
-#    def get_account(self, identifier, session=None):
-#        """
-#        get_account performs the most comprehensive collection of information
-#        from the database, including credentials AND authorization information
-#
-#        :param identifier:  the request object's identifier
-#        :returns: dict
-#
-#        CAUTION
-#        --------
-#        This method was initially created as part of shiro porting but is
-#        not intended for v0.1.0 use due to lack of support for get_or_create_multi
-#        dogpile locking. If you would like to use get_account, you *should*
-#        implement an appropriate get_or_create_multi caching process (and submit
-#        the changes as pull requests to yosai!).  Without dogpile protection,
-#        you run the risk of concurrently calling the most expensive creational
-#        process
-#
-#        """
-#        cred = self.get_credential_query(session, identifier).scalar()
-#        credential = self.credential(cred)
-#
-#        roles = {self.role(r.title) for r in self.get_roles_query(session, identifier).all()}
-#
-#        perms = self.get_permissions_query(session, identifier).all()
-#        permissions = {self.permission(permission=p.perm) for p in perms}
-#
-#        authz_info = self.authz_info(roles=roles, permissions=permissions)
-#
-#        account = dict(account_id=identifier, credentials=credential,
-#                       authz_info=authz_info)
-#
-#        return account

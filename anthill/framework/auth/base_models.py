@@ -1,9 +1,11 @@
-from anthill.framework.auth.hashers import make_password, check_password
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
 from anthill.framework.utils.crypto import salted_hmac
+from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.auth import password_validation
-from anthill.framework.core.mail import send_mail
+from anthill.framework.auth.hashers import make_password, check_password
+from anthill.framework.auth.backends.db.models import UserMixin
+from anthill.framework.core.mail.asynchronous import send_mail
 
 
 class BaseAbstractUser(db.Model):
@@ -75,11 +77,12 @@ class BaseAbstractUser(db.Model):
         return salted_hmac(key_salt, self.password).hexdigest()
 
 
-class AbstractUser(BaseAbstractUser):
+class AbstractUser(UserMixin, BaseAbstractUser):
     __abstract__ = True
 
     username = db.Column(db.String(128), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
+    phone = db.Column(db.String(100), nullable=True)
     is_superuser = db.Column(db.Boolean, nullable=False, default=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
@@ -93,6 +96,6 @@ class AbstractUser(BaseAbstractUser):
     def is_authenticated(self):
         return True
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
+    async def send_mail(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+        await send_mail(subject, message, from_email, [self.email], **kwargs)

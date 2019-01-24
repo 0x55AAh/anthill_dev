@@ -15,16 +15,11 @@ class BaseAnthillApplication(Application):
         super().__init__()
         self.internal = internal_api
 
-    def get_models_modules(self):
-        models_modules = super().get_models_modules()
-        return models_modules
-
     # noinspection PyMethodMayBeStatic
     def get_internal_api_modules(self):
-        api_modules = (
+        return (
             settings.INTERNAL_API_CONF,
         )
-        return api_modules
 
     def setup_internal_api(self):
         logger.debug('Internal api installing...')

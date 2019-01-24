@@ -1,3 +1,4 @@
+from anthill.framework.core.mail.asynchronous import send_mail
 from anthill.platform.api.internal import RequestError, connector
 from tornado.escape import json_decode
 from functools import partial
@@ -26,11 +27,12 @@ class RemoteUser:
     """
     USERNAME_FIELD = 'username'
 
-    def __init__(self, username: str, **kwargs):
+    def __init__(self, username: str, email: str, **kwargs):
         kwargs['created'] = iso_parse(kwargs.pop('created', None))
         kwargs['last_login'] = iso_parse(kwargs.pop('last_login', None))
         self.__dict__.update(kwargs)
         self.username = username
+        self.email = email
 
     def __str__(self):
         return self.get_username()
@@ -77,6 +79,10 @@ class RemoteUser:
 
     def get_profile(self):
         return getattr(self, 'profile', None)
+
+    async def send_mail(self, subject, message, from_email=None, **kwargs):
+        """Send an email to this user."""
+        await send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
 class RemoteProfile:

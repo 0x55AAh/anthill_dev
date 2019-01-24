@@ -1,6 +1,6 @@
 from anthill.framework.auth import authenticate, get_user_model
 from anthill.framework.utils.translation import translate as _
-from anthill.framework.auth.api import (
+from anthill.framework.auth.token import (
     exceptions, get_authorization_header, BaseAuthentication
 )
 import jwt

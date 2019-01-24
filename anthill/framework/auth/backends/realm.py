@@ -17,7 +17,7 @@ under the License.
 
 from abc import ABCMeta, abstractmethod
 from anthill.framework.auth.backends.authorizer import DefaultPermissionVerifier, Permission
-from anthill.framework.auth.backends.db import AlchemyStore
+from anthill.framework.auth.backends.db.storage import AlchemyStore
 from anthill.framework.core.cache import cache
 from uuid import uuid4
 import logging

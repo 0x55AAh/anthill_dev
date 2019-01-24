@@ -1,6 +1,5 @@
 """Tornado SQLAlchemy ORM models for Social Auth."""
 
-from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from anthill.framework.auth.social.core.utils import setting_name
 from social_sqlalchemy.storage import (
@@ -39,8 +38,8 @@ def init_social():
 
     class UserSocialAuth(_AppSession, SQLAlchemyUserMixin):
         """Social Auth association model."""
-        uid = Column(String(UID_LENGTH))
-        user_id = Column(User.id.type, ForeignKey(User.id), nullable=False, index=True)
+        uid = db.Column(db.String(UID_LENGTH))
+        user_id = db.Column(User.id.type, db.ForeignKey(User.id), nullable=False, index=True)
         user = relationship(User, backref=backref('social_auth', lazy='dynamic'))
 
         @classmethod

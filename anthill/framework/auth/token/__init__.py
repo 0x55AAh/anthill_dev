@@ -3,7 +3,7 @@ Provides various authentication policies.
 """
 from anthill.framework.auth import authenticate, get_user_model
 from anthill.framework.utils.translation import translate as _
-from anthill.framework.auth.api import exceptions
+from anthill.framework.auth.token import exceptions
 import six
 
 # Header encoding (see RFC5987)

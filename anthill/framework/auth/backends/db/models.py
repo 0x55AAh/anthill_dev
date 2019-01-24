@@ -16,6 +16,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
+import itertools
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import relationship
+from anthill.framework.db import db
 
 """
 models.py features a basic, non-hierarchical, non-constrained RBAC data model,
@@ -35,11 +40,6 @@ also known as a flat model
 +-----------------+          +-------------------+          +---------------+
 """
 
-import itertools
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.orm import relationship
-from anthill.framework.db import db
-
 role_permission = db.Table(
     'role_permission', db.metadata,
     db.Column('role_id', db.ForeignKey('role.id'), primary_key=True),
@@ -56,26 +56,17 @@ role_membership = db.Table(
 class UserMixin(db.Model):
     __abstract__ = True
 
-    roles = relationship('Role', secondary=role_membership, backref='users')
-    perms = association_proxy('roles', 'permissions')
+    @declared_attr
+    def roles(self):
+        return relationship('Role', secondary=role_membership, backref='users')
+
+    @declared_attr
+    def perms(self):
+        return association_proxy('roles', 'permissions')
 
     @property
     def permissions(self):
         return list(itertools.chain(*self.perms))
-
-
-class User(UserMixin, db.Model):
-    __tablename__ = 'user'
-
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255), nullable=False)
-    last_name = db.Column(db.String(255), nullable=False)
-    identifier = db.Column(db.String(255), nullable=False, unique=True)
-    account_lock_millis = db.Column(db.BigInteger, nullable=True)
-    phone_number = db.Column(db.String(100), nullable=True)
-
-    def __repr__(self):
-        return "User(identifier={0})".format(self.identifier)
 
 
 class Credential(db.Model):
