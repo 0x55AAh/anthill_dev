@@ -361,33 +361,33 @@ class DefaultAuthorizer(BaseAuthorizer):
 
     def assert_realms_configured(self):
         if not self.realms:
-            msg = ("Configuration error:  No realms have been configured! "
+            msg = ("Configuration error: No realms have been configured! "
                    "One or more realms must be present to execute an "
                    "authorization operation.")
             raise ValueError(msg)
 
-    def _has_role(self, handler, role_s):
+    def _has_role(self, identifier, role_s):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :type role_s: Set of String(s)
         """
         for realm in self.realms:
             # the realm's has_role returns a generator
-            yield from realm.has_role(handler, role_s)
+            yield from realm.has_role(identifier, role_s)
 
-    def _is_permitted(self, handler, permission_s):
+    def _is_permitted(self, identifier, permission_s):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param permission_s: a collection of 1..N permissions
         :type permission_s: List of permission string(s)
         """
         for realm in self.realms:
             # the realm's is_permitted returns a generator
-            yield from realm.is_permitted(handler, permission_s)
+            yield from realm.is_permitted(identifier, permission_s)
 
-    def is_permitted(self, handler, permission_s, log_results=True):
+    def is_permitted(self, identifier, permission_s, log_results=True):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param permission_s: a collection of 1..N permissions
         :type permission_s: List of permission string(s)
         :param log_results:  states whether to log results (True) or allow the
@@ -400,7 +400,7 @@ class DefaultAuthorizer(BaseAuthorizer):
 
         results = collections.defaultdict(bool)  # defaults to False
 
-        is_permitted_results = self._is_permitted(handler, permission_s)
+        is_permitted_results = self._is_permitted(identifier, permission_s)
 
         for permission, is_permitted in is_permitted_results:
             # permit expected format is: (Permission, Boolean)
@@ -411,9 +411,9 @@ class DefaultAuthorizer(BaseAuthorizer):
         results = set(results.items())
         return results
 
-    def is_permitted_collective(self, handler, permission_s, logical_operator):
+    def is_permitted_collective(self, identifier, permission_s, logical_operator):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param permission_s: a collection of 1..N permissions
         :type permission_s: List of Permission object(s) or String(s)
         :param logical_operator:  indicates whether all or at least one
@@ -424,7 +424,7 @@ class DefaultAuthorizer(BaseAuthorizer):
         self.assert_realms_configured()
 
         # interim_results is a set of tuples:
-        interim_results = self.is_permitted(handler, permission_s,
+        interim_results = self.is_permitted(identifier, permission_s,
                                             log_results=False)
 
         results = logical_operator(is_permitted for perm, is_permitted
@@ -432,9 +432,9 @@ class DefaultAuthorizer(BaseAuthorizer):
 
         return results
 
-    def check_permission(self, handler, permission_s, logical_operator):
+    def check_permission(self, identifier, permission_s, logical_operator):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param permission_s: a collection of 1..N permissions
         :type permission_s: List of Permission objects or Strings
         :param logical_operator:  indicates whether all or at least one
@@ -443,15 +443,15 @@ class DefaultAuthorizer(BaseAuthorizer):
         :raises UnauthorizedException: if any permission is unauthorized
         """
         self.assert_realms_configured()
-        permitted = self.is_permitted_collective(handler,
+        permitted = self.is_permitted_collective(identifier,
                                                  permission_s, logical_operator)
         if not permitted:
             msg = "Subject lacks permission(s) to satisfy logical operation"
             raise UnauthorizedException(msg)
 
-    def has_role(self, handler, role_s, log_results=True):
+    def has_role(self, identifier, role_s, log_results=True):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param role_s: a collection of 1..N Role identifiers
         :type role_s: Set of String(s)
         :param log_results:  states whether to log results (True) or allow the
@@ -464,7 +464,7 @@ class DefaultAuthorizer(BaseAuthorizer):
 
         results = collections.defaultdict(bool)  # defaults to False
 
-        for role, has_role in self._has_role(handler, role_s):
+        for role, has_role in self._has_role(identifier, role_s):
             # checkrole expected format is: (role, Boolean)
             # As long as one realm returns True for a role, a subject is
             # considered a member of that Role.
@@ -474,9 +474,9 @@ class DefaultAuthorizer(BaseAuthorizer):
         results = set(results.items())
         return results
 
-    def has_role_collective(self, handler, role_s, logical_operator):
+    def has_role_collective(self, identifier, role_s, logical_operator):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param role_s: a collection of 1..N Role identifiers
         :type role_s: Set of String(s)
         :param logical_operator:  indicates whether all or at least one
@@ -487,16 +487,15 @@ class DefaultAuthorizer(BaseAuthorizer):
         self.assert_realms_configured()
 
         # interim_results is a set of tuples:
-        interim_results = self.has_role(handler, role_s, log_results=False)
+        interim_results = self.has_role(identifier, role_s, log_results=False)
 
-        results = logical_operator(has_role for role, has_role
-                                   in interim_results)
+        results = logical_operator(has_role for role, has_role in interim_results)
 
         return results
 
-    def check_role(self, handler, role_s, logical_operator):
+    def check_role(self, identifier, role_s, logical_operator):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param role_s: 1..N role identifiers
         :type role_s:  a String or Set of Strings
         :param logical_operator:  indicates whether all or at least one
@@ -505,8 +504,7 @@ class DefaultAuthorizer(BaseAuthorizer):
         :raises UnauthorizedException: if Subject not assigned to all roles
         """
         self.assert_realms_configured()
-        has_role_s = self.has_role_collective(handler,
-                                              role_s, logical_operator)
+        has_role_s = self.has_role_collective(identifier, role_s, logical_operator)
         if not has_role_s:
             msg = "Subject does not have role(s) assigned."
             raise UnauthorizedException(msg)

@@ -1,3 +1,4 @@
+from anthill.framework.auth import BACKEND_SESSION_KEY, load_backend
 import functools
 
 
@@ -20,14 +21,14 @@ def requires_permission(permission_s, logical_operator=all):
     Basic Example:
         requires_permission(['domain1:action1,action2'])
     """
-    def outer_wrap(fn):
-        @functools.wraps(fn)
+    def outer_wrap(func):
+        @functools.wraps(func)
         def inner_wrap(*args, **kwargs):
-
-            subject = Yosai.get_current_subject()
-            subject.check_permission(permission_s, logical_operator)
-
-            return fn(*args, **kwargs)
+            session = args[0].session  # get session from request handler
+            backend_path = session[BACKEND_SESSION_KEY]
+            backend = load_backend(backend_path)
+            backend.check_permission(permission_s, logical_operator)
+            return func(*args, **kwargs)
         return inner_wrap
     return outer_wrap
 
@@ -56,16 +57,15 @@ def requires_dynamic_permission(permission_s, logical_operator=all):
     Basic Example:
         requires_permission(['{kwarg.domainid}:action1,action2'])
     """
-    def outer_wrap(fn):
-        @functools.wraps(fn)
+    def outer_wrap(func):
+        @functools.wraps(func)
         def inner_wrap(*args, **kwargs):
             newperms = [perm.format(**kwargs) for perm in permission_s]
-
-            subject = Yosai.get_current_subject()
-
-            subject.check_permission(newperms, logical_operator)
-
-            return fn(*args, **kwargs)
+            session = args[0].session  # get session from request handler
+            backend_path = session[BACKEND_SESSION_KEY]
+            backend = load_backend(backend_path)
+            backend.check_permission(newperms, logical_operator)
+            return func(*args, **kwargs)
         return inner_wrap
     return outer_wrap
 
@@ -88,14 +88,13 @@ def requires_role(role_s, logical_operator=all):
     Basic Example:
         requires_role('physician')
     """
-    def outer_wrap(fn):
-        @functools.wraps(fn)
+    def outer_wrap(func):
+        @functools.wraps(func)
         def inner_wrap(*args, **kwargs):
-
-            subject = Yosai.get_current_subject()
-
-            subject.check_role(role_s, logical_operator)
-
-            return fn(*args, **kwargs)
+            session = args[0].session  # get session from request handler
+            backend_path = session[BACKEND_SESSION_KEY]
+            backend = load_backend(backend_path)
+            backend.check_role(role_s, logical_operator)
+            return func(*args, **kwargs)
         return inner_wrap
     return outer_wrap

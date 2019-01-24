@@ -52,6 +52,9 @@ class as_row(ColumnElement):
 def _gen_as_row(element, compiler, **kw):
     return compiler.visit_alias(element.expr, ashint=True, **kw)
 
+# -------------------------------------------------------
+# -------------------------------------------------------
+
 
 def session_context(fn):
     """
@@ -97,7 +100,7 @@ class AuthorizationAccountStore(BaseAccountStore):
 
 class AlchemyStore(AuthorizationAccountStore):
     """
-    AccountStore provides the realm-facing API to the relational database
+    AlchemyStore provides the realm-facing API to the relational database
     that is managed through the SQLAlchemy ORM.
     step 1: generate an orm query
     step 2: execute the query
@@ -215,18 +218,14 @@ class AlchemyStore(AuthorizationAccountStore):
 #        cred = self.get_credential_query(session, identifier).scalar()
 #        credential = self.credential(cred)
 #
-#        roles = {self.role(r.title)
-#                 for r in self.get_roles_query(session, identifier).all()}
+#        roles = {self.role(r.title) for r in self.get_roles_query(session, identifier).all()}
 #
 #        perms = self.get_permissions_query(session, identifier).all()
-#        permissions = {self.permission(permission=p.perm)
-#                       for p in perms}
+#        permissions = {self.permission(permission=p.perm) for p in perms}
 #
-#        authz_info = self.authz_info(roles=roles,
-#                                              permissions=permissions)
+#        authz_info = self.authz_info(roles=roles, permissions=permissions)
 #
-#        account = dict(account_id=identifier,
-#                          credentials=credential,
-#                          authz_info=authz_info)
+#        account = dict(account_id=identifier, credentials=credential,
+#                       authz_info=authz_info)
 #
 #        return account

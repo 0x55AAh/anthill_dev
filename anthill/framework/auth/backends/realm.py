@@ -17,20 +17,11 @@ under the License.
 
 from abc import ABCMeta, abstractmethod
 from anthill.framework.auth.backends.authorizer import DefaultPermissionVerifier, Permission
+from anthill.framework.auth.backends.db import AlchemyStore
+from anthill.framework.core.cache import cache
 from uuid import uuid4
 import logging
-
-
-AUTH_PERMISSIONS_DATA_SESSION_KEY = '_auth_perms_user_data'
-AUTH_ROLES_DATA_SESSION_KEY = '_auth_roles_user_data'
-
-
-def _get_cached_permissions(handler):
-    return handler.session[AUTH_PERMISSIONS_DATA_SESSION_KEY]
-
-
-def _get_cached_roles(handler):
-    return handler.session[AUTH_ROLES_DATA_SESSION_KEY]
+import functools
 
 
 logger = logging.getLogger('anthill.application')
@@ -79,7 +70,7 @@ class BaseRealm(metaclass=ABCMeta):
         pass
 
 
-class BaseAuthorizingRealm(Realm):
+class BaseAuthorizingRealm(BaseRealm):
     """
     required attributes:
         permission_verifier
@@ -113,52 +104,51 @@ class BaseAuthorizingRealm(Realm):
         pass
 
 
+def cached(key, timeout=300):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            return cache.get_or_set(key, func(*args, **kwargs), timeout)
+        return wrapper
+    return decorator
+
+
 class DatastoreRealm(BaseAuthorizingRealm):
     """
     A Realm interprets information from a datastore.
     """
-
     def __init__(self, name='DatastoreRealm_' + str(uuid4()),
-                 storage=None, permission_verifier=None):
+                 storage=AlchemyStore(), permission_verifier=DefaultPermissionVerifier()):
         self.name = name
         self.storage = storage
-        self.permission_verifier = permission_verifier or DefaultPermissionVerifier()
+        self.permission_verifier = permission_verifier
 
     def clear_cached_authorization_info(self, identifiers):
         pass
 
-    def get_authzd_permissions(self, handler, perm_domain):
+    def get_authzd_permissions(self, identifier, perm_domain):
         """
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :type perm_domain: str
         :returns: a list of relevant json blobs, each a list of permission dicts
         """
-        related_perms = []
-        identifier = handler.current_user.username
+        cache_key = ':'.join(['authorization', 'permissions', self.name])
 
-        def query_permissions(self):
+        @cached(cache_key, timeout=300)
+        def query_permissions(self_):
             msg = ("Could not obtain cached permissions for [{0}]. "
                    "Will try to acquire permissions from account store."
                    .format(identifier))
             logger.debug(msg)
 
             # permissions is a dict:  {'domain': json blob of lists of dicts}
-            permissions = self.storage.get_authz_permissions(identifier)
+            permissions = self_.storage.get_authz_permissions(identifier)
             if not permissions:
                 raise ValueError(
                     "Could not get permissions from storage for {0}".format(identifier))
             return permissions
 
-        try:
-            logger.debug("Attempting to get cached permissions for [{0}]".format(identifier))
-            queried_permissions = _get_cached_permissions(handler)
-        except ValueError:
-            logger.warning(
-                "No permissions found for identifiers [{0}]. Returning None.".format(identifier))
-            return []
-        except AttributeError:
-            # this means the sessions isn't configured
-            queried_permissions = query_permissions(self)
+        queried_permissions = query_permissions(self)
 
         related_perms = [
             queried_permissions.get('*'),
@@ -167,38 +157,31 @@ class DatastoreRealm(BaseAuthorizingRealm):
 
         return related_perms
 
-    def get_authzd_roles(self, handler):
-        roles = []
-        identifier = handler.current_user.username
+    def get_authzd_roles(self, identifier):
+        cache_key = ':'.join(['authorization', 'roles', self.name])
 
-        def query_roles(self):
+        @cached(cache_key, timeout=300)
+        def query_roles(self_):
             msg = ("Could not obtain cached roles for [{0}]. "
                    "Will try to acquire roles from account store."
                    .format(identifier))
             logger.debug(msg)
 
-            roles_ = self.storage.get_authz_roles(identifier)
+            roles_ = self_.storage.get_authz_roles(identifier)
             if not roles_:
                 raise ValueError(
                     "Could not get roles from storage for {0}".format(identifier))
             return roles_
-        try:
-            logger.debug("Attempting to get cached roles for [{0}]".format(identifier))
-            roles = _get_cached_roles(handler)
-        except AttributeError:
-            # this means the sessions isn't configured
-            roles = query_roles(self)
-        except ValueError:
-            logger.warning(
-                "No roles found for identifiers [{0}]. Returning None.".format(identifier))
+
+        roles = query_roles(self)
 
         return set(roles)
 
-    def is_permitted(self, handler, permission_s):
+    def is_permitted(self, identifier, permission_s):
         """
         If the authorization info cannot be obtained from the accountstore,
         permission check tuple yields False.
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param permission_s: a collection of one or more permissions, represented
                              as string-based permissions or Permission objects
                              and NEVER comingled types
@@ -209,7 +192,7 @@ class DatastoreRealm(BaseAuthorizingRealm):
             domain = Permission.get_domain(required)
 
             # assigned is a list of json blobs:
-            assigned = self.get_authzd_permissions(handler, domain)
+            assigned = self.get_authzd_permissions(identifier, domain)
 
             is_permitted = False
             for perms_blob in assigned:
@@ -218,20 +201,18 @@ class DatastoreRealm(BaseAuthorizingRealm):
 
             yield (required, is_permitted)
 
-    def has_role(self, handler, required_role_s):
+    def has_role(self, identifier, required_role_s):
         """
         Confirms whether a subject is a member of one or more roles.
         If the authorization info cannot be obtained from the accountstore,
         role check tuple yields False.
-        :type handler: tornado.web.RequestHandler
+        :type identifier: str
         :param required_role_s: a collection of 1..N Role identifiers
         :type required_role_s: Set of String(s)
         :yields: tuple(role, Boolean)
         """
-        identifier = handler.current_user.username
-
         # assigned_role_s is a set
-        assigned_role_s = self.get_authzd_roles(handler)
+        assigned_role_s = self.get_authzd_roles(identifier)
 
         if not assigned_role_s:
             logger.warning(

@@ -1,8 +1,9 @@
 from anthill.framework.auth import get_user_model
-from anthill.framework.core.exceptions import ObjectDoesNotExist
 from anthill.framework.auth.backends.authorizer import DefaultAuthorizer
 from anthill.framework.auth.backends.realm import DatastoreRealm
-from .storage import AlchemyStore
+from anthill.framework.core.exceptions import ObjectDoesNotExist
+from anthill.framework.utils.asynchronous import as_future
+
 
 UserModel = get_user_model()
 
@@ -12,9 +13,10 @@ class ModelBackend:
 
     def __init__(self):
         self.authorizer = DefaultAuthorizer()
-        self.authorizer.init_realms((DatastoreRealm(storage=AlchemyStore),))
+        self.authorizer.init_realms((DatastoreRealm(),))
 
-    async def authenticate(self, request, username=None, password=None, **kwargs):
+    @as_future
+    def authenticate(self, request, username=None, password=None, **kwargs):
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)
         user = UserModel.query.filter_by(username=username).first()
@@ -42,30 +44,35 @@ class ModelBackend:
     def get_roles(self, user):
         return user.roles
 
-    def is_permitted(self, request_handler, permission_s):
-        return self.authorizer.is_permitted(request_handler, permission_s,
-                                            log_results=True)
+    @as_future
+    def is_permitted(self, user, permission_s):
+        return self.authorizer.is_permitted(user.username, permission_s, log_results=True)
 
-    def is_permitted_collective(self, request_handler, permission_s, logical_operator=all):
-        return self.authorizer.is_permitted_collective(request_handler, permission_s,
+    @as_future
+    def is_permitted_collective(self, user, permission_s, logical_operator=all):
+        return self.authorizer.is_permitted_collective(user.username, permission_s,
                                                        logical_operator)
 
-    def check_permission(self, request_handler, permission_s, logical_operator=all):
-        return self.authorizer.check_permission(request_handler, permission_s,
+    @as_future
+    def check_permission(self, user, permission_s, logical_operator=all):
+        return self.authorizer.check_permission(user.username, permission_s,
                                                 logical_operator)
 
-    def has_role(self, request_handler, role_s):
-        return self.authorizer.has_role(request_handler, role_s, log_results=True)
+    @as_future
+    def has_role(self, user, role_s):
+        return self.authorizer.has_role(user.username, role_s, log_results=True)
 
-    def has_role_collective(self, request_handler, role_s, logical_operator=all):
-        return self.authorizer.has_role_collective(request_handler, role_s,
+    @as_future
+    def has_role_collective(self, user, role_s, logical_operator=all):
+        return self.authorizer.has_role_collective(user.username, role_s,
                                                    logical_operator)
 
-    def check_role(self, request_handler, role_s, logical_operator=all):
-        return self.authorizer.check_role(request_handler, role_s,
-                                          logical_operator)
+    @as_future
+    def check_role(self, user, role_s, logical_operator=all):
+        return self.authorizer.check_role(user.username, role_s, logical_operator)
 
-    async def get_user(self, user_id):
+    @as_future
+    def get_user(self, user_id):
         user = UserModel.query.get(user_id)
         if user is None:
             raise ObjectDoesNotExist('User does not exist.')
