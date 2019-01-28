@@ -20,8 +20,8 @@ from anthill.framework.db import db
 from sqlalchemy import case, cast, func, Text
 from sqlalchemy.sql import Alias, ColumnElement
 from sqlalchemy.ext.compiler import compiles
-from abc import ABCMeta, abstractmethod
 from anthill.framework.auth import get_user_model
+from ..abcs import AuthorizationAccountStore
 import functools
 
 from .models import (
@@ -69,20 +69,6 @@ def session_context(fn):
         session.close()
         return result
     return wrap
-
-
-class BaseAccountStore(metaclass=ABCMeta):
-    pass
-
-
-class AuthorizationAccountStore(BaseAccountStore):
-    @abstractmethod
-    def get_authz_permissions(self, identifiers):
-        pass
-
-    @abstractmethod
-    def get_authz_roles(self, identifiers):
-        pass
 
 
 class AlchemyStore(AuthorizationAccountStore):

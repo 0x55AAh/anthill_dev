@@ -1,6 +1,7 @@
 from anthill.framework.auth import get_user_model
 from anthill.framework.auth.backends.authorizer import DefaultAuthorizer
 from anthill.framework.auth.backends.realm import DatastoreRealm
+from anthill.framework.auth.backends.db.storage import AlchemyStore
 from anthill.framework.core.exceptions import ObjectDoesNotExist
 from anthill.framework.utils.asynchronous import as_future
 
@@ -8,12 +9,29 @@ from anthill.framework.utils.asynchronous import as_future
 UserModel = get_user_model()
 
 
-class ModelBackend:
-    """Authenticates against settings.AUTH_USER_MODEL."""
+class BaseModelBackend:
+    datastore = None
 
     def __init__(self):
+        self.authorizer = None
+        self.init_authorizer()
+
+    def init_authorizer(self):
         self.authorizer = DefaultAuthorizer()
-        self.authorizer.init_realms((DatastoreRealm(),))
+        self.authorizer.init_realms((DatastoreRealm(storage=datastore),))
+
+    def can_authenticate(self, user):
+        """
+        Reject users with is_active=False.
+        Custom user models that don't have that attribute are allowed.
+        """
+        is_active = getattr(user, 'is_active', None)
+        return is_active or is_active is None
+
+
+class ModelBackend(BaseModelBackend):
+    """Authenticates against settings.AUTH_USER_MODEL."""
+    datastore = AlchemyStore()
 
     @as_future
     def authenticate(self, request, username=None, password=None, **kwargs):
@@ -27,14 +45,6 @@ class ModelBackend:
         else:
             if user.check_password(password) and self.can_authenticate(user):
                 return user
-
-    def can_authenticate(self, user):
-        """
-        Reject users with is_active=False.
-        Custom user models that don't have that attribute are allowed.
-        """
-        is_active = getattr(user, 'is_active', None)
-        return is_active or is_active is None
 
     # noinspection PyMethodMayBeStatic
     def get_permissions(self, user):

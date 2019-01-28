@@ -12,7 +12,7 @@ class AnthillApplication(BaseAnthillApplication):
     )
 
     def get_models_modules(self):
-        return super().get_models_modules() + models_modules
+        return super().get_models_modules() + self.models_modules
 
     def post_setup_models(self):
         from anthill.framework.auth.social import models

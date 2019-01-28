@@ -7,7 +7,7 @@ from anthill.framework.auth import get_user_model
 from calendar import timegm
 from datetime import datetime
 
-from anthill.framework.auth.token.jwt.settings import settings as api_settings
+from anthill.framework.auth.token.jwt.settings import settings as token_settings
 
 
 def get_username_field():
@@ -37,12 +37,12 @@ def jwt_get_secret_key(payload=None):
         - password is changed
         - etc.
     """
-    if api_settings.JWT_GET_USER_SECRET_KEY:
+    if token_settings.JWT_GET_USER_SECRET_KEY:
         User = get_user_model()
         user = User.query.get(payload.get('user_id'))
-        key = str(api_settings.JWT_GET_USER_SECRET_KEY(user))
+        key = str(token_settings.JWT_GET_USER_SECRET_KEY(user))
         return key
-    return api_settings.JWT_SECRET_KEY
+    return token_settings.JWT_SECRET_KEY
 
 
 def jwt_payload_handler(user):
@@ -58,7 +58,7 @@ def jwt_payload_handler(user):
     payload = {
         'user_id': user.id,
         'username': username,
-        'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
+        'exp': datetime.utcnow() + token_settings.JWT_EXPIRATION_DELTA
     }
     if hasattr(user, 'email'):
         payload['email'] = user.email
@@ -69,14 +69,14 @@ def jwt_payload_handler(user):
 
     # Include original issued at time for a brand new token,
     # to allow token refresh
-    if api_settings.JWT_ALLOW_REFRESH:
+    if token_settings.JWT_ALLOW_REFRESH:
         payload['orig_iat'] = timegm(datetime.utcnow().utctimetuple())
 
-    if api_settings.JWT_AUDIENCE is not None:
-        payload['aud'] = api_settings.JWT_AUDIENCE
+    if token_settings.JWT_AUDIENCE is not None:
+        payload['aud'] = token_settings.JWT_AUDIENCE
 
-    if api_settings.JWT_ISSUER is not None:
-        payload['iss'] = api_settings.JWT_ISSUER
+    if token_settings.JWT_ISSUER is not None:
+        payload['iss'] = token_settings.JWT_ISSUER
 
     return payload
 
@@ -102,30 +102,30 @@ def jwt_get_username_from_payload_handler(payload):
 
 
 def jwt_encode_handler(payload):
-    key = api_settings.JWT_PRIVATE_KEY or jwt_get_secret_key(payload)
+    key = token_settings.JWT_PRIVATE_KEY or jwt_get_secret_key(payload)
     return jwt.encode(
         payload,
         key,
-        api_settings.JWT_ALGORITHM
+        token_settings.JWT_ALGORITHM
     ).decode('utf-8')
 
 
 def jwt_decode_handler(token):
     options = {
-        'verify_exp': api_settings.JWT_VERIFY_EXPIRATION,
+        'verify_exp': token_settings.JWT_VERIFY_EXPIRATION,
     }
     # get user from token, BEFORE verification, to get user secret key
     unverified_payload = jwt.decode(token, None, False)
     secret_key = jwt_get_secret_key(unverified_payload)
     return jwt.decode(
         token,
-        api_settings.JWT_PUBLIC_KEY or secret_key,
-        api_settings.JWT_VERIFY,
+        token_settings.JWT_PUBLIC_KEY or secret_key,
+        token_settings.JWT_VERIFY,
         options=options,
-        leeway=api_settings.JWT_LEEWAY,
-        audience=api_settings.JWT_AUDIENCE,
-        issuer=api_settings.JWT_ISSUER,
-        algorithms=[api_settings.JWT_ALGORITHM]
+        leeway=token_settings.JWT_LEEWAY,
+        audience=token_settings.JWT_AUDIENCE,
+        issuer=token_settings.JWT_ISSUER,
+        algorithms=[token_settings.JWT_ALGORITHM]
     )
 
 

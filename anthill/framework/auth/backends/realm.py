@@ -15,93 +15,16 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from abc import ABCMeta, abstractmethod
 from anthill.framework.auth.backends.authorizer import DefaultPermissionVerifier, Permission
 from anthill.framework.auth.backends.db.storage import AlchemyStore
 from anthill.framework.core.cache import cache
+from .abcs import BaseAuthorizingRealm
 from uuid import uuid4
 import logging
 import functools
 
 
 logger = logging.getLogger('anthill.application')
-
-
-class BaseRealm(metaclass=ABCMeta):
-    """
-    A ``Realm`` access application-specific security entities such as accounts,
-    roles, and permissions to perform authentication and authorization operations.
-    ``Realm``s usually have a 1-to-1 correlation with an ``AccountStore``,
-    such as a NoSQL or relational database, file system, or other similar resource.
-    However, since most Realm implementations are nearly identical, except for
-    the account query logic, a default realm implementation, ``AccountStoreRealm``,
-    is provided, allowing you to configure it with the data API-specific
-    ``AccountStore`` instance.
-    Because most account stores usually contain Subject information such as
-    usernames and passwords, a Realm can act as a pluggable authentication module
-    in a <a href="http://en.wikipedia.org/wiki/Pluggable_Authentication_Modules">PAM</a>
-    configuration.  This allows a Realm to perform *both* authentication and
-    authorization duties for a single account store, catering to most
-    application needs.  If for some reason you don't want your Realm implementation
-    to participate in authentication, override the ``supports(authc_token)`` method
-    to always return False.
-    Because every application is different, security data such as users and roles
-    can be represented in any number of ways.  Yosai tries to maintain a
-    non-intrusive development philosophy whenever possible -- it does not require
-    you to implement or extend any *User*, *Group* or *Role* interfaces or classes.
-    Instead, Yosai allows applications to implement this interface to access
-    environment-specific account stores and data model objects.  The
-    implementation can then be plugged in to the application's Yosai configuration.
-    This modular technique abstracts away any environment/modeling details and
-    allows Yosai to be deployed in practically any application environment.
-    Most users will not implement this ``Realm`` interface directly, but will
-    instead use an ``AccountStoreRealm`` instance configured with an underlying
-    ``AccountStore``. This setup implies that there is an ``AccountStoreRealm``
-    instance per ``AccountStore`` that the application needs to access.
-    Yosai introduces two additional Realm interfaces in order to separate authentication
-    and authorization responsibilities.
-    """
-
-    @abstractmethod
-    def do_clear_cache(self, identifiers):
-        """
-        :type identifiers:  SimpleRealmCollection
-        """
-        pass
-
-
-class BaseAuthorizingRealm(BaseRealm):
-    """
-    required attributes:
-        permission_verifier
-        role_verifier
-    """
-
-    @abstractmethod
-    def get_authzd_permissions(self, identitier, domain):
-        pass
-
-    @abstractmethod
-    def get_authzd_roles(self, identitier):
-        pass
-
-    @abstractmethod
-    def is_permitted(self, identifiers, permission_s):
-        """
-        :type identifiers:  SimpleRealmCollection
-        """
-        pass
-
-    @abstractmethod
-    def has_role(self, identifiers, role_s):
-        """
-        :type identifiers:  SimpleRealmCollection
-        """
-        pass
-
-    @abstractmethod
-    def clear_cached_authorization_info(self, identifiers):
-        pass
 
 
 def cached(key, timeout=300):
@@ -141,7 +64,7 @@ class DatastoreRealm(BaseAuthorizingRealm):
                    .format(identifier))
             logger.debug(msg)
 
-            # permissions is a dict:  {'domain': json blob of lists of dicts}
+            # permissions is a dict: {'domain': json blob of lists of dicts}
             permissions = self_.storage.get_authz_permissions(identifier)
             if not permissions:
                 raise ValueError(

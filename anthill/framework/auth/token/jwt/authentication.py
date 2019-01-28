@@ -1,6 +1,7 @@
 from anthill.framework.auth import authenticate, get_user_model
 from anthill.framework.utils.encoding import smart_text
 from anthill.framework.utils.translation import translate as _
+from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.auth.token import exceptions
 from anthill.framework.auth.token.authentication import (
     get_authorization_header, BaseAuthentication)
@@ -104,4 +105,4 @@ class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
         authentication scheme should return `403 Permission Denied` responses.
         """
         return '{0} realm="{1}"'.format(
-            api_settings.JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm)
+            token_settings.JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm)

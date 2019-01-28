@@ -1,5 +1,6 @@
 from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
+from datetime import timedelta
 import os
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
@@ -184,9 +185,40 @@ AUTHENTICATION_BACKENDS = [
     # GITHUB
     'anthill.framework.auth.social.backends.github.GithubOAuth2',
 
+    # JWT
+    'anthill.framework.auth.backends.JWTBackend',
+
     # LOGIN/PASSWORD
     'anthill.framework.auth.backends.ModelBackend'
 ]
+
+JWT_AUTHENTICATION = {
+    'JWT_ENCODE_HANDLER': 'anthill.framework.auth.token.jwt.utils.jwt_encode_handler',
+    'JWT_DECODE_HANDLER': 'anthill.framework.auth.token.jwt.utils.jwt_decode_handler',
+    'JWT_PAYLOAD_HANDLER': 'anthill.framework.auth.token.jwt.utils.jwt_payload_handler',
+    'JWT_PAYLOAD_GET_USER_ID_HANDLER': 'anthill.framework.auth.token.jwt.utils.jwt_get_user_id_from_payload_handler',
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'anthill.framework.auth.token.jwt.utils.jwt_get_username_from_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'anthill.framework.auth.token.jwt.utils.jwt_response_payload_handler',
+
+    'JWT_PRIVATE_KEY': None,
+    'JWT_PUBLIC_KEY': None,
+
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_GET_USER_SECRET_KEY': None,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 0,
+    'JWT_EXPIRATION_DELTA': timedelta(seconds=300),
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+
+    'JWT_ALLOW_REFRESH': False,
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_AUTH_COOKIE': None,
+}
 
 SOCIAL_AUTH_STRATEGY = 'anthill.framework.auth.social.strategy.TornadoStrategy'
 SOCIAL_AUTH_STORAGE = 'anthill.framework.auth.social.models.TornadoStorage'
