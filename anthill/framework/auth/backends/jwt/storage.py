@@ -23,6 +23,7 @@ from anthill.framework.auth.token.jwt.settings import token_settings
 from anthill.framework.auth.token.jwt import authentication
 from anthill.framework.auth.token import exceptions
 import functools
+import json
 import jwt
 
 
@@ -76,5 +77,9 @@ class JWTStore(AuthorizationAccountStore):
         jwt_value = self._get_jwt_value(handler)
         payload = self._get_jwt_payload(jwt_value)
         roles = payload['roles']
-        # TODO: roles is a list of strings
+        try:
+            roles = json.loads(roles)
+        except json.JSONDecodeError:
+            # roles = list(map(lambda x: x.strip(), roles.split(',')))
+            roles = [r.strip() for r in roles.split(',')]
         return roles
