@@ -70,7 +70,8 @@ class DatastoreRealm(BaseAuthorizingRealm):
                     "Could not get permissions from storage for {0}".format(identifier))
             return permissions
 
-        query_permissions = cached(cache_key, timeout=300)(query_permissions)  # cached
+        if self.storage.allow_caching:
+            query_permissions = cached(cache_key, timeout=300)(query_permissions)
         queried_permissions = query_permissions(self)
 
         related_perms = [
@@ -95,7 +96,8 @@ class DatastoreRealm(BaseAuthorizingRealm):
                     "Could not get roles from storage for {0}".format(identifier))
             return roles_
 
-        query_roles = cached(cache_key, timeout=300)(query_roles)  # cached
+        if self.storage.allow_caching:
+            query_roles = cached(cache_key, timeout=300)(query_roles)
         roles = query_roles(self)
 
         return set(roles)

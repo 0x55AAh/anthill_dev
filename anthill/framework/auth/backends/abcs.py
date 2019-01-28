@@ -6,6 +6,8 @@ class BaseAccountStore(metaclass=ABCMeta):
 
 
 class AuthorizationAccountStore(BaseAccountStore):
+    allow_caching = True
+
     @abstractmethod
     def get_authz_permissions(self, identifiers):
         pass

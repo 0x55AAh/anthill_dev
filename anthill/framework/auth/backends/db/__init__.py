@@ -18,7 +18,7 @@ class BaseModelBackend:
 
     def init_authorizer(self):
         self.authorizer = DefaultAuthorizer()
-        self.authorizer.init_realms((DatastoreRealm(storage=datastore),))
+        self.authorizer.init_realms((DatastoreRealm(storage=self.datastore),))
 
     def can_authenticate(self, user):
         """

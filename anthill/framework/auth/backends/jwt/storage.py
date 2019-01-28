@@ -18,6 +18,7 @@ under the License.
 """
 from tornado.web import RequestHandler
 from ..abcs import AuthorizationAccountStore
+from anthill.framework.utils.translation import translate as _
 from anthill.framework.auth.token.jwt.settings import token_settings
 from anthill.framework.auth.token.jwt import authentication
 from anthill.framework.auth.token import exceptions
@@ -39,6 +40,8 @@ def request_context(fn):
 
 
 class JWTStore(AuthorizationAccountStore):
+    allow_caching = False
+
     def __init__(self, handler: RequestHandler = None):
         self._auth = authentication.JSONWebTokenAuthentication()
         self.handler = handler
