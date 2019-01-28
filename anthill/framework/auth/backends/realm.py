@@ -57,7 +57,6 @@ class DatastoreRealm(BaseAuthorizingRealm):
         """
         cache_key = ':'.join(['authorization', 'permissions', self.name])
 
-        @cached(cache_key, timeout=300)
         def query_permissions(self_):
             msg = ("Could not obtain cached permissions for [{0}]. "
                    "Will try to acquire permissions from account store."
@@ -71,6 +70,7 @@ class DatastoreRealm(BaseAuthorizingRealm):
                     "Could not get permissions from storage for {0}".format(identifier))
             return permissions
 
+        query_permissions = cached(cache_key, timeout=300)(query_permissions)  # cached
         queried_permissions = query_permissions(self)
 
         related_perms = [
@@ -83,7 +83,6 @@ class DatastoreRealm(BaseAuthorizingRealm):
     def get_authzd_roles(self, identifier):
         cache_key = ':'.join(['authorization', 'roles', self.name])
 
-        @cached(cache_key, timeout=300)
         def query_roles(self_):
             msg = ("Could not obtain cached roles for [{0}]. "
                    "Will try to acquire roles from account store."
@@ -96,6 +95,7 @@ class DatastoreRealm(BaseAuthorizingRealm):
                     "Could not get roles from storage for {0}".format(identifier))
             return roles_
 
+        query_roles = cached(cache_key, timeout=300)(query_roles)  # cached
         roles = query_roles(self)
 
         return set(roles)
