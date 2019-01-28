@@ -19,7 +19,6 @@ class GDBInspector:
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.exit()
-        self._gdb = None
 
     def __getattr__(self, item):
         return getattr(self._gdb, item)
