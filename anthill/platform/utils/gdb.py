@@ -28,8 +28,9 @@ class GDBInspector:
     def connect(self):
         self._gdb = GdbController(gdb_args=self.gdb_args)
 
-    async def exit(self):
-        return await as_future(self._gdb.exit)()
+    @as_future
+    def exit(self):
+        return self._gdb.exit()
 
     @property
     def gdb_args(self):
@@ -37,8 +38,9 @@ class GDBInspector:
         args += REQUIRED_GDB_FLAGS
         return args
 
-    async def write(self, *args, **kwargs):
-        return await as_future(self._gdb.write)(*args, **kwargs)
+    @as_future
+    def write(self, *args, **kwargs):
+        return self._gdb.write(*args, **kwargs)
 
     def corefile_exists(self):
         return os.path.isfile(self._corefile)
