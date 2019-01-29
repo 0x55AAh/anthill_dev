@@ -254,20 +254,22 @@ class BaseRealm(metaclass=ABCMeta):
     the account query logic, a default realm implementation, ``AccountStoreRealm``,
     is provided, allowing you to configure it with the data API-specific
     ``AccountStore`` instance.
+
     Because most account stores usually contain Subject information such as
     usernames and passwords, a Realm can act as a pluggable authentication module
     in a <a href="http://en.wikipedia.org/wiki/Pluggable_Authentication_Modules">PAM</a>
-    configuration.  This allows a Realm to perform *both* authentication and
+    configuration. This allows a Realm to perform *both* authentication and
     authorization duties for a single account store, catering to most
-    application needs.  If for some reason you don't want your Realm implementation
+    application needs. If for some reason you don't want your Realm implementation
     to participate in authentication, override the ``supports(authc_token)`` method
     to always return False.
+
     Because every application is different, security data such as users and roles
-    can be represented in any number of ways.  Yosai tries to maintain a
+    can be represented in any number of ways. Yosai tries to maintain a
     non-intrusive development philosophy whenever possible -- it does not require
     you to implement or extend any *User*, *Group* or *Role* interfaces or classes.
     Instead, Yosai allows applications to implement this interface to access
-    environment-specific account stores and data model objects.  The
+    environment-specific account stores and data model objects. The
     implementation can then be plugged in to the application's Yosai configuration.
     This modular technique abstracts away any environment/modeling details and
     allows Yosai to be deployed in practically any application environment.

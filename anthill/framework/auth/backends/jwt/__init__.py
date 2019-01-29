@@ -9,7 +9,13 @@ from anthill.framework.auth.backends.db import BaseModelBackend
 UserModel = get_user_model()
 
 
-class JWTBackend(JSONWebTokenAuthentication, BaseModelBackend):
+class JWTBackend(BaseModelBackend):
     """Authenticates against JWT authentication token."""
 
-    datastore = JWTStore()
+    datastore_class = JWTStore
+
+    # noinspection PyMethodMayBeStatic
+    async def authenticate(self, request):
+        user, payload = await JSONWebTokenAuthentication().authenticate(request)
+        user.authz_info = payload
+        return user

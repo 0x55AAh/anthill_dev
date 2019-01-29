@@ -80,7 +80,7 @@ def requires_dynamic_permission(permission_s, logical_operator=all):
     Elaborate Example:
         requires_permission(
             permission_s=['{kwarg1.domainid}:action1,action2',
-                           '{kwarg2.domainid}:action1'],
+                          '{kwarg2.domainid}:action1'],
             logical_operator=any)
 
     Basic Example:

@@ -163,6 +163,16 @@ GRAPHENE = {
 
 AUTH_USER_MODEL = 'User'
 
+AUTHENTICATION_BACKEND_MANAGER = {
+    'AUTHORIZER_CLASS': 'anthill.framework.auth.backends.authorizer.DefaultAuthorizer',
+    'DATASTORE_REALMS': [
+        {
+            'REALM_CLASS': 'anthill.framework.auth.backends.realm.DatastoreRealm',
+            'DATASTORE_CLASS': 'anthill.framework.auth.backends.jwt.storage.JWTStore',
+        },
+    ]
+}
+
 AUTHENTICATION_BACKENDS = [
     # GOOGLE
     'anthill.framework.auth.social.backends.google.GoogleOAuth2',

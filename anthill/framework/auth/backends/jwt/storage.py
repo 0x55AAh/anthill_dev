@@ -18,16 +18,9 @@ under the License.
 """
 from tornado.web import RequestHandler
 from ..abcs import AuthorizationAccountStore
-from anthill.framework.utils.translation import translate as _
-from anthill.framework.auth.token.jwt.settings import token_settings
-from anthill.framework.auth.token.jwt import authentication
-from anthill.framework.auth.token import exceptions
+from ..authorizer import Permission
 import functools
 import json
-import jwt
-
-
-jwt_decode_handler = token_settings.JWT_DECODE_HANDLER
 
 
 def request_context(fn):
@@ -44,42 +37,26 @@ class JWTStore(AuthorizationAccountStore):
     allow_caching = False
 
     def __init__(self, handler: RequestHandler = None):
-        self._auth = authentication.JSONWebTokenAuthentication()
         self.handler = handler
-
-    def _get_jwt_value(self, handler):
-        return self._auth.get_jwt_value(handler.request)
-
-    # noinspection PyMethodMayBeStatic
-    def _get_jwt_payload(self, jwt_value):
-        try:
-            payload = jwt_decode_handler(jwt_value)
-        except jwt.ExpiredSignature:
-            msg = _('Signature has expired.')
-            raise exceptions.AuthenticationFailed(msg)
-        except jwt.DecodeError:
-            msg = _('Error decoding signature.')
-            raise exceptions.AuthenticationFailed(msg)
-        except jwt.InvalidTokenError:
-            raise exceptions.AuthenticationFailed()
-        return payload
 
     @request_context
     def get_authz_permissions(self, identifier, handler: RequestHandler = None):
-        jwt_value = self._get_jwt_value(handler)
-        payload = self._get_jwt_payload(jwt_value)
-        permissions = payload['permissions']
+        payload = handler.current_user.authz_info
+        permissions = payload.get('permissions', '')
+        try:
+            permissions = json.loads(permissions)
+        except json.JSONDecodeError:
+            permissions = [p.strip() for p in permissions.split(',')]
+        permissions = map(lambda p: (Permission.get_domain(p), p), permissions)
         # TODO: permissions is a dict: {'domain': json blob of lists of dicts}
         return permissions
 
     @request_context
     def get_authz_roles(self, identifier, handler: RequestHandler = None):
-        jwt_value = self._get_jwt_value(handler)
-        payload = self._get_jwt_payload(jwt_value)
-        roles = payload['roles']
+        payload = handler.current_user.authz_info
+        roles = payload.get('roles', '')
         try:
             roles = json.loads(roles)
         except json.JSONDecodeError:
-            # roles = list(map(lambda x: x.strip(), roles.split(',')))
             roles = [r.strip() for r in roles.split(',')]
         return roles

@@ -40,13 +40,21 @@ class DatastoreRealm(BaseAuthorizingRealm):
     """
     A Realm interprets information from a datastore.
     """
-    def __init__(self, name='DatastoreRealm_' + str(uuid4()),
-                 storage=AlchemyStore(), permission_verifier=DefaultPermissionVerifier()):
+    def __init__(self,
+                 name='datastore_realm_' + str(uuid4()),
+                 storage=AlchemyStore(),
+                 permission_verifier=DefaultPermissionVerifier()):
         self.name = name
         self.storage = storage
         self.permission_verifier = permission_verifier
 
     def clear_cached_authorization_info(self, identifiers):
+        pass
+
+    def do_clear_cache(self, identifiers):
+        """
+        :type identifiers: SimpleRealmCollection
+        """
         pass
 
     def get_authzd_permissions(self, identifier, perm_domain):
@@ -55,7 +63,7 @@ class DatastoreRealm(BaseAuthorizingRealm):
         :type perm_domain: str
         :returns: a list of relevant json blobs, each a list of permission dicts
         """
-        cache_key = ':'.join(['authorization', 'permissions', self.name])
+        cache_key = ':'.join([self.name, 'authorization', 'permissions', identifier])
 
         def query_permissions(self_):
             msg = ("Could not obtain cached permissions for [{0}]. "
@@ -82,7 +90,7 @@ class DatastoreRealm(BaseAuthorizingRealm):
         return related_perms
 
     def get_authzd_roles(self, identifier):
-        cache_key = ':'.join(['authorization', 'roles', self.name])
+        cache_key = ':'.join([self.name, 'authorization', 'roles', identifier])
 
         def query_roles(self_):
             msg = ("Could not obtain cached roles for [{0}]. "

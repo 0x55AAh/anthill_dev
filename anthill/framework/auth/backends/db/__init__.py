@@ -10,15 +10,19 @@ UserModel = get_user_model()
 
 
 class BaseModelBackend:
-    datastore = None
+    datastore_class = None
 
     def __init__(self):
-        self.authorizer = None
-        self.init_authorizer()
+        self.authorizer = self.create_authorizer()
 
-    def init_authorizer(self):
-        self.authorizer = DefaultAuthorizer()
-        self.authorizer.init_realms((DatastoreRealm(storage=self.datastore),))
+    def create_authorizer(self):
+        authorizer = DefaultAuthorizer()
+        datastore = self.create_datastore()
+        authorizer.init_realms((DatastoreRealm(storage=datastore),))
+        return authorizer
+
+    def create_datastore(self):
+        return self.datastore_class()
 
     def can_authenticate(self, user):
         """
@@ -31,7 +35,7 @@ class BaseModelBackend:
 
 class ModelBackend(BaseModelBackend):
     """Authenticates against settings.AUTH_USER_MODEL."""
-    datastore = AlchemyStore()
+    datastore_class = AlchemyStore
 
     @as_future
     def authenticate(self, request, username=None, password=None, **kwargs):

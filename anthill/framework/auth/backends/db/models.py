@@ -128,6 +128,16 @@ class Resource(db.Model):
         return "Resource(id={0}, name={1})".format(self.id, self.name)
 
 
+class Scope(db.Model):
+    __tablename__ = 'scope'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return "Scope(id={0}, name={1})".format(self.id, self.name)
+
+
 class Permission(db.Model):
     __tablename__ = 'permission'
 
