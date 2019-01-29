@@ -17,18 +17,16 @@ class ActionType(enum.Enum):
     HIDE_MESSAGE = 'hide_message'
 
 
-class ModerationAction(InternalAPIMixin, db.Model):
-    __tablename__ = 'moderation_actions'
-    __table_args__ = ()
+class BaseModerationAction(InternalAPIMixin, db.Model):
+    __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     action_type = db.Column(db.Enum(ActionType), nullable=False)
     moderator_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
-    is_active = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
-    finish_at = db.Column(db.DateTime)
     reason = db.Column(db.String(512), nullable=False)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
     extra_data = db.Column(JSONType, nullable=False, default={})
 
     async def get_user(self) -> RemoteUser:
@@ -49,6 +47,16 @@ class ModerationAction(InternalAPIMixin, db.Model):
         self.is_active = False
         self.save(commit)
 
+    def active(self) -> bool:
+        return self.is_active
+
+
+class ModerationAction(BaseModerationAction):
+    __tablename__ = 'actions'
+    __table_args__ = ()
+
+    finish_at = db.Column(db.DateTime)
+
     def time_limited(self) -> bool:
         return self.finish_at is not None
 
@@ -65,3 +73,8 @@ class ModerationAction(InternalAPIMixin, db.Model):
         if finished is None:
             return self.is_active
         return self.is_active and not finished
+
+
+class ModerationWarning(BaseModerationAction):
+    __tablename__ = 'warnings'
+    __table_args__ = ()
