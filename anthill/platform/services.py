@@ -109,6 +109,11 @@ class MessengerClient:
         self._client.disconnect()
 
 
+async def emit_message(event, data=None, namespace=None, callback=None):
+    from anthill.framework.apps import app
+    await app.service.messenger_client.emit(event, data, namespace, callback)
+
+
 class BaseService(CeleryMixin, _BaseService):
     internal_api_connection_class = JSONRPCInternalConnection
 
