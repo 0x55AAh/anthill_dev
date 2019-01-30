@@ -1,14 +1,13 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
-from anthill.platform.api.internal import InternalAPIMixin
+from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future
-from anthill.framework.core.mail.asynchronous import send_mail
+from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.auth import RemoteUser
 from sqlalchemy_utils.types.json import JSONType
-from anthill.framework.utils import timezone
-from typing import Optional
 from datetime import timedelta
+from typing import Optional
 import enum
 
 
