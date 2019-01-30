@@ -7,6 +7,7 @@ from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.auth import RemoteUser
 from sqlalchemy_utils.types.json import JSONType
 from datetime import timedelta
+from functools import partial
 from typing import Optional
 import enum
 
@@ -37,13 +38,15 @@ class BaseModerationAction(InternalAPIMixin, db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     extra_data = db.Column(JSONType, nullable=False, default={})
 
+    @property
+    def user_request(self):
+        return partial(self.internal_request, 'login', 'get_user')
+
     async def get_user(self) -> RemoteUser:
-        return await self.internal_request(
-            'login', 'get_user', user_id=self.user_id, include_profile=False)
+        return await self.user_request(user_id=self.user_id, include_profile=False)
 
     async def get_moderator(self) -> RemoteUser:
-        return await self.internal_request(
-            'login', 'get_user', user_id=self.moderator_id, include_profile=False)
+        return await self.user_request(user_id=self.moderator_id, include_profile=False)
 
     @as_future
     def turn_on(self, commit: bool = False) -> None:
@@ -82,7 +85,9 @@ class ModerationAction(BaseModerationAction):
         return self.is_active
 
     @classmethod
-    async def moderate(cls, action_type, reason, moderator, user, extra_data=None):
+    async def moderate(cls, action_type: str, reason: str,
+                       moderator: RemoteUser, user: RemoteUser,
+                       extra_data: Optional[dict] = None):
         obj = cls.create(
             action_type=action_type,
             reason=reason,
@@ -100,7 +105,9 @@ class ModerationWarning(BaseModerationAction):
     __table_args__ = ()
 
     @classmethod
-    async def warn(cls, action_type, reason, moderator, user, extra_data=None):
+    async def warn(cls, action_type: str, reason: str,
+                   moderator: RemoteUser, user: RemoteUser,
+                   extra_data: Optional[dict] = None):
         obj = cls.create(
             action_type=action_type,
             reason=reason,
@@ -121,5 +128,5 @@ class ModerationWarningThreshold(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     action_type = db.Column(db.Enum(ActionType), nullable=False)
-    value = db.Column(
-        db.Integer, nullable=False, default=DEFAULT_MODERATION_WARNING_THRESHOLD)
+    value = db.Column(db.Integer, nullable=False,
+                      default=DEFAULT_MODERATION_WARNING_THRESHOLD)
