@@ -5,7 +5,9 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future
 from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.auth import RemoteUser
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils.types.json import JSONType
+from sqlalchemy import func
 from datetime import timedelta
 from functools import partial
 from typing import Optional
@@ -38,28 +40,39 @@ class BaseModerationAction(InternalAPIMixin, db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     extra_data = db.Column(JSONType, nullable=False, default={})
 
+    def __init__(self, **kwargs):  # for IDE inspection
+        super().__init__(**kwargs)
+
     @property
-    def user_request(self):
+    def request_user(self):
         return partial(self.internal_request, 'login', 'get_user')
 
     async def get_user(self) -> RemoteUser:
-        return await self.user_request(user_id=self.user_id, include_profile=False)
+        return await self.request_user(user_id=self.user_id, include_profile=False)
 
     async def get_moderator(self) -> RemoteUser:
-        return await self.user_request(user_id=self.moderator_id, include_profile=False)
+        return await self.request_user(user_id=self.moderator_id, include_profile=False)
 
     @as_future
     def turn_on(self, commit: bool = False) -> None:
+        """Set action in active state."""
         self.is_active = True
         self.save(commit)
 
     @as_future
     def turn_off(self, commit: bool = False) -> None:
+        """Set action in inactive state."""
         self.is_active = False
         self.save(commit)
 
+    @hybrid_property
     def active(self) -> bool:
         return self.is_active
+
+    @classmethod
+    async def actions_query(cls, user_id: str, **filters) -> db.Query:
+        """Get actions query for current user id."""
+        return cls.query.filter_by(active=True, user_id=user_id, **filters)
 
 
 class ModerationAction(BaseModerationAction):
@@ -68,58 +81,76 @@ class ModerationAction(BaseModerationAction):
 
     finish_at = db.Column(db.DateTime)
 
+    @hybrid_property
     def time_limited(self) -> bool:
         return self.finish_at is not None
 
     def finish_in(self) -> Optional[timedelta]:
-        if self.time_limited():
+        if self.time_limited:
             return self.finish_at - timezone.now()
 
+    @hybrid_property
     def finished(self) -> Optional[bool]:
-        if self.time_limited():
+        if self.time_limited:
             return self.finish_at <= timezone.now()
 
+    @hybrid_property
     def active(self) -> bool:
-        if self.time_limited():
-            return self.is_active and not self.finished()
+        if self.time_limited:
+            return self.is_active and not self.finished
         return self.is_active
 
     @classmethod
     async def moderate(cls, action_type: str, reason: str,
                        moderator: RemoteUser, user: RemoteUser,
-                       extra_data: Optional[dict] = None):
-        obj = cls.create(
+                       extra_data: Optional[dict] = None, commit=True):
+        data = dict(
             action_type=action_type,
             reason=reason,
             moderator_id=moderator.id,
             user_id=user.id,
             extra_data=extra_data
         )
+        obj = cls(**data)
+        db.session.add(obj)
+        if commit:
+            db.session.commit()
         # TODO: send message to user (user.send_message)
         # TODO: send email to user (user.send_mail)
-        return obj
 
 
 class ModerationWarning(BaseModerationAction):
     __tablename__ = 'warnings'
     __table_args__ = ()
 
+    @property
+    def threshold_model(self):
+        return ModerationWarningThreshold
+
     @classmethod
     async def warn(cls, action_type: str, reason: str,
                    moderator: RemoteUser, user: RemoteUser,
                    extra_data: Optional[dict] = None):
-        obj = cls.create(
+        data = dict(
             action_type=action_type,
             reason=reason,
             moderator_id=moderator.id,
             user_id=user.id,
             extra_data=extra_data
         )
+        obj = cls(**data)
+        db.session.add(obj)
         # TODO: send message to user (user.send_message)
         # TODO: send email to user (user.send_mail)
-        # TODO: check for warns count and trigger moderation action if counter exceeded
-        # await cls.moderate(action_type, reason, moderator, user, extra_data)
-        return obj
+        try:
+            warns_count = await cls.actions_query(user.id, action_type=action_type).count()
+            threshold = cls.threshold_model.query.filter_by(action_type=action_type).first()
+            if len(warns_count) >= threshold.value:
+                await cls.moderate(action_type, reason, moderator, user, extra_data, commit=False)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise
 
 
 class ModerationWarningThreshold(db.Model):
@@ -127,6 +158,6 @@ class ModerationWarningThreshold(db.Model):
     __table_args__ = ()
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    action_type = db.Column(db.Enum(ActionType), nullable=False)
+    action_type = db.Column(db.Enum(ActionType), unique=True, nullable=False)
     value = db.Column(db.Integer, nullable=False,
                       default=DEFAULT_MODERATION_WARNING_THRESHOLD)
