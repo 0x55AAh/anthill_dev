@@ -83,8 +83,10 @@ class MessengerNamespace(socketio.AsyncNamespace):
     # noinspection PyMethodMayBeStatic
     def retrieve_group(self, data):
         group = data.get('group')
-        if group.startswith('__'):  # System group
-            raise ValueError('Not valid group name: %s' % group)
+        trusted = data.get('trusted', False)
+        if not trusted:
+            if group.startswith('__'):  # System group
+                raise ValueError('Not valid group name: %s' % group)
         return group
 
     async def online(self, sid, user_id):

@@ -18,7 +18,8 @@ class User(InternalAPIMixin, AbstractUser):
         create_personal_group = messenger_settings.PERSONAL_GROUP_FUNCTION
         data = {
             'data': message,
-            'group': create_personal_group(self.id)
+            'group': create_personal_group(self.id),
+            'trusted': True
         }
         await send_message(
             event='create_message',
