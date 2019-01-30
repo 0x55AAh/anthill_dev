@@ -3,6 +3,8 @@
 from anthill.framework.db import db
 from anthill.framework.auth.base_models import AbstractUser
 from anthill.platform.api.internal import InternalAPIMixin
+from anthill.platform.core.messenger.message import send_message
+from anthill.platform.core.messenger.settings import messenger_settings
 
 
 class User(InternalAPIMixin, AbstractUser):
@@ -10,3 +12,18 @@ class User(InternalAPIMixin, AbstractUser):
 
     async def get_profile(self):
         return await self.internal_request('profile', 'get_profile', user_id=self.id)
+
+    async def send_message(self, message, callback=None, client=None):
+        """Send a message to this user."""
+        create_personal_group = messenger_settings.PERSONAL_GROUP_FUNCTION
+        data = {
+            'data': message,
+            'group': create_personal_group(self.id)
+        }
+        await send_message(
+            event='create_message',
+            data=data,
+            namespace=None,
+            callback=callback,
+            client=client
+        )

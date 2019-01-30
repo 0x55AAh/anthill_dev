@@ -1,12 +1,16 @@
 from anthill.framework.auth.models import AnonymousUser
 from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
+from anthill.platform.core.messenger.settings import messenger_settings
 from anthill.platform.auth import RemoteUser
 from typing import Optional
 
 
+def create_personal_group(user_identifier) -> str:
+    return '.'.join([messenger_settings.PERSONAL_GROUP_PREFIX, str(user_identifier)])
+
+
 class BaseClient:
     user_id_key = 'id'
-    personal_group_prefix = '__user'  # Must starts with `__` for security reason
 
     def __init__(self, user: Optional[RemoteUser] = None):
         self.user = user or AnonymousUser()
@@ -20,9 +24,9 @@ class BaseClient:
         if isinstance(self.user, (type(None), AnonymousUser)):
             raise NotAuthenticatedError
 
-    def create_personal_group(self, user_id: str = None) -> str:
-        user_id = user_id if user_id is not None else self.get_user_id()
-        return '.'.join([self.personal_group_prefix, str(user_id)])
+    def create_personal_group(self, user_id: Optional[str] = None) -> str:
+        func = messenger_settings.PERSONAL_GROUP_FUNCTION
+        return func(user_id or self.get_user_id())
 
     def get_user_id(self) -> str:
         return getattr(self.user, self.user_id_key)

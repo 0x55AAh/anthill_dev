@@ -12,7 +12,7 @@ from datetime import timedelta
 import enum
 
 
-DEFAULT_MODERATION_WARNING_THRESHOLD_VALUE = 3
+DEFAULT_MODERATION_WARNING_THRESHOLD = 3
 
 
 @enum.unique
@@ -91,7 +91,7 @@ class ModerationAction(BaseModerationAction):
             user_id=user.id,
             extra_data=extra_data
         )
-        # TODO: send message to user
+        # TODO: send message to user (user.send_message)
         # TODO: send email to user (user.send_mail)
         return obj
 
@@ -109,7 +109,7 @@ class ModerationWarning(BaseModerationAction):
             user_id=user.id,
             extra_data=extra_data
         )
-        # TODO: send message to user
+        # TODO: send message to user (user.send_message)
         # TODO: send email to user (user.send_mail)
         # TODO: check for warns count and trigger moderation action if counter exceeded
         # await cls.moderate(action_type, reason, moderator, user, extra_data)
@@ -123,4 +123,4 @@ class ModerationWarningThreshold(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     action_type = db.Column(db.Enum(ActionType), nullable=False)
     value = db.Column(
-        db.Integer, nullable=False, default=DEFAULT_MODERATION_WARNING_THRESHOLD_VALUE)
+        db.Integer, nullable=False, default=DEFAULT_MODERATION_WARNING_THRESHOLD)

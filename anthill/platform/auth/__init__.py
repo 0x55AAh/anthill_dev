@@ -1,4 +1,6 @@
 from anthill.framework.core.mail.asynchronous import send_mail
+from anthill.platform.core.messenger.message import send_message
+from anthill.platform.core.messenger.settings import messenger_settings
 from anthill.platform.api.internal import RequestError, connector
 from tornado.escape import json_decode
 from functools import partial
@@ -83,6 +85,21 @@ class RemoteUser:
     async def send_mail(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         await send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    async def send_message(self, message, callback=None, client=None):
+        """Send a message to this user."""
+        create_personal_group = messenger_settings.PERSONAL_GROUP_FUNCTION
+        data = {
+            'data': message,
+            'group': create_personal_group(self.id)
+        }
+        await send_message(
+            event='create_message',
+            data=data,
+            namespace=None,
+            callback=callback,
+            client=client
+        )
 
 
 class RemoteProfile:

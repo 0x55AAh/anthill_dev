@@ -1,17 +1,16 @@
-from tornado.ioloop import PeriodicCallback
 from anthill.framework.utils.decorators import method_decorator, retry
 from anthill.framework.utils import timezone
+from anthill.framework.utils.geoip import GeoIP2
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.core.cache import caches
-from anthill.framework.handlers.socketio import socketio_client
 from anthill.platform.utils.celery import CeleryMixin
+from anthill.platform.core.messenger.message import MessengerClient
 from anthill.platform.api.internal import (
     JSONRPCInternalConnection, RequestTimeoutError, RequestError)
-from anthill.framework.utils.geoip import GeoIP2
+from socketio.exceptions import ConnectionError
+from tornado.ioloop import PeriodicCallback
 from functools import partial
 from tornado.web import url
-from socketio.exceptions import ConnectionError
-import socketio
 import logging
 
 logger = logging.getLogger('anthill.application')
@@ -70,48 +69,6 @@ class UpdateManager:
 
     async def update(self, version=None):
         pass
-
-
-class MessengerClient:
-    def __init__(self, url, namespace='/messenger'):
-        self.url = url
-        self.namespace = namespace or '/'
-        self._client = socketio_client
-        self._client.register_namespace(
-            self._SocketIONamespace(self.namespace))
-
-    class _SocketIONamespace(socketio.AsyncClientNamespace):
-        def on_connect(self):
-            logger.debug('Connected to messenger.')
-
-        def on_disconnect(self):
-            logger.debug('Disconnected from messenger.')
-
-    def __repr__(self):
-        return "<MessengerClient(url=%r, namespace=%r)>" % (self.url, self.namespace)
-
-    async def __aenter__(self):
-        await self.connect()
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        self.close()
-
-    async def connect(self):
-        await self._client.connect(self.url, namespaces=[self.namespace])
-
-    async def emit(self, event, data=None, namespace=None, callback=None):
-        await self._client.emit(
-            event, data=data, namespace=namespace or self.namespace, callback=callback)
-        logger.debug('Message has been sent.')
-
-    def close(self):
-        self._client.disconnect()
-
-
-async def emit_message(event, data=None, namespace=None, callback=None):
-    from anthill.framework.apps import app
-    await app.service.messenger_client.emit(event, data, namespace, callback)
 
 
 class BaseService(CeleryMixin, _BaseService):
