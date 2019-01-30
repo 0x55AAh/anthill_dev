@@ -145,7 +145,7 @@ class ModerationWarning(BaseModerationAction):
         try:
             warns_count = await cls.actions_query(user.id, action_type=action_type).count()
             threshold = cls.threshold_model.query.filter_by(action_type=action_type).first()
-            if len(warns_count) >= threshold.value:
+            if warns_count >= threshold.value:
                 await cls.moderate(action_type, reason, moderator, user, extra_data, commit=False)
             db.session.commit()
         except Exception:
