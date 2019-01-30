@@ -24,7 +24,6 @@ class User(InternalAPIMixin, AbstractUser):
         await send_message(
             event='create_message',
             data=data,
-            namespace=None,
             callback=callback,
             client=client
         )
