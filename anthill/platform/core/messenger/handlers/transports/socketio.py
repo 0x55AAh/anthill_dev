@@ -221,7 +221,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         subject = _('New incoming message')
         message = loader.load("incoming_message_email.txt").generate(data)
         html_message = loader.load("incoming_message_email.html").generate(data)
-        from_email = 'root'
+        from_email = settings.APPLICATION_EMAIL
         await send_mail(
             subject, message, from_email, recipient_list,
             fail_silently=False, html_message=html_message)

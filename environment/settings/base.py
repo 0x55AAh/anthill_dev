@@ -30,6 +30,7 @@ APPLICATION_VERBOSE_NAME = _('Environment')
 APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-cube'
 APPLICATION_COLOR = 'info'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'environment.services.Service'
 

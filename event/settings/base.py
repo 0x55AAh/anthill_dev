@@ -27,6 +27,7 @@ APPLICATION_VERBOSE_NAME = _('Event')
 APPLICATION_DESCRIPTION = _('Compete players with time-limited events')
 APPLICATION_ICON_CLASS = 'icon-calendar'
 APPLICATION_COLOR = 'success'
+APPLICATION_EMAIL = 'root@localhost'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: event] '
 

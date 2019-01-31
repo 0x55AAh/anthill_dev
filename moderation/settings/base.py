@@ -33,6 +33,7 @@ APPLICATION_VERBOSE_NAME = _('Moderation')
 APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-lock'
 APPLICATION_COLOR = 'purple'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'moderation.services.Service'
 

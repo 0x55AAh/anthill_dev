@@ -33,6 +33,7 @@ APPLICATION_VERBOSE_NAME = _('{{ camel_case_app_name }}')
 APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-question6'
 APPLICATION_COLOR = '{{ app_color }}'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = '{{ app_name }}.services.Service'
 

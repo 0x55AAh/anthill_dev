@@ -29,6 +29,7 @@ APPLICATION_VERBOSE_NAME = _('Discovery')
 APPLICATION_DESCRIPTION = _('Map each service location dynamically')
 APPLICATION_ICON_CLASS = 'icon-direction'
 APPLICATION_COLOR = 'danger'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'discovery.services.Service'
 

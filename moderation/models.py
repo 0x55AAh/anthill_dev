@@ -1,6 +1,7 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
+from anthill.framework.conf import settings
 from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.utils.translation import translate as _
@@ -120,15 +121,15 @@ class ModerationAction(BaseModerationAction):
         if commit:
             db.session.commit()
 
-        await send_email(
+        await cls.send_email(
             user,
             subject=_('You are moderated'),
             message=reason,
-            from_email=None,     # TODO:
+            from_email=settings.APPLICATION_EMAIL,
             fail_silently=False,
-            html_message=None    # TODO:
+            html_message=None
         )
-        await send_message(user, message=reason)
+        await cls.send_message(user, message=reason)
 
 
 class ModerationWarning(BaseModerationAction):
@@ -160,15 +161,15 @@ class ModerationWarning(BaseModerationAction):
                 await cls.moderate(action_type, reason, moderator, user, extra_data,
                                    finish_at, commit=False)
             else:
-                await send_email(
+                await cls.send_email(
                     user,
                     subject=_('You are warned'),
                     message=reason,
-                    from_email=None,     # TODO:
+                    from_email=settings.APPLICATION_EMAIL,
                     fail_silently=False,
-                    html_message=None    # TODO:
+                    html_message=None
                 )
-                await send_message(user, message=reason)
+                await cls.send_message(user, message=reason)
             db.session.commit()
         except Exception:
             db.session.rollback()

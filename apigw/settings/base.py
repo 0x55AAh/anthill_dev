@@ -31,6 +31,7 @@ APPLICATION_VERBOSE_NAME = _('API')
 APPLICATION_DESCRIPTION = _('Api gateway service')
 APPLICATION_ICON_CLASS = 'icon-puzzle'
 APPLICATION_COLOR = 'purple'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'apigw.services.Service'
 

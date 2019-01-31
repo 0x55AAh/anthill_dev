@@ -30,6 +30,7 @@ APPLICATION_VERBOSE_NAME = _('Report')
 APPLICATION_DESCRIPTION = _('User-submitted reporting service')
 APPLICATION_ICON_CLASS = 'icon-flag3'
 APPLICATION_COLOR = 'grey'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'report.services.Service'
 

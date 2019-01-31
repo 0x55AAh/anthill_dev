@@ -28,6 +28,7 @@ APPLICATION_VERBOSE_NAME = _('Store')
 APPLICATION_DESCRIPTION = _('In-App Purchasing, with server validation')
 APPLICATION_ICON_CLASS = 'icon-cart'
 APPLICATION_COLOR = 'primary'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'store.services.Service'
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')

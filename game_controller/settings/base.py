@@ -27,6 +27,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 # APPLICATION_CLASS = 'game_controller.apps.AnthillApplication'
 APPLICATION_NAME = 'game_controller'
 APPLICATION_VERBOSE_NAME = _('Game Controller')
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'game_controller.services.Service'
 

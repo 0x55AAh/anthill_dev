@@ -28,6 +28,7 @@ APPLICATION_VERBOSE_NAME = _('Login')
 APPLICATION_DESCRIPTION = _('Manage user accounts, credentials and access tokens')
 APPLICATION_ICON_CLASS = 'icon-key'
 APPLICATION_COLOR = 'pink'
+APPLICATION_EMAIL = 'root@localhost'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: login] '
 

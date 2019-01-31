@@ -33,6 +33,7 @@ APPLICATION_VERBOSE_NAME = _('Profile')
 APPLICATION_DESCRIPTION = _('Manage user profiles')
 APPLICATION_ICON_CLASS = 'icon-user'
 APPLICATION_COLOR = 'orange'
+APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'profile.services.Service'
 
