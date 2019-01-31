@@ -7,7 +7,6 @@ from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.auth import RemoteUser
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils.types.json import JSONType
-from sqlalchemy import func
 from datetime import timedelta
 from functools import partial
 from typing import Optional
@@ -19,8 +18,8 @@ DEFAULT_MODERATION_WARNING_THRESHOLD = 3
 
 @enum.unique
 class ActionType(enum.Enum):
-    BAN_ACCOUNT = 'ban_account'
-    HIDE_MESSAGE = 'hide_message'
+    BAN_ACCOUNT = 0
+    HIDE_MESSAGE = 1
 
 
 @enum.unique
@@ -74,6 +73,14 @@ class BaseModerationAction(InternalAPIMixin, db.Model):
         """Get actions query for current user id."""
         return cls.query.filter_by(active=True, user_id=user_id, **filters)
 
+    @staticmethod
+    async def send_email(user: RemoteUser, subject, message, from_email=None, **kwargs):
+        await user.send_mail(subject, message, from_email, **kwargs)
+
+    @staticmethod
+    async def send_message(user: RemoteUser, message):
+        await user.send_message(message)
+
 
 class ModerationAction(BaseModerationAction):
     __tablename__ = 'actions'
@@ -103,20 +110,22 @@ class ModerationAction(BaseModerationAction):
     @classmethod
     async def moderate(cls, action_type: str, reason: str,
                        moderator: RemoteUser, user: RemoteUser,
-                       extra_data: Optional[dict] = None, commit=True):
+                       extra_data: Optional[dict] = None, finish_at=None,
+                       commit=True):
         data = dict(
             action_type=action_type,
             reason=reason,
             moderator_id=moderator.id,
             user_id=user.id,
+            finish_at=finish_at,
             extra_data=extra_data
         )
         obj = cls(**data)
         db.session.add(obj)
         if commit:
             db.session.commit()
-        # TODO: send message to user (user.send_message)
-        # TODO: send email to user (user.send_mail)
+        # TODO: await send_email(user, subject, message, from_email=None, **kwargs)
+        # TODO: await send_message(user, message)
 
 
 class ModerationWarning(BaseModerationAction):
@@ -130,7 +139,7 @@ class ModerationWarning(BaseModerationAction):
     @classmethod
     async def warn(cls, action_type: str, reason: str,
                    moderator: RemoteUser, user: RemoteUser,
-                   extra_data: Optional[dict] = None):
+                   finish_at=None, extra_data: Optional[dict] = None):
         data = dict(
             action_type=action_type,
             reason=reason,
@@ -140,13 +149,14 @@ class ModerationWarning(BaseModerationAction):
         )
         obj = cls(**data)
         db.session.add(obj)
-        # TODO: send message to user (user.send_message)
-        # TODO: send email to user (user.send_mail)
+        # TODO: await send_email(user, subject, message, from_email=None, **kwargs)
+        # TODO: await send_message(user, message)
         try:
             warns_count = await cls.actions_query(user.id, action_type=action_type).count()
             threshold = cls.threshold_model.query.filter_by(action_type=action_type).first()
-            if len(warns_count) >= threshold.value:
-                await cls.moderate(action_type, reason, moderator, user, extra_data, commit=False)
+            if warns_count >= threshold.value:
+                await cls.moderate(action_type, reason, moderator, user, extra_data,
+                                   finish_at, commit=False)
             db.session.commit()
         except Exception:
             db.session.rollback()
