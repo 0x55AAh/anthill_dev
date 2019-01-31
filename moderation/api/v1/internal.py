@@ -11,5 +11,11 @@ Example:
         ...
 """
 from anthill.platform.api.internal import as_internal, InternalAPI
+from moderation.models import ModerationAction
 
 
+@as_internal()
+async def get_moderations(api: InternalAPI, user_id: str) -> dict:
+    moderations = ModerationAction.actions_query(user_id).all()
+    result = ModerationAction.__marshmallow__(many=True).dump(moderations).data
+    return result

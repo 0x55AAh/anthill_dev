@@ -14,12 +14,16 @@ from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestExcep
 from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
 from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
+from anthill.framework.utils.asynchronous import as_future
+from anthill.framework.core.cache import cache
+
 from typing import Optional
 import inspect
 import json
 import logging
 import os
 import signal
+import functools
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
@@ -29,6 +33,35 @@ __all__ = [
 ]
 
 logger = logging.getLogger('anthill.application')
+
+
+DEFAULT_CACHE_TIMEOUT = 300
+
+
+def cache_key(service, method):
+    return '.'.join(['internal.cache', service, method])
+
+
+def _cached(key=cache_key, timeout=DEFAULT_CACHE_TIMEOUT):
+    def decorator(func):
+        @functools.wraps(func)
+        async def wrapper(conn, service, method, *args, **kwargs):
+            timeout_ = kwargs.pop('cache_timeout', timeout)
+
+            if not timeout_:  # not cached
+                return await func(conn, service, method, *args, **kwargs)
+
+            key_ = key(service, method) if callable(key) else key
+            result = await as_future(cache.get)(key_)
+            if result is None:
+                result = await func(conn, service, method, *args, **kwargs)
+                await as_future(cache.set)(key_, result, timeout_)
+            return result
+        return wrapper
+    return decorator
+
+
+cached = _cached()
 
 
 def has_keys(d, keys):
@@ -293,6 +326,7 @@ class JSONRPCInternalConnection(BaseInternalConnection):
         if registered_services is not None and service not in registered_services:
             raise ServiceDoesNotExist
 
+    @cached
     async def request(self, service: str, method: str, timeout: int = None, registered_services=None, **kwargs) -> dict:
         self.check_service(service, registered_services)
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):

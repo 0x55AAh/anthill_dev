@@ -5,6 +5,7 @@ from anthill.framework.core.mail.asynchronous import send_mail
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
 from anthill.platform.core.messenger.client.exceptions import ClientError
+from anthill.framework.utils.translation import translate as _
 from tornado import template
 import user_agents
 import socketio
@@ -217,7 +218,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         clients.discard(my_client)
         recipient_list = (c.user.email for c in clients)
         loader = template.Loader(settings.TEMPLATE_PATH)
-        subject = 'New incoming message'
+        subject = _('New incoming message')
         message = loader.load("incoming_message_email.txt").generate(data)
         html_message = loader.load("incoming_message_email.html").generate(data)
         from_email = 'root'

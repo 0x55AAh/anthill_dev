@@ -19,8 +19,6 @@ Usage:
         # function code
         ...
 """
-from anthill.platform.security.rate_limit.exceptions import RateLimitException
-# from anthill.framework.core.cache import cache  # Default cache
 from anthill.framework.core.cache import caches
 from anthill.framework.conf import settings
 from anthill.framework.utils.module_loading import import_string
@@ -36,6 +34,16 @@ RATE_LIMIT_ENABLE = getattr(settings, 'RATE_LIMIT_ENABLE', False)
 RATE_LIMIT_CONFIG = getattr(settings, 'RATE_LIMIT_CONFIG', {})
 
 __all__ = ['RateLimit', 'RateLimitException', 'default_rate_limit']
+
+
+class RateLimitException(Exception):
+    """
+    Rate limit exception class.
+    """
+
+    def __init__(self, state=None, message=''):
+        super(RateLimitException, self).__init__(message)
+        self.state = state or {}
 
 
 class RateLimitConfig(dict):

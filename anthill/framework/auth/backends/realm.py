@@ -27,11 +27,19 @@ import functools
 logger = logging.getLogger('anthill.application')
 
 
-def cached(key, timeout=300):
+DEFAULT_CACHE_TIMEOUT = 300
+
+
+def cached(key, timeout=DEFAULT_CACHE_TIMEOUT):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            return cache.get_or_set(key, func(*args, **kwargs), timeout)
+            k = key() if callable(key) else key
+            result = cache.get(k)
+            if result is None:
+                result = func(*args, **kwargs)
+                cache.set(k, result, timeout)
+            return result
         return wrapper
     return decorator
 
