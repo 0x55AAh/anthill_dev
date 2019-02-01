@@ -28,7 +28,6 @@ APPLICATION_VERBOSE_NAME = _('Configuration')
 APPLICATION_DESCRIPTION = _('Configure your application dynamically')
 APPLICATION_ICON_CLASS = 'icon-gear'
 APPLICATION_COLOR = 'primary'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'config.services.Service'
 

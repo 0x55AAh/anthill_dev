@@ -28,7 +28,6 @@ APPLICATION_VERBOSE_NAME = _('Exec')
 APPLICATION_DESCRIPTION = _('Execute custom javascript code on a server side')
 APPLICATION_ICON_CLASS = 'icon-circle-code'
 APPLICATION_COLOR = 'violet'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'exec.services.Service'
 

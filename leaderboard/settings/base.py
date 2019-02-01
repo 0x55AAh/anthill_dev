@@ -30,7 +30,6 @@ APPLICATION_VERBOSE_NAME = _('Leaderboard')
 APPLICATION_DESCRIPTION = _('See and edit player ranking')
 APPLICATION_ICON_CLASS = 'icon-trophy2'
 APPLICATION_COLOR = 'indigo'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'leaderboard.services.Service'
 

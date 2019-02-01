@@ -31,7 +31,6 @@ APPLICATION_VERBOSE_NAME = _('Media')
 APPLICATION_DESCRIPTION = _('Manage user uploaded files')
 APPLICATION_ICON_CLASS = 'icon-file-media'
 APPLICATION_COLOR = 'teal'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'media.services.Service'
 

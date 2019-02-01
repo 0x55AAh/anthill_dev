@@ -35,22 +35,21 @@ __all__ = [
 logger = logging.getLogger('anthill.application')
 
 
-DEFAULT_CACHE_TIMEOUT = 300
+DEFAULT_CACHE_TIMEOUT = 300  # 5min
 
 
 def cache_key(service, method):
     return '.'.join(['internal.cache', service, method])
 
 
-def _cached(key=cache_key, timeout=DEFAULT_CACHE_TIMEOUT):
+def _cached(key, timeout):
     def decorator(func):
         @functools.wraps(func)
         async def wrapper(conn, service, method, *args, **kwargs):
-            timeout_ = kwargs.pop('cache_timeout', timeout)
-
-            if not timeout_:  # not cached
+            caching = kwargs.pop('caching', True)
+            if not caching:
                 return await func(conn, service, method, *args, **kwargs)
-
+            timeout_ = kwargs.pop('cache_timeout', timeout)
             key_ = key(service, method) if callable(key) else key
             result = await as_future(cache.get)(key_)
             if result is None:
@@ -61,7 +60,7 @@ def _cached(key=cache_key, timeout=DEFAULT_CACHE_TIMEOUT):
     return decorator
 
 
-cached = _cached()
+cached = _cached(key=cache_key, timeout=DEFAULT_CACHE_TIMEOUT)
 
 
 def has_keys(d, keys):
@@ -165,6 +164,13 @@ def get_service_metadata(api_: InternalAPI, **options):
 @as_internal()
 def send_signal(api_: InternalAPI, sig_name: str, **options):
     os.kill(os.getpid(), getattr(signal, sig_name))
+
+
+@as_internal()
+def reload(api_: InternalAPI, sig_name: str, **options):
+    import tornado.autoreload
+    # noinspection PyProtectedMember
+    tornado.autoreload._reload()
 
 
 class BaseInternalConnection(Singleton):

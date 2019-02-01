@@ -30,7 +30,6 @@ APPLICATION_VERBOSE_NAME = _('Logging')
 APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-clipboard6'
 APPLICATION_COLOR = 'purple'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'log.services.Service'
 

@@ -24,7 +24,6 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 # APPLICATION_CLASS = 'admin.apps.AnthillApplication'
 APPLICATION_NAME = 'admin'
 APPLICATION_VERBOSE_NAME = _('Admin')
-APPLICATION_EMAIL = 'root@localhost'
 
 DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
 

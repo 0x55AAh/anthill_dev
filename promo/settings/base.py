@@ -28,7 +28,6 @@ APPLICATION_VERBOSE_NAME = _('Promo')
 APPLICATION_DESCRIPTION = _('Reward users with promo-codes')
 APPLICATION_ICON_CLASS = 'icon-gift'
 APPLICATION_COLOR = 'brown'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'promo.services.Service'
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')

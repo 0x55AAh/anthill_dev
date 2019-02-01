@@ -27,7 +27,6 @@ APPLICATION_VERBOSE_NAME = _('DLC')
 APPLICATION_DESCRIPTION = _('Deliver downloadable content to a user')
 APPLICATION_ICON_CLASS = 'icon-onedrive'
 APPLICATION_COLOR = 'warning'
-APPLICATION_EMAIL = 'root@localhost'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: dlc] '
 

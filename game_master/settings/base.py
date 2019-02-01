@@ -30,7 +30,6 @@ APPLICATION_VERBOSE_NAME = _('Game')
 APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-steam'
 APPLICATION_COLOR = 'purple'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'game_master.services.Service'
 

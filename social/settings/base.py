@@ -28,7 +28,6 @@ APPLICATION_VERBOSE_NAME = _('Social')
 APPLICATION_DESCRIPTION = _('Manage social networks, groups and friend connections')
 APPLICATION_ICON_CLASS = 'icon-share3'
 APPLICATION_COLOR = 'slate'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'social.services.Service'
 

@@ -28,7 +28,6 @@ APPLICATION_VERBOSE_NAME = _('Message')
 APPLICATION_DESCRIPTION = _('Implements messaging system')
 APPLICATION_ICON_CLASS = 'icon-envelop5'
 APPLICATION_COLOR = 'green'
-APPLICATION_EMAIL = 'root@localhost'
 
 # SERVICE_CLASS = 'message.services.Service'
 

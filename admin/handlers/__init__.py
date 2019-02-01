@@ -9,11 +9,13 @@ from anthill.platform.auth.handlers import (
     UserTemplateHandler, UserHandlerMixin
 )
 from anthill.platform.handlers.base import InternalRequestHandlerMixin
+from anthill.platform.api.internal import connector, InternalAPIError
 from ._base import ServiceContextMixin, UserTemplateServiceRequestHandler, PageHandlerMixin
 from admin.ui.modules import ServiceCard
 from typing import Optional
 import logging
 import inspect
+import functools
 
 logger = logging.getLogger('anthill.application')
 
@@ -95,12 +97,30 @@ class DebugSessionHandler(UserHandlerMixin, PageHandlerMixin, JsonRPCSessionHand
         self._set_context(name, None)
 
 
+def _util_internal_wrapper(func):
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        try:
+            await func(*args, **kwargs)
+        except InternalAPIError as e:
+            return {'error': str(e)}
+        return {'message': args[0].SUCCESSFUL_MESSAGE}
+    return wrapper
+
+
 class UtilsSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
+    SUCCESSFUL_MESSAGE = _('Completed successfully.')
+
     @jsonrpc_method()
+    @_util_internal_wrapper
     async def update(self, service_name, version=None):
-        return {
-            'message': _('Completed successfully.')
-        }
+        # TODO:
+        pass
+
+    @jsonrpc_method()
+    @_util_internal_wrapper
+    async def reload(self, service_name):
+        connector.internal_request(service_name, 'reload')
 
 
 # @authenticated()

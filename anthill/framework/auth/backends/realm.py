@@ -27,7 +27,7 @@ import functools
 logger = logging.getLogger('anthill.application')
 
 
-DEFAULT_CACHE_TIMEOUT = 300
+DEFAULT_CACHE_TIMEOUT = 300  # 5min
 
 
 def cached(key, timeout=DEFAULT_CACHE_TIMEOUT):

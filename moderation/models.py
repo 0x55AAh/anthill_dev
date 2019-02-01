@@ -125,7 +125,7 @@ class ModerationAction(BaseModerationAction):
             user,
             subject=_('You are moderated'),
             message=reason,
-            from_email=settings.APPLICATION_EMAIL,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             fail_silently=False,
             html_message=None
         )
@@ -165,7 +165,7 @@ class ModerationWarning(BaseModerationAction):
                     user,
                     subject=_('You are warned'),
                     message=reason,
-                    from_email=settings.APPLICATION_EMAIL,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
                     fail_silently=False,
                     html_message=None
                 )
