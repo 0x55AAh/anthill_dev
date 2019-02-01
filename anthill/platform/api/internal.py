@@ -22,8 +22,6 @@ import inspect
 import json
 import logging
 import os
-import signal
-import functools
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
@@ -36,6 +34,7 @@ logger = logging.getLogger('anthill.application')
 
 
 DEFAULT_CACHE_TIMEOUT = 300  # 5min
+INTERNAL_REQUEST_CACHING = True
 
 
 def cache_key(service, method):
@@ -44,9 +43,9 @@ def cache_key(service, method):
 
 def _cached(key, timeout):
     def decorator(func):
-        @functools.wraps(func)
+        @wraps(func)
         async def wrapper(conn, service, method, *args, **kwargs):
-            caching = kwargs.pop('caching', True)
+            caching = kwargs.pop('caching', INTERNAL_REQUEST_CACHING)
             if not caching:
                 return await func(conn, service, method, *args, **kwargs)
             timeout_ = kwargs.pop('cache_timeout', timeout)
@@ -159,11 +158,6 @@ def doc(api_: InternalAPI, **options):
 @as_internal()
 def get_service_metadata(api_: InternalAPI, **options):
     return api_.service.app.metadata
-
-
-@as_internal()
-def send_signal(api_: InternalAPI, sig_name: str, **options):
-    os.kill(os.getpid(), getattr(signal, sig_name))
 
 
 @as_internal()
