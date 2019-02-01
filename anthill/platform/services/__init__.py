@@ -3,6 +3,7 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.geoip import GeoIP2
 from anthill.framework.core.servers import BaseService as _BaseService
 from anthill.framework.core.cache import caches
+from anthill.platform.services.update import manager
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.core.messenger.message import MessengerClient
 from anthill.platform.api.internal import (
@@ -55,22 +56,6 @@ def _url_pattern(url_, float_slash=True):
     return r'^{url}{end}$'.format(url=url_, end=end)
 
 
-class UpdateManager:
-    schemes = ('git', 'pip', 'pip+git')
-
-    def __init__(self, scheme='git'):
-        self.scheme = scheme
-
-    async def versions(self):
-        pass
-
-    async def current_version(self):
-        pass
-
-    async def update(self, version=None):
-        pass
-
-
 class BaseService(CeleryMixin, _BaseService):
     internal_api_connection_class = JSONRPCInternalConnection
 
@@ -82,7 +67,7 @@ class BaseService(CeleryMixin, _BaseService):
         logger.debug('Geo position tracking system status: '
                      '%s.' % 'ENABLED' if self.gis else 'DISABLED')
         self.started_at = None
-        self.update_manager = UpdateManager()
+        self.update_manager = manager.UpdateManager()
 
     @property
     def internal_connection(self):

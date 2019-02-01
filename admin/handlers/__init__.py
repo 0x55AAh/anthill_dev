@@ -114,13 +114,12 @@ class UtilsSessionHandler(UserHandlerMixin, JsonRPCSessionHandler):
     @jsonrpc_method()
     @_util_internal_wrapper
     async def update(self, service_name, version=None):
-        # TODO:
-        pass
+        await connector.internal_request(service_name, 'update', version=version)
 
     @jsonrpc_method()
     @_util_internal_wrapper
     async def reload(self, service_name):
-        connector.internal_request(service_name, 'reload')
+        await connector.internal_request(service_name, 'reload')
 
 
 # @authenticated()

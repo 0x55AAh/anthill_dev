@@ -167,6 +167,12 @@ def reload(api_: InternalAPI, sig_name: str, **options):
     tornado.autoreload._reload()
 
 
+@as_internal()
+def update(api_: InternalAPI, version: Optional[str], **options):
+    update_manager = api.service.update_manager
+    update_manager.update(version)
+
+
 class BaseInternalConnection(Singleton):
     """Implements communications between services."""
     message_type = 'internal'
