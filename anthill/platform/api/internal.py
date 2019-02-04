@@ -161,7 +161,7 @@ def get_service_metadata(api_: InternalAPI, **options):
 
 
 @as_internal()
-def reload(api_: InternalAPI, sig_name: str, **options):
+def reload(api_: InternalAPI, **options):
     import tornado.autoreload
     # noinspection PyProtectedMember
     tornado.autoreload._reload()
