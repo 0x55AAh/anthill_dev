@@ -7,18 +7,31 @@ Example:
         ...
 """
 from tornado.ioloop import IOLoop
-from v8py import new
+from v8py import new, Context
+from typing import Coroutine
+import inspect
 import functools
 import collections
 import traceback
 import weakref
 
 
-__all__ = ['session_api']
+__all__ = ['session_api', 'SessionAPIError']
+
+
+class SessionAPIError(Exception):
+    pass
 
 
 class PromiseContext:
     current = None
+
+
+class BoundPromise:
+    def __init__(self, handler, method, args):
+        self.handler = weakref.ref(handler)
+        self.method = method
+        self.args = args
 
 
 def promise_completion(f):
@@ -53,7 +66,6 @@ def promise_callback(bound, resolve, reject):
         return
 
     try:
-        # noinspection PyProtectedMember
         future = coroutine(bound.method)(*bound.args, handler=handler)
     except BaseException as exc:
         exc.stack = traceback.format_exc()
@@ -65,38 +77,32 @@ def promise_callback(bound, resolve, reject):
         IOLoop.current().add_future(future, promise_completion)
 
 
-class BoundPromise:
-    def __init__(self, handler, method, args):
-        self.handler = weakref.ref(handler)
-        self.method = method
-        self.args = args
-
-
 def promise(method):
     """
-    This complex decorator allows to wrap coroutine to be used in async/await
-    Use it to call a method asynchronously from JS:
+    Decorator allows method to be used in async/await.
+    Use it to call a method asynchronously from javascript.
+    Example:
 
-    @promise
-    async def sum(a, b):
-        await sleep(1)
-        return a + b
+        @promise
+        async def sum(a, b):
+            await sleep(1)
+            return a + b
 
-    When called from JS, a Promise object is returned:
+    When called from javascript, a Promise object is returned.
+    Example:
 
-    async function test() {
-        var result = await sum(5, 10);
-    }
+        async function test() {
+            var result = await sum(5, 10);
+            // using result
+        }
     """
     def wrapper(*args, **kwargs):
-        # pull a handler from PromiseContext. Every javascript call has to set one
+        # Retrieve handler from PromiseContext.
+        # Every javascript call has to set one
         handler = PromiseContext.current
         context = handler.context
-
-        return new(
-            handler.promise_type,
-            context.bind(promise_callback, BoundPromise(handler, method, args))
-        )
+        return new(handler.promise_type,
+                   context.bind(promise_callback, BoundPromise(handler, method, args)))
     return wrapper
 
 
@@ -119,7 +125,11 @@ class SessionAPI:
     def __len__(self):
         return len(self.categories)
 
-    def add_method(self, method):
+    # noinspection PyMethodMayBeStatic
+    def expose(self, context: Context) -> None:
+        context.expose_readonly(**self.categories)
+
+    def add_method(self, method) -> None:
         method_module = method.__module__.partition('.')[-1]
         setattr(self.categories[method_module], method.__name__, method)
 
@@ -127,8 +137,9 @@ class SessionAPI:
         """Decorator marks function as an session api method."""
         def decorator(func):
             @functools.wraps(func)
-            def wrapper(*args, **kwargs):
-                return func(*args, **kwargs)
+            @promise
+            async def wrapper(*args, **kwargs):
+                return await func(*args, **kwargs)
             self.add_method(wrapper)
             return wrapper
         return decorator
