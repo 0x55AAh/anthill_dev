@@ -5,5 +5,5 @@ from . import handlers
 
 # Create your routes here.
 route_patterns = [
-
+    url(r'^/session/?', handlers.SessionHandler, name='session')
 ]

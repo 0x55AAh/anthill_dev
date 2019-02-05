@@ -8,12 +8,11 @@ Example:
 """
 from tornado.ioloop import IOLoop
 from v8py import new, Context
-from typing import Coroutine
-import inspect
 import functools
 import collections
 import traceback
 import weakref
+import inspect
 
 
 __all__ = ['session_api', 'SessionAPIError']
@@ -106,41 +105,53 @@ def promise(method):
     return wrapper
 
 
-class SessionAPICategory:
+class SessionAPIModule:
     pass
 
 
 class SessionAPI:
-    categories = collections.defaultdict(SessionAPICategory)
+    _modules = collections.defaultdict(SessionAPIModule)
+    _methods = []
 
     def __iter__(self):
-        return iter(self.categories)
+        return iter(self.items)
 
     def __getitem__(self, key):
-        return self.categories[key]
+        return dict(self.items)[key]
 
     def __repr__(self):
-        return repr(self.categories)
+        return repr(self.items)
 
     def __len__(self):
-        return len(self.categories)
+        return len(self.items)
+
+    @property
+    def items(self):
+        return list(self._modules.items()) + self._methods
 
     # noinspection PyMethodMayBeStatic
     def expose(self, context: Context) -> None:
-        context.expose_readonly(**self.categories)
+        context.expose_readonly(**dict(self.items))
 
-    def add_method(self, method) -> None:
-        method_module = method.__module__.partition('.')[-1]
-        setattr(self.categories[method_module], method.__name__, method)
+    def add_method(self, method, direct=True) -> None:
+        if direct:
+            method_module = method.__module__.partition('.')[-1]
+            setattr(self._modules[method_module], method.__name__, method)
+        else:
+            self._methods.append([method.__name__, method])
 
-    def __call__(self):
+    def __call__(self, direct=True):
         """Decorator marks function as an session api method."""
         def decorator(func):
-            @functools.wraps(func)
-            @promise
-            async def wrapper(*args, **kwargs):
-                return await func(*args, **kwargs)
-            self.add_method(wrapper)
+            if inspect.iscoroutinefunction(func):
+                @promise
+                async def wrapper(*args, **kwargs):
+                    return await func(*args, **kwargs)
+            else:
+                def wrapper(*args, **kwargs):
+                    return func(*args, **kwargs)
+            wrapper = functools.wraps(func)(wrapper)
+            self.add_method(wrapper, direct)
             return wrapper
         return decorator
 
