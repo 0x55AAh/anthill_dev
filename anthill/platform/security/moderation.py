@@ -14,14 +14,13 @@ class ModerationError(Exception):
 
 
 async def _check_user_action_types(handler, required_action_types):
-    required_action_types = set(required_action_types)
     get_moderations = functools.partial(
         connector.internal_request, 'moderation', 'get_moderations')
     user_moderations = await get_moderations(user_id=handler.current_user.id)
     user_action_types = set(m['action_type'] for m in user_moderations)
-    action_types = required_action_types.intersection(user_action_types)
-    if action_types:
-        raise ModerationError(action_types=action_types)
+    shared_action_types = set(required_action_types) & user_action_types
+    if shared_action_types:
+        raise ModerationError(action_types=shared_action_types)
 
 
 def moderated(action_types: Union[list, tuple]):

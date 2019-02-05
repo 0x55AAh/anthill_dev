@@ -7,6 +7,7 @@ Example:
         ...
 """
 from tornado.ioloop import IOLoop
+from tornado.gen import coroutine
 from v8py import new, Context
 import functools
 import collections
@@ -133,14 +134,14 @@ class SessionAPI:
     def expose(self, context: Context) -> None:
         context.expose_readonly(**dict(self.items))
 
-    def add_method(self, method, direct=True) -> None:
+    def add_method(self, method, direct=False) -> None:
         if direct:
+            self._methods.append([method.__name__, method])
+        else:
             method_module = method.__module__.partition('.')[-1]
             setattr(self._modules[method_module], method.__name__, method)
-        else:
-            self._methods.append([method.__name__, method])
 
-    def __call__(self, direct=True):
+    def __call__(self, direct=False):
         """Decorator marks function as an session api method."""
         def decorator(func):
             if inspect.iscoroutinefunction(func):
