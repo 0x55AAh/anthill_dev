@@ -1,7 +1,6 @@
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
 from anthill.framework.utils.crypto import salted_hmac
-from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.auth import password_validation
 from anthill.framework.auth.hashers import make_password, check_password
 from anthill.framework.auth.backends.db.models import UserMixin
@@ -87,10 +86,6 @@ class AbstractUser(UserMixin, BaseAbstractUser):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     USERNAME_FIELD = 'username'
-
-    @classmethod
-    def __declare_last__(cls):
-        """Validation must be here."""
 
     @property
     def is_authenticated(self):

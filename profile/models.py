@@ -13,9 +13,5 @@ class Profile(InternalAPIMixin, db.Model):
     user_id = db.Column(db.Integer, nullable=False, unique=True)
     payload = db.Column(JSONType, nullable=False, default={})
 
-    @classmethod
-    def __declare_last__(cls):
-        """Validation must be here."""
-
     async def get_user(self):
         return await self.internal_request('login', 'get_user', user_id=self.user_id)

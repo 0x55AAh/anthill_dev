@@ -1,18 +1,24 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
+from sqlalchemy.orm import validates
 from sqlalchemy_utils.types.json import JSONType
+from anthill.framework.utils.translation import translate as _
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.utils.crypto import get_random_string
-import re
+from anthill.framework.core.validators import RegexValidator
 
 
 PROMO_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
-PROMO_RE = re.compile("^[A-Z0-9]{12}$")
+PROMO_LENGTH = 12
 
 
-class Promocode(db.Model):
-    __tablename__ = 'promocodes'
+promo_code_validator = RegexValidator(
+    regex=r'^[A-Z0-9]{12}$', message=_('Promo code is not valid'))
+
+
+class PromoCode(db.Model):
+    __tablename__ = 'promo_codes'
 
     key = db.Column(db.String(255), primary_key=True)
     count = db.Column(db.Integer, nullable=False, default=1)
@@ -26,9 +32,9 @@ class Promocode(db.Model):
 
     @as_future
     def generate_key(self):
-        return get_random_string(12, PROMO_CHARS)
+        return get_random_string(PROMO_LENGTH, PROMO_CHARS)
 
-    @staticmethod
-    def validate_key(key):
-        if not PROMO_RE.match(key):
-            raise ValueError('Promo code is not valid')
+    @validates('key')
+    def validate_key(self, key, value):
+        promo_code_validator(value)
+        return value
