@@ -92,7 +92,7 @@
     content: "#";
 }
 
-.kolobok-1:before {
+.kolobok-mocking:before {
     content: "$";
 }
 
@@ -124,7 +124,7 @@
     content: "+";
 }
 
-.kolobok-1:before {
+.kolobok-cray:before {
     content: "-";
 }
 
@@ -140,7 +140,7 @@
     content: ".";
 }
 
-.kolobok-1:before {
+.kolobok-good:before {
     content: ",";
 }
 
