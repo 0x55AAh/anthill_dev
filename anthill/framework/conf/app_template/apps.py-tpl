@@ -1,8 +1,8 @@
-from anthill.platform.apps import BaseAnthillApplication
+from anthill.framework.apps import Application
 import logging
 
 logger = logging.getLogger('anthill.application')
 
 
-class AnthillApplication(BaseAnthillApplication):
+class AnthillApplication(Application):
     """Anthill default application."""

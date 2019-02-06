@@ -1,5 +1,5 @@
-from anthill.platform.services import PlainService
+from anthill.framework.core.servers import BaseService
 
 
-class Service(PlainService):
+class Service(BaseService):
     """Anthill default service."""

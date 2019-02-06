@@ -4,20 +4,19 @@ from tornado.web import (
     HTTPError)
 from tornado.websocket import WebSocketHandler as BaseWebSocketHandler
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.http import HttpGoneError
+from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.sessions.handlers import SessionHandlerMixin
 from anthill.framework.utils.debug.report import ExceptionReporter
 from anthill.framework.utils.format import bytes2human
 from anthill.framework.utils.translation import default_locale
-from anthill.framework.context_processors import build_context_from_context_processors
 from anthill.framework.utils.module_loading import import_string
+from anthill.framework.utils.urls import build_absolute_uri
+from anthill.framework.utils.serializer import AlchemyJSONEncoder
+from anthill.framework.http import HttpGoneError
 from anthill.framework.conf import settings
 from tornado import httputil
 import json
 import logging
-
-from anthill.framework.utils.urls import build_absolute_uri
-from anthill.platform.api.rest.encoders import AlchemyJSONEncoder
 
 
 class TranslationHandlerMixin:

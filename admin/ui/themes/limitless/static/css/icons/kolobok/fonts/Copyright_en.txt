@@ -1,0 +1,19 @@
+Font KOLOBOK_smiles
+
+Author: Sergeant007
+http://4url.ru/11633
+
+Font KOLOBOK_smiles based on the "HD Smiley" Sergei (StarWind) Egorov and "Kolobok Smiles" Mantsurova (Aiwan) Ivan,
+with the consent of the authors and is distributed under license koloboks. Kolobok Smiles is copyrighted work
+registered in the US Copyright Office Library of Congress and is protected by national and International Copyright laws.
+
+The font consists of 83h of images of smiles.
+We used the following symbols are available with the standard keyboard:
+1234567890!@#$%^&*()+-=?.,/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz<>;'
+
+
+
+Copyright © 2011-2012 Sergeant007
+Copyright © 2010 StarWind
+Copyright © 2004-2010 Kolobok Smiles, Ivan Mantsurov
+http://www.kolobok.us

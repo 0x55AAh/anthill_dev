@@ -1,0 +1,374 @@
+@font-face {
+    font-family: 'kolobok';
+    url('fonts/kolobok.ttf?3p0rtw') format('truetype'),
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="kolobok-"], [class*=" kolobok-"] {
+    font-family: 'kolobok';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    min-width: 1em;
+    display: inline-block;
+    text-align: center;
+    font-size: 16px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.kolobok-2x {
+    font-size: 32px;
+}
+
+.kolobok-3x {
+    font-size: 48px;
+}
+
+.kolobok-bordered {
+    padding: 5px;
+    border: 2px solid;
+    border-radius: 50%;
+}
+
+.kolobok-smile:before {
+    content: "1";
+}
+
+.kolobok-sad:before {
+    content: "2";
+}
+
+.kolobok-wink:before {
+    content: "3";
+}
+
+.kolobok-blum2:before {
+    content: "4";
+}
+
+.kolobok-dirol:before {
+    content: "5";
+}
+
+.kolobok-biggrin:before {
+    content: "6";
+}
+
+.kolobok-blush:before {
+    content: "7";
+}
+
+.kolobok-shock:before {
+    content: "8";
+}
+
+.kolobok-9:before {
+    content: "9";
+}
+
+.kolobok-angel:before {
+    content: "0";
+}
+
+.kolobok-agressive:before {
+    content: "!";
+}
+
+.kolobok-sorry2:before {
+    content: "@";
+}
+
+.kolobok-beee:before {
+    content: "#";
+}
+
+.kolobok-1:before {
+    content: "$";
+}
+
+.kolobok-diablo:before {
+    content: "%";
+}
+
+.kolobok-new-russian:before {
+    content: "^";
+}
+
+.kolobok-music:before {
+    content: "&";
+}
+
+.kolobok-stop:before {
+    content: "*";
+}
+
+.kolobok-wacko2:before {
+    content: "(";
+}
+
+.kolobok-ok:before {
+    content: ")";
+}
+
+.kolobok-kiss3:before {
+    content: "+";
+}
+
+.kolobok-1:before {
+    content: "-";
+}
+
+.kolobok-secret:before {
+    content: "=";
+}
+
+.kolobok-mamba:before {
+    content: "?";
+}
+
+.kolobok-drinks:before {
+    content: ".";
+}
+
+.kolobok-1:before {
+    content: ",";
+}
+
+.kolobok-help:before {
+    content: "/";
+}
+
+.kolobok-give-rose:before {
+    content: "A";
+}
+
+.kolobok-vava:before {
+    content: "B";
+}
+
+.kolobok-victory:before {
+    content: "C";
+}
+
+.kolobok-1:before {
+    content: "D";
+}
+
+.kolobok-1:before {
+    content: "E";
+}
+
+.kolobok-1:before {
+    content: "F";
+}
+
+.kolobok-1:before {
+    content: "G";
+}
+
+.kolobok-bb:before {
+    content: "H";
+}
+
+.kolobok-1:before {
+    content: "I";
+}
+
+.kolobok-1:before {
+    content: "J";
+}
+
+.kolobok-1:before {
+    content: "K";
+}
+
+.kolobok-1:before {
+    content: "L";
+}
+
+.kolobok-acute:before {
+    content: "M";
+}
+
+.kolobok-dash1:before {
+    content: "N";
+}
+
+.kolobok-mail1:before {
+    content: "O";
+}
+
+.kolobok-preved:before {
+    content: "P";
+}
+
+.kolobok-1:before {
+    content: "Q";
+}
+
+.kolobok-pardon:before {
+    content: "R";
+}
+
+.kolobok-nea:before {
+    content: "S";
+}
+
+.kolobok-unknown:before {
+    content: "T";
+}
+
+.kolobok-rolf:before {
+    content: "U";
+}
+
+.kolobok-air-kiss:before {
+    content: "V";
+}
+
+.kolobok-bad:before {
+    content: "W";
+}
+
+.kolobok-boredom:before {
+    content: "X";
+}
+
+.kolobok-fool:before {
+    content: "Y";
+}
+
+.kolobok-tease:before {
+    content: "Z";
+}
+
+.kolobok-big-boss:before {
+    content: "a";
+}
+
+.kolobok-curtsey:before {
+    content: "b";
+}
+
+.kolobok-feminist:before {
+    content: "c";
+}
+
+.kolobok-friends:before {
+    content: "d";
+}
+
+.kolobok-gamer4:before {
+    content: "e";
+}
+
+.kolobok-1:before {
+    content: "f";
+}
+
+.kolobok-1:before {
+    content: "g";
+}
+
+.kolobok-1:before {
+    content: "h";
+}
+
+.kolobok-1:before {
+    content: "i";
+}
+
+.kolobok-1:before {
+    content: "j";
+}
+
+.kolobok-1:before {
+    content: "k";
+}
+
+.kolobok-1:before {
+    content: "l";
+}
+
+.kolobok-give-heart2:before {
+    content: "m";
+}
+
+.kolobok-hi:before {
+    content: "n";
+}
+
+.kolobok-i-m-so-happy:before {
+    content: "o";
+}
+
+.kolobok-ireful1:before {
+    content: "p";
+}
+
+.kolobok-king:before {
+    content: "q";
+}
+
+.kolobok-lazy:before {
+    content: "r";
+}
+
+.kolobok-moil:before {
+    content: "s";
+}
+
+.kolobok-paint2:before {
+    content: "t";
+}
+
+.kolobok-pleasantry:before {
+    content: "u";
+}
+
+.kolobok-popcorn1:before {
+    content: "v";
+}
+
+.kolobok-punish:before {
+    content: "w";
+}
+
+.kolobok-scare:before {
+    content: "x";
+}
+
+.kolobok-search:before {
+    content: "y";
+}
+
+.kolobok-vampire:before {
+    content: "z";
+}
+
+.kolobok-1:before {
+    content: "<";
+}
+
+.kolobok-1:before {
+    content: ">";
+}
+
+.kolobok-1:before {
+    content: ";";
+}
+
+.kolobok-1:before {
+    content: "'";
+}
+

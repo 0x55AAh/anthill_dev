@@ -1,0 +1,20 @@
+Font KOLOBOK_smiles
+
+Автор: Sergeant007
+http://4url.ru/11633
+
+Шрифт KOLOBOK_smiles создан на основе "HD смайлов" Сергея (StarWind) Егорова и "Kolobok Smiles" Манцурова (Aiwan) Ивана
+с согласия авторов и распространяется согласно лицензионному соглашению колобков. Kolobok Smiles - официально
+зарегистрированные авторские произведения в Бюро по авторским правам США (The U.S. Copyright Office) при Библиотеке
+Конгресса США и охраняются международным и национальным авторским правом.
+
+Шрифт состоит из 83х изображений смайлов.
+Были использованы следующие символы, доступные со стандартной клавиатуры:
+1234567890!@#$%^&*()+-=?.,/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz<>;'
+
+
+
+Copyright © 2011-2012 Sergeant007
+Copyright © 2010 StarWind
+Copyright © 2004-2010 Kolobok Smiles, Ivan Mantsurov
+http://www.kolobok.us
