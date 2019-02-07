@@ -212,3 +212,8 @@ SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
 # LOGGING_ROOT_DIR = '/var/log/anthill'
 LOGGING_ROOT_DIR = '../'
 USER_LOGGING_ROOT_DIR = os.path.join(LOGGING_ROOT_DIR, 'users')
+
+
+UPDATES = {
+    'BACKEND': 'anthill.platform.services.update.backends.git.Backend'
+}

@@ -1,11 +1,18 @@
-class UpdateManager:
-    schemes = ('git', 'pip', 'pip+git')
+from anthill.framework.conf import settings
+from anthill.framework.utils.module_loading import import_string
 
-    def __init__(self, scheme='git'):
-        self.scheme = scheme
+
+UPDATES_SETTINGS = getattr(settings, 'UPDATES', {})
+UPLOAD_BACKEND = UPDATES_SETTINGS.get('BACKEND', 'anthill.platform.services.update.backends.git.Backend')
+
+backend = import_string(UPLOAD_BACKEND)
+
+
+class UpdateManager:
+    backend = backend
 
     async def versions(self):
-        pass
+        return self.backend.versions()
 
     async def current_version(self):
         pass
