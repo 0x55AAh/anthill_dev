@@ -3,22 +3,14 @@ from anthill.framework.utils.module_loading import import_string
 
 
 UPDATES_SETTINGS = getattr(settings, 'UPDATES', {})
-UPLOAD_BACKEND = UPDATES_SETTINGS.get('BACKEND', 'anthill.platform.services.update.backends.git.Backend')
+UPDATES_BACKEND = UPDATES_SETTINGS.get(
+    'BACKEND', 'anthill.platform.services.update.backends.git.Backend')
 
-backend = import_string(UPLOAD_BACKEND)
+backend_class = import_string(UPDATES_BACKEND)
 
 
 class UpdateManager:
-    backend = backend
+    _backend = backend_class()
 
-    async def versions(self):
-        return self.backend.versions()
-
-    async def current_version(self):
-        pass
-
-    async def check_updates(self):
-        pass
-
-    async def update(self, version=None):
-        pass
+    def __getattr__(self, item):
+        return getattr(self._backend, item)

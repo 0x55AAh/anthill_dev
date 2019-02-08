@@ -168,9 +168,9 @@ def reload(api_: InternalAPI, **options):
 
 
 @as_internal()
-def update(api_: InternalAPI, version: Optional[str], **options):
+async def update(api_: InternalAPI, version: Optional[str], **options):
     update_manager = api.service.update_manager
-    update_manager.update(version)
+    await update_manager.update(version)
 
 
 class BaseInternalConnection(Singleton):

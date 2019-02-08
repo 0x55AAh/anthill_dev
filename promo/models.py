@@ -54,12 +54,12 @@ class PromoCode(db.Model):
         return self.expires <= timezone.now()
 
     @hybrid_property
-    def awailable(self):
+    def available(self):
         return self.count > 0 and not self.expired
 
     async def use(self, commit=True):
         if not self.awailable:
-            raise ValueError('Promo code is not awailable')
+            raise ValueError('Promo code is not available')
         self.count -= 1
         await self.save(commit=commit)
         return self.payload
