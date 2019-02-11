@@ -198,6 +198,8 @@ class BaseInternalConnection(Singleton):
         if self.channel_receive:
             while True:
                 message = await self.channel_receive()
+                if not message.get('type', None):
+                    raise ValueError('Worker received message with no type.')
                 await self.on_message(message)
 
     async def connect(self) -> None:

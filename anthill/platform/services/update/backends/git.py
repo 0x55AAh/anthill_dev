@@ -14,7 +14,7 @@ class Backend(BaseBackend):
         self._root = settings.BASE_DIR
         # self._repo = git.Repo(self._root)
 
-        logger.info('Git updates activated')
+        logger.info('Git updates enabled.')
 
     @as_future
     def versions(self) -> List[str]:
