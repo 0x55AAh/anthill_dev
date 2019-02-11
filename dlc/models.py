@@ -3,12 +3,10 @@
 from anthill.framework.db import db
 from anthill.framework.core.files.storage import default_storage
 from sqlalchemy_utils.types.json import JSONType
-from sqlalchemy.schema import UniqueConstraint
 from dlc.deploy import Deployment
 import enum
 import hashlib
 import binascii
-import ctypes
 import pyhash
 
 
@@ -31,8 +29,7 @@ class Hasher:
         return hashlib.sha256(self.data).hexdigest()
 
     def crc32(self):
-        v = binascii.crc32(self.data)
-        return int(ctypes.c_uint(v).value)
+        return binascii.crc32(self.data) & 0xffffffff
 
     def super_fast_hash(self):
         return pyhash.super_fast_hash()(self.data)
