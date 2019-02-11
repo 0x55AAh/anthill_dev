@@ -48,6 +48,8 @@ class Event(db.Model):
     on_start_task_id = db.Column(UUIDType(binary=False))
     on_finish_task_id = db.Column(UUIDType(binary=False))
 
+    participations = db.relationship('EventParticipation', backref='event')
+
     @classmethod
     def _schema(cls):
         class Meta:
@@ -196,13 +198,9 @@ class EventParticipation(InternalAPIMixin, db.Model):
     status = db.Column(db.Enum(EventParticipationStatus))
     payload = db.Column(JSONType, nullable=False, default={})
     user_id = db.Column(db.Integer, nullable=False)
-    event_id = db.Column(db.ForeignKey('events.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
 
-    event = db.relationship('Event',
-                            backref='participations',
-                            single_parent=True)
-
-    async def status_changed_notify(self):
+    async def on_status_changed(self):
         user = await self.get_user()
         msg = {
             'type': 'STATUS_CHANGED',
@@ -217,17 +215,18 @@ class EventParticipation(InternalAPIMixin, db.Model):
 @listens_for(EventParticipation.status, 'set', active_history=True)
 def on_event_participation_status_changed(target, value, oldvalue, initiator):
     if value != oldvalue:
-        IOLoop.current().add_callback(target.status_changed_notify)
+        IOLoop.current().add_callback(target.on_status_changed)
 
 
 class EventGenerator(db.Model):
     __tablename__ = 'event_generators'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    pool_id = db.Column(db.Integer)
+    pool_id = db.Column(db.Integer, db.ForeignKey('event_generator_pools.id'))
 
 
 class EventGeneratorPool(db.Model):
     __tablename__ = 'event_generator_pools'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    generators = db.relationship('EventGenerator', backref='pool')
