@@ -185,7 +185,7 @@ class EventCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(512), nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
-    events = db.relationship('Event', backref='event')
+    events = db.relationship('Event', backref='category')
 
 
 class EventParticipation(InternalAPIMixin, db.Model):
