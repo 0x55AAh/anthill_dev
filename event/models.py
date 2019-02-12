@@ -38,7 +38,7 @@ class Event(db.Model):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    category_id = db.Column(db.Integer)
+    category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
     start_at = db.Column(db.DateTime, nullable=False)
     finish_at = db.Column(db.DateTime, nullable=False)
@@ -185,6 +185,7 @@ class EventCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(512), nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
+    events = db.relationship('Event', backref='event')
 
 
 class EventParticipation(InternalAPIMixin, db.Model):
