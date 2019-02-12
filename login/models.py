@@ -13,12 +13,13 @@ class User(InternalAPIMixin, AbstractUser):
     async def get_profile(self):
         return await self.internal_request('profile', 'get_profile', user_id=self.id)
 
-    async def send_message(self, message, callback=None, client=None):
+    async def send_message(self, message, callback=None, client=None, content_type=None):
         """Send a message to this user."""
         create_personal_group = messenger_settings.PERSONAL_GROUP_FUNCTION
         data = {
             'data': message,
             'group': create_personal_group(self.id),
+            'content_type': content_type,
             'trusted': True
         }
         await send_message(

@@ -86,13 +86,14 @@ class RemoteUser:
         """Send an email to this user."""
         await send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    async def send_message(self, message, callback=None, client=None):
+    async def send_message(self, message, callback=None, client=None, content_type=None):
         """Send a message to this user."""
         create_personal_group = messenger_settings.PERSONAL_GROUP_FUNCTION
         data = {
             'data': message,
             'group': create_personal_group(self.id),
-            'trusted': True
+            'content_type': content_type,
+            'trusted': True,
         }
         await send_message(
             event='create_message',

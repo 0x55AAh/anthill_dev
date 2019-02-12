@@ -1,6 +1,6 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
-from anthill.framework.db import db
+from anthill.framework.db import db, ma
 from anthill.framework.utils import timezone
 from anthill.framework.utils.translation import translate as _
 from anthill.framework.utils.asynchronous import as_future
@@ -14,12 +14,15 @@ from anthill.platform.core.celery import app as celery_app
 from tornado.ioloop import IOLoop
 from typing import Optional
 from datetime import timedelta
-import marshmallow_sqlalchemy as ma
 import enum
 import logging
+import json
 
 
 logger = logging.getLogger('anthill.application')
+
+
+EVENT_PARTICIPATION_STATUS_CHANGED = 'EVENT_PARTICIPATION_STATUS_CHANGED'
 
 
 @enum.unique
@@ -32,6 +35,21 @@ class EventParticipationStatus(enum.Enum):
 class EventStatus(enum.Enum):
     STARTED = 0
     FINISHED = 1
+
+
+class EventCategory(db.Model):
+    __tablename__ = 'event_categories'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(512), nullable=False)
+    payload = db.Column(JSONType, nullable=False, default={})
+    events = db.relationship('Event', backref='category')
+    generators = db.relationship('EventGenerator', backref='category')
+
+    class Schema(ma.Schema):
+        class Meta:
+            model = EventCategory
+            fields = ('id', 'name', 'payload')
 
 
 class Event(db.Model):
@@ -50,15 +68,15 @@ class Event(db.Model):
 
     participations = db.relationship('EventParticipation', backref='event')
 
-    @classmethod
-    def _schema(cls):
+    class Schema(ma.Schema):
+        category = ma.Nested(EventCategory.Schema)
+
         class Meta:
-            model = cls
-            fields = ('id', 'finish_at', 'payload')
+            model = Event
+            fields = ('id', 'start_at', 'finish_at', 'payload')
 
-        return type('Schema', (ma.ModelSchema,), {'Meta': Meta})
-
-    Schema = _schema
+    def dumps(self) -> dict:
+        return self.Schema().dump(self).data
 
     @hybrid_property
     def active(self) -> bool:
@@ -82,9 +100,6 @@ class Event(db.Model):
         if self.finish_at >= timezone.now():
             return self.finish_at - timezone.now()
 
-    def dumps(self):
-        return self.Schema().dump(self).data
-
     async def on_start(self) -> None:
         # TODO: bulk get_users request
         for p in self.participations:
@@ -93,7 +108,8 @@ class Event(db.Model):
                 'type': EventStatus.STARTED.name,
                 'data': self.dumps()
             }
-            await user.send_message(msg)
+            await user.send_message(message=json.dumps(msg),
+                                    content_type='application/json')
 
     async def on_finish(self) -> None:
         # TODO: bulk get_users request
@@ -103,10 +119,11 @@ class Event(db.Model):
                 'type': EventStatus.FINISHED.name,
                 'data': self.dumps()
             }
-            await user.send_message(msg)
+            await user.send_message(message=json.dumps(msg),
+                                    content_type='application/json')
 
     @as_future
-    def join(self, user_id):
+    def join(self, user_id: str) -> None:
         kwargs = dict(
             user_id=user_id,
             event_id=self.id,
@@ -115,7 +132,7 @@ class Event(db.Model):
         EventParticipation.create(**kwargs)
 
     @as_future
-    def leave(self, user_id):
+    def leave(self, user_id: str) -> None:
         kwargs = dict(
             user_id=user_id,
             event_id=self.id,
@@ -179,15 +196,6 @@ def on_event_delete(mapper, connection, target):
         revoke(celery_app, target.on_finish_task_id)
 
 
-class EventCategory(db.Model):
-    __tablename__ = 'event_categories'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(512), nullable=False)
-    payload = db.Column(JSONType, nullable=False, default={})
-    events = db.relationship('Event', backref='category')
-
-
 class EventParticipation(InternalAPIMixin, db.Model):
     __tablename__ = 'event_participations'
     __table_args__ = (
@@ -201,13 +209,23 @@ class EventParticipation(InternalAPIMixin, db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
 
-    async def on_status_changed(self):
+    class Schema(ma.Schema):
+        class Meta:
+            model = EventParticipation
+            fields = ('payload', 'created_at', 'status')
+
+    def dumps(self) -> dict:
+        return self.Schema().dump(self).data
+
+    async def on_status_changed(self) -> None:
         user = await self.get_user()
         msg = {
-            'type': 'STATUS_CHANGED',
-            'status': self.status
+            'type': EVENT_PARTICIPATION_STATUS_CHANGED,
+            'data': self.dumps(),
+            'event': self.event.dumps()
         }
-        await user.send_message(msg)
+        await user.send_message(message=json.dumps(msg),
+                                content_type='application/json')
 
     async def get_user(self):
         return await self.internal_request('login', 'get_user', user_id=self.user_id)
@@ -224,6 +242,25 @@ class EventGenerator(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pool_id = db.Column(db.Integer, db.ForeignKey('event_generator_pools.id'))
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    plan = db.Column(db.String(64))
+
+    # Event parameters
+    category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
+    start_at = db.Column(db.DateTime, nullable=False)
+    finish_at = db.Column(db.DateTime, nullable=False)
+    payload = db.Column(JSONType, nullable=False, default={})
+
+    @as_future
+    def generate(self, is_active=True):
+        kwargs = {
+            'category_id': self.category_id,
+            'start_at': self.start_at,
+            'finish_at': self.finish_at,
+            'payload': self.payload,
+            'is_active': is_active,
+        }
+        return Event.create(**kwargs)
 
 
 class EventGeneratorPool(db.Model):
