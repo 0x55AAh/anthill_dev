@@ -71,7 +71,7 @@ class MediaDeploymentMethod(DeploymentMethod):
     def __init__(self):
         super().__init__()
         self.upload_url = None
-        IOLoop.current().add_callback(set_upload_url)
+        IOLoop.current().add_callback(self.set_upload_url)
 
     async def set_upload_url(self):
         self.upload_url = await self.internal_request('media', 'get_upload_url')

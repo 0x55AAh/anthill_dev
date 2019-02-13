@@ -2,14 +2,16 @@
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db, ma
 from anthill.framework.utils import timezone
-from anthill.framework.utils.translation import translate as _
 from anthill.framework.utils.asynchronous import as_future
+from anthill.framework.utils.translation import translate as _
 from anthill.platform.api.internal import InternalAPIMixin
 from sqlalchemy_utils.types.json import JSONType
 from sqlalchemy_utils.types.uuid import UUIDType
+from sqlalchemy_utils.types.choice import ChoiceType
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
 from celery.worker.control import revoke
+from celery.schedules import crontab
 from anthill.platform.core.celery import app as celery_app
 from tornado.ioloop import IOLoop
 from typing import Optional
@@ -23,12 +25,6 @@ logger = logging.getLogger('anthill.application')
 
 
 EVENT_PARTICIPATION_STATUS_CHANGED = 'EVENT_PARTICIPATION_STATUS_CHANGED'
-
-
-@enum.unique
-class EventParticipationStatus(enum.Enum):
-    JOINED = 0
-    LEAVED = 1
 
 
 @enum.unique
@@ -46,10 +42,13 @@ class EventCategory(db.Model):
     events = db.relationship('Event', backref='category')
     generators = db.relationship('EventGenerator', backref='category')
 
-    class Schema(ma.Schema):
-        class Meta:
-            model = EventCategory
-            fields = ('id', 'name', 'payload')
+    def __init__(self, *args, **kwargs):
+        class _Schema(ma.Schema):
+            class Meta:
+                model = self.__class__
+                fields = ('id', 'name', 'payload')
+        self.Schema = _Schema
+        super().__init__(*args, **kwargs)
 
 
 class Event(db.Model):
@@ -68,12 +67,13 @@ class Event(db.Model):
 
     participations = db.relationship('EventParticipation', backref='event')
 
-    class Schema(ma.Schema):
-        category = ma.Nested(EventCategory.Schema)
-
-        class Meta:
-            model = Event
-            fields = ('id', 'start_at', 'finish_at', 'payload')
+    def __init__(self, *args, **kwargs):
+        class _Schema(ma.Schema):
+            class Meta:
+                model = self.__class__
+                fields = ('id', 'start_at', 'finish_at', 'payload', 'category')
+        self.Schema = _Schema
+        super().__init__(*args, **kwargs)
 
     def dumps(self) -> dict:
         return self.Schema().dump(self).data
@@ -124,23 +124,14 @@ class Event(db.Model):
 
     @as_future
     def join(self, user_id: str) -> None:
-        kwargs = dict(
-            user_id=user_id,
-            event_id=self.id,
-            status=EventParticipationStatus.JOINED.name
-        )
-        EventParticipation.create(**kwargs)
+        EventParticipation.create(user_id=user_id, event_id=self.id, status='joined')
 
     @as_future
     def leave(self, user_id: str) -> None:
-        kwargs = dict(
-            user_id=user_id,
-            event_id=self.id,
-            status=EventParticipationStatus.LEAVED.name
-        )
+        kwargs = dict(user_id=user_id, event_id=self.id, status='joined')
         p = EventParticipation.query.filter_by(**kwargs).first()
         if p is not None:
-            p.status = 'LEAVED'
+            p.status = 'leaved'
             p.save()
         else:
             logger.warning('User (%s) is not joined to event (%s), '
@@ -202,17 +193,25 @@ class EventParticipation(InternalAPIMixin, db.Model):
         db.UniqueConstraint('user_id', 'event_id'),
     )
 
+    STATUSES = (
+        ('joined', _('Joined')),
+        ('leaved', _('Leaved'))
+    )
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
-    status = db.Column(db.Enum(EventParticipationStatus))
+    status = db.Column(ChoiceType(STATUSES))
     payload = db.Column(JSONType, nullable=False, default={})
     user_id = db.Column(db.Integer, nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
 
-    class Schema(ma.Schema):
-        class Meta:
-            model = EventParticipation
-            fields = ('payload', 'created_at', 'status')
+    def __init__(self, *args, **kwargs):
+        class _Schema(ma.Schema):
+            class Meta:
+                model = self.__class__
+                fields = ('payload', 'created_at', 'status', 'event')
+        self.Schema = _Schema
+        super().__init__(*args, **kwargs)
 
     def dumps(self) -> dict:
         return self.Schema().dump(self).data
@@ -221,8 +220,7 @@ class EventParticipation(InternalAPIMixin, db.Model):
         user = await self.get_user()
         msg = {
             'type': EVENT_PARTICIPATION_STATUS_CHANGED,
-            'data': self.dumps(),
-            'event': self.event.dumps()
+            'data': self.dumps()
         }
         await user.send_message(message=json.dumps(msg),
                                 content_type='application/json')
@@ -243,6 +241,7 @@ class EventGenerator(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pool_id = db.Column(db.Integer, db.ForeignKey('event_generator_pools.id'))
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    task_id = db.Column(UUIDType(binary=False))
     plan = db.Column(db.String(64))
 
     # Event parameters
@@ -252,7 +251,7 @@ class EventGenerator(db.Model):
     payload = db.Column(JSONType, nullable=False, default={})
 
     @as_future
-    def generate(self, is_active=True):
+    def next(self, is_active=True):
         kwargs = {
             'category_id': self.category_id,
             'start_at': self.start_at,
@@ -262,9 +261,60 @@ class EventGenerator(db.Model):
         }
         return Event.create(**kwargs)
 
+    def get_plan(self):
+        return self.pool.plan or self.plan
+
+
+@listens_for(EventGenerator, 'after_insert')
+def on_create_event_generator(mapper, connection, target):
+    from event import tasks
+
+    if not target.is_active:
+        return
+
+    @celery_app.on_after_configure.connect
+    def start_generator(sender, **kwargs):
+        key = sender.add_periodic_task(
+            crontab(hour=7, minute=30, day_of_week=1),
+            tasks.on_event_generator_start.s(target.id),
+        )
+        # target.task_id = task.id
+
+
+@listens_for(EventGenerator, 'after_delete')
+def on_delete_event_generator(mapper, connection, target):
+    revoke(celery_app, target.task_id)
+
+
+@listens_for(EventGenerator, 'after_update')
+def on_update_event_generator(mapper, connection, target):
+    from event import tasks
+
+    if not target.is_active:
+        return
+
+    @celery_app.on_after_configure.connect
+    def start_generator(sender, **kwargs):
+        key = sender.add_periodic_task(
+            crontab(hour=7, minute=30, day_of_week=1),
+            tasks.on_event_generator_start.s(target.id),
+        )
+        # target.task_id = task.id
+
 
 class EventGeneratorPool(db.Model):
     __tablename__ = 'event_generator_pools'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     generators = db.relationship('EventGenerator', backref='pool')
+    plan = db.Column(db.String(64))
+
+
+@listens_for(EventGeneratorPool, 'after_delete')
+def on_delete_event_generator_pool(mapper, connection, target):
+    pass
+
+
+@listens_for(EventGeneratorPool, 'after_update')
+def on_update_event_generator_pool(mapper, connection, target):
+    pass

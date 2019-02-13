@@ -2,6 +2,8 @@
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
 from anthill.framework.core.files.storage import default_storage
+from anthill.framework.utils.translation import translate as _
+from sqlalchemy_utils.types.choice import ChoiceType
 from sqlalchemy_utils.types.json import JSONType
 from dlc.deploy import Deployment
 import enum
@@ -43,7 +45,7 @@ class DeploymentMethod(db.Model):
     Names = enum.Enum('Names', list(Deployment().methods_dict))
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.Enum(Names), nullable=False)
+    name = db.Column(ChoiceType(Names, impl=db.Integer()), nullable=False)
     data = db.Column(JSONType, nullable=False)
     applications = db.relationship(
         'Application', backref=db.backref('deployment_method'), lazy='dynamic',
@@ -84,17 +86,16 @@ class ApplicationVersion(db.Model):
 
 class BundlesGroup(db.Model):
     __tablename__ = 'bundle_groups'
-    __table_args__ = ()
 
-    @enum.unique
-    class Statuses(enum.Enum):
-        CREATED = 0
-        PUBLISHING = 1
-        PUBLISHED = 2
-        ERROR = 3
+    STATUSES = (
+        ('created', _('Created')),
+        ('publishing', _('Publishing')),
+        ('published', _('Published')),
+        ('error', _('Error')),
+    )
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    status = db.Column(db.Enum(Statuses), nullable=False, default=Statuses.CREATED)
+    status = db.Column(ChoiceType(STATUSES), nullable=False, default='created')
     hash_types = db.Column(JSONType, nullable=False)
     bundles = db.relationship(
         'Bundle', backref=db.backref('group'), lazy='dynamic',
@@ -105,15 +106,14 @@ class BundlesGroup(db.Model):
 
 class Bundle(db.Model):
     __tablename__ = 'bundles'
-    __table_args__ = ()
 
-    @enum.unique
-    class Statuses(enum.Enum):
-        CREATED = 0
-        UPLOADED = 1
-        DELIVERING = 2
-        DELIVERED = 3
-        ERROR = 4
+    STATUSES = (
+        ('created', _('Created')),
+        ('uploaded', _('Uploaded')),
+        ('delivering', _('Delivering')),
+        ('delivered', _('Delivered')),
+        ('error', _('Error')),
+    )
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
@@ -121,7 +121,7 @@ class Bundle(db.Model):
     filename = db.Column(db.String(128), nullable=False, unique=True)
     hash = db.Column(JSONType, nullable=False)
     filter = db.Column(JSONType, nullable=False)
-    status = db.Column(db.Enum(Statuses), nullable=False, default=Statuses.CREATED)
+    status = db.Column(ChoiceType(STATUSES), nullable=False, default='created')
     group_id = db.Column(
         db.Integer, db.ForeignKey('bundle_groups.id'), nullable=False, index=True)
 

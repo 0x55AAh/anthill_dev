@@ -4,31 +4,31 @@ from anthill.framework.db import db
 from anthill.framework.conf import settings
 from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future
-from anthill.framework.utils.translation import translate as _
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.auth import RemoteUser
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils.types.json import JSONType
+from sqlalchemy_utils.types.choice import ChoiceType
 from datetime import timedelta
 from functools import partial
 from typing import Optional
-import enum
 
 
 DEFAULT_MODERATION_WARNING_THRESHOLD = 3
 
 
-@enum.unique
-class ActionType(enum.Enum):
-    BAN_ACCOUNT = 0
-    HIDE_MESSAGE = 1
+ACTION_TYPES = (
+    ('ban_account', _('Ban account')),
+    ('hide_message', _('Hide message'))
+)
 
 
 class BaseModerationAction(InternalAPIMixin, db.Model):
     __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    action_type = db.Column(db.Enum(ActionType), nullable=False)
+    action_type = db.Column(ChoiceType(ACTION_TYPES), nullable=False)
     moderator_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
@@ -181,6 +181,6 @@ class ModerationWarningThreshold(db.Model):
     __table_args__ = ()
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    action_type = db.Column(db.Enum(ActionType), unique=True, nullable=False)
+    action_type = db.Column(ChoiceType(ACTION_TYPES), unique=True, nullable=False)
     value = db.Column(db.Integer, nullable=False,
                       default=DEFAULT_MODERATION_WARNING_THRESHOLD)

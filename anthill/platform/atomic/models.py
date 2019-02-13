@@ -1,30 +1,29 @@
 from anthill.framework.db import db
 from anthill.framework.utils import timezone
-from sqlalchemy_utils.types.uuid import UUIDType
+from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.atomic.exceptions import (
     TransactionError, TransactionTimeoutError, TransactionFinished)
-import enum
+from sqlalchemy_utils.types.uuid import UUIDType
+from sqlalchemy_utils.types.choice import ChoiceType
 import logging
 
 logger = logging.getLogger('anthill.application')
 
 
-@enum.unique
-class Status(enum.Enum):
-    NEW = 0
-    STARTED = 1
-    SUCCESSFUL = 2
-    FAILED = 3
-
-
 class Transaction(db.Model):
     __tablename__ = 'transactions'
-    __table_args__ = ()
+
+    STATUSES = (
+        ('new', _('New')),
+        ('started', _('Started')),
+        ('successful', _('Successful')),
+        ('failed', _('Failed')),
+    )
 
     id = db.Column(UUIDType(binary=False), primary_key=True)
     started = db.Column(db.DateTime, nullable=False, default=timezone.now)
     finished = db.Column(db.DateTime)
-    status = db.Column(db.Enum(Status), nullable=False, default=Status.NEW)
+    status = db.Column(ChoiceType(STATUSES), nullable=False, default='new')
     timeout = db.Column(db.Integer, nullable=False, default=0)
     master = db.Column(db.String(128))  # Name of master service
 
