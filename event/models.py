@@ -5,20 +5,22 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.utils.translation import translate as _
 from anthill.platform.api.internal import InternalAPIMixin
-from sqlalchemy_utils.types.json import JSONType
-from sqlalchemy_utils.types.uuid import UUIDType
-from sqlalchemy_utils.types.choice import ChoiceType
+from anthill.platform.core.celery import app as celery_app
+from sqlalchemy_utils.types import JSONType, UUIDType, ChoiceType
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
+from sqlalchemy.types import TypeDecorator, VARCHAR
 from celery.worker.control import revoke
 from celery.schedules import crontab
-from anthill.platform.core.celery import app as celery_app
+from celery.beat import Scheduler
 from tornado.ioloop import IOLoop
 from typing import Optional
 from datetime import timedelta
 import enum
 import logging
 import json
+import re
+import random
 
 
 logger = logging.getLogger('anthill.application')
@@ -37,18 +39,24 @@ class EventCategory(db.Model):
     __tablename__ = 'event_categories'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(512), nullable=False)
+    name = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(512), nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
     events = db.relationship('Event', backref='category')
     generators = db.relationship('EventGenerator', backref='category')
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.Schema = self.get_schema_class()
+
+    @classmethod
+    def get_schema_class(cls):
         class _Schema(ma.Schema):
             class Meta:
-                model = self.__class__
-                fields = ('id', 'name', 'payload')
-        self.Schema = _Schema
-        super().__init__(*args, **kwargs)
+                model = cls
+                fields = ('id', 'name', 'description', 'payload')
+
+        return _Schema
 
 
 class Event(db.Model):
@@ -56,6 +64,7 @@ class Event(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
+    generator_id = db.Column(db.Integer, db.ForeignKey('event_generators.id'))
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
     start_at = db.Column(db.DateTime, nullable=False)
     finish_at = db.Column(db.DateTime, nullable=False)
@@ -68,12 +77,17 @@ class Event(db.Model):
     participations = db.relationship('EventParticipation', backref='event')
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.Schema = self.get_schema_class()
+
+    @classmethod
+    def get_schema_class(cls):
         class _Schema(ma.Schema):
             class Meta:
-                model = self.__class__
+                model = cls
                 fields = ('id', 'start_at', 'finish_at', 'payload', 'category')
-        self.Schema = _Schema
-        super().__init__(*args, **kwargs)
+
+        return _Schema
 
     def dumps(self) -> dict:
         return self.Schema().dump(self).data
@@ -206,12 +220,17 @@ class EventParticipation(InternalAPIMixin, db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'), nullable=False)
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.Schema = self.get_schema_class()
+
+    @classmethod
+    def get_schema_class(cls):
         class _Schema(ma.Schema):
             class Meta:
                 model = self.__class__
                 fields = ('payload', 'created_at', 'status', 'event')
-        self.Schema = _Schema
-        super().__init__(*args, **kwargs)
+
+        return _Schema
 
     def dumps(self) -> dict:
         return self.Schema().dump(self).data
@@ -235,14 +254,39 @@ def on_event_participation_status_changed(target, value, oldvalue, initiator):
         IOLoop.current().add_callback(target.on_status_changed)
 
 
+class CrontabField(TypeDecorator):
+    impl = VARCHAR(128)
+
+    def process_literal_param(self, value, dialect):
+        pass
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = re.split(r'\s+', value)
+            if len(value) != 5:
+                raise ValueError('Illegal crontab field value: %s' % value)
+            return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            if len(value) != 5:
+                raise ValueError('Illegal crontab field value: %s' % value)
+            return ' '.join(value)
+
+    @property
+    def python_type(self):
+        return self.impl.type.python_type
+
+
 class EventGenerator(db.Model):
     __tablename__ = 'event_generators'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pool_id = db.Column(db.Integer, db.ForeignKey('event_generator_pools.id'))
     is_active = db.Column(db.Boolean, nullable=False, default=True)
-    task_id = db.Column(UUIDType(binary=False))
-    plan = db.Column(db.String(64))
+    last_run_at = db.Column(db.DateTime)
+    total_run_count = db.Column(db.Integer, nullable=False, default=0)
+    generator_plan = db.Column(CrontabField)
 
     # Event parameters
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
@@ -250,71 +294,100 @@ class EventGenerator(db.Model):
     finish_at = db.Column(db.DateTime, nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
 
+    events = db.relationship('Event', backref='generator')
+
     @as_future
-    def next(self, is_active=True):
+    def next(self, is_active=True) -> Event:
+        self.last_run_at = timezone.now()
+        self.total_run_count += 1
+        self.save()
         kwargs = {
             'category_id': self.category_id,
             'start_at': self.start_at,
             'finish_at': self.finish_at,
             'payload': self.payload,
             'is_active': is_active,
+            'generator_id': self.id,
         }
         return Event.create(**kwargs)
 
-    def get_plan(self):
-        return self.pool.plan or self.plan
+    @hybrid_property
+    def plan(self):
+        if self.pool_id is not None:
+            return self.pool.plan or self.generator_plan
+        return self.generator_plan
 
-
-@listens_for(EventGenerator, 'after_insert')
-def on_create_event_generator(mapper, connection, target):
-    from event import tasks
-
-    if not target.is_active:
-        return
-
-    @celery_app.on_after_configure.connect
-    def start_generator(sender, **kwargs):
-        key = sender.add_periodic_task(
-            crontab(hour=7, minute=30, day_of_week=1),
-            tasks.on_event_generator_start.s(target.id),
-        )
-        # target.task_id = task.id
-
-
-@listens_for(EventGenerator, 'after_delete')
-def on_delete_event_generator(mapper, connection, target):
-    revoke(celery_app, target.task_id)
-
-
-@listens_for(EventGenerator, 'after_update')
-def on_update_event_generator(mapper, connection, target):
-    from event import tasks
-
-    if not target.is_active:
-        return
-
-    @celery_app.on_after_configure.connect
-    def start_generator(sender, **kwargs):
-        key = sender.add_periodic_task(
-            crontab(hour=7, minute=30, day_of_week=1),
-            tasks.on_event_generator_start.s(target.id),
-        )
-        # target.task_id = task.id
+    @hybrid_property
+    def active(self) -> bool:
+        if self.pool_id is not None:
+            return self.pool.is_active
+        return self.is_active
 
 
 class EventGeneratorPool(db.Model):
     __tablename__ = 'event_generator_pools'
 
+    RUN_SCHEMES = (
+        ('all', _('All')),
+        ('any', _('Any')),
+    )
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
+    description = db.Column(db.String(512), nullable=False)
     generators = db.relationship('EventGenerator', backref='pool')
-    plan = db.Column(db.String(64))
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    is_follow_generator_plan = db.Column(db.Boolean, nullable=False, default=False)
+    run_scheme = db.Column(ChoiceType(RUN_SCHEMES), default='any')
+    last_run_at = db.Column(db.DateTime)
+    total_run_count = db.Column(db.Integer, nullable=False, default=0)
+    pool_plan = db.Column(CrontabField)
+
+    async def run(self) -> None:
+        self.last_run_at = timezone.now()
+        self.total_run_count += 1
+        generators = await self.prepare_generators()
+        await self._run(generators)
+
+    @as_future
+    def _run(self, generators, is_active=True) -> None:
+        now = timezone.now()
+        events = []
+
+        for gen in generators:
+            gen.last_run_at = now
+            gen.total_run_count += 1
+            kwargs = {
+                'category_id': gen.category_id,
+                'start_at': gen.start_at,
+                'finish_at': gen.finish_at,
+                'payload': gen.payload,
+                'is_active': is_active,
+                'generator_id': gen.id
+            }
+            events.append(Event(**kwargs))
+
+        db.session.bulk_save_objects(events)
+        db.session.commit()
+
+    @as_future
+    def prepare_generators(self) -> list:
+        generators = self.generators.query.filter_by(active=True).all()
+        if self.run_scheme is 'any':
+            return [random.choice(generators)]
+        elif self.run_scheme is 'all':
+            return generators
+        return []
+
+    @hybrid_property
+    def plan(self):
+        if not self.is_follow_generator_plan:
+            return self.pool_plan
 
 
-@listens_for(EventGeneratorPool, 'after_delete')
-def on_delete_event_generator_pool(mapper, connection, target):
+class EventGeneratorSheduler(Scheduler):
     pass
 
 
-@listens_for(EventGeneratorPool, 'after_update')
-def on_update_event_generator_pool(mapper, connection, target):
+class EventGeneratorPoolSheduler(Scheduler):
     pass

@@ -9,11 +9,11 @@ TIME_ZONE = getattr(settings, 'TIME_ZONE', 'UTC')
 
 
 class CeleryMixin:
-    @staticmethod
-    def start_celery():
+    # noinspection PyMethodMayBeStatic
+    def start_celery(self):
         if CELERY_ENABLE:
             logger.debug('Celery status: ENABLED.')
-            with start_worker(app=celery_app, timezone=TIME_ZONE):
+            with start_worker(app=celery_app, timezone=TIME_ZONE, loglevel=settings.DEBUG):
                 pass
         else:
             logger.debug('Celery status: DISABLED.')

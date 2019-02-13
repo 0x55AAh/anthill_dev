@@ -80,6 +80,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False
         },
+        'celery.beat': {
+            'handlers': ['anthill.server'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
         'celery.redirected': {
             'handlers': ['anthill.server'],
             'level': 'DEBUG',

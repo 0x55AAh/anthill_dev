@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-'''
+"""
 #=============================================================================
 #     FileName: schedulers
 #         Desc:
@@ -11,7 +9,7 @@
 #   LastChange: 4/13/16 3:38 PM
 #      History:
 #=============================================================================
-'''
+"""
 import json
 from multiprocessing.util import Finalize
 
@@ -21,7 +19,7 @@ from celery.beat import ScheduleEntry, Scheduler
 from celery.utils.encoding import safe_str
 from celery.utils.log import get_logger
 from celery.utils.timeutils import is_naive
-from model import PeriodicTask, CrontabSchedule, PeriodicTasks, get_session, IntervalSchedule
+from .model import PeriodicTask, CrontabSchedule, PeriodicTasks, get_session, IntervalSchedule
 
 DEFAULT_MAX_INTERVAL = 5
 

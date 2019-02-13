@@ -23,7 +23,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.schema import MetaData
 
 __all__ = [
-    'CrontabSchedule', 'PeriodicTask', 'PeriodicTasks', 'IntervalSchedule'
+    'CrontabSchedule', 'PeriodicTask', 'PeriodicTasks', 'IntervalSchedule', 'get_session'
 ]
 
 

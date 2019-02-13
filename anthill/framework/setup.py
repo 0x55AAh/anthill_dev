@@ -94,7 +94,9 @@ setup(
         'python-socketio',
         'aiohttp',
         'websockets',
-        'six'
+        'six',
+        'passlib',
+        'phonenumbers'
     ],
     extras_require={
 

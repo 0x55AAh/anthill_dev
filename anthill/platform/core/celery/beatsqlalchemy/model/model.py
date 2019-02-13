@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-'''
+"""
 #=============================================================================
 #     FileName: model
 #         Desc:
@@ -11,7 +9,7 @@
 #   LastChange: 4/13/16 3:38 PM
 #      History:
 #=============================================================================
-'''
+"""
 import datetime
 from sqlalchemy.orm import relationship
 from .base import Base

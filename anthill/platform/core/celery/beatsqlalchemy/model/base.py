@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-'''
+"""
 #=============================================================================
 #     FileName: base
 #         Desc:
@@ -11,7 +9,7 @@
 #   LastChange: 4/28/16 9:31 AM
 #      History:
 #=============================================================================
-'''
+"""
 from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -60,5 +58,6 @@ class TimestampModel(object):
             obj = cls(**params)
             created = True
         return obj, created
+
 
 Base = declarative_base(cls=TimestampModel)

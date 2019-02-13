@@ -5,6 +5,7 @@ from anthill.framework.auth import password_validation
 from anthill.framework.auth.hashers import make_password, check_password
 from anthill.framework.auth.backends.db.models import UserMixin
 from anthill.framework.core.mail.asynchronous import send_mail
+from sqlalchemy_utils.types import PasswordType, EmailType, PhoneNumberType
 
 
 class BaseAbstractUser(db.Model):
@@ -13,7 +14,7 @@ class BaseAbstractUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     created = db.Column(db.DateTime, nullable=False, default=timezone.now)
     last_login = db.Column(db.DateTime, nullable=True, default=None)
-    password = db.Column(db.String)
+    password = db.Column(PasswordType)
 
     # Stores the raw password if set_password() is called so that it can
     # be passed to password_changed() after the model is saved.
@@ -80,8 +81,8 @@ class AbstractUser(UserMixin, BaseAbstractUser):
     __abstract__ = True
 
     username = db.Column(db.String(128), nullable=False, unique=True)
-    email = db.Column(db.String(128), nullable=False, unique=True)
-    phone = db.Column(db.String(100), nullable=True)
+    email = db.Column(EmailType, nullable=False, unique=True)
+    phone = db.Column(PhoneNumberType, nullable=True)
     is_superuser = db.Column(db.Boolean, nullable=False, default=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 

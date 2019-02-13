@@ -19,3 +19,5 @@ python-socketio
 aiohttp
 websockets
 six
+passlib
+phonenumbers

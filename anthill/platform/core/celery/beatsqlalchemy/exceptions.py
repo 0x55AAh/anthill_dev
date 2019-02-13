@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-'''
+"""
 #=============================================================================
 #     FileName: exceptions
 #         Desc:
@@ -11,8 +9,7 @@
 #   LastChange: 5/4/16 2:32 PM
 #      History:
 #=============================================================================
-'''
-from __future__ import absolute_import, unicode_literals
+"""
 
 
 class ConstraintError(Exception):

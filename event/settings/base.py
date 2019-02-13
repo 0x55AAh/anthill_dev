@@ -120,6 +120,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False
         },
+        'celery.beat': {
+            'handlers': ['anthill.server'],
+            'level': 'INFO',
+            'propagate': False
+        },
         'celery.redirected': {
             'handlers': ['anthill.server'],
             'level': 'INFO',
@@ -132,6 +137,17 @@ LOGGING = {
         },
     }
 }
+
+##########
+# CELERY #
+##########
+
+# All celery configuration options:
+# http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
+CELERY_SETTINGS.update({
+    # 'beat_scheduler': 'celery.beat:PersistentScheduler',
+    'beat_scheduler': 'event.models:EventGeneratorSheduler',
+})
 
 #########
 # GEOIP #

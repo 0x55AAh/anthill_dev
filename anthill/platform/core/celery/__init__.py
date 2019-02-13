@@ -7,15 +7,16 @@ __all__ = ['app', 'start_worker']
 
 SETTINGS = getattr(settings, 'CELERY_SETTINGS', {})
 
-# app_label = settings.APPLICATION_NAME.rpartition('.')[2]
-app_label = settings.APPLICATION_NAME
+app_label = settings.APPLICATION_NAME.rpartition('.')[2]
 default_entity_name = 'celery.%s' % app_label
 
 SETTINGS.update({
     'task_default_queue': default_entity_name,
     'task_default_routing_key': default_entity_name,
     'task_default_exchange': default_entity_name,
-    'imports': ['%s.tasks' % settings.APPLICATION_NAME]
+    'imports': [
+        '%s.tasks' % settings.APPLICATION_NAME,
+    ]
 })
 
 app = Celery(main=app_label, loader=Loader)

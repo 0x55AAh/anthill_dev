@@ -27,7 +27,7 @@ def on_event_finish(event_id):
 
 
 @app.task(ignore_result=True)
-def on_event_generator_start(event_generator_id):
+def event_generator_run(event_generator_id):
     from event.models import EventGenerator
     event_generator = EventGenerator.query.get(event_generator_id)
     if event_generator is not None:
