@@ -227,7 +227,7 @@ class EventParticipation(InternalAPIMixin, db.Model):
     def get_schema_class(cls):
         class _Schema(ma.Schema):
             class Meta:
-                model = self.__class__
+                model = cls
                 fields = ('payload', 'created_at', 'status', 'event')
 
         return _Schema

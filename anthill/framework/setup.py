@@ -95,7 +95,6 @@ setup(
         'aiohttp',
         'websockets',
         'six',
-        'passlib',
         'phonenumbers'
     ],
     extras_require={
