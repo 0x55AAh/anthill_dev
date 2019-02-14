@@ -12,7 +12,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from celery.worker.control import revoke
-from celery.beat import Scheduler
 from tornado.ioloop import IOLoop
 from typing import Optional
 from datetime import timedelta
@@ -254,7 +253,7 @@ def on_event_participation_status_changed(target, value, oldvalue, initiator):
         IOLoop.current().add_callback(target.on_status_changed)
 
 
-class CrontabField(TypeDecorator):
+class CrontabType(TypeDecorator):
     impl = VARCHAR(128)
 
     def process_literal_param(self, value, dialect):
@@ -286,7 +285,7 @@ class EventGenerator(db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     last_run_at = db.Column(db.DateTime)
     total_run_count = db.Column(db.Integer, nullable=False, default=0)
-    generator_plan = db.Column(CrontabField)
+    generator_plan = db.Column(CrontabType)
 
     # Event parameters
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
@@ -333,6 +332,21 @@ class EventGenerator(db.Model):
         return self.is_active
 
 
+@listens_for(EventGenerator, 'after_insert')
+def on_event_generator_create(mapper, connection, target):
+    pass
+
+
+@listens_for(EventGenerator, 'after_update')
+def on_event_generator_update(mapper, connection, target):
+    pass
+
+
+@listens_for(EventGenerator, 'after_delete')
+def on_event_generator_delete(mapper, connection, target):
+    pass
+
+
 class EventGeneratorPool(db.Model):
     __tablename__ = 'event_generator_pools'
 
@@ -349,8 +363,8 @@ class EventGeneratorPool(db.Model):
     run_scheme = db.Column(ChoiceType(RUN_SCHEMES), default='any')
     last_run_at = db.Column(db.DateTime)
     total_run_count = db.Column(db.Integer, nullable=False, default=0)
-    generator_plan = db.Column(CrontabField)  # Plan for generators
-    pool_plan = db.Column(CrontabField)       # Plan of its own
+    generator_plan = db.Column(CrontabType)  # Plan for generators
+    pool_plan = db.Column(CrontabType)       # Plan of its own
 
     task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
     # task = db.relationship('PeriodicTask')
@@ -399,3 +413,18 @@ class EventGeneratorPool(db.Model):
         elif self.run_scheme is 'all':
             return generators
         return []
+
+
+@listens_for(EventGeneratorPool, 'after_insert')
+def on_event_generator_pool_create(mapper, connection, target):
+    IOLoop.current().add_callback(target.run)
+
+
+@listens_for(EventGeneratorPool, 'after_update')
+def on_event_generator_pool_update(mapper, connection, target):
+    pass
+
+
+@listens_for(EventGeneratorPool, 'after_delete')
+def on_event_generator_pool_delete(mapper, connection, target):
+    pass
