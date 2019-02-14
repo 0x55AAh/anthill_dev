@@ -1,29 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-'''
-#=============================================================================
-#     FileName: __init__.py
-#         Desc:
-#       Author: ge.jin
-#        Email: ge.jin@woqutech.com
-#     HomePage: wwww.woqutech.com
-#      Version: 0.0.1
-#   LastChange: 4/28/16 9:30 AM
-#      History:
-#=============================================================================
-'''
-from contextlib import contextmanager
-
-from .model import CrontabSchedule, PeriodicTask, PeriodicTasks, IntervalSchedule
-from celery import current_app
 from sqlalchemy import event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.schema import MetaData
+from .model import CrontabSchedule, PeriodicTask, PeriodicTasks, IntervalSchedule
+from celery import current_app
+from contextlib import contextmanager
 
 __all__ = [
-    'CrontabSchedule', 'PeriodicTask', 'PeriodicTasks', 'IntervalSchedule', 'get_session'
+    'CrontabSchedule', 'PeriodicTask', 'PeriodicTasks', 'IntervalSchedule'
 ]
 
 

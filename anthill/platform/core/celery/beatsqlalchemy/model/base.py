@@ -1,21 +1,9 @@
-"""
-#=============================================================================
-#     FileName: base
-#         Desc:
-#       Author: ge.jin
-#        Email: ge.jin@woqutech.com
-#     HomePage: wwww.woqutech.com
-#      Version: 0.0.1
-#   LastChange: 4/28/16 9:31 AM
-#      History:
-#=============================================================================
-"""
 from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 
-class TimestampModel(object):
+class TimestampModel:
     """
     自带两个时间戳字段的base model
     """

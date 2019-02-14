@@ -1,38 +1,29 @@
-"""
-#=============================================================================
-#     FileName: model
-#         Desc:
-#       Author: ge.jin
-#        Email: ge.jin@woqutech.com
-#     HomePage: wwww.woqutech.com
-#      Version: 0.0.1
-#   LastChange: 4/13/16 3:38 PM
-#      History:
-#=============================================================================
-"""
-import datetime
-from sqlalchemy.orm import relationship
-from .base import Base
+from anthill.framework.db import db
+from anthill.framework.utils import timezone
+from anthill.framework.utils.translation import translate as _
+from sqlalchemy_utils.types import ChoiceType
 from celery import schedules
-from sqlalchemy import Column, String, DateTime, ForeignKey, Integer, Boolean
-from sqlalchemy_utils.types.choice import ChoiceType
+import datetime
 
 
 class ValidationError(Exception):
     pass
 
 
-class IntervalSchedule(Base):
+class IntervalSchedule(db.Model):
     __tablename__ = "interval_schedule"
-    PERIOD_CHOICES = (('days', 'Days'),
-                      ('hours', 'Hours'),
-                      ('minutes', 'Minutes'),
-                      ('seconds', 'Seconds'),
-                      ('microseconds', 'Microseconds'))
 
-    every = Column(Integer, nullable=False)
-    period = Column(ChoiceType(PERIOD_CHOICES))
-    periodic_tasks = relationship('PeriodicTask')
+    PERIOD_CHOICES = (
+        ('days', _('Days')),
+        ('hours', _('Hours')),
+        ('minutes', _('Minutes')),
+        ('seconds', _('Seconds')),
+        ('microseconds', _('Microseconds'))
+    )
+
+    every = db.Column(db.Integer, nullable=False)
+    period = db.Column(ChoiceType(PERIOD_CHOICES))
+    periodic_tasks = db.relationship('PeriodicTask')
 
     @property
     def schedule(self):
@@ -41,7 +32,7 @@ class IntervalSchedule(Base):
     @classmethod
     def from_schedule(cls, session, schedule, period='seconds'):
         every = max(schedule.run_every.total_seconds(), 0)
-        obj = cls.filter_by(session, every=every, period=period).first()
+        obj = cls.filter_by(session, every=every, period=period).first()  # TODO: filter_by
         if obj is None:
             return cls(every=every, period=period)
         else:
@@ -57,17 +48,18 @@ class IntervalSchedule(Base):
         return self.period[:-1]
 
 
-class CrontabSchedule(Base):
+class CrontabSchedule(db.Model):
     """
     Task result/status.
     """
     __tablename__ = "crontab_schedule"
-    minute = Column(String(length=120), default="*")
-    hour = Column(String(length=120), default="*")
-    day_of_week = Column(String(length=120), default="*")
-    day_of_month = Column(String(length=120), default="*")
-    month_of_year = Column(String(length=120), default="*")
-    periodic_tasks = relationship('PeriodicTask')
+
+    minute = db.Column(db.String(length=120), default="*")
+    hour = db.Column(db.String(length=120), default="*")
+    day_of_week = db.Column(db.String(length=120), default="*")
+    day_of_month = db.Column(db.String(length=120), default="*")
+    month_of_year = db.Column(db.String(length=120), default="*")
+    periodic_tasks = db.relationship('PeriodicTask')
 
     def __str__(self):
         rfield = lambda f: f and str(f).replace(' ', '') or '*'
@@ -78,58 +70,64 @@ class CrontabSchedule(Base):
 
     @property
     def schedule(self):
-        return schedules.crontab(minute=self.minute,
-                                 hour=self.hour,
-                                 day_of_week=self.day_of_week,
-                                 day_of_month=self.day_of_month,
-                                 month_of_year=self.month_of_year)
+        spec = {
+            'minute': self.minute,
+            'hour': self.hour,
+            'day_of_week': self.day_of_week,
+            'day_of_month': self.day_of_month,
+            'month_of_year': self.month_of_year
+        }
+        return schedules.crontab(**spec)
 
     @classmethod
     def from_schedule(cls, session, schedule):
-        spec = {'minute': schedule._orig_minute,
-                'hour': schedule._orig_hour,
-                'day_of_week': schedule._orig_day_of_week,
-                'day_of_month': schedule._orig_day_of_month,
-                'month_of_year': schedule._orig_month_of_year}
-        obj = cls.filter_by(session, **spec).first()
+        spec = {
+            'minute': schedule._orig_minute,
+            'hour': schedule._orig_hour,
+            'day_of_week': schedule._orig_day_of_week,
+            'day_of_month': schedule._orig_day_of_month,
+            'month_of_year': schedule._orig_month_of_year
+        }
+        obj = cls.filter_by(session, **spec).first()  # TODO: filter_by
         if obj is None:
             return cls(**spec)
         else:
             return obj
 
 
-class PeriodicTasks(Base):
+class PeriodicTasks(db.Model):
     __tablename__ = "periodic_tasks"
 
-    ident = Column(Integer, default=1, primary_key=True)
-    last_update = Column(DateTime, default=datetime.datetime.utcnow)
+    ident = db.Column(db.Integer, default=1, primary_key=True)
+    last_update = db.Column(db.DateTime, default=timezone.now)
 
     @classmethod
     def changed(cls, session, instance):
         if not instance.no_changes:
-            obj, _ = cls.update_or_create(session, defaults={'last_update': datetime.datetime.now()}, ident=1)
+            obj, _ = cls.update_or_create(  # TODO: update_or_create
+                session, defaults={'last_update': timezone.now()}, ident=1)
             session.add(obj)
 
     @classmethod
     def last_change(cls, session):
-        obj = cls.filter_by(session, ident=1).first()
+        obj = cls.filter_by(session, ident=1).first()  # TODO: filter_by
         return obj.last_update if obj else None
 
 
-class PeriodicTask(Base):
+class PeriodicTask(db.Model):
     __tablename__ = "periodic_task"
 
-    name = Column(String(length=120), unique=True)
-    task = Column(String(length=120))
-    crontab_id = Column(Integer, ForeignKey('crontab_schedule.id'))
-    crontab = relationship("CrontabSchedule", back_populates="periodic_tasks")
-    interval_id = Column(Integer, ForeignKey('interval_schedule.id'))
-    interval = relationship("IntervalSchedule", back_populates="periodic_tasks")
-    args = Column(String(length=120))
-    kwargs = Column(String(length=120))
-    last_run_at = Column(DateTime, default=datetime.datetime.utcnow)
-    total_run_count = Column(Integer, default=0)
-    enabled = Column(Boolean, default=True)
+    name = db.Column(db.String(length=120), unique=True)
+    task = db.Column(db.String(length=120))
+    crontab_id = db.Column(db.Integer, db.ForeignKey('crontab_schedule.id'))
+    crontab = db.relationship("CrontabSchedule", back_populates="periodic_tasks")
+    interval_id = db.Column(db.Integer, db.ForeignKey('interval_schedule.id'))
+    interval = db.relationship("IntervalSchedule", back_populates="periodic_tasks")
+    args = db.Column(db.String(length=120))
+    kwargs = db.Column(db.String(length=120))
+    last_run_at = db.Column(db.DateTime, default=timezone.now)
+    total_run_count = db.Column(db.Integer, default=0)
+    enabled = db.Column(db.Boolean, default=True)
     no_changes = False
 
     def __str__(self):

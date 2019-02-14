@@ -6,6 +6,7 @@ from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.utils.translation import translate as _
 from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.core.celery import app as celery_app
+# from anthill.platform.core.celery.beatsqlalchemy.model import PeriodicTask
 from sqlalchemy_utils.types import JSONType, UUIDType, ChoiceType
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
@@ -294,9 +295,12 @@ class EventGenerator(db.Model):
     payload = db.Column(JSONType, nullable=False, default={})
 
     events = db.relationship('Event', backref='generator')
+    task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
+    # task = db.relationship('PeriodicTask')
 
     @as_future
-    def next(self, is_active=True) -> Event:
+    def run(self, is_active=True) -> Event:
+        """Generates new event."""
         self.last_run_at = timezone.now()
         self.total_run_count += 1
         self.save()
@@ -310,10 +314,16 @@ class EventGenerator(db.Model):
         }
         return Event.create(**kwargs)
 
+    @as_future
+    def create_task(self):
+        # TODO: create new PeriodicTask object
+        # TODO: save new created PeriodicTask object id in task_id field
+        pass
+
     @hybrid_property
     def plan(self):
         if self.pool_id is not None:
-            return self.pool.plan or self.generator_plan
+            return self.pool.generator_plan or self.generator_plan
         return self.generator_plan
 
     @hybrid_property
@@ -336,17 +346,26 @@ class EventGeneratorPool(db.Model):
     description = db.Column(db.String(512), nullable=False)
     generators = db.relationship('EventGenerator', backref='pool')
     is_active = db.Column(db.Boolean, nullable=False, default=True)
-    is_follow_generator_plan = db.Column(db.Boolean, nullable=False, default=False)
     run_scheme = db.Column(ChoiceType(RUN_SCHEMES), default='any')
     last_run_at = db.Column(db.DateTime)
     total_run_count = db.Column(db.Integer, nullable=False, default=0)
-    pool_plan = db.Column(CrontabField)
+    generator_plan = db.Column(CrontabField)  # Plan for generators
+    pool_plan = db.Column(CrontabField)       # Plan of its own
+
+    task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
+    # task = db.relationship('PeriodicTask')
 
     async def run(self) -> None:
-        self.last_run_at = timezone.now()
-        self.total_run_count += 1
+        """Generates multiple events based on multiple generators."""
         generators = await self.prepare_generators()
-        await self._run(generators)
+        if generators:
+            await self._run(generators)
+
+    @as_future
+    def create_task(self):
+        # TODO: create new PeriodicTask object
+        # TODO: save new created PeriodicTask object id in task_id field
+        pass
 
     @as_future
     def _run(self, generators, is_active=True) -> None:
@@ -366,6 +385,9 @@ class EventGeneratorPool(db.Model):
             }
             events.append(Event(**kwargs))
 
+        self.last_run_at = now
+        self.total_run_count += 1
+
         db.session.bulk_save_objects(events)
         db.session.commit()
 
@@ -377,16 +399,3 @@ class EventGeneratorPool(db.Model):
         elif self.run_scheme is 'all':
             return generators
         return []
-
-    @hybrid_property
-    def plan(self):
-        if not self.is_follow_generator_plan:
-            return self.pool_plan
-
-
-class EventGeneratorScheduler(Scheduler):
-    pass
-
-
-class EventGeneratorPoolScheduler(Scheduler):
-    pass

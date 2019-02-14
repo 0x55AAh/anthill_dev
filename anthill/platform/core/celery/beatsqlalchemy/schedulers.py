@@ -1,18 +1,3 @@
-"""
-#=============================================================================
-#     FileName: schedulers
-#         Desc:
-#       Author: ge.jin
-#        Email: ge.jin@woqutech.com
-#     HomePage: wwww.woqutech.com
-#      Version: 0.0.1
-#   LastChange: 4/13/16 3:38 PM
-#      History:
-#=============================================================================
-"""
-import json
-from multiprocessing.util import Finalize
-
 from celery import current_app
 from celery import schedules
 from celery.beat import ScheduleEntry, Scheduler
@@ -20,6 +5,8 @@ from celery.utils.encoding import safe_str
 from celery.utils.log import get_logger
 from celery.utils.timeutils import is_naive
 from .model import PeriodicTask, CrontabSchedule, PeriodicTasks, get_session, IntervalSchedule
+from multiprocessing.util import Finalize
+import json
 
 DEFAULT_MAX_INTERVAL = 5
 

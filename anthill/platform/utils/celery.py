@@ -13,7 +13,12 @@ class CeleryMixin:
     def start_celery(self):
         if CELERY_ENABLE:
             logger.debug('Celery status: ENABLED.')
-            with start_worker(app=celery_app, timezone=TIME_ZONE, loglevel=settings.DEBUG):
+            kwargs = {
+                'app': celery_app,
+                'timezone': TIME_ZONE,
+                'loglevel': settings.DEBUG
+            }
+            with start_worker(**kwargs):
                 pass
         else:
             logger.debug('Celery status: DISABLED.')

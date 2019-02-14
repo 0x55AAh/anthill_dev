@@ -27,8 +27,16 @@ def on_event_finish(event_id):
 
 
 @app.task(ignore_result=True)
-def event_generator_run(event_generator_id):
+def event_generator_run(id_):
     from event.models import EventGenerator
-    event_generator = EventGenerator.query.get(event_generator_id)
-    if event_generator is not None:
-        IOLoop.current().add_callback(event_generator.next)
+    obj = EventGenerator.query.get(id_)
+    if obj is not None:
+        IOLoop.current().add_callback(obj.run)
+
+
+@app.task(ignore_result=True)
+def event_generator_pool_run(id_):
+    from event.models import EventGeneratorPool
+    obj = EventGeneratorPool.query.get(id_)
+    if obj is not None:
+        IOLoop.current().add_callback(obj.run)
