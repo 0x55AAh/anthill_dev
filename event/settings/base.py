@@ -145,8 +145,8 @@ LOGGING = {
 # All celery configuration options:
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
 CELERY_SETTINGS.update({
-    # 'beat_scheduler': 'celery.beat:PersistentScheduler',
-    'beat_scheduler': 'event.models:EventGeneratorScheduler',
+    # 'beat_scheduler': 'celery.beat:PersistentScheduler',  # Default scheduler
+    'beat_scheduler': 'anthill.platform.core.celery.beatsqlalchemy:DatabaseScheduler',
 })
 
 #########
