@@ -146,7 +146,7 @@ LOGGING = {
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#configuration
 CELERY_SETTINGS.update({
     # 'beat_scheduler': 'celery.beat:PersistentScheduler',
-    'beat_scheduler': 'event.models:EventGeneratorSheduler',
+    'beat_scheduler': 'event.models:EventGeneratorScheduler',
 })
 
 #########

@@ -11,7 +11,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from celery.worker.control import revoke
-from celery.schedules import crontab
 from celery.beat import Scheduler
 from tornado.ioloop import IOLoop
 from typing import Optional
@@ -371,7 +370,7 @@ class EventGeneratorPool(db.Model):
         db.session.commit()
 
     @as_future
-    def prepare_generators(self) -> list:
+    def prepare_generators(self):
         generators = self.generators.query.filter_by(active=True).all()
         if self.run_scheme is 'any':
             return [random.choice(generators)]
@@ -385,9 +384,9 @@ class EventGeneratorPool(db.Model):
             return self.pool_plan
 
 
-class EventGeneratorSheduler(Scheduler):
+class EventGeneratorScheduler(Scheduler):
     pass
 
 
-class EventGeneratorPoolSheduler(Scheduler):
+class EventGeneratorPoolScheduler(Scheduler):
     pass
