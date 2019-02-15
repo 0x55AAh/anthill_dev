@@ -5,4 +5,4 @@ logger = logging.getLogger('anthill.application')
 
 
 class AnthillApplication(BaseAnthillApplication):
-    """Anthill application"""
+    """Anthill default application."""

@@ -6,7 +6,7 @@ from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.utils.translation import translate as _
 from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.core.celery import app as celery_app
-# from anthill.platform.core.celery.beatsqlalchemy.model import PeriodicTask, CrontabSchedule
+from anthill.platform.core.celery.beatsqlalchemy.models import PeriodicTask, CrontabSchedule
 from sqlalchemy_utils.types import JSONType, UUIDType, ChoiceType
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
@@ -151,7 +151,7 @@ class Event(db.Model):
                            'so cannot leave.' % (user_id, self.id))
 
 
-@listens_for(Event, 'after_insert')
+@listens_for(Event, 'before_insert')
 def on_event_create(mapper, connection, target):
     from event import tasks
 
@@ -169,7 +169,7 @@ def on_event_create(mapper, connection, target):
         target.on_finish_task_id = task.id
 
 
-@listens_for(Event, 'after_update')
+@listens_for(Event, 'before_update')
 def on_event_update(mapper, connection, target):
     from event import tasks
 
@@ -269,9 +269,10 @@ class CrontabType(TypeDecorator):
 
     def process_result_value(self, value, dialect):
         if value is not None:
-            if len(value) != 5:
+            values = list(value.values())
+            if len(values) != 5:
                 raise ValueError('Illegal crontab field value: %s' % value)
-            return ' '.join(value)
+            return ' '.join(values)
 
     @property
     def python_type(self):
@@ -296,7 +297,7 @@ class EventGenerator(db.Model):
 
     events = db.relationship('Event', backref='generator')
     task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
-    # task = db.relationship('PeriodicTask')
+    task = db.relationship('PeriodicTask')
 
     @as_future
     def run(self, is_active=True) -> Event:
@@ -316,31 +317,25 @@ class EventGenerator(db.Model):
 
     @as_future
     def task_start(self):
-        # TODO:
-        # schedule = CrontabSchedule.get_or_create(**self.plan)
-        # task = PeriodicTask.create(crontab=schedule,
-        #                            name=_('Start events generator'),
-        #                            task='event.tasks.events_generator_run',
-        #                            enabled=self.active)
-        # self.task_id = task.id
+        schedule = CrontabSchedule.get_or_create(**self.plan)
+        task = PeriodicTask.create(crontab=schedule,
+                                   name=_('Start events generator'),
+                                   task='event.tasks.events_generator_run',
+                                   enabled=self.active)
+        self.task_id = task.id
         # self.save()
-        pass
 
     @as_future
     def task_stop(self):
-        # TODO:
-        # self.task.enabled = False
-        # self.task.save()
-        pass
+        self.task.enabled = False
+        self.task.save()
 
     @as_future
     def task_update(self):
-        # TODO:
-        # schedule = CrontabSchedule.get_or_create(**self.plan)
-        # self.task.crontab = schedule
-        # self.task.enabled = self.active
-        # self.task.save()
-        pass
+        schedule = CrontabSchedule.get_or_create(**self.plan)
+        self.task.crontab = schedule
+        self.task.enabled = self.active
+        self.task.save()
 
     @hybrid_property
     def active(self) -> bool:
@@ -349,12 +344,12 @@ class EventGenerator(db.Model):
         return self.is_active
 
 
-@listens_for(EventGenerator, 'after_insert')
+@listens_for(EventGenerator, 'before_insert')
 def on_event_generator_create(mapper, connection, target):
     pass
 
 
-@listens_for(EventGenerator, 'after_update')
+@listens_for(EventGenerator, 'before_update')
 def on_event_generator_update(mapper, connection, target):
     pass
 
@@ -383,7 +378,7 @@ class EventGeneratorPool(db.Model):
     plan = db.Column(CrontabType)
 
     task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
-    # task = db.relationship('PeriodicTask')
+    task = db.relationship('PeriodicTask')
 
     async def run(self) -> None:
         """Generates multiple events based on multiple generators."""
@@ -393,31 +388,25 @@ class EventGeneratorPool(db.Model):
 
     @as_future
     def task_start(self):
-        # TODO:
-        # schedule = CrontabSchedule.get_or_create(**self.plan)
-        # task = PeriodicTask.create(crontab=schedule,
-        #                            name=_('Start events generators pool'),
-        #                            task='event.tasks.events_generators_pool_run'
-        #                            enabled=self.active)
-        # self.task_id = task.id
+        schedule = CrontabSchedule.get_or_create(**self.plan)
+        task = PeriodicTask.create(crontab=schedule,
+                                   name=_('Start events generators pool'),
+                                   task='event.tasks.events_generators_pool_run',
+                                   enabled=self.active)
+        self.task_id = task.id
         # self.save()
-        pass
 
     @as_future
     def task_stop(self):
-        # TODO:
-        # self.task.enabled = False
-        # self.task.save()
-        pass
+        self.task.enabled = False
+        self.task.save()
 
     @as_future
     def task_update(self):
-        # TODO:
-        # schedule = CrontabSchedule.get_or_create(**self.plan)
-        # self.task.crontab = schedule
-        # self.task.enabled = self.active
-        # self.task.save()
-        pass
+        schedule = CrontabSchedule.get_or_create(**self.plan)
+        self.task.crontab = schedule
+        self.task.enabled = self.active
+        self.task.save()
 
     @as_future
     def _run(self, generators, is_active=True) -> None:
@@ -457,12 +446,12 @@ class EventGeneratorPool(db.Model):
         return self.is_active
 
 
-@listens_for(EventGeneratorPool, 'after_insert')
+@listens_for(EventGeneratorPool, 'before_insert')
 def on_event_generator_pool_create(mapper, connection, target):
     IOLoop.current().add_callback(target.task_start)
 
 
-@listens_for(EventGeneratorPool, 'after_update')
+@listens_for(EventGeneratorPool, 'before_update')
 def on_event_generator_pool_update(mapper, connection, target):
     IOLoop.current().add_callback(target.task_update)
 

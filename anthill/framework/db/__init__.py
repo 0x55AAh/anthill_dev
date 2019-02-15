@@ -26,6 +26,35 @@ class Model(ActiveRecordMixin, DefaultModel):
             raise ImproperlyConfigured('Schema class is undefined')
         return schema_class().dump(self)
 
+    @classmethod
+    def filter_by(cls, **kwargs):
+        return cls.query.filter_by(**kwargs)
+
+    @classmethod
+    def get_or_create(cls, defaults=None, **kwargs):
+        obj = cls.query.filter_by(**kwargs).first()
+        if obj:
+            return obj, False
+        else:
+            params = dict((k, v) for k, v in kwargs.iteritems())
+            params.update(defaults or {})
+            obj = cls(**params)
+            return obj, True
+
+    @classmethod
+    def update_or_create(cls, defaults=None, **kwargs):
+        obj = cls.query.filter_by(**kwargs).first()
+        if obj:
+            for key, value in defaults.iteritems():
+                setattr(obj, key, value)
+            created = False
+        else:
+            params = dict((k, v) for k, v in kwargs.iteritems())
+            params.update(defaults or {})
+            obj = cls(**params)
+            created = True
+        return obj, created
+
 
 Base = declarative_base(cls=Model, metaclass=DefaultMeta, name='Model')
 

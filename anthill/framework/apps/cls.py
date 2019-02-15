@@ -93,6 +93,8 @@ class CommandParser:
 
 class Application:
     raise_on_conflict_commands = True
+    extra_models_modules = None
+    system_models_modules = ('anthill.framework.sessions.models',)
 
     def __init__(self):
         self.settings = self.config = settings
@@ -219,14 +221,14 @@ class Application:
             return {}
 
     def get_models_modules(self):
-        sys_modules = ('anthill.framework.sessions.models',)
+        models_modules = []
+        models_modules += list(self.system_models_modules or [])
+        models_modules += list(self.extra_models_modules or [])
         if isinstance(self.models_conf, str):
-            usr_modules = (self.models_conf,)
+            models_modules += [self.models_conf]
         elif isinstance(self.models_conf, (tuple, list)):
-            usr_modules = self.models_conf
-        else:
-            usr_modules = ()
-        return sys_modules + usr_modules
+            models_modules += list(self.models_conf)
+        return models_modules
 
     def update_models(self):
         models = self.get_models()

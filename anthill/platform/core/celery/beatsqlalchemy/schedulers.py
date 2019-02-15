@@ -4,7 +4,8 @@ from celery.beat import ScheduleEntry, Scheduler
 from celery.utils.encoding import safe_str
 from celery.utils.log import get_logger
 from celery.utils.timeutils import is_naive
-from .model import PeriodicTask, CrontabSchedule, PeriodicTasks, get_session, IntervalSchedule
+from .models import PeriodicTask, CrontabSchedule, PeriodicTasks, IntervalSchedule
+from anthill.framework.db import db
 from multiprocessing.util import Finalize
 import json
 
@@ -25,7 +26,7 @@ class ModelEntry(ScheduleEntry):
 
     def __init__(self, model, session=None):
         self.app = current_app
-        self.session = session or get_session()
+        self.session = session or db.session
         self.name = model.name
         self.task = model.task
         self.schedule = model.schedule
@@ -45,6 +46,7 @@ class ModelEntry(ScheduleEntry):
         model.no_changes = True
         model.enabled = False
         self.session.add(model)
+        self.session.commit()
 
     def is_due(self):
         if not self.model.enabled:
@@ -71,6 +73,7 @@ class ModelEntry(ScheduleEntry):
     @staticmethod
     def save_model(session, obj):
         session.add(obj)
+        session.commit()
 
     @classmethod
     def to_model_schedule(cls, schedule, session):
@@ -127,7 +130,7 @@ class DatabaseScheduler(Scheduler):
     _initial_read = False
 
     def __init__(self, session=None, *args, **kwargs):
-        self.session = session or get_session()
+        self.session = session or db.session
         self._dirty = set()
         self._finalize = Finalize(self, self.sync, exitpriority=5)
         super(DatabaseScheduler, self).__init__(*args, **kwargs)
