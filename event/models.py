@@ -321,6 +321,7 @@ class EventGenerator(db.Model):
         task = PeriodicTask.create(crontab=schedule,
                                    name=_('Start events generator'),
                                    task='event.tasks.events_generator_run',
+                                   args=json.dumps([self.id]),
                                    enabled=self.active)
         self.task_id = task.id
         # self.save()
@@ -392,6 +393,7 @@ class EventGeneratorPool(db.Model):
         task = PeriodicTask.create(crontab=schedule,
                                    name=_('Start events generators pool'),
                                    task='event.tasks.events_generators_pool_run',
+                                   args=json.dumps([self.id]),
                                    enabled=self.active)
         self.task_id = task.id
         # self.save()
