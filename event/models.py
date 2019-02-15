@@ -332,6 +332,11 @@ class EventGenerator(db.Model):
         self.task.save()
 
     @as_future
+    def task_delete(self):
+        self.task_id = None
+        # TODO: delete task from db
+
+    @as_future
     def task_update(self):
         schedule = CrontabSchedule.get_or_create(**self.plan)
         self.task.crontab = schedule
@@ -412,27 +417,10 @@ class EventGeneratorPool(db.Model):
 
     @as_future
     def _run(self, generators, is_active=True) -> None:
-        now = timezone.now()
-        events = []
+        # TODO: reload generators tasks
 
         for gen in generators:
-            gen.last_run_at = now
-            gen.total_run_count += 1
-            kwargs = {
-                'category_id': gen.category_id,
-                'start_at': gen.start_at,
-                'finish_at': gen.finish_at,
-                'payload': gen.payload,
-                'is_active': is_active,
-                'generator_id': gen.id
-            }
-            events.append(Event(**kwargs))
-
-        self.last_run_at = now
-        self.total_run_count += 1
-
-        db.session.bulk_save_objects(events)
-        db.session.commit()
+            pass
 
     @as_future
     def prepare_generators(self):
