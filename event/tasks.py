@@ -70,6 +70,6 @@ def events_generator_run(id_):
 @app.task(ignore_result=True)
 def events_generators_pool_run(id_):
     """
-    Periodically generates new events according to generator pool settings.
+    Periodically starts generators according to generator pool settings.
     """
     IOLoop.current().add_callback(_events_generators_pool_run, id_)
