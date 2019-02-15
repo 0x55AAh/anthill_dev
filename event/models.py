@@ -6,7 +6,7 @@ from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.utils.translation import translate as _
 from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.core.celery import app as celery_app
-# from anthill.platform.core.celery.beatsqlalchemy.model import PeriodicTask
+# from anthill.platform.core.celery.beatsqlalchemy.model import PeriodicTask, CrontabSchedule
 from sqlalchemy_utils.types import JSONType, UUIDType, ChoiceType
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.event import listens_for
@@ -255,16 +255,17 @@ def on_event_participation_status_changed(target, value, oldvalue, initiator):
 
 class CrontabType(TypeDecorator):
     impl = VARCHAR(128)
+    keys = ('minute', 'hour', 'day_of_week', 'day_of_month', 'month_of_year')
 
     def process_literal_param(self, value, dialect):
         pass
 
     def process_bind_param(self, value, dialect):
         if value is not None:
-            value = re.split(r'\s+', value)
-            if len(value) != 5:
+            values = re.split(r'\s+', value)
+            if len(values) != 5:
                 raise ValueError('Illegal crontab field value: %s' % value)
-            return value
+            return dict(zip(self.keys, values))
 
     def process_result_value(self, value, dialect):
         if value is not None:
@@ -285,7 +286,7 @@ class EventGenerator(db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     last_run_at = db.Column(db.DateTime)
     total_run_count = db.Column(db.Integer, nullable=False, default=0)
-    generator_plan = db.Column(CrontabType)
+    plan = db.Column(CrontabType)
 
     # Event parameters
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
@@ -314,16 +315,32 @@ class EventGenerator(db.Model):
         return Event.create(**kwargs)
 
     @as_future
-    def create_task(self):
-        # TODO: create new PeriodicTask object
-        # TODO: save new created PeriodicTask object id in task_id field
+    def task_start(self):
+        # TODO:
+        # schedule = CrontabSchedule.get_or_create(**self.plan)
+        # task = PeriodicTask.create(crontab=schedule,
+        #                            name=_('Start events generator'),
+        #                            task='event.tasks.events_generator_run',
+        #                            enabled=self.active)
+        # self.task_id = task.id
+        # self.save()
         pass
 
-    @hybrid_property
-    def plan(self):
-        if self.pool_id is not None:
-            return self.pool.generator_plan or self.generator_plan
-        return self.generator_plan
+    @as_future
+    def task_stop(self):
+        # TODO:
+        # self.task.enabled = False
+        # self.task.save()
+        pass
+
+    @as_future
+    def task_update(self):
+        # TODO:
+        # schedule = CrontabSchedule.get_or_create(**self.plan)
+        # self.task.crontab = schedule
+        # self.task.enabled = self.active
+        # self.task.save()
+        pass
 
     @hybrid_property
     def active(self) -> bool:
@@ -363,8 +380,7 @@ class EventGeneratorPool(db.Model):
     run_scheme = db.Column(ChoiceType(RUN_SCHEMES), default='any')
     last_run_at = db.Column(db.DateTime)
     total_run_count = db.Column(db.Integer, nullable=False, default=0)
-    generator_plan = db.Column(CrontabType)  # Plan for generators
-    pool_plan = db.Column(CrontabType)       # Plan of its own
+    plan = db.Column(CrontabType)
 
     task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
     # task = db.relationship('PeriodicTask')
@@ -376,9 +392,31 @@ class EventGeneratorPool(db.Model):
             await self._run(generators)
 
     @as_future
-    def create_task(self):
-        # TODO: create new PeriodicTask object
-        # TODO: save new created PeriodicTask object id in task_id field
+    def task_start(self):
+        # TODO:
+        # schedule = CrontabSchedule.get_or_create(**self.plan)
+        # task = PeriodicTask.create(crontab=schedule,
+        #                            name=_('Start events generators pool'),
+        #                            task='event.tasks.events_generators_pool_run'
+        #                            enabled=self.active)
+        # self.task_id = task.id
+        # self.save()
+        pass
+
+    @as_future
+    def task_stop(self):
+        # TODO:
+        # self.task.enabled = False
+        # self.task.save()
+        pass
+
+    @as_future
+    def task_update(self):
+        # TODO:
+        # schedule = CrontabSchedule.get_or_create(**self.plan)
+        # self.task.crontab = schedule
+        # self.task.enabled = self.active
+        # self.task.save()
         pass
 
     @as_future
@@ -414,17 +452,21 @@ class EventGeneratorPool(db.Model):
             return generators
         return []
 
+    @hybrid_property
+    def active(self) -> bool:
+        return self.is_active
+
 
 @listens_for(EventGeneratorPool, 'after_insert')
 def on_event_generator_pool_create(mapper, connection, target):
-    IOLoop.current().add_callback(target.run)
+    IOLoop.current().add_callback(target.task_start)
 
 
 @listens_for(EventGeneratorPool, 'after_update')
 def on_event_generator_pool_update(mapper, connection, target):
-    pass
+    IOLoop.current().add_callback(target.task_update)
 
 
 @listens_for(EventGeneratorPool, 'after_delete')
 def on_event_generator_pool_delete(mapper, connection, target):
-    pass
+    IOLoop.current().add_callback(target.task_stop)

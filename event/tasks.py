@@ -7,36 +7,57 @@ Example:
 """
 
 from anthill.platform.core.celery import app
+from anthill.framework.utils.asynchronous import as_future
 from tornado.ioloop import IOLoop
+
+
+@as_future
+def _event_on_start(event_id):
+    from event.models import Event
+    event = Event.query.get(event_id)
+    if event is not None:
+        event.on_start()
+
+
+@as_future
+def _event_on_finish(event_id):
+    from event.models import Event
+    event = Event.query.get(event_id)
+    if event is not None:
+        event.on_finish()
+
+
+@as_future
+def _events_generator_run(id_):
+    from event.models import EventGenerator
+    obj = EventGenerator.query.get(id_)
+    if obj is not None:
+        obj.run()
+
+
+@as_future
+def _events_generators_pool_run(id_):
+    from event.models import EventGeneratorPool
+    obj = EventGeneratorPool.query.get(id_)
+    if obj is not None:
+        obj.run()
 
 
 @app.task(ignore_result=True)
 def on_event_start(event_id):
-    from event.models import Event
-    event = Event.query.get(event_id)
-    if event is not None:
-        IOLoop.current().add_callback(event.on_start)
+    IOLoop.current().add_callback(_event_on_start, event_id)
 
 
 @app.task(ignore_result=True)
 def on_event_finish(event_id):
-    from event.models import Event
-    event = Event.query.get(event_id)
-    if event is not None:
-        IOLoop.current().add_callback(event.on_finish)
+    IOLoop.current().add_callback(_event_on_finish, event_id)
 
 
 @app.task(ignore_result=True)
-def event_generator_run(id_):
-    from event.models import EventGenerator
-    obj = EventGenerator.query.get(id_)
-    if obj is not None:
-        IOLoop.current().add_callback(obj.run)
+def events_generator_run(id_):
+    IOLoop.current().add_callback(_events_generator_run, id_)
 
 
 @app.task(ignore_result=True)
-def event_generator_pool_run(id_):
-    from event.models import EventGeneratorPool
-    obj = EventGeneratorPool.query.get(id_)
-    if obj is not None:
-        IOLoop.current().add_callback(obj.run)
+def events_generators_pool_run(id_):
+    IOLoop.current().add_callback(_events_generators_pool_run, id_)
