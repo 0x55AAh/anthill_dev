@@ -6,14 +6,13 @@ Example:
     def api_method(*args, **kwargs):
         ...
 """
-from tornado.ioloop import IOLoop
-from tornado.gen import coroutine
 from v8py import new, Context
 import functools
 import collections
 import traceback
 import weakref
 import inspect
+import asyncio
 
 
 __all__ = ['session_api', 'SessionAPIError']
@@ -45,7 +44,7 @@ def promise_completion(f):
 
     exception = f.exception()
     if exception:
-        exception.stack = "".join(traceback.format_tb(f.exc_info()[2]))
+        exception.stack = ''.join(traceback.format_tb(f.exc_info()[2]))
         f.bound_reject(exception)
     else:
         f.bound_resolve(f.result())
@@ -66,21 +65,23 @@ def promise_callback(bound, resolve, reject):
         return
 
     try:
-        future = coroutine(bound.method)(*bound.args, handler=handler)
+        coroutine_object = bound.method(*bound.args, handler=handler)
     except BaseException as exc:
         exc.stack = traceback.format_exc()
         reject(exc)
     else:
-        future.bound = bound
-        future.bound_resolve = resolve
-        future.bound_reject = reject
-        IOLoop.current().add_future(future, promise_completion)
+        task = asyncio.ensure_future(coroutine_object)
+        task.bound = bound
+        task.bound_resolve = resolve
+        task.bound_reject = reject
+        task.add_done_callback(promise_completion)
 
 
 def promise(method):
     """
     Decorator allows method to be used in async/await.
     Use it to call a method asynchronously from javascript.
+
     Example:
 
         @promise
@@ -89,6 +90,7 @@ def promise(method):
             return a + b
 
     When called from javascript, a Promise object is returned.
+
     Example:
 
         async function test() {

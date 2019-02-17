@@ -285,6 +285,7 @@ class EventGenerator(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     pool_id = db.Column(db.Integer, db.ForeignKey('event_generator_pools.id'))
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    enabled = db.Column(db.Boolean, nullable=False, default=True)
     last_run_at = db.Column(db.DateTime)
     total_run_count = db.Column(db.Integer, nullable=False, default=0)
     plan = db.Column(CrontabType)
@@ -316,7 +317,7 @@ class EventGenerator(db.Model):
         return Event.create(**kwargs)
 
     @as_future
-    def task_start(self):
+    def task_create(self):
         schedule = CrontabSchedule.get_or_create(**self.plan)
         task = PeriodicTask.create(crontab=schedule,
                                    name=_('Start events generator'),
@@ -327,14 +328,18 @@ class EventGenerator(db.Model):
         # self.save()
 
     @as_future
-    def task_stop(self):
+    def task_disable(self):
         self.task.enabled = False
         self.task.save()
 
     @as_future
+    def task_enable(self):
+        self.task.enabled = True
+        self.task.save()
+
+    @as_future
     def task_delete(self):
-        self.task_id = None
-        # TODO: delete task from db
+        self.task.delete()
 
     @as_future
     def task_update(self):
@@ -345,6 +350,8 @@ class EventGenerator(db.Model):
 
     @hybrid_property
     def active(self) -> bool:
+        if not self.enabled:
+            return False
         if self.pool_id is not None:
             return self.pool.is_active
         return self.is_active
@@ -352,17 +359,17 @@ class EventGenerator(db.Model):
 
 @listens_for(EventGenerator, 'before_insert')
 def on_event_generator_create(mapper, connection, target):
-    pass
+    IOLoop.current().add_callback(target.task_create)
 
 
 @listens_for(EventGenerator, 'before_update')
 def on_event_generator_update(mapper, connection, target):
-    pass
+    IOLoop.current().add_callback(target.task_update)
 
 
 @listens_for(EventGenerator, 'after_delete')
 def on_event_generator_delete(mapper, connection, target):
-    pass
+    IOLoop.current().add_callback(target.task_delete)
 
 
 class EventGeneratorPool(db.Model):
@@ -386,14 +393,25 @@ class EventGeneratorPool(db.Model):
     task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
     task = db.relationship('PeriodicTask')
 
-    async def run(self) -> None:
-        """Generates multiple events based on multiple generators."""
-        generators = await self.prepare_generators()
-        if generators:
-            await self._run(generators)
+    @as_future
+    def run(self):
+        enabled_generators = self.generators.query.filter_by(enabled=True).all()
+        for gen in enabled_generators:
+            gen.is_active = False
+            gen.save()
+        if self.run_scheme is 'any':
+            prepared_generators = [random.choice(enabled_generators)]
+        elif self.run_scheme is 'all':
+            prepared_generators = enabled_generators
+        else:
+            prepared_generators = []
+        if prepared_generators:
+            for gen in prepared_generators:
+                gen.is_active = True
+                gen.save()
 
     @as_future
-    def task_start(self):
+    def task_create(self):
         schedule = CrontabSchedule.get_or_create(**self.plan)
         task = PeriodicTask.create(crontab=schedule,
                                    name=_('Start events generators pool'),
@@ -404,8 +422,13 @@ class EventGeneratorPool(db.Model):
         # self.save()
 
     @as_future
-    def task_stop(self):
+    def task_disable(self):
         self.task.enabled = False
+        self.task.save()
+
+    @as_future
+    def task_enable(self):
+        self.task.enabled = True
         self.task.save()
 
     @as_future
@@ -416,20 +439,8 @@ class EventGeneratorPool(db.Model):
         self.task.save()
 
     @as_future
-    def _run(self, generators, is_active=True) -> None:
-        # TODO: reload generators tasks
-
-        for gen in generators:
-            pass
-
-    @as_future
-    def prepare_generators(self):
-        generators = self.generators.query.filter_by(active=True).all()
-        if self.run_scheme is 'any':
-            return [random.choice(generators)]
-        elif self.run_scheme is 'all':
-            return generators
-        return []
+    def task_delete(self):
+        self.task.delete()
 
     @hybrid_property
     def active(self) -> bool:
@@ -438,7 +449,7 @@ class EventGeneratorPool(db.Model):
 
 @listens_for(EventGeneratorPool, 'before_insert')
 def on_event_generator_pool_create(mapper, connection, target):
-    IOLoop.current().add_callback(target.task_start)
+    IOLoop.current().add_callback(target.task_create)
 
 
 @listens_for(EventGeneratorPool, 'before_update')
@@ -448,4 +459,4 @@ def on_event_generator_pool_update(mapper, connection, target):
 
 @listens_for(EventGeneratorPool, 'after_delete')
 def on_event_generator_pool_delete(mapper, connection, target):
-    IOLoop.current().add_callback(target.task_stop)
+    IOLoop.current().add_callback(target.task_delete)
