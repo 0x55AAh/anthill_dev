@@ -396,19 +396,20 @@ class EventGeneratorPool(db.Model):
     @as_future
     def run(self):
         enabled_generators = self.generators.query.filter_by(enabled=True).all()
-        for gen in enabled_generators:
-            gen.is_active = False
-            gen.save()
         if self.run_scheme is 'any':
             prepared_generators = [random.choice(enabled_generators)]
         elif self.run_scheme is 'all':
             prepared_generators = enabled_generators
         else:
             prepared_generators = []
-        if prepared_generators:
-            for gen in prepared_generators:
-                gen.is_active = True
-                gen.save()
+
+        for gen in enabled_generators:
+            gen.is_active = False
+            gen.save()
+
+        for gen in prepared_generators:
+            gen.is_active = True
+            gen.save()
 
     @as_future
     def task_create(self):
