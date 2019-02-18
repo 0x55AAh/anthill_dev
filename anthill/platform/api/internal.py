@@ -2,6 +2,7 @@ from tornado.gen import with_timeout
 from tornado.util import TimeoutError
 from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
+from tornado.escape import utf8
 
 from anthill.framework.testing.timing import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
@@ -22,6 +23,7 @@ import inspect
 import json
 import logging
 import os
+import hashlib
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
@@ -37,8 +39,11 @@ DEFAULT_CACHE_TIMEOUT = 300  # 5min
 INTERNAL_REQUEST_CACHING = True
 
 
-def cache_key(service, method):
-    return '.'.join(['internal.cache', service, method])
+def cache_key(service, method, postfix=None):
+    parts = ['internal.cache', service, method]
+    if postfix:
+        parts.append(postfix)
+    return '.'.join(parts)
 
 
 def _cached(key, timeout):
@@ -49,11 +54,12 @@ def _cached(key, timeout):
             if not caching:
                 return await func(conn, service, method, *args, **kwargs)
             timeout_ = kwargs.pop('cache_timeout', timeout)
-            key_ = key(service, method) if callable(key) else key
-            result = await as_future(cache.get)(key_)
+            postfix = hashlib.md5(utf8(str(args) + str(kwargs))).hexdigest()
+            k = key(service, method, postfix) if callable(key) else key
+            result = await as_future(cache.get)(k)
             if result is None:
                 result = await func(conn, service, method, *args, **kwargs)
-                await as_future(cache.set)(key_, result, timeout_)
+                await as_future(cache.set)(k, result, timeout_)
             return result
         return wrapper
     return decorator
