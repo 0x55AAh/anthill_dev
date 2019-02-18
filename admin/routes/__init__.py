@@ -22,6 +22,7 @@ extra_routes = (
     'admin.routes.media',
     'admin.routes.message',
     'admin.routes.moderation',
+    'admin.routes.news',
     'admin.routes.profile',
     'admin.routes.promo',
     'admin.routes.report',

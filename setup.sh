@@ -26,8 +26,8 @@ source anthill/platform/setup.sh
 services=(
     "admin" "config" "discovery" "dlc" "environment" "event" "exec"
     "game_controller" "game_master" "leaderboard" "log" "login"
-    "media" "message" "moderation" "profile" "promo" "report" "social"
-    "store"
+    "media" "message" "moderation" "news" "profile" "promo" "report"
+    "social" "store"
 )
 for service in "${services[@]}"; do
     echo

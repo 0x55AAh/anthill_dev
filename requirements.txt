@@ -17,6 +17,7 @@
 -r media/requirements.txt
 -r message/requirements.txt
 -r moderation/requirements.txt
+-r news/requirements.txt
 -r profile/requirements.txt
 -r promo/requirements.txt
 -r report/requirements.txt

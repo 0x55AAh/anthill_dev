@@ -1,12 +1,12 @@
+import os
 from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.conf.settings import *
-import os
 
 # Build paths inside the application like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gfuj##umq24n7zaeejhig=72ytcp6s!n@wt1)rw&amp;*-c@ri20bo'
+SECRET_KEY = '=tn9i3rb&amp;5a_tg!#x)hws00s3(8lo9q6^n9u%l@&amp;k6=!f1dk$w'
 
 DEBUG = False
 
@@ -14,28 +14,28 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_promo@/anthill_promo'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_news@/anthill_news'
 
-LOCATION = 'http://localhost:9612'
+LOCATION = 'http://localhost:9624'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-# ROUTES_CONF = 'promo.routes'
+# ROUTES_CONF = 'news.routes'
 
-# APPLICATION_CLASS = 'promo.apps.AnthillApplication'
-APPLICATION_NAME = 'promo'
-APPLICATION_VERBOSE_NAME = _('Promo')
-APPLICATION_DESCRIPTION = _('Reward users with promo-codes')
-APPLICATION_ICON_CLASS = 'icon-gift'
-APPLICATION_COLOR = 'brown'
-
-# SERVICE_CLASS = 'promo.services.Service'
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
-EMAIL_SUBJECT_PREFIX = '[Anthill: promo] '
+# APPLICATION_CLASS = 'news.apps.AnthillApplication'
+APPLICATION_NAME = 'news'
+APPLICATION_VERBOSE_NAME = _('News')
+APPLICATION_DESCRIPTION = _('Service description')
+APPLICATION_ICON_CLASS = 'icon-new'
+APPLICATION_COLOR = 'pink'
 
-CACHES["default"]["LOCATION"] = "redis://localhost:6379/22"
-CACHES["default"]["KEY_PREFIX"] = "promo.anthill"
+# SERVICE_CLASS = 'news.services.Service'
+
+# UI_MODULE = 'news.ui'
+
+EMAIL_SUBJECT_PREFIX = '[Anthill: news] '
 
 LOGGING = {
     'version': 1,
@@ -66,7 +66,7 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOGGING_ROOT_DIR, 'promo.log'),
+            'filename': '/var/log/anthill/news.log',
             'formatter': 'anthill.server',
             'maxBytes': 100 * 1024 * 1024,  # 100 MiB
             'backupCount': 10
@@ -130,6 +130,7 @@ LOGGING = {
     }
 }
 
+
 #########
 # GEOIP #
 #########
@@ -146,11 +147,12 @@ GEOIP_PATH = os.path.join(BASE_DIR, '../')
 # }
 HTTPS = None
 
+
 ############
 # GRAPHENE #
 ############
 
 GRAPHENE = {
-    'SCHEMA': 'promo.api.v1.public.schema',
+    'SCHEMA': 'news.api.v1.public.schema',
     'MIDDLEWARE': ()
 }

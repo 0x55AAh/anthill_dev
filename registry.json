@@ -78,5 +78,9 @@
   "moderation": {
     "internal": "http://localhost:9623",
     "external": "http://localhost:9623"
+  },
+  "news": {
+    "internal": "http://localhost:9624",
+    "external": "http://localhost:9624"
   }
 }

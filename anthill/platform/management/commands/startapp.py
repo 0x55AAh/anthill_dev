@@ -38,7 +38,7 @@ class StartApplication(BaseStartApplication):
             try:
                 Path(path).touch()
             except FileNotFoundError:
-                Path(os.path.basedir(path)).mkdir(mode=0o755, parents=False)
+                Path(os.path.dirname(path)).mkdir(mode=0o755, parents=False)
                 Path(path).touch()
 
     def create_new_registry_entry(self, app_name, host, port):

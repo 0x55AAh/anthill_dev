@@ -113,7 +113,7 @@ class SessionAPIModule:
 
 
 class SessionAPI:
-    _modules = collections.defaultdict(SessionAPIModule)
+    _module = collections.defaultdict(SessionAPIModule)
     _methods = []
 
     def __iter__(self):
@@ -130,7 +130,7 @@ class SessionAPI:
 
     @property
     def items(self):
-        return list(self._modules.items()) + self._methods
+        return list(self._module.items()) + self._methods
 
     # noinspection PyMethodMayBeStatic
     def expose(self, context: Context) -> None:
@@ -141,7 +141,7 @@ class SessionAPI:
             self._methods.append([method.__name__, method])
         else:
             method_module = method.__module__.partition('.')[-1]
-            setattr(self._modules[method_module], method.__name__, method)
+            setattr(self._module[method_module], method.__name__, method)
 
     def __call__(self, direct=False):
         """Decorator marks function as an session api method."""
