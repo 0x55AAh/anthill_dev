@@ -59,8 +59,10 @@ def promise_completion(f):
 
 def promise_callback(bound, resolve, reject):
     handler = bound.handler()
+
     if handler is None:
         return
+
     try:
         coroutine_object = bound.method(*bound.args, handler=handler)
         f = asyncio.ensure_future(coroutine_object)
