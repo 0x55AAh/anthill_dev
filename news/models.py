@@ -23,5 +23,5 @@ class NewsCategory(db.Model):
     news = db.relationship('News', backref='category')
 
     def get_news(self):
-        return self.news.query.filter_by(active=True).all()
+        return self.news.filter_by(active=True).all()
 
