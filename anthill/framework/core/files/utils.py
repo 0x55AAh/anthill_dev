@@ -1,3 +1,6 @@
+from anthill.framework.conf import settings
+
+
 # noinspection PyUnresolvedReferences
 class FileProxyMixin:
     """
@@ -51,3 +54,16 @@ class FileProxyMixin:
 
     def __iter__(self):
         return iter(self.file)
+
+
+def setting(name, default=None):
+    """
+    Helper function to get a Django setting by name. If setting doesn't exists
+    it will return a default.
+
+    :param name: Name of setting
+    :type name: str
+    :param default: Value if setting is unfound
+    :returns: Setting's value
+    """
+    return getattr(settings, name, default)

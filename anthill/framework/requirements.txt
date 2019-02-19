@@ -1,4 +1,5 @@
 tornado>=5.0
+paramiko
 pytz
 SQLAlchemy
 SQLAlchemy-Utils
