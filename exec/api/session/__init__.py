@@ -66,15 +66,15 @@ def promise_callback(bound, resolve, reject):
 
     try:
         coroutine_object = bound.method(*bound.args, handler=handler)
+        f = asyncio.ensure_future(coroutine_object)
     except BaseException as exc:
         exc.stack = traceback.format_exc()
         reject(exc)
     else:
-        task = asyncio.ensure_future(coroutine_object)
-        task.bound = bound
-        task.bound_resolve = resolve
-        task.bound_reject = reject
-        task.add_done_callback(promise_completion)
+        f.bound = bound
+        f.bound_resolve = resolve
+        f.bound_reject = reject
+        f.add_done_callback(promise_completion)
 
 
 def promise(method):
