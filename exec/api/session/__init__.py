@@ -41,10 +41,10 @@ def promise_completion(f):
     # once the future done, set the handler to ours
     PromiseContext.current = handler
 
-    exception = f.exception()
-    if exception:
-        exception.stack = ''.join(traceback.format_tb(f.exc_info()[2]))
-        f.bound_reject(exception)
+    exc = f.exception()
+    if exc:
+        exc.stack = ''.join(traceback.format_tb(f.exc_info()[2]))
+        f.bound_reject(exc)
     else:
         f.bound_resolve(f.result())
 
