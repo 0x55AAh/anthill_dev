@@ -162,8 +162,8 @@ class GroupMembership(db.Model):
 
 def get_friends(user_id):
     # TODO:
-    # groups = Group.query.filter_by(active=True, type='p').filter(GroupMembership.group)
-    pass
+    friendships = GroupMembership.query.filter_by(active=True, user_id=user_id)\
+        .filter(GroupMembership.group.type == 'p')
 
 
 def make_friends(user_id1, user_id2):
