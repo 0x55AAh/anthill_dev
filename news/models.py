@@ -20,7 +20,7 @@ class NewsCategory(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False, unique=True)
     description = db.Column(db.String(512), nullable=False)
-    news = db.relationship('News', backref='category')
+    news = db.relationship('News', backref='category', lazy='dynamic')
 
     def get_news(self):
         return self.news.filter_by(active=True).all()

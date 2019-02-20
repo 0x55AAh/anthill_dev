@@ -19,7 +19,6 @@ under the License.
 import itertools
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relationship
 from anthill.framework.db import db
 
 """
@@ -58,7 +57,7 @@ class UserMixin(db.Model):
 
     @declared_attr
     def roles(self):
-        return relationship('Role', secondary=role_membership, backref='users')
+        return db.relationship('Role', secondary=role_membership, backref='users')
 
     @declared_attr
     def perms(self):
@@ -78,10 +77,10 @@ class Credential(db.Model):
     credential_type_id = db.Column(db.ForeignKey('credential_type.id'), nullable=False)
     expiration_dt = db.Column(db.DateTime(timezone=True), nullable=False)
 
-    user = relationship('User',
-                        backref='credential',
-                        cascade="all, delete-orphan",
-                        single_parent=True)
+    user = db.relationship('User',
+                           backref='credential',
+                           cascade="all, delete-orphan",
+                           single_parent=True)
 
     def __repr__(self):
         return ("Credential(credential_type_id={0}, user_id={1})".
@@ -146,12 +145,12 @@ class Permission(db.Model):
     action_id = db.Column(db.ForeignKey('action.id'), nullable=True)
     resource_id = db.Column(db.ForeignKey('resource.id'), nullable=True)
 
-    domain = relationship('Domain', backref='permission')
-    action = relationship('Action', backref='permission')
-    resource = relationship('Resource', backref='permission')
+    domain = db.relationship('Domain', backref='permission')
+    action = db.relationship('Action', backref='permission')
+    resource = db.relationship('Resource', backref='permission')
 
-    roles = relationship('Role', secondary=role_permission,
-                         backref='permissions')
+    roles = db.relationship('Role', secondary=role_permission,
+                            backref='permissions')
 
     users = association_proxy('roles', 'users')
 

@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import hashlib
+import copy
 
 __all__ = [
     'BaseInternalConnection', 'InternalConnection', 'JSONRPCInternalConnection',
@@ -37,6 +38,7 @@ logger = logging.getLogger('anthill.application')
 
 DEFAULT_CACHE_TIMEOUT = 300  # 5min
 INTERNAL_REQUEST_CACHING = True
+API_REQUEST_CACHING = False
 
 
 def cache_key(service, method, postfix=None):
@@ -119,22 +121,45 @@ class InternalAPI(Singleton):
         for method in methods:
             self.add_method(method)
 
-    def as_internal(self):
+    def as_internal(self, enable_cache=API_REQUEST_CACHING,
+                    cache_timeout=DEFAULT_CACHE_TIMEOUT, cache_key=cache_key):
         """Decorator marks function as an internal api method."""
 
         def decorator(func):
+            def get_cache_key(api_, *args, **kwargs):
+                kwargs = copy.deepcopy(kwargs)
+                del kwargs['service']
+                method = func.__name__
+                postfix = hashlib.md5(utf8(str(args) + str(kwargs))).hexdigest()
+                key = cache_key(self.service.name, method, postfix) if callable(cache_key) else cache_key
+                return key
+
             if inspect.iscoroutinefunction(func):
                 async def wrapper(api_, *args, **kwargs):
+                    key = None
+                    if enable_cache:
+                        key = get_cache_key(api_, *args, **kwargs)
+                        result = await as_future(cache.get)(key)
+                        if result:
+                            return result
                     try:
-                        return await func(api_, *args, **kwargs)
+                        result = await func(api_, *args, **kwargs)
                     except Exception as e:
                         return {'error': {'message': str(e)}}
+                    else:
+                        if enable_cache:
+                            await as_future(cache.set)(key, result, cache_timeout)
+                        return result
             else:
                 def wrapper(api_, *args, **kwargs):
+                    if enable_cache:
+                        logger.warning('Caching cannot be enabled. Make api method async.')
                     try:
-                        return func(api_, *args, **kwargs)
+                        result = func(api_, *args, **kwargs)
                     except Exception as e:
                         return {'error': {'message': str(e)}}
+                    else:
+                        return result
             wrapper = wraps(func)(wrapper)
             self.add_method(wrapper)
             return wrapper

@@ -41,8 +41,8 @@ class EventCategory(db.Model):
     name = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(512), nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
-    events = db.relationship('Event', backref='category')
-    generators = db.relationship('EventGenerator', backref='category')
+    events = db.relationship('Event', backref='category', lazy='dynamic')
+    generators = db.relationship('EventGenerator', backref='category', lazy='dynamic')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,7 +73,7 @@ class Event(db.Model):
     on_start_task_id = db.Column(UUIDType(binary=False))
     on_finish_task_id = db.Column(UUIDType(binary=False))
 
-    participations = db.relationship('EventParticipation', backref='event')
+    participations = db.relationship('EventParticipation', backref='event', lazy='dynamic')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -296,7 +296,7 @@ class EventGenerator(db.Model):
     finish_at = db.Column(db.DateTime, nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
 
-    events = db.relationship('Event', backref='generator')
+    events = db.relationship('Event', backref='generator', lazy='dynamic')
     task_id = db.Column(db.Integer, db.ForeignKey('periodic_task.id'))
     task = db.relationship('PeriodicTask')
 
@@ -383,7 +383,7 @@ class EventGeneratorPool(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False, unique=True)
     description = db.Column(db.String(512), nullable=False)
-    generators = db.relationship('EventGenerator', backref='pool')
+    generators = db.relationship('EventGenerator', backref='pool', lazy='dynamic')
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     run_scheme = db.Column(ChoiceType(RUN_SCHEMES), default='any')
     last_run_at = db.Column(db.DateTime)

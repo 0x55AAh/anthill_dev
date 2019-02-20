@@ -39,7 +39,6 @@ class Hasher:
 
 class DeploymentMethod(db.Model):
     __tablename__ = 'deployment_methods'
-    __table_args__ = ()
 
     # noinspection PyArgumentList
     Names = enum.Enum('Names', list(Deployment().methods_dict))
@@ -58,7 +57,6 @@ class DeploymentMethod(db.Model):
 
 class Application(db.Model):
     __tablename__ = 'applications'
-    __table_args__ = ()
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(256), nullable=False)
@@ -73,7 +71,6 @@ class Application(db.Model):
 
 class ApplicationVersion(db.Model):
     __tablename__ = 'application_versions'
-    __table_args__ = ()
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     value = db.Column(db.String(128), nullable=False)
