@@ -73,7 +73,8 @@ class Message(InternalAPIMixin, db.Model):
     @classmethod
     @as_future
     def incoming_messages(cls, receiver_id, **kwargs):
-        return cls.query.filter_by(active=True, **kwargs).filter(cls.status.receiver_id == receiver_id)
+        return cls.query.filter_by(active=True, **kwargs).join(cls.status) \
+            .filter(MessageStatus.receiver_id == receiver_id)
 
     @classmethod
     async def draft_messages(cls, sender_id, **kwargs):
@@ -82,8 +83,8 @@ class Message(InternalAPIMixin, db.Model):
     @classmethod
     @as_future
     def new_messages(cls, receiver_id, **kwargs):
-        return cls.query.filter_by(active=True, **kwargs).filter(cls.status.receiver_id == receiver_id and
-                                                                 cls.status.value == 'new')
+        return cls.query.filter_by(active=True, **kwargs).join(cls.status) \
+            .filter(MessageStatus.receiver_id == receiver_id, MessageStatus.value == 'new')
 
 
 class TextMessage(Message):
@@ -153,24 +154,30 @@ class Group(db.Model):
 class GroupMembership(db.Model):
     __tablename__ = 'groups_memberships'
 
-    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), primary_key=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id', ondelete='CASCADE'), primary_key=True)
     user_id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, default=timezone.now)
     active = db.Column(db.Boolean, nullable=False, default=True)
     group = db.relationship('Group', backref=db.backref('memberships', lazy='dynamic'))
 
 
+@as_future
 def get_friends(user_id):
-    # TODO:
-    friendships = GroupMembership.query.filter_by(active=True, user_id=user_id)\
-        .filter(GroupMembership.group.type == 'p')
+    membership_query = GroupMembership.query.join(GroupMembership.group)
+    friendships1 = membership_query.filter(Group.type == 'p').filter_by(active=True, user_id=user_id)
+    friendships2 = membership_query.filter(
+        GroupMembership.user_id != user_id, Group.id.in_(f.group_id for f in friendships1))
+    return (f.user_id for f in friendships2)
 
 
+@as_future
 def make_friends(user_id1, user_id2):
-    # TODO:
-    pass
+    # TODO: check if already friends
+    group = Group.create(type='p', name=None)  # TODO: name
+    GroupMembership.create(user_id=user_id1, group_id=group.id)
+    GroupMembership.create(user_id=user_id2, group_id=group.id)
 
 
+@as_future
 def remove_friends(user_id1, user_id2):
-    # TODO:
-    pass
+    Group.query.filter_by(type='p', name=None).first().delete()  # TODO: name
