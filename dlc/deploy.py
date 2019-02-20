@@ -5,10 +5,9 @@ from anthill.framework.utils.urls import build_absolute_uri
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.core.exceptions import ImproperlyConfigured
 from anthill.framework.core.files.storage import default_storage
+from anthill.framework.core.files.backends.sftpstorage import SFTPStorage
 from anthill.platform.api.internal import InternalAPIMixin
 from anthill.platform.utils.ssh import PrivateSSHKeyContext
-from anthill.platform.utils.rsync import Rsync
-from tornado.escape import to_unicode
 from tornado.ioloop import IOLoop
 from dlc.exceptions import DeploymentError
 
@@ -102,22 +101,28 @@ class KeyCDNDeploymentMethod(DeploymentMethod):
 
     def configure(self, username=None, zone=None, key_data=None, base_url=None):
         self.username = username
-        self.zone = zone
+        self.zone = zone  # TODO:
         self.key_data = key_data
         self.base_url = base_url
 
-    async def deploy(self, src: str, dst: str) -> str:
-        with PrivateSSHKeyContext(self.key_data) as key_file:
+    @as_future
+    def deploy(self, src: str, dst: str) -> str:
+        with PrivateSSHKeyContext(self.key_data) as key_filename:
             kwargs = {
-                'identity_file': key_file,
-                'hostname': self.hostname,
-                'username': self.username
+                'host': self.hostname,
+                'username': self.username,
+                'base_url': self.base_url,  # TODO:
+                'root_path': None,          # TODO:
+                'params': {
+                    'key_filename': key_filename,
+                    'compress': False,
+                },
+                'file_mode': 0o644,
+                'dir_mode': 0o755,
             }
-            rsync = Rsync(**kwargs)
-            code, _, error = await rsync.upload(src, dst)
-
-            if code != 0:
-                raise DeploymentError(code, to_unicode(error))
+            storage = SFTPStorage(**kwargs)
+            with open(src, 'rb') as src_f:
+                storage.save(dst, src_f)
 
             return self.url(dst)
 
