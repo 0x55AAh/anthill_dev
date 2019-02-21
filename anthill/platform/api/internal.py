@@ -17,12 +17,12 @@ from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.core.cache import cache
+from anthill.framework.conf import settings
 
 from typing import Optional
 import inspect
 import json
 import logging
-import os
 import hashlib
 import copy
 
@@ -36,9 +36,9 @@ __all__ = [
 logger = logging.getLogger('anthill.application')
 
 
-DEFAULT_CACHE_TIMEOUT = 300  # 5min
-INTERNAL_REQUEST_CACHING = True
-API_REQUEST_CACHING = False
+DEFAULT_CACHE_TIMEOUT = getattr(settings, 'INTERNAL_DEFAULT_CACHE_TIMEOUT', 300)
+INTERNAL_REQUEST_CACHING = getattr(settings, 'INTERNAL_REQUEST_CACHING', True)
+INTERNAL_API_METHOD_CACHING = getattr(settings, 'INTERNAL_API_METHOD_CACHING', False)
 
 
 def cache_key(service, method, postfix=None):
@@ -121,7 +121,7 @@ class InternalAPI(Singleton):
         for method in methods:
             self.add_method(method)
 
-    def as_internal(self, enable_cache=API_REQUEST_CACHING,
+    def as_internal(self, enable_cache=INTERNAL_API_METHOD_CACHING,
                     cache_timeout=DEFAULT_CACHE_TIMEOUT, cache_key=cache_key):
         """Decorator marks function as an internal api method."""
 

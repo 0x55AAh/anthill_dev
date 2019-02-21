@@ -117,8 +117,8 @@ class KeyCDNDeploymentMethod(DeploymentMethod):
                     'key_filename': key_filename,
                     'compress': False,
                 },
-                'file_mode': 0o644,
-                'dir_mode': 0o755,
+                'file_mode': settings.FILE_UPLOAD_PERMISSIONS,
+                'dir_mode': settings.FILE_UPLOAD_DIRECTORY_PERMISSIONS,
             }
             storage = SFTPStorage(**kwargs)
             with open(src, 'rb') as src_f:
