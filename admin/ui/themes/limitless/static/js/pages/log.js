@@ -11,6 +11,11 @@ $(function () {
     var LOG_RE = /^(\[.*?\])\s+(.+)$/;
     var LOG_STRIPPED_PREFIX_RE = /^\[(.+)\]$/;
 
+    // Checkboxes, radios
+    $(".styled, .multiselect-container input").uniform({
+        radioClass: 'choice'
+    });
+
     var term = $('.console').terminal(function () {
     }, {
         enable: false,

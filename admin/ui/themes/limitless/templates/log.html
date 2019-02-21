@@ -25,5 +25,131 @@
 {% end %}
 
 {% block content %}
-<div class="console custom"></div>
+<div class="sidebar-detached">
+    <div class="sidebar sidebar-default sidebar-separate">
+        <div class="sidebar-content">
+
+            <!-- Sidebar search -->
+            <div class="panel panel-white">
+                <div class="panel-heading">
+                    <div class="panel-title text-semibold">
+                        <i class="icon-pencil7 text-size-base position-left"></i> {{ _('Content') }}
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <form action="#">
+                        <div class="form-group">
+                            <div class="has-feedback has-feedback-left">
+                                <input type="search" class="form-control" placeholder="Search">
+                                <div class="form-control-feedback">
+                                    <i class="icon-search4 text-size-large text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="radio no-margin-top">
+                                <label>
+                                    <input type="radio" name="filter_content" checked value="filter_content_string" class="styled"> {{ _('String') }}
+                                </label>
+                            </div>
+
+                            <div class="radio no-margin-bottom">
+                                <label>
+                                    <input type="radio" name="filter_content" value="filter_content_regex" class="styled"> {{ _('Regex') }}
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /sidebar search -->
+
+            <div class="panel panel-white">
+                <div class="panel-heading">
+                    <div class="panel-title text-semibold">
+                        <i class="icon-pushpin position-left"></i> {{ _('Mode') }}
+                    </div>
+                </div>
+
+                <form action="#">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="checkbox no-margin-top">
+                                <label><input type="checkbox" value="filter_mode_debug" class="styled"> {{ _('Debug') }}</label>
+                            </div>
+
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="filter_mode_info" checked class="styled"> {{ _('Info') }}</label>
+                            </div>
+
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="filter_mode_warning" class="styled"> {{ _('Warning') }}</label>
+                            </div>
+
+                            <div class="checkbox">
+                                <label><input type="checkbox" value="filter_mode_error" class="styled"> {{ _('Error') }}</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="panel panel-white">
+                <div class="panel-heading">
+                    <div class="panel-title text-semibold">
+                        <i class="icon-calendar3 position-left"></i> {{ _('Date') }}
+                    </div>
+                </div>
+
+                <form action="#">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="radio no-margin-top">
+                                <label>
+                                    <input type="radio" checked name="when_posted" value="filter_date_today" class="styled"> {{ _('Today') }}
+                                </label>
+                            </div>
+
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="when_posted" value="filter_date_yesterday" class="styled"> {{ _('Yesterday') }}
+                                </label>
+                            </div>
+
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="when_posted" value="filter_date_lastweek" class="styled"> {{ _('Last week') }}
+                                </label>
+                            </div>
+
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="when_posted" value="filter_date_lastmonth" class="styled"> {{ _('Last month') }}
+                                </label>
+                            </div>
+
+                            <div class="radio no-margin-bottom">
+                                <label>
+                                    <input type="radio" name="when_posted" value="filter_date_any" class="styled"> {{ _('Any time') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer no-padding">
+                        <a href="#" class="btn btn-default btn-block no-border">Other</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="container-detached">
+    <div class="content-detached">
+        <div class="console custom"></div>
+    </div>
+</div>
 {% end %}

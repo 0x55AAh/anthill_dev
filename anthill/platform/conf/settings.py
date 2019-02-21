@@ -14,14 +14,6 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 
 DEFAULT_HANDLER_CLASS = None
 
-RESOLVERS = {
-    "default": {
-        'internal': 'http://localhost:9602',
-        'external': 'http://localhost:9602',
-        'broker': BROKER
-    }
-}
-
 CACHES = {
     "default": {
         "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
@@ -213,8 +205,6 @@ GEOIP_CITY = 'GeoLite2-City.mmdb'
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
 
 COMPRESS_RESPONSE = True
-
-SESSION_ENGINE = 'anthill.framework.sessions.backends.cache'
 
 # LOGGING_ROOT_DIR = '/var/log/anthill'
 LOGGING_ROOT_DIR = '../'

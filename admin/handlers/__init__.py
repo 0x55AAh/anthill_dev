@@ -102,9 +102,9 @@ def _util_internal_wrapper(func):
     async def wrapper(*args, **kwargs):
         try:
             await func(*args, **kwargs)
+            return {'message': args[0].SUCCESSFUL_MESSAGE}
         except InternalAPIError as e:
-            return {'error': str(e)}
-        return {'message': args[0].SUCCESSFUL_MESSAGE}
+            return e.args[0]
     return wrapper
 
 
@@ -147,6 +147,11 @@ class ServiceRequestHandler(UserTemplateServiceRequestHandler):
 # @authenticated()
 class LogRequestHandler(ServiceContextMixin, PageHandlerMixin, UserTemplateHandler):
     page_name = 'log'
+
+    async def get_context_data(self, **kwargs):
+        context = await super().get_context_data(**kwargs)
+        context['has_detached_right'] = True
+        return context
 
 
 # @authenticated()

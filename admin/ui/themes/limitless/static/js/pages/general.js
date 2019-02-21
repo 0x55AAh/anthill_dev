@@ -119,10 +119,11 @@ $(function () {
                 if (isConfirm) {
                     var args = {service_name: service_name, version: null};
                     utils_client.send('update', args, function (error, response) {
-                        if (error) { // ¯\_(ツ)_/¯
+                        if (error || response.error) { // ¯\_(ツ)_/¯
+                            var e = error || response.error;
                             swal({
                                 title: "Error",
-                                text: error.message,
+                                text: e.message,
                                 confirmButtonColor: "#2196F3",
                                 type: "error"
                             });

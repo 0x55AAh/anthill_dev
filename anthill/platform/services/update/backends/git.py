@@ -1,7 +1,7 @@
 from anthill.framework.conf import settings
 from anthill.framework.utils.asynchronous import as_future
 from .base import BaseBackend
-from typing import List
+from typing import List, Optional
 import logging
 import git
 
@@ -30,7 +30,7 @@ class Backend(BaseBackend):
         self._repo.git.checkout('master')
 
     @as_future
-    def update(self, version: str = None) -> None:
+    def update(self, version: Optional[str] = None) -> None:
         self._repo.remotes.origin.fetch()
         self._repo.git.checkout('master')
         self._repo.git.checkout(version)

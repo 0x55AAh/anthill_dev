@@ -46,6 +46,7 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/extensions/easytimer.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/extensions/kurento-jsonrpc.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static_url('js/plugins/forms/styling/uniform.min.js') }}"></script>
     <script type="text/javascript"
             src="{{ static_url('js/plugins/extensions/reconnecting-websocket.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/plugins/notifications/sweet_alert.min.js') }}"></script>
@@ -61,7 +62,7 @@
     {% block js_header %}{% end %}
 </head>
 
-<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %}">
+<body class="{% block body-class %}navbar-top {% if not main_sidebar_expanded %}sidebar-xs{% end %}{% end %} {% if has_detached_right %}has-detached-right{% end %}">
 
 <!-- Main navbar -->
 {% block main-navbar %}

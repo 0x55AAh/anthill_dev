@@ -17,6 +17,12 @@ async def main_sidebar(handler):
     }
 
 
+async def additional_sidebar(handler):
+    return {
+        'has_detached_right': False,
+    }
+
+
 def metadata(handler):
     return {
         'admin_metadata': app.metadata
