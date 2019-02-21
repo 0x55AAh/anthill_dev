@@ -37,7 +37,7 @@ class PromoCode(db.Model):
     async def save(self, *args, **kwargs):
         if not self.key:
             self.key = await self.generate_key()
-        super().save(*args, **kwargs)
+        await as_future(super().save)(*args, **kwargs)
 
     @as_future
     def generate_key(self):
@@ -58,7 +58,7 @@ class PromoCode(db.Model):
         return self.count > 0 and not self.expired
 
     async def use(self, commit=True):
-        if not self.awailable:
+        if not self.available:
             raise ValueError('Promo code is not available')
         self.count -= 1
         await self.save(commit=commit)
