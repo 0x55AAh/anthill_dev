@@ -24,8 +24,8 @@ async def _check_user_action_types(handler, required_action_types):
 
 
 def moderated(action_types: Union[list, tuple]):
-    @functools.wraps(func)
     def decorator(func):
+        @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             await _check_user_action_types(args[0], action_types)
             if inspect.iscoroutinefunction(func):

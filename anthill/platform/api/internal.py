@@ -70,13 +70,6 @@ def _cached(key, timeout):
 cached = _cached(key=cache_key, timeout=DEFAULT_CACHE_TIMEOUT)
 
 
-def has_keys(d, keys):
-    for k in d.keys():
-        if k in keys:
-            return True
-    return False
-
-
 class InternalAPIError(Exception):
     """General internal API error."""
 
