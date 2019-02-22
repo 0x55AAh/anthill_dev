@@ -2,6 +2,7 @@
 -r anthill/platform/requirements.txt
 -r admin/requirements.txt
 -r apigw/requirements.txt
+-r backup/requirements.txt
 -r config/requirements.txt
 -r discovery/requirements.txt
 -r dlc/requirements.txt

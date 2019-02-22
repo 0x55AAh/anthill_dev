@@ -9,6 +9,7 @@ from .startproject import StartProject
 from .sendtestemail import SendTestEmail
 from .version import Version
 from .mmdbupdate import GeoIPMMDBUpdate
+# from .dumpsdb import DatabaseDumpsCommand
 
 __all__ = [
     'ApplicationChooser', 'Clean', 'CompileMessages', 'Server',

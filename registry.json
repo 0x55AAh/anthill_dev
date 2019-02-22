@@ -82,5 +82,9 @@
   "news": {
     "internal": "http://localhost:9624",
     "external": "http://localhost:9624"
+  },
+  "backup": {
+    "internal": "http://localhost:9625",
+    "external": "http://localhost:9625"
   }
 }

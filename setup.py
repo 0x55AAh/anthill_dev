@@ -73,6 +73,7 @@ setup(
         'anthill.platform',
         'anthill.admin',
         'anthill.apigw',
+        'anthill.backup',
         'anthill.config',
         'anthill.discovery',
         'anthill.dlc',

@@ -422,6 +422,9 @@ class AppManager(BaseManager):
         if "db" not in self._commands:
             from anthill.framework.db.management import MigrateCommand
             self.add_command("db", MigrateCommand)
+        if "dumpsdb" not in self._commands:
+            from anthill.framework.core.management.commands.dumpsdb import DatabaseDumpsCommand
+            self.add_command("dumpsdb", DatabaseDumpsCommand)
 
         super(AppManager, self).add_default_commands()
 
