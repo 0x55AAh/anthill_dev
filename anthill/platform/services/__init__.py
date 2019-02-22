@@ -62,12 +62,8 @@ class BaseService(CeleryMixin, _BaseService):
     def __init__(self, handlers=None, default_host=None, transforms=None, **kwargs):
         super().__init__(handlers, default_host, transforms, **kwargs)
         self.gis = None
-        if getattr(self.config, 'GEOIP_PATH', None):
-            self.gis = GeoIP2()
-        logger.debug('Geo position tracking system status: '
-                     '%s.' % 'ENABLED' if self.gis else 'DISABLED')
         self.started_at = None
-        self.update_manager = manager.UpdateManager()
+        self.update_manager = None
 
     @property
     def internal_connection(self):
@@ -81,6 +77,16 @@ class BaseService(CeleryMixin, _BaseService):
     def uptime(self):
         if self.started_at is not None:
             return timezone.now() - self.started_at
+
+    def setup_gis(self):
+        gis = None
+        if getattr(self.config, 'GEOIP_PATH', None):
+            self.gis = gis = GeoIP2()
+        logger.debug('Geo position tracking system status: '
+                     '%s.' % 'ENABLED' if gis else 'DISABLED')
+
+    def setup_update_manager(self):
+        self.update_manager = manager.UpdateManager()
 
     def setup_public_api(self):
         public_api_url = getattr(self.config, 'PUBLIC_API_URL', None)
@@ -114,6 +120,8 @@ class BaseService(CeleryMixin, _BaseService):
     def setup(self) -> None:
         self.setup_log_streaming()
         self.setup_public_api()
+        self.setup_gis()
+        self.setup_update_manager()
         super().setup()
 
     async def on_start(self) -> None:
