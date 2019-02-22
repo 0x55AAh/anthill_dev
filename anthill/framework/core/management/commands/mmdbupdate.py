@@ -2,6 +2,7 @@ from anthill.framework.core.management import Command, Option
 import requests
 import tarfile
 import functools
+import time
 import os
 
 products = ['City', 'Country']
@@ -15,6 +16,7 @@ PROGRESS_WIDTH = 50
 
 def _progress(message, width=PROGRESS_WIDTH, logger=None):
     def decorator(func):
+
         @functools.wraps(func)
         def wrapper(*args_, **kwargs_):
             dots = width - len(message) - 7
@@ -27,7 +29,6 @@ def _progress(message, width=PROGRESS_WIDTH, logger=None):
                 logger.info('  \_ %s %s OK' % (message, '.' * dots))
 
         return wrapper
-
     return decorator
 
 
@@ -50,6 +51,14 @@ def update(base, logger=None):
         else:
             print('* %s' % link)
 
+        @_progress('Backuping', logger=logger)
+        def backup():
+            if os.path.isfile(db_name):
+                name_parts = list(os.path.splitext(db_name))
+                name_parts.insert(-1, '.' + str(int(time.time())))
+                new_name = ''.join(name_parts)
+                os.rename(db_name, new_name)
+
         @_progress('Downloading', logger=logger)
         def download():
             resp = requests.get(link, stream=True)
@@ -70,6 +79,7 @@ def update(base, logger=None):
         def cleanup():
             os.unlink(arc_name)
 
+        backup()
         download()
         extract()
         cleanup()
