@@ -28,7 +28,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 APPLICATION_NAME = 'news'
 APPLICATION_VERBOSE_NAME = _('News')
 APPLICATION_DESCRIPTION = _('Service description')
-APPLICATION_ICON_CLASS = 'icon-new'
+APPLICATION_ICON_CLASS = 'icon-feed'
 APPLICATION_COLOR = 'pink'
 
 # SERVICE_CLASS = 'news.services.Service'

@@ -92,18 +92,20 @@ class KeyCDNDeploymentMethod(DeploymentMethod):
     name = 'keycdn'
     hostname = 'rsync.keycdn.com'
 
-    def __init__(self, username=None, zone=None, key_data=None, base_url=None):
+    def __init__(self, username=None, zone=None, key_data=None, base_url=None, root_path=None):
         super().__init__()
         self.username = username
         self.zone = zone
         self.key_data = key_data
         self.base_url = base_url
+        self.root_path = root_path
 
-    def configure(self, username=None, zone=None, key_data=None, base_url=None):
+    def configure(self, username=None, zone=None, key_data=None, base_url=None, root_path=None):
         self.username = username
         self.zone = zone  # TODO:
         self.key_data = key_data
         self.base_url = base_url
+        self.root_path = root_path
 
     @as_future
     def deploy(self, src: str, dst: str) -> str:
@@ -111,8 +113,7 @@ class KeyCDNDeploymentMethod(DeploymentMethod):
             kwargs = {
                 'host': self.hostname,
                 'username': self.username,
-                'base_url': self.base_url,  # TODO:
-                'root_path': None,          # TODO:
+                'root_path': self.root_path,
                 'params': {
                     'key_filename': key_filename,
                     'compress': False,
