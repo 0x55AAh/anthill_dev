@@ -10,13 +10,15 @@ Example:
         # current_service = api.service
         ...
 """
-from anthill.platform.api.internal import as_internal, InternalAPI
+from anthill.platform.api.internal import as_internal, InternalAPI, connector
 from anthill.framework.auth import authenticate as _authenticate, get_user_model
 from anthill.framework.utils.asynchronous import thread_pool_exec
 from anthill.framework.utils.urls import reverse, build_absolute_uri
 from typing import Optional
+import functools
 
 User = get_user_model()
+request_profile = functools.partial(connector.internal_request, 'profile')
 
 PAGINATED_BY = 50
 
@@ -46,8 +48,7 @@ async def _get_users(request=None, include_profiles: bool = False,
     users = users.paginate(request, **pagination_kwargs)
     users_data = User.__marshmallow__(many=True).dump(users.items).data
     if include_profiles:
-        profiles_data = await api.service.internal_connection.request(
-            'profile', 'get_profiles', user_ids=[u['id'] for u in users_data])
+        profiles_data = await request_profile('get_profiles', user_ids=[u['id'] for u in users_data])
         profiles_data_dict = {p['user_id']: p for p in profiles_data['data']}
         for user in users_data:
             user['profile'] = profiles_data_dict[user['id']]
