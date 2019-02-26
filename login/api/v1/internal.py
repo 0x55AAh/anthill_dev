@@ -18,7 +18,11 @@ from typing import Optional
 import functools
 
 User = get_user_model()
-request_profile = functools.partial(connector.internal_request, 'profile')
+
+
+def request_profile():
+    return functools.partial(connector.internal_request, 'profile')
+
 
 PAGINATED_BY = 50
 
@@ -48,7 +52,8 @@ async def _get_users(request=None, include_profiles: bool = False,
     users = users.paginate(request, **pagination_kwargs)
     users_data = User.__marshmallow__(many=True).dump(users.items).data
     if include_profiles:
-        profiles_data = await request_profile('get_profiles', user_ids=[u['id'] for u in users_data])
+        profiles_data = await request_profile()(
+            'get_profiles', user_ids=[u['id'] for u in users_data])
         profiles_data_dict = {p['user_id']: p for p in profiles_data['data']}
         for user in users_data:
             user['profile'] = profiles_data_dict[user['id']]
