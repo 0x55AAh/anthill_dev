@@ -43,6 +43,7 @@ def _get_names(link, base):
 
 
 def update(base, logger=None):
+    ts = int(time.time())
     for link in links:
         arc_name, db_name = _get_names(link, base)
 
@@ -55,7 +56,7 @@ def update(base, logger=None):
         def backup():
             if os.path.isfile(db_name):
                 name_parts = list(os.path.splitext(db_name))
-                name_parts.insert(-1, '.' + str(int(time.time())))
+                name_parts.insert(-1, '.%s' % ts)
                 new_name = ''.join(name_parts)
                 os.rename(db_name, new_name)
 
