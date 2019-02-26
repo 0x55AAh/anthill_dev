@@ -12,6 +12,7 @@ links = [link_tpl % {'product': product} for product in products]
 
 CHUNK_SIZE = 1024
 PROGRESS_WIDTH = 50
+DB_EXT = '.mmdb'
 
 
 def _progress(message, width=PROGRESS_WIDTH, logger=None):
@@ -21,12 +22,12 @@ def _progress(message, width=PROGRESS_WIDTH, logger=None):
         def wrapper(*args_, **kwargs_):
             dots = width - len(message) - 7
             if logger is None:
-                print('  \_ %s %s' % (message, '.' * dots), end=' ')
+                print('  \\_ %s %s' % (message, '.' * dots), end=' ')
             func(*args_, **kwargs_)
             if logger is None:
                 print('OK')
             else:
-                logger.info('  \_ %s %s OK' % (message, '.' * dots))
+                logger.info('  \\_ %s %s OK' % (message, '.' * dots))
 
         return wrapper
     return decorator
@@ -34,7 +35,7 @@ def _progress(message, width=PROGRESS_WIDTH, logger=None):
 
 def _get_names(link, base):
     arc_name = link.rpartition('/')[-1]
-    db_name = arc_name.partition('.')[0] + '.mmdb'
+    db_name = arc_name.partition('.')[0] + DB_EXT
 
     return (
         os.path.join(base, arc_name),
@@ -52,7 +53,7 @@ def update(base, logger=None):
         else:
             print('* %s' % link)
 
-        @_progress('Backuping', logger=logger)
+        @_progress('Create backup', logger=logger)
         def backup():
             if os.path.isfile(db_name):
                 name_parts = list(os.path.splitext(db_name))
@@ -71,7 +72,7 @@ def update(base, logger=None):
         def extract():
             arc = tarfile.open(arc_name)
             for m in arc.getmembers():
-                if m.name.endswith('.mmdb'):
+                if m.name.endswith(DB_EXT):
                     with open(db_name, 'wb') as f:
                         f.write(arc.extractfile(m).read())
             arc.close()
