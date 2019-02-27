@@ -3,8 +3,8 @@
 {% block header %}
 <div class="page-header">
     <div class="page-header-content"></div>
-    <div class="breadcrumb-line breadcrumb-line-component"><a class="breadcrumb-elements-toggle"><i
-            class="icon-menu-open"></i></a>
+    <div class="breadcrumb-line breadcrumb-line-component">
+        <a class="breadcrumb-elements-toggle"><i class="icon-menu-open"></i></a>
         <ul class="breadcrumb">
             <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Home') }}</a></li>
             <li class="active">{{ metadata['title'] }}</li>

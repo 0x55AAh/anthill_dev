@@ -25,7 +25,7 @@ $(function() {
         order: [[ 0, 'asc' ]],
         dom: '<"datatable-header datatable-header-accent"fBl><""t><"datatable-footer"ip>',
         language: {
-            search: '<span>Search people:</span> _INPUT_',
+            search: '<span>Search records:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
             paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -40,7 +40,7 @@ $(function() {
         },
         buttons: [
             {
-                extend: 'pdfHtml5',
+                /*extend: 'pdfHtml5',
                 text: 'Export list <i class="icon-file-pdf position-right"></i>',
                 className: 'btn bg-blue',
                 orientation: 'landscape',
@@ -50,7 +50,7 @@ $(function() {
                 },
                 customize: function (doc) {
                     doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-                }
+                }*/
             }
         ],
         drawCallback: function (settings) {

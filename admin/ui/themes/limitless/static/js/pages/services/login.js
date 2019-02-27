@@ -25,7 +25,7 @@ $(function() {
         order: [[ 0, 'asc' ]],
         dom: '<"datatable-header datatable-header-accent"fBl><""t><"datatable-footer"ip>',
         language: {
-            search: '<span>Search people:</span> _INPUT_',
+            search: '<span>Search user:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
             paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -40,14 +40,10 @@ $(function() {
         },
         buttons: [
             {
-                extend: 'pdfHtml5',
-                text: 'Export list <i class="icon-file-pdf position-right"></i>',
+                // extend: 'pdfHtml5',
+                text: 'Create user <i class="icon-plus22 position-right"></i>',
                 className: 'btn bg-blue',
                 orientation: 'landscape',
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                    stripHtml: true
-                },
                 customize: function (doc) {
                     doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
                 }
@@ -69,6 +65,15 @@ $(function() {
     $('.dataTables_length select').select2({
         minimumResultsForSearch: Infinity,
         width: 'auto'
+    });
+
+
+    // Switchery toggles
+    // ------------------------------
+
+    var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
+    switches.forEach(function(html) {
+        var switchery = new Switchery(html, {color: '#4CAF50'});
     });
 
 });
