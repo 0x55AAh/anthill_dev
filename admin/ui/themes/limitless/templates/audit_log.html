@@ -7,1542 +7,1467 @@
 {% block js %}
 <script type="text/javascript" src="{{ static_url('js/core/libraries/jquery_ui/widgets.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/plugins/tables/datatables/datatables.min.js') }}"></script>
-<script type="text/javascript" src="{{ static_url('js/plugins/forms/selects/select2.min.js') }}"></script>
+<script type="text/javascript"
+        src="{{ static_url('js/plugins/tables/datatables/extensions/responsive.min.js') }}"></script>
 <script type="text/javascript"
         src="{{ static_url('js/plugins/tables/datatables/extensions/natural_sort.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/plugins/forms/selects/select2.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/pages/audit_log.js') }}"></script>
+{% end %}
+
+{% block header %}
+<div class="page-header">
+    <div class="page-header-content"></div>
+    <div class="breadcrumb-line breadcrumb-line-component"><a class="breadcrumb-elements-toggle"><i
+            class="icon-menu-open"></i></a>
+        <ul class="breadcrumb">
+            <li><a href="{{ reverse_url('index') }}"><i class="icon-home2 position-left"></i> {{ _('Home') }}</a></li>
+            <li class="active">{{ metadata['title'] }}</li>
+        </ul>
+    </div>
+</div>
 {% end %}
 
 {% block content %}
 <!-- Task manager table -->
 <div class="panel panel-white">
-    <table class="table tasks-list table-lg">
+    <table class="table table-striped text-nowrap table-customers">
         <thead>
         <tr>
-            <th>#</th>
-            <th>Period</th>
-            <th>Task Description</th>
-            <th>Priority</th>
-            <th>Latest update</th>
-            <th>Status</th>
-            <th>Assigned users</th>
-            <th class="text-center text-muted" style="width: 30px;"><i class="icon-checkmark3"></i></th>
+            <th>Customer</th>
+            <th>Registered</th>
+            <th>Email</th>
+            <th>Payment method</th>
+            <th>Orders history</th>
+            <th>Value</th>
+            <th>Actions</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td>#25</td>
-            <td>Today</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">New blog layout</a></div>
-                <div class="text-muted">Grumbled ripely eternal sniffed the when hello less much..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">James Alexander</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.12.30
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>July 12, 2016</td>
+            <td><a href="#">james@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="22 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">25 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">34 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved" selected="selected">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 322.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#24</td>
-            <td>Today</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Create UI design model</a></div>
-                <div class="text-muted">One morning, when Gregor Samsa woke from troubled..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Jeremy Victorino</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.03.05
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>September 4, 2016</td>
+            <td><a href="#">jeremy@interface.club</a></td>
+            <td>Cash on delivery</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="22 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">43 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">65 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 1,432.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#23</td>
-            <td>Today</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">New icons set for an iOS app</a></div>
-                <div class="text-muted">A collection of textile samples lay spread out on the table..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Margo Baker</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.03.27
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>July 10, 2016</td>
+            <td><a href="#">margo@interface.club</a></td>
+            <td>Paypal</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="22 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">38 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">53 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold" selected="selected">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 489.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#22</td>
-            <td>Today</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Create ad campaign banners set</a></div>
-                <div class="text-muted">That he had recently cut out of an illustrated magazine..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Monica Smith</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.10.03
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>June 27, 2016</td>
+            <td><a href="#">monica@interface.club</a></td>
+            <td>Cash on delivery</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="22 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">15 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">235 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved" selected="selected">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 940.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#21</td>
-            <td>Yesterday</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Edit the draft for the icons</a></div>
-                <div class="text-muted">You've got to get enough sleep. Other travelling salesmen..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-info dropdown-toggle" data-toggle="dropdown">High <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-info"></span> High
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Jemmy Royle</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.11.25
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>January 2, 2016</td>
+            <td><a href="#">jemmy@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="21 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">23 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">65 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid" selected="selected">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 772.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#20</td>
-            <td>Yesterday</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Fix validation issues and commit</a>
-                </div>
-                <div class="text-muted">But who knows, maybe that would be the best thing for me..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Ashlynn Ben</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.04.14
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>February 25, 2016</td>
+            <td><a href="#">ashlynn@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="22 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">23 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">75 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved" selected="selected">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 662.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#19</td>
-            <td>Yesterday</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Support tickets list doesn't support
-                    commas</a></div>
-                <div class="text-muted">I'd have gone up to the boss and told him just what i think..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Ray Sammy</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.02.20
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>March 20, 2016</td>
+            <td><a href="#">ray@interface.club</a></td>
+            <td>Visa</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="21 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">42 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">542 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed" selected="selected">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 499.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#18</td>
-            <td>Yesterday</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Help Web devs with HTML integration</a>
-                </div>
-                <div class="text-muted">Samsa was a travelling salesman - and above it there hung..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-success dropdown-toggle" data-toggle="dropdown">Low <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-success"></span> Low
-                            priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Brian Leslie</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.12.24
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>July 12, 2016</td>
+            <td><a href="#">brian@interface.club</a></td>
+            <td>Paypal</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="21 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">14 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">45 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved" selected="selected">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 946.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#17</td>
-            <td>2 days ago</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Another icon set</a></div>
-                <div class="text-muted">A wonderful serenity has taken possession of my entire soul..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-success dropdown-toggle" data-toggle="dropdown">Low <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-success"></span> Low
-                            priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Patrick Marilynn</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.09.28
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>October 4, 2016</td>
+            <td><a href="#">patrick@interface.club</a></td>
+            <td>Wire transfer</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="20 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">24 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">76 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid" selected="selected">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 538.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#16</td>
-            <td>2 days ago</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">iOS application design mockups</a></div>
-                <div class="text-muted">Sweet mornings of spring which I enjoy with my whole heart..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Roland Cydney</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.02.12
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>August 1, 2016</td>
+            <td><a href="#">roland@interface.club</a></td>
+            <td>Paypal</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="21 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">27 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">236 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 432.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#15</td>
-            <td>2 days ago</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">UI/UX design review</a></div>
-                <div class="text-muted">I am alone, and feel the charm of existence in this spot..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Deanna Joss</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.05.20
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>May 17, 2016</td>
+            <td><a href="#">deanna@interface.club</a></td>
+            <td>Visa</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="20 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">53 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">236 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold" selected="selected">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 472.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#14</td>
-            <td>2 days ago</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Marketing campaign review</a></div>
-                <div class="text-muted">Which was created for the bliss of souls like mine..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-success dropdown-toggle" data-toggle="dropdown">Low <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-success"></span> Low
-                            priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Dawn Justin</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.06.17
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>May 12, 2016</td>
+            <td><a href="#">dawn@interface.club</a></td>
+            <td>Wire transfer</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="20 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">63 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">75 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 402.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#13</td>
-            <td>2 days ago</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Fix website issues on mobile</a></div>
-                <div class="text-muted">I am so happy, my dear friend, so absorbed in the exquisite..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-info dropdown-toggle" data-toggle="dropdown">High <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-info"></span> High
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Blondie Madison</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.01.26
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>March 26, 2016</td>
+            <td><a href="#">blondie@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="21 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">12 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">53 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid" selected="selected">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 839.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#12</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Add updated responsive styles</a></div>
-                <div class="text-muted">I should be incapable of drawing a single stroke at the present..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Derryl Carrie</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.09.15
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>July 26, 2016</td>
+            <td><a href="#">derryl@interface.club</a></td>
+            <td>Visa</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="17 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">43 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">90 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 471.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#11</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Merge latest changes</a></div>
-                <div class="text-muted">When, while the lovely valley teems with vapour around me..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Vincent Doris</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.02.23
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>June 25, 2016</td>
+            <td><a href="#">vincent@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="16 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">41 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">76 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix" selected="selected">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 902.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#10</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Create landing page for a new app</a>
-                </div>
-                <div class="text-muted">A few stray gleams steal into the inner sanctuary, I throw..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-info dropdown-toggle" data-toggle="dropdown">High <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-info"></span> High
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Diantha Royston</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.02.04
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>September 25, 2016</td>
+            <td><a href="#">diantha@interface.club</a></td>
+            <td>Paypal</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="17 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">7 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">234 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 543.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#9</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Update JS code in app.js file</a></div>
-                <div class="text-muted">When I hear the buzz of the little world among the stalks..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-info dropdown-toggle" data-toggle="dropdown">High <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-info"></span> High
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Lilian Knox</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.05.18
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>March 5, 2016</td>
+            <td><a href="#">lilian@interface.club</a></td>
+            <td>Visa</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="15 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">8 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">34 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold" selected="selected">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 2,472.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#8</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Combine .js files in /app/js/</a></div>
-                <div class="text-muted">Insects and flies, then I feel the presence of the Almighty..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Toria Eveline</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.03.28
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>August 26, 2016</td>
+            <td><a href="#">toria@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="14 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">53 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">90 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved" selected="selected">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 2,372.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#7</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Create application Photoshop draft</a>
-                </div>
-                <div class="text-muted">Who formed us in his own image, and the breath of that universal..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Tiffany Willemina</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.07.29
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>November 19, 2016</td>
+            <td><a href="#">tiffany@interface.club</a></td>
+            <td>Paypal</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="20 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">21 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">42 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid" selected="selected">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 1,930.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#6</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Cartoon characters for app ads</a></div>
-                <div class="text-muted">My friend, when darkness overspreads my eyes, and heaven..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Trenton Alison</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.09.16
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>July 25, 2016</td>
+            <td><a href="#">trenton@interface.club</a></td>
+            <td>Wire transfer</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="17 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">5 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">29 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold" selected="selected">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 830.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#5</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Google AdWords campain graphics</a>
-                </div>
-                <div class="text-muted">Seem to dwell in my soul and absorb its power, like the form..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-success dropdown-toggle" data-toggle="dropdown">Low <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-success"></span> Low
-                            priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Brandon Gilbert</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.11.25
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>December 26, 2016</td>
+            <td><a href="#">brandon@interface.club</a></td>
+            <td>Paypal</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="18 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">15 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">89 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid" selected="selected">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 903.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#4</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Monthly statistics report</a></div>
-                <div class="text-muted">I sink under the weight of the splendour of these visions..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-danger dropdown-toggle" data-toggle="dropdown">Highest <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-danger"></span> Highest
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Troy Webster</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.10.24
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>May 29, 2016</td>
+            <td><a href="#">troy@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="19 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">12 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">53 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 394.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#3</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Create invoice template</a></div>
-                <div class="text-muted">Far far away, behind the word mountains, far from the..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-info dropdown-toggle" data-toggle="dropdown">High <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-info"></span> High
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Elbert Cailyn</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.08.20
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>February 28, 2016</td>
+            <td><a href="#">elbert@interface.club</a></td>
+            <td>Visa</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="20 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">10 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">93 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved" selected="selected">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 192.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#2</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Add images to the product gallery</a>
-                </div>
-                <div class="text-muted">Countries Vokalia and Consonantia, there live the blind..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-primary dropdown-toggle" data-toggle="dropdown">Normal <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-primary"></span> Normal
-                            priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-success"></span> Low priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Coen Grant</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.12.24
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>June 17, 2016</td>
+            <td><a href="#">coen@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="21 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">19 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">75 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed" selected="selected">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 252.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
 
         <tr>
-            <td>#1</td>
-            <td>Last week</td>
             <td>
-                <div class="text-semibold"><a href="task_manager_detailed.html">Update User profile page</a></div>
-                <div class="text-muted">A small river named Duden flows by their place and supplies it..</div>
-            </td>
-            <td>
-                <div class="btn-group">
-                    <a href="#" class="label label-success dropdown-toggle" data-toggle="dropdown">Low <span
-                            class="caret"></span></a>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="#"><span class="status-mark position-left bg-danger"></span> Highest priority</a>
-                        </li>
-                        <li><a href="#"><span class="status-mark position-left bg-info"></span> High priority</a></li>
-                        <li><a href="#"><span class="status-mark position-left bg-primary"></span> Normal priority</a>
-                        </li>
-                        <li class="active"><a href="#"><span class="status-mark position-left bg-success"></span> Low
-                            priority</a></li>
-                    </ul>
+                <div class="media">
+                    <a href="user_pages_profile_tabbed.html" class="media-left">
+                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
+                    </a>
+
+                    <div class="media-body media-middle">
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Charles Elian</a>
+                        <div class="text-muted text-size-small">
+                            Latest order: 2016.01.28
+                        </div>
+                    </div>
                 </div>
             </td>
+            <td>September 21, 2016</td>
+            <td><a href="#">charles@interface.club</a></td>
+            <td>MasterCard</td>
             <td>
-                <div class="input-group input-group-transparent">
-                    <div class="input-group-addon"><i class="icon-calendar2 position-left"></i></div>
-                    <input type="text" class="form-control datepicker" value="19 January, 15">
-                </div>
+                <ul class="list list-unstyled no-margin">
+                    <li class="no-margin">
+                        <i class="icon-infinite text-size-base text-warning position-left"></i>
+                        Pending:
+                        <a href="#">3 orders</a>
+                    </li>
+
+                    <li class="no-margin">
+                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
+                        Processed:
+                        <a href="#">19 orders</a>
+                    </li>
+                </ul>
             </td>
             <td>
-                <select name="status" class="select" data-placeholder="Select status">
-                    <option value="open">Open</option>
-                    <option value="hold">On hold</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="dublicate">Dublicate</option>
-                    <option value="invalid">Invalid</option>
-                    <option value="wontfix">Wontfix</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <h6 class="no-margin text-semibold">&euro; 2,345.00</h6>
             </td>
-            <td>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#"><img src="assets/images/placeholder.jpg" class="img-circle img-xs" alt=""></a>
-                <a href="#" class="text-default">&nbsp;<i class="icon-plus22"></i></a>
-            </td>
-            <td class="text-center">
+            <td class="text-right">
                 <ul class="icons-list">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-menu9"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-menu7"></i>
+                            <span class="caret"></span>
+                        </a>
+
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-alarm-add"></i> Check in</a></li>
-                            <li><a href="#"><i class="icon-attachment"></i> Attach screenshot</a></li>
-                            <li><a href="#"><i class="icon-rotate-ccw2"></i> Reassign</a></li>
+                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
+                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
+                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
                             <li class="divider"></li>
-                            <li><a href="#"><i class="icon-pencil7"></i> Edit task</a></li>
-                            <li><a href="#"><i class="icon-cross2"></i> Remove</a></li>
+                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
                         </ul>
                     </li>
                 </ul>
             </td>
+            <td class="no-padding-left"></td>
         </tr>
         </tbody>
     </table>
