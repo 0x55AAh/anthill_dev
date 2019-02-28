@@ -9,7 +9,7 @@ $(function () {
         columnDefs: [
             {
                 targets: 0,
-                width: 400
+                width: 40
             },
             {
                 orderable: false,
@@ -75,5 +75,35 @@ $(function () {
     switches.forEach(function(html) {
         var switchery = new Switchery(html, {color: '#4CAF50'});
     });
+
+    // Initialize with options
+    $('.daterange-predefined').daterangepicker(
+        {
+            timePicker: true,
+            timePickerIncrement: 1,
+            timePicker24Hour: true,
+
+            drops: 'up',
+
+            //startDate: moment(),
+            //endDate: moment(),
+            //minDate: '01/01/2014',
+            //maxDate: '12/31/2016',
+            //dateLimit: { days: 60 },
+            opens: 'left',
+            applyClass: 'btn-small bg-slate',
+            cancelClass: 'btn-small btn-default',
+            locale: {
+                format: 'MM/DD/YYYY h:mm'
+            }
+        },
+        function(start, end) {
+            $('.daterange-predefined span').html(start.format('MMMM D, YYYY, h:mm') + ' &nbsp; - &nbsp; ' + end.format('MMMM D, YYYY, h:mm'));
+            $.jGrowl('Date range has been changed', { header: 'Update', theme: 'bg-primary', position: 'center', life: 1500 });
+        }
+    );
+
+    // Display date format
+    $('.daterange-predefined span').html(moment().subtract(29, 'days').format('MMMM D, YYYY, h:mm a') + ' &nbsp; - &nbsp; ' + moment().format('MMMM D, YYYY, h:mm a'));
 
 });

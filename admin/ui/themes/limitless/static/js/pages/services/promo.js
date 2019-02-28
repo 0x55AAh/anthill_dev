@@ -25,7 +25,7 @@ $(function () {
         order: [[ 0, 'asc' ]],
         dom: '<"datatable-header datatable-header-accent"fBl><""t><"datatable-footer"ip>',
         language: {
-            search: '<span>Search promocode:</span> _INPUT_',
+            search: '<span>Search promo code:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
             paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -40,13 +40,24 @@ $(function () {
         },
         buttons: [
             {
-                // extend: 'pdfHtml5',
-                text: 'Create promocode <i class="icon-plus22 position-right"></i>',
+                extend: 'collection',
+                text: '<i class="icon-three-bars"></i> <span class="caret"></span>',
                 className: 'btn bg-blue',
                 orientation: 'landscape',
-                customize: function (doc) {
-                    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-                }
+                buttons: [
+                    {
+                        text: '<i class="icon-plus22 position-right" style="padding-right: 7px"></i> New promo code',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 0 ).visible( ! dt.column( 0 ).visible() );
+                        }
+                    },
+                    {
+                        text: '<i class="icon-grid4 position-right" style="padding-right: 7px"></i> Generate promo codes',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( -2 ).visible( ! dt.column( -2 ).visible() );
+                        }
+                    }
+                ]
             }
         ],
         drawCallback: function (settings) {
