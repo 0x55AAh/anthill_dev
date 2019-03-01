@@ -15,6 +15,7 @@ class Profile(InternalAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False, unique=True)
     payload = db.Column(JSONType, nullable=False, default={})
+    active = db.Column(db.Boolean, nullable=False, default=True)
 
     async def get_user(self):
         return await self.internal_request('login', 'get_user', user_id=self.user_id)

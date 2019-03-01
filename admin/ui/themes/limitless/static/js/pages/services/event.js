@@ -8,13 +8,25 @@ $(function () {
         autoWidth: false,
         columnDefs: [
             {
-                targets: 0,
-                width: 40
+                targets: 3,
+                width: 200
             },
             {
+                targets: 4,
+                width: 320
+            },
+            {
+                targets: 5,
+                width: 130
+            },
+            {
+                targets: 6,
+                width: 130
+            },
+            {
+                targets: 7,
                 orderable: false,
-                width: 16,
-                targets: 6
+                width: 130
             },
             {
                 className: 'control',
@@ -22,7 +34,7 @@ $(function () {
                 targets: -1
             }
         ],
-        order: [[ 0, 'asc' ]],
+        order: [[ 3, 'asc' ]],
         dom: '<"datatable-header datatable-header-accent"fBl><""t><"datatable-footer"ip>',
         language: {
             search: '<span>Search event:</span> _INPUT_',
@@ -77,7 +89,7 @@ $(function () {
     });
 
     // Initialize with options
-    var $picker = $('.daterange-predefined').daterangepicker(
+    var $dates_picker = $('.daterange-predefined').daterangepicker(
         {
             timePicker: true,
             timePickerIncrement: 1,
@@ -97,14 +109,14 @@ $(function () {
         }
     );
 
-    $picker.on('show.daterangepicker', function (ev, picker) {
-	if (picker.element.offset().top - $(window).scrollTop() + picker.container.outerHeight() > $(window).height()) {
-		picker.drops = 'up';
-	} else {
-		picker.drops = 'down';
-	}
-	picker.move();
-});
+    $dates_picker.on('show.daterangepicker', function (ev, picker) {
+        if (picker.element.offset().top - $(window).scrollTop() + picker.container.outerHeight() > $(window).height()) {
+            picker.drops = 'up';
+        } else {
+            picker.drops = 'down';
+        }
+        picker.move();
+    });
 
     // Display date format
     $('.daterange-predefined span').html(moment().subtract(29, 'days')

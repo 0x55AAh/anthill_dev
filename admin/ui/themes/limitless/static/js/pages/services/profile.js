@@ -7,15 +7,15 @@ $(function () {
     $('.table-customers').DataTable({
         autoWidth: false,
         columnDefs: [
-            {
-                targets: 0,
-                width: 400
-            },
-            {
-                orderable: false,
-                width: 16,
-                targets: 6
-            },
+            // {
+            //     targets: 0,
+            //     width: 400
+            // },
+            // {
+            //     orderable: false,
+            //     width: 16,
+            //     targets: 6
+            // },
             {
                 className: 'control',
                 orderable: false,
@@ -65,6 +65,14 @@ $(function () {
     $('.dataTables_length select').select2({
         minimumResultsForSearch: Infinity,
         width: 'auto'
+    });
+
+    // Switchery toggles
+    // ------------------------------
+
+    var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
+    switches.forEach(function(html) {
+        var switchery = new Switchery(html, {color: '#4CAF50'});
     });
 
 });

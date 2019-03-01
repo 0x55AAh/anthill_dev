@@ -8,12 +8,28 @@ $(function() {
         autoWidth: false,
         columnDefs: [
             {
-                targets: 0,
-                width: 400
+                targets: 1,
+                width: 130
+            },
+            {
+                targets: 2,
+                width: 300
+            },
+            {
+                targets: 3,
+                width: 200
+            },
+            {
+                targets: 4,
+                width: 130
+            },
+            {
+                targets: 5,
+                width: 130
             },
             {
                 orderable: false,
-                width: 16,
+                width: 130,
                 targets: 6
             },
             {
