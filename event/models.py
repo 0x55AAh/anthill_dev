@@ -62,6 +62,7 @@ class Event(db.Model):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
     category_id = db.Column(db.Integer, db.ForeignKey('event_categories.id'))
     generator_id = db.Column(db.Integer, db.ForeignKey('event_generators.id'))
     created_at = db.Column(db.DateTime, nullable=False, default=timezone.now)
@@ -283,6 +284,7 @@ class EventGenerator(db.Model):
     __tablename__ = 'event_generators'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
     pool_id = db.Column(db.Integer, db.ForeignKey('event_generator_pools.id'))
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     enabled = db.Column(db.Boolean, nullable=False, default=True)
@@ -307,6 +309,7 @@ class EventGenerator(db.Model):
         self.total_run_count += 1
         self.save()
         kwargs = {
+            'name': None,  # TODO: auto
             'category_id': self.category_id,
             'start_at': self.start_at,
             'finish_at': self.finish_at,

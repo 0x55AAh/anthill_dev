@@ -77,19 +77,12 @@ $(function () {
     });
 
     // Initialize with options
-    $('.daterange-predefined').daterangepicker(
+    var $picker = $('.daterange-predefined').daterangepicker(
         {
             timePicker: true,
             timePickerIncrement: 1,
             timePicker24Hour: true,
 
-            drops: 'up',
-
-            //startDate: moment(),
-            //endDate: moment(),
-            //minDate: '01/01/2014',
-            //maxDate: '12/31/2016',
-            //dateLimit: { days: 60 },
             opens: 'left',
             applyClass: 'btn-small bg-slate',
             cancelClass: 'btn-small btn-default',
@@ -98,12 +91,23 @@ $(function () {
             }
         },
         function(start, end) {
-            $('.daterange-predefined span').html(start.format('MMMM D, YYYY, h:mm') + ' &nbsp; - &nbsp; ' + end.format('MMMM D, YYYY, h:mm'));
+            $('.daterange-predefined span').html(
+                start.format('MMMM D, YYYY, h:mm') + ' &nbsp; - &nbsp; ' + end.format('MMMM D, YYYY, h:mm'));
             $.jGrowl('Date range has been changed', { header: 'Update', theme: 'bg-primary', position: 'center', life: 1500 });
         }
     );
 
+    $picker.on('show.daterangepicker', function (ev, picker) {
+	if (picker.element.offset().top - $(window).scrollTop() + picker.container.outerHeight() > $(window).height()) {
+		picker.drops = 'up';
+	} else {
+		picker.drops = 'down';
+	}
+	picker.move();
+});
+
     // Display date format
-    $('.daterange-predefined span').html(moment().subtract(29, 'days').format('MMMM D, YYYY, h:mm a') + ' &nbsp; - &nbsp; ' + moment().format('MMMM D, YYYY, h:mm a'));
+    $('.daterange-predefined span').html(moment().subtract(29, 'days')
+        .format('MMMM D, YYYY, h:mm a') + ' &nbsp; - &nbsp; ' + moment().format('MMMM D, YYYY, h:mm a'));
 
 });
