@@ -197,6 +197,33 @@ async def update(api_: InternalAPI, version: Optional[str], **options):
     await update_manager.update(version)
 
 
+def _get_model_object(model_name: str, object_id: str):
+    from anthill.framework.apps import app
+    model = app.get_model(model_name)
+    return model.query.get(object_id)
+
+
+@as_internal()
+@as_future
+def object_version(api_: InternalAPI, model_name: str, object_id: str, version: int, **options):
+    obj = _get_model_object(model_name, object_id)
+    return obj.versions[version]
+
+
+@as_internal()
+@as_future
+def object_recover(api_: InternalAPI, model_name: str, object_id: str, version: int, **options) -> None:
+    obj = _get_model_object(model_name, object_id)
+    obj.versions[version].revert()
+
+
+@as_internal()
+@as_future
+def object_history(api_: InternalAPI, model_name: str, object_id: str, **options):
+    obj = _get_model_object(model_name, object_id)
+    return obj.versions
+
+
 class BaseInternalConnection(Singleton):
     """Implements communications between services."""
     message_type = 'internal'

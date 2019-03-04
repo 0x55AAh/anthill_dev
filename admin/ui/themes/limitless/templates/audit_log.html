@@ -21,13 +21,13 @@
     <table class="table table-striped text-nowrap table-customers">
         <thead>
         <tr>
-            <th>Customer</th>
-            <th>Registered</th>
-            <th>Email</th>
-            <th>Payment method</th>
-            <th>Orders history</th>
+            <th>{{ _("Author") }}</th>
+            <th>{{ _("Date & Time") }}</th>
+            <th>{{ _("Service") }}</th>
+            <th>{{ _("Model") }}</th>
+            <th>{{ _("Object ID") }}</th>
             <th>Value</th>
-            <th>Actions</th>
+            <th>{{ _("Actions") }}</th>
             <th></th>
         </tr>
         </thead>
@@ -42,31 +42,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">James Alexander</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.12.30
+                            Last login: 2016.12.30
                         </div>
                     </div>
                 </div>
             </td>
-            <td>July 12, 2016</td>
-            <td><a href="#">james@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">25 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">34 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 322.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-steam position-left"></i></span>
+                    <input type="text" class="form-control" value="Game" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">15</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -77,11 +73,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -99,31 +91,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Jeremy Victorino</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.03.05
+                            Last login: 2016.03.05
                         </div>
                     </div>
                 </div>
             </td>
-            <td>September 4, 2016</td>
-            <td><a href="#">jeremy@interface.club</a></td>
-            <td>Cash on delivery</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">43 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">65 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 1,432.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-steam position-left"></i></span>
+                    <input type="text" class="form-control" value="Game" disabled>
+                </div>
+            </td>
+            <td>CashOnDelivery</td>
+            <td><a href="#">546</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -134,11 +122,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -156,31 +140,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Margo Baker</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.03.27
+                            Last login: 2016.03.27
                         </div>
                     </div>
                 </div>
             </td>
-            <td>July 10, 2016</td>
-            <td><a href="#">margo@interface.club</a></td>
-            <td>Paypal</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">38 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">53 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 489.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-steam position-left"></i></span>
+                    <input type="text" class="form-control" value="Game" disabled>
+                </div>
+            </td>
+            <td>Paypal</td>
+            <td><a href="#">134</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -191,11 +171,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -213,31 +189,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Monica Smith</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.10.03
+                            Last login: 2016.10.03
                         </div>
                     </div>
                 </div>
             </td>
-            <td>June 27, 2016</td>
-            <td><a href="#">monica@interface.club</a></td>
-            <td>Cash on delivery</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">15 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">235 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 940.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-gear position-left"></i></span>
+                    <input type="text" class="form-control" value="Configuration" disabled>
+                </div>
+            </td>
+            <td>CashOnDelivery</td>
+            <td><a href="#">7856</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -248,11 +220,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -270,31 +238,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Jemmy Royle</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.11.25
+                            Last login: 2016.11.25
                         </div>
                     </div>
                 </div>
             </td>
-            <td>January 2, 2016</td>
-            <td><a href="#">jemmy@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">23 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">65 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 772.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-gear position-left"></i></span>
+                    <input type="text" class="form-control" value="Configuration" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">45</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -305,11 +269,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -327,31 +287,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Ashlynn Ben</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.04.14
+                            Last login: 2016.04.14
                         </div>
                     </div>
                 </div>
             </td>
-            <td>February 25, 2016</td>
-            <td><a href="#">ashlynn@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">23 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">75 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 662.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-gear position-left"></i></span>
+                    <input type="text" class="form-control" value="Configuration" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">42</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -362,11 +318,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -384,31 +336,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Ray Sammy</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.02.20
+                            Last login: 2016.02.20
                         </div>
                     </div>
                 </div>
             </td>
-            <td>March 20, 2016</td>
-            <td><a href="#">ray@interface.club</a></td>
-            <td>Visa</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">42 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">542 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 499.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-gear position-left"></i></span>
+                    <input type="text" class="form-control" value="Configuration" disabled>
+                </div>
+            </td>
+            <td>Visa</td>
+            <td><a href="#">698</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -419,11 +367,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -441,31 +385,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Brian Leslie</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.12.24
+                            Last login: 2016.12.24
                         </div>
                     </div>
                 </div>
             </td>
-            <td>July 12, 2016</td>
-            <td><a href="#">brian@interface.club</a></td>
-            <td>Paypal</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">14 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">45 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 946.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-gear position-left"></i></span>
+                    <input type="text" class="form-control" value="Configuration" disabled>
+                </div>
+            </td>
+            <td>Paypal</td>
+            <td><a href="#">85</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -476,11 +416,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -498,31 +434,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Patrick Marilynn</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.09.28
+                            Last login: 2016.09.28
                         </div>
                     </div>
                 </div>
             </td>
-            <td>October 4, 2016</td>
-            <td><a href="#">patrick@interface.club</a></td>
-            <td>Wire transfer</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">24 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">76 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 538.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar position-left"></i></span>
+                    <input type="text" class="form-control" value="Event" disabled>
+                </div>
+            </td>
+            <td>WireTransfer</td>
+            <td><a href="#">35</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -533,11 +465,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -555,31 +483,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Roland Cydney</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.02.12
+                            Last login: 2016.02.12
                         </div>
                     </div>
                 </div>
             </td>
-            <td>August 1, 2016</td>
-            <td><a href="#">roland@interface.club</a></td>
-            <td>Paypal</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">27 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">236 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 432.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar position-left"></i></span>
+                    <input type="text" class="form-control" value="Event" disabled>
+                </div>
+            </td>
+            <td>Paypal</td>
+            <td><a href="#">468</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -590,11 +514,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -612,31 +532,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Deanna Joss</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.05.20
+                            Last login: 2016.05.20
                         </div>
                     </div>
                 </div>
             </td>
-            <td>May 17, 2016</td>
-            <td><a href="#">deanna@interface.club</a></td>
-            <td>Visa</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">53 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">236 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 472.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar position-left"></i></span>
+                    <input type="text" class="form-control" value="Event" disabled>
+                </div>
+            </td>
+            <td>Visa</td>
+            <td><a href="#">4568</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -647,11 +563,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -669,31 +581,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Dawn Justin</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.06.17
+                            Last login: 2016.06.17
                         </div>
                     </div>
                 </div>
             </td>
-            <td>May 12, 2016</td>
-            <td><a href="#">dawn@interface.club</a></td>
-            <td>Wire transfer</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">63 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">75 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 402.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar position-left"></i></span>
+                    <input type="text" class="form-control" value="Event" disabled>
+                </div>
+            </td>
+            <td>WireTransfer</td>
+            <td><a href="#">654</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -704,11 +612,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -726,31 +630,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Blondie Madison</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.01.26
+                            Last login: 2016.01.26
                         </div>
                     </div>
                 </div>
             </td>
-            <td>March 26, 2016</td>
-            <td><a href="#">blondie@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">12 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">53 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 839.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar position-left"></i></span>
+                    <input type="text" class="form-control" value="Event" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">159</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -761,11 +661,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -783,31 +679,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Derryl Carrie</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.09.15
+                            Last login: 2016.09.15
                         </div>
                     </div>
                 </div>
             </td>
-            <td>July 26, 2016</td>
-            <td><a href="#">derryl@interface.club</a></td>
-            <td>Visa</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">43 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">90 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 471.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar position-left"></i></span>
+                    <input type="text" class="form-control" value="Event" disabled>
+                </div>
+            </td>
+            <td>Visa</td>
+            <td><a href="#">147</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -818,11 +710,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -840,31 +728,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Vincent Doris</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.02.23
+                            Last login: 2016.02.23
                         </div>
                     </div>
                 </div>
             </td>
-            <td>June 25, 2016</td>
-            <td><a href="#">vincent@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">41 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">76 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 902.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">741</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -875,11 +759,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -897,31 +777,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Diantha Royston</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.02.04
+                            Last login: 2016.02.04
                         </div>
                     </div>
                 </div>
             </td>
-            <td>September 25, 2016</td>
-            <td><a href="#">diantha@interface.club</a></td>
-            <td>Paypal</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">7 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">234 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 543.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>Paypal</td>
+            <td><a href="#">62</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -932,11 +808,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -954,31 +826,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Lilian Knox</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.05.18
+                            Last login: 2016.05.18
                         </div>
                     </div>
                 </div>
             </td>
-            <td>March 5, 2016</td>
-            <td><a href="#">lilian@interface.club</a></td>
-            <td>Visa</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">8 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">34 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 2,472.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>Visa</td>
+            <td><a href="#">5</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -989,11 +857,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1011,31 +875,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Toria Eveline</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.03.28
+                            Last login: 2016.03.28
                         </div>
                     </div>
                 </div>
             </td>
-            <td>August 26, 2016</td>
-            <td><a href="#">toria@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">53 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">90 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 2,372.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">984</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1046,11 +906,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1068,31 +924,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Tiffany Willemina</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.07.29
+                            Last login: 2016.07.29
                         </div>
                     </div>
                 </div>
             </td>
-            <td>November 19, 2016</td>
-            <td><a href="#">tiffany@interface.club</a></td>
-            <td>Paypal</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">21 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">42 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 1,930.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>Paypal</td>
+            <td><a href="#">12648</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1103,11 +955,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1125,31 +973,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Trenton Alison</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.09.16
+                            Last login: 2016.09.16
                         </div>
                     </div>
                 </div>
             </td>
-            <td>July 25, 2016</td>
-            <td><a href="#">trenton@interface.club</a></td>
-            <td>Wire transfer</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">5 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">29 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 830.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>WireTransfer</td>
+            <td><a href="#">7</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1160,11 +1004,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1180,33 +1020,29 @@
                     </a>
 
                     <div class="media-body media-middle">
-                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Brandon Gilbert</a>
+                        <a href="user_pages_profile_tabbed.html" class="text-semibold">Brandon Gilbert <i class="icon-crown superuser"></i></a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.11.25
+                            Last login: 2016.11.25
                         </div>
                     </div>
                 </div>
             </td>
-            <td>December 26, 2016</td>
-            <td><a href="#">brandon@interface.club</a></td>
-            <td>Paypal</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">15 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">89 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 903.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-circle-code position-left"></i></span>
+                    <input type="text" class="form-control" value="Exec" disabled>
+                </div>
+            </td>
+            <td>Paypal</td>
+            <td><a href="#">11</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1217,11 +1053,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1239,31 +1071,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Troy Webster</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.10.24
+                            Last login: 2016.10.24
                         </div>
                     </div>
                 </div>
             </td>
-            <td>May 29, 2016</td>
-            <td><a href="#">troy@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">12 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">53 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 394.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-cart position-left"></i></span>
+                    <input type="text" class="form-control" value="Store" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">56</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1274,11 +1102,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1296,31 +1120,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Elbert Cailyn</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.08.20
+                            Last login: 2016.08.20
                         </div>
                     </div>
                 </div>
             </td>
-            <td>February 28, 2016</td>
-            <td><a href="#">elbert@interface.club</a></td>
-            <td>Visa</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">10 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">93 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 192.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-cart position-left"></i></span>
+                    <input type="text" class="form-control" value="Store" disabled>
+                </div>
+            </td>
+            <td>Visa</td>
+            <td><a href="#">954</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1331,11 +1151,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1353,31 +1169,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Coen Grant</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.12.24
+                            Last login: 2016.12.24
                         </div>
                     </div>
                 </div>
             </td>
-            <td>June 17, 2016</td>
-            <td><a href="#">coen@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">19 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">75 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 252.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-cart position-left"></i></span>
+                    <input type="text" class="form-control" value="Store" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">748</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1388,11 +1200,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1410,31 +1218,27 @@
                     <div class="media-body media-middle">
                         <a href="user_pages_profile_tabbed.html" class="text-semibold">Charles Elian</a>
                         <div class="text-muted text-size-small">
-                            Latest order: 2016.01.28
+                            Last login: 2016.01.28
                         </div>
                     </div>
                 </div>
             </td>
-            <td>September 21, 2016</td>
-            <td><a href="#">charles@interface.club</a></td>
-            <td>MasterCard</td>
             <td>
-                <ul class="list list-unstyled no-margin">
-                    <li class="no-margin">
-                        <i class="icon-infinite text-size-base text-warning position-left"></i>
-                        Pending:
-                        <a href="#">3 orders</a>
-                    </li>
-
-                    <li class="no-margin">
-                        <i class="icon-checkmark3 text-size-base text-success position-left"></i>
-                        Processed:
-                        <a href="#">19 orders</a>
-                    </li>
-                </ul>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
+                    <input type="text" class="form-control" value="08/01/2013 1:00:35" disabled>
+                </div>
             </td>
             <td>
-                <h6 class="no-margin text-semibold">&euro; 2,345.00</h6>
+                <div class="input-group input-group-transparent">
+                    <span class="input-group-addon"><i class="icon-cart position-left"></i></span>
+                    <input type="text" class="form-control" value="Store" disabled>
+                </div>
+            </td>
+            <td>MasterCard</td>
+            <td><a href="#">9654</a></td>
+            <td>
+
             </td>
             <td class="text-right">
                 <ul class="icons-list">
@@ -1445,11 +1249,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-file-pdf"></i> Invoices</a></li>
-                            <li><a href="#"><i class="icon-cube2"></i> Shipping details</a></li>
-                            <li><a href="#"><i class="icon-credit-card"></i> Billing details</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#"><i class="icon-warning2"></i> Report problem</a></li>
+                            <li><a href="#"><i class="icon-history"></i> {{ _("Recover") }}</a></li>
                         </ul>
                     </li>
                 </ul>

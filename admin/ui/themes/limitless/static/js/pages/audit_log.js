@@ -7,10 +7,10 @@ $(function() {
     $('.table-customers').DataTable({
         autoWidth: false,
         columnDefs: [
-            {
+            /*{
                 targets: 0,
                 width: 400
-            },
+            },*/
             {
                 orderable: false,
                 width: 16,
