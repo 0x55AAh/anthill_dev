@@ -4,7 +4,7 @@ $(function() {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-audit-log-records').DataTable({
         autoWidth: false,
         columnDefs: [
             /*{
@@ -69,6 +69,27 @@ $(function() {
     $('.dataTables_length select').select2({
         minimumResultsForSearch: Infinity,
         width: 'auto'
+    });
+
+    // Recover model object
+    $(document).on('click', '.table-audit-log-records .recover-object-action', function (e) {
+        e.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Object will be recovered to the previous version.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Recover",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+
+                }
+            });
     });
 
 });

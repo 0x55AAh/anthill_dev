@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-events').DataTable({
         autoWidth: false,
         columnDefs: [
             {
@@ -121,5 +121,26 @@ $(function () {
     // Display date format
     $('.daterange-predefined span').html(moment().subtract(29, 'days')
         .format('MMMM D, YYYY, h:mm a') + ' &nbsp; - &nbsp; ' + moment().format('MMMM D, YYYY, h:mm a'));
+
+    // Remove event
+    $(document).on('click', '.table-events .remove-event-action', function (e) {
+        e.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Event will be removed.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Remove",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+
+                }
+            });
+    });
 
 });
