@@ -21,7 +21,8 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
-                "max_connections": 500
+                "max_connections": 500,
+                "retry_on_timeout": True
             }
         }
     }
@@ -98,7 +99,8 @@ CACHES['rate_limit'] = {
     "OPTIONS": {
         "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
         "CONNECTION_POOL_KWARGS": {
-            "max_connections": 500
+            "max_connections": 500,
+            "retry_on_timeout": True
         }
     },
     "KEY_PREFIX": "rate_limit"
@@ -152,7 +154,8 @@ CACHES['websocket_clients_watcher'] = {
     "OPTIONS": {
         "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
         "CONNECTION_POOL_KWARGS": {
-            "max_connections": 500
+            "max_connections": 500,
+            "retry_on_timeout": True
         }
     },
     "KEY_PREFIX": "websocket_clients_watcher"
