@@ -109,6 +109,7 @@ class GeoLocation(db.Model):
     @staticmethod
     def from_point_to_xy(pt):
         """Extract x and y coordinates from a point geometry."""
+        # noinspection PyUnresolvedReferences
         point_json = json.loads(db.session.scalar(func.ST_AsGeoJSON(pt.point)))
         return point_json['coordinates']
 

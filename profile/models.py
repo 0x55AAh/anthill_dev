@@ -9,7 +9,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils.types import (
     JSONType, CurrencyType, CountryType, LocaleType, EmailType)
 from jsonpath_ng.ext import parser
-from jsonpath_ng.parser import JsonPathParser
 from anthill.platform.auth import RemoteUser
 from typing import Callable
 
@@ -65,7 +64,7 @@ class Profile(InternalAPIMixin, db.Model):
         return await self.internal_request('login', 'get_user', user_id=self.user_id)
 
     @staticmethod
-    def _payload_parse_obj(path: str) -> JsonPathParser:
+    def _payload_parse_obj(path: str):
         return parser.parse(path, debug=settings.DEBUG)
 
     @as_future
