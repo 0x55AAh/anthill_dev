@@ -5,8 +5,13 @@ from anthill.framework.conf import settings
 from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future
 from anthill.platform.api.internal import InternalAPIMixin
-from sqlalchemy_utils.types import JSONType
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_utils.types import (
+    JSONType, CurrencyType, CountryType, LocaleType, EmailType)
 from jsonpath_ng.ext import parser
+from jsonpath_ng.parser import JsonPathParser
+from anthill.platform.auth import RemoteUser
+from typing import Callable
 
 
 class Profile(InternalAPIMixin, db.Model):
@@ -15,66 +20,64 @@ class Profile(InternalAPIMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, default=timezone.now)
+    updated = db.Column(db.DateTime, onupdate=timezone.now)
     user_id = db.Column(db.Integer, nullable=False, unique=True)
+    # currency = sa.Column(CurrencyType)
+    # country = sa.Column(CountryType)
+    # locale = sa.Column(LocaleType)
+    # email = db.Column(EmailType)
     payload = db.Column(JSONType, nullable=False, default={})
     active = db.Column(db.Boolean, nullable=False, default=True)
 
-    @property
-    def avatar(self):
-        # TODO: retrieve form profile payload
-        return
+    @hybrid_property
+    def photo(self):
+        return self.payload.get('avatar')
 
-    @property
+    @hybrid_property
+    def name(self):
+        return self.payload.get('name')
+
+    @hybrid_property
     def first_name(self):
-        # TODO: retrieve form profile payload
         return
 
-    @property
+    @hybrid_property
     def last_name(self):
-        # TODO: retrieve form profile payload
         return
 
-    @property
+    @hybrid_property
     def email(self):
-        # TODO: retrieve form profile payload
-        return
+        return self.payload.get('email')
 
-    @property
+    @hybrid_property
     def currency(self):
-        # TODO: retrieve form profile payload
-        return
+        return self.payload.get('currency')
 
-    @property
+    @hybrid_property
     def country(self):
-        # TODO: retrieve form profile payload
-        return
+        return self.payload.get('country')
 
-    @property
+    @hybrid_property
     def language(self):
-        # TODO: retrieve form profile payload
-        return
+        return self.payload.get('language')
 
-    @property
-    def username(self):
-        # TODO: retrieve form profile payload
-        return
-
-    async def get_user(self):
+    async def get_user(self) -> RemoteUser:
         return await self.internal_request('login', 'get_user', user_id=self.user_id)
 
     @staticmethod
-    def _payload_parse_obj(path: str):
+    def _payload_parse_obj(path: str) -> JsonPathParser:
         return parser.parse(path, debug=settings.DEBUG)
 
     @as_future
-    def find_payload(self, path: str):
+    def find_payload(self, path: str) -> dict:
         return self._payload_parse_obj(path).find(self.payload)
 
     @as_future
-    def filter_payload(self, path: str, fn):
+    def filter_payload(self, path: str, fn: Callable[[dict], bool]) -> dict:
         return self._payload_parse_obj(path).filter(fn, self.payload)
 
     @as_future
-    def update_payload(self, path: str, data, commit=True):
+    def update_payload(self, path: str, data: dict, commit: bool = True) -> dict:
         self.payload = self._payload_parse_obj(path).update(self.payload, data)
         self.save(commit)
+        return self.payload

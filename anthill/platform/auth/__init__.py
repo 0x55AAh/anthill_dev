@@ -86,12 +86,12 @@ class RemoteUser:
         """Send an email to this user."""
         await send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    async def send_message(self, message, callback=None, client=None, content_type=None):
-        """Send a message to this user."""
+    @staticmethod
+    async def send_message_by_user_id(user_id, message, callback=None, client=None, content_type=None):
         create_personal_group = messenger_settings.PERSONAL_GROUP_FUNCTION
         data = {
             'data': message,
-            'group': create_personal_group(self.id),
+            'group': create_personal_group(user_id),
             'content_type': content_type,
             'trusted': True,
         }
@@ -101,6 +101,10 @@ class RemoteUser:
             callback=callback,
             client=client
         )
+
+    async def send_message(self, message, callback=None, client=None, content_type=None):
+        """Send a message to this user."""
+        await self.send_message_by_user_id(self.id, message, callback, client, content_type)
 
 
 class RemoteProfile:

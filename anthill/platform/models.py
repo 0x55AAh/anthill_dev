@@ -24,5 +24,7 @@ class BaseApplicationVersion(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     value = db.Column(db.String(128), nullable=False)
-    application_id = db.Column(
-        db.Integer, db.ForeignKey('applications.id'), nullable=False)
+
+    @declared_attr
+    def application_id(self):
+        return db.Column(db.Integer, db.ForeignKey('applications.id'), nullable=False)

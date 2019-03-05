@@ -20,7 +20,8 @@ DEFAULT_MODERATION_WARNING_THRESHOLD = 3
 
 ACTION_TYPES = (
     ('ban_account', _('Ban account')),
-    ('hide_message', _('Hide message'))
+    ('hide_message', _('Hide message')),
+    ('ban_game', _('Ban in game')),
 )
 
 

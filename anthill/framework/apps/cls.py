@@ -1,6 +1,7 @@
 from anthill.framework.utils.text import slugify, camel_case_to_spaces, class_name
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.conf import settings
+from marshmallow_sqlalchemy import ModelConversionError, ModelSchema, convert
 from urllib.parse import urlparse, urljoin
 from collections import defaultdict
 from functools import lru_cache
@@ -230,13 +231,11 @@ class Application:
             models_modules += list(self.models_conf)
         return models_modules
 
+    class ModelConverter(convert.ModelConverter):
+        """Anthill model converter for marshmallow model schema."""
+
     def update_models(self):
         models = self.get_models()
-
-        from marshmallow_sqlalchemy import ModelConversionError, ModelSchema, convert
-
-        class ModelConverter(convert.ModelConverter):
-            """Anthill model converter for marshmallow model schema."""
 
         def add_schema(cls):
             if hasattr(cls, '__tablename__'):
@@ -247,7 +246,7 @@ class Application:
 
                 class Meta:
                     model = cls
-                    model_converter = ModelConverter
+                    model_converter = self.ModelConverter
                     sqla_session = self.db.session
 
                 schema_class_name = '%sSchema' % cls.__name__
