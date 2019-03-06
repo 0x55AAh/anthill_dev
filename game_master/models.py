@@ -1,6 +1,7 @@
 # For more details, see
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
+from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future, thread_pool_exec as future_exec
 from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.models import BaseApplication, BaseApplicationVersion
@@ -95,7 +96,8 @@ class GeoLocation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     point = db.Column(Geometry(geometry_type='POINT', srid=4326))
     region_id = db.Column(db.Integer, db.ForeignKey('geo_location_regions.id'))
-    server = db.relationship('Server', backref='geo_location', lazy='dynamic')
+    servers = db.relationship('Server', backref='geo_location', lazy='dynamic')
+    default = db.Column(db.Boolean, nullable=False, default=False)
 
     @classmethod
     def get_nearest(cls, lat, lon):
@@ -114,7 +116,11 @@ class GeoLocation(db.Model):
         return point_json['coordinates']
 
 
-class Server(db.Model):
+class HeartbeatError(Exception):
+    pass
+
+
+class Server(InternalAPIMixin, db.Model):
     __tablename__ = 'servers'
 
     STATUSES = [
@@ -129,12 +135,25 @@ class Server(db.Model):
     geo_location_id = db.Column(db.Integer, db.ForeignKey('geo_locations.id'))
     last_heartbeat = db.Column(db.DateTime)
     status = db.Column(ChoiceType(STATUSES))
+    last_failure_tb = db.Column(db.Text)
     enabled = db.Column(db.Boolean, nullable=False, default=True)
     rooms = db.relationship('Room', backref='server', lazy='dynamic')
+    system_load = db.Column(db.Float, nullable=False, default=0.0)
+    ram_usage = db.Column(db.Float, nullable=False, default=0.0)
 
     @hybrid_property
     def active(self):
         return self.enabled and self.status == 'active'
+
+    @as_future
+    def heartbeat(self):
+        try:
+            report = 0  # TODO:
+        except HeartbeatError:
+            self.status = 'failed'
+        else:
+            self.last_heartbeat = timezone.now()
+        self.save()
 
 
 class Deployment(db.Model):

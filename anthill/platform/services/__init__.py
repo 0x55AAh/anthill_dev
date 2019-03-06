@@ -7,7 +7,7 @@ from anthill.platform.services.update import manager
 from anthill.platform.utils.celery import CeleryMixin
 from anthill.platform.core.messenger.message import MessengerClient
 from anthill.platform.api.internal import (
-    JSONRPCInternalConnection, RequestTimeoutError, RequestError)
+    JSONRPCInternalConnection, RequestTimeoutError, RequestError, as_internal)
 from socketio.exceptions import ConnectionError
 from tornado.ioloop import PeriodicCallback
 from functools import partial
@@ -19,10 +19,50 @@ logger = logging.getLogger('anthill.application')
 
 class MasterRole:
     """Mixin class for enabling `master` role on service."""
+    controllers = None
+    heartbeat_interval = 10
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.heartbeat = PeriodicCallback(
+            self.heartbeat_request, self.heartbeat_interval * 1000)
+
+    def get_controllers(self):
+        return self.controllers or []
+
+    async def heartbeat_request(self):
+        for controller in self.get_controllers():
+            report = await self.internal_request(controller, 'heartbeat_report')
+            await self.heartbeat_callback(report)
+
+    async def heartbeat_callback(self, report):
+        raise NotImplementedError
+
+    async def on_start(self):
+        await super().on_start()
+        self.heartbeat.start()
+
+    async def on_stop(self):
+        self.heartbeat.stop()
+        await super().on_stop()
 
 
 class ControllerRole:
     """Mixin class for enabling `controller` role on service."""
+    master = None
+
+    def __init__(self, *args, **kwargs):
+        self.heartbeat_report = as_internal(self.heartbeat_report)
+        self.connect_master = as_internal(self.connect_master)
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    async def heartbeat_report(api, **options):
+        raise NotImplementedError
+
+    @staticmethod
+    async def connect_master(api, **options):
+        raise NotImplementedError
 
 
 def dict_filter(d, keys=None):
