@@ -40,6 +40,19 @@ EMAIL_SUBJECT_PREFIX = '[Anthill: game_master] '
 CACHES["default"]["LOCATION"] = "redis://localhost:6379/28"
 CACHES["default"]["KEY_PREFIX"] = "game_master.anthill"
 
+CACHES["controllers"] = {
+    "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
+    "LOCATION": "redis://localhost:6379/0",
+    "OPTIONS": {
+        "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
+        "CONNECTION_POOL_KWARGS": {
+            "max_connections": 500,
+            "retry_on_timeout": True
+        }
+    },
+    "KEY_PREFIX": "controllers"
+}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

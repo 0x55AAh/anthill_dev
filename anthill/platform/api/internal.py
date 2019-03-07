@@ -386,7 +386,8 @@ class JSONRPCInternalConnection(BaseInternalConnection):
             raise ServiceDoesNotExist
 
     @cached
-    async def request(self, service: str, method: str, timeout: int = None, registered_services=None, **kwargs) -> dict:
+    async def request(self, service: str, method: str, timeout: int = None, registered_services=None,
+                      **kwargs) -> dict:
         self.check_service(service, registered_services)
         with ElapsedTime('request@InternalConnection -> {0}@{1}', method, service):
             kwargs.update(service=self.service.name)

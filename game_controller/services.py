@@ -1,11 +1,12 @@
 from anthill.platform.services import PlainService, ControllerRole
+from anthill.platform.api.internal import as_internal
 
 
-class Service(PlainService, ControllerRole):
+class Service(ControllerRole, PlainService):
     """Anthill default service."""
-    auto_register_on_discovery = False
     master = 'game_master'
 
     @staticmethod
+    @as_internal()
     async def heartbeat_report(api, **options):
         pass

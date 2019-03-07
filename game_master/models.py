@@ -5,13 +5,16 @@ from anthill.framework.utils import timezone
 from anthill.framework.utils.asynchronous import as_future, thread_pool_exec as future_exec
 from anthill.framework.utils.translation import translate_lazy as _
 from anthill.platform.models import BaseApplication, BaseApplicationVersion
-from anthill.platform.api.internal import InternalAPIMixin
+from anthill.platform.api.internal import InternalAPIMixin, RequestError
 from anthill.platform.auth import RemoteUser
+from anthill.platform.services import HeartbeatReport
 from sqlalchemy_utils.types import URLType, ChoiceType, JSONType
 from sqlalchemy.ext.hybrid import hybrid_property
 from geoalchemy2.elements import WKTElement
 from geoalchemy2 import Geometry
+from typing import Union
 import geoalchemy2.functions as func
+import traceback
 import json
 
 
@@ -116,10 +119,6 @@ class GeoLocation(db.Model):
         return point_json['coordinates']
 
 
-class HeartbeatError(Exception):
-    pass
-
-
 class Server(InternalAPIMixin, db.Model):
     __tablename__ = 'servers'
 
@@ -146,13 +145,18 @@ class Server(InternalAPIMixin, db.Model):
         return self.enabled and self.status == 'active'
 
     @as_future
-    def heartbeat(self):
-        try:
-            report = 0  # TODO:
-        except HeartbeatError:
+    def heartbeat(self, report: Union[HeartbeatReport, RequestError]):
+        if isinstance(report, RequestError):
             self.status = 'failed'
-        else:
+            self.last_failure_tb = traceback.format_tb(report.__traceback__)
+        elif isinstance(report, HeartbeatReport):
             self.last_heartbeat = timezone.now()
+            self.system_load = report.system_load
+            self.ram_usage = report.ram_usage
+            self.status = 'overload' if report.server_is_overload() else 'active'
+        else:
+            raise ValueError('`report` argument should be either instance of'
+                             'HeartbeatReport or RequestError class')
         self.save()
 
 

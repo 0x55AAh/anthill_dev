@@ -1,4 +1,5 @@
 from anthill.framework.utils.decorators import method_decorator, retry
+from anthill.framework.utils.asynchronous import as_future, thread_pool_exec as future_exec
 from anthill.framework.utils import timezone
 from anthill.framework.utils.geoip import GeoIP2
 from anthill.framework.core.servers import BaseService as _BaseService
@@ -17,9 +18,21 @@ import logging
 logger = logging.getLogger('anthill.application')
 
 
+class HeartbeatReport:
+    system_load_limit = 95
+    ram_usage_limit = 95
+
+    def __init__(self, system_load=None, ram_usage=None):
+        self.system_load = system_load
+        self.ram_usage = ram_usage
+
+    def server_is_overload(self) -> bool:
+        return (self.system_load >= self.system_load_limit or
+                self.ram_usage >= self.ram_usage_limit)
+
+
 class MasterRole:
     """Mixin class for enabling `master` role on service."""
-    controllers = None
     heartbeat_interval = 10
 
     def __init__(self, *args, **kwargs):
@@ -27,16 +40,36 @@ class MasterRole:
         self.heartbeat = PeriodicCallback(
             self.heartbeat_request, self.heartbeat_interval * 1000)
 
-    def get_controllers(self):
-        return self.controllers or []
+    @staticmethod
+    async def storage():
+        raise NotImplementedError
+
+    async def controllers_registry(self):
+        raise NotImplementedError
+
+    async def get_controllers(self):
+        keys = await self.controllers_registry()
+        storage = await self.storage()
+        res = await future_exec(storage.get_many, keys=keys)
+        return list(res.keys())
 
     async def heartbeat_request(self):
-        for controller in self.get_controllers():
-            report = await self.internal_request(controller, 'heartbeat_report')
-            await self.heartbeat_callback(report)
+        for controller in await self.get_controllers():
+            try:
+                report = await self.internal_request(controller, 'heartbeat_report')
+                report = HeartbeatReport(report)
+            except RequestError as e:
+                report = e
+            await self.heartbeat_callback(controller, report)
 
-    async def heartbeat_callback(self, report):
+    async def heartbeat_callback(self, controller, report):
         raise NotImplementedError
+
+    @as_internal()
+    async def register_controller(self, api, controller, metadata, **options):
+        storage = await self.storage()
+        await future_exec(storage.set, controller, metadata, timeout=None)
+        logger.info('Controller registered: %s' % controller)
 
     async def on_start(self):
         await super().on_start()
@@ -49,20 +82,24 @@ class MasterRole:
 
 class ControllerRole:
     """Mixin class for enabling `controller` role on service."""
+    auto_register_on_discovery = False
     master = None
 
-    def __init__(self, *args, **kwargs):
-        self.heartbeat_report = as_internal(self.heartbeat_report)
-        self.connect_master = as_internal(self.connect_master)
-        super().__init__(*args, **kwargs)
-
     @staticmethod
+    @as_internal()
     async def heartbeat_report(api, **options):
         raise NotImplementedError
 
-    @staticmethod
-    async def connect_master(api, **options):
-        raise NotImplementedError
+    @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
+                            on_exception=lambda func, e: logger.error('Cannot register on master. Retry...'), ))
+    async def register(self):
+        kwargs = dict(controller='game_controller', metadata=self.app.metadata)
+        await self.internal_request(self.master, 'register_controller', **kwargs)
+        logger.info('Registered on master: %s' % self.master)
+
+    async def on_start(self):
+        await super().on_start()
+        await self.register()
 
 
 def dict_filter(d, keys=None):
