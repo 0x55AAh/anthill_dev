@@ -2,7 +2,7 @@ from ._base import UserTemplateServiceRequestHandler, PageHandlerMixin
 
 
 class ServicesList(UserTemplateServiceRequestHandler):
-    template_name = 'services-list.html'
+    template_name = 'index.html'
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -11,7 +11,7 @@ class ServicesList(UserTemplateServiceRequestHandler):
 
 
 class ServiceDetail(UserTemplateServiceRequestHandler):
-    template_name = 'service-detail.html'
+    template_name = 'service_detail.html'
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)

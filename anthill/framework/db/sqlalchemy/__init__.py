@@ -427,7 +427,7 @@ class BaseQuery(orm.Query):
         return Pagination(self, page, per_page, total, items)
 
 
-class _QueryProperty(object):
+class _QueryProperty:
     def __init__(self, sa):
         self.sa = sa
 
@@ -449,7 +449,7 @@ def _record_queries(app):
     return bool(getattr(app.config, 'TESTING', False))
 
 
-class _EngineConnector(object):
+class _EngineConnector:
     def __init__(self, sa, app, bind=None):
         self._sa = sa
         self._app = app
@@ -494,7 +494,7 @@ def get_state(app):
     return app.extensions['sqlalchemy']
 
 
-class _SQLAlchemyState(object):
+class _SQLAlchemyState:
     """Remembers configuration for the (db, app) tuple."""
 
     def __init__(self, db):
@@ -502,7 +502,7 @@ class _SQLAlchemyState(object):
         self.connectors = {}
 
 
-class SQLAlchemy(object):
+class SQLAlchemy:
     """
     This class is used to control the SQLAlchemy integration to one
     or more Flask applications. Depending on how you initialize the
