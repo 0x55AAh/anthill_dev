@@ -86,5 +86,9 @@
   "backup": {
     "internal": "http://localhost:9625",
     "external": "http://localhost:9625"
+  },
+  "bot": {
+    "internal": "http://localhost:9626",
+    "external": "http://localhost:9626"
   }
 }

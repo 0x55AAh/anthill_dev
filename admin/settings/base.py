@@ -24,6 +24,9 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 # APPLICATION_CLASS = 'admin.apps.AnthillApplication'
 APPLICATION_NAME = 'admin'
 APPLICATION_VERBOSE_NAME = _('Admin')
+APPLICATION_DESCRIPTION = _('Service description')
+APPLICATION_ICON_CLASS = 'icon-crown'
+APPLICATION_COLOR = 'pink'
 
 DEFAULT_HANDLER_CLASS = 'anthill.framework.handlers.Handler404'
 
@@ -35,7 +38,6 @@ EMAIL_SUBJECT_PREFIX = '[Anthill: admin] '
 
 STATIC_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'static')
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'themes', UI_THEME, 'templates')
-
 LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
 STATIC_URL = '/static/'

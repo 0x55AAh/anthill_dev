@@ -47,10 +47,10 @@
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-flat">
-            <table class="table table-striped text-nowrap table-customers">
+            <table class="table table-striped text-nowrap table-services">
         <thead>
         <tr>
-            <th>Customer</th>
+            <th>Service</th>
             <th>Registered</th>
             <th>Email</th>
             <th>Payment method</th>
@@ -62,16 +62,19 @@
         </thead>
         <tbody>
 
-        {% for service in services %}
+        {% for service in services_all_meta %}
+        {% set detail_url=reverse_url('service:detail', metadata['name'], service['name']) %}
+        {% set color=service['color'] %}
         <tr>
             <td>
                 <div class="media">
-                    <a href="user_pages_profile_tabbed.html" class="media-left">
-                        <img src="{{ static_url('images/placeholder.jpg') }}" width="40" height="40" class="img-circle img-md" alt="">
-                    </a>
+                    <div class="media-left">
+                        <a href="{{ detail_url }}" class="btn border-{{ color }} text-{{ color }} btn-flat btn-icon btn-rounded btn-sm">
+                            <i class="{{ service['icon_class'] }}"></i></a>
+                    </div>
 
                     <div class="media-body media-middle">
-                        <a href="user_pages_profile_tabbed.html" class="text-semibold">James Alexander</a>
+                        <a href="{{ detail_url }}" class="text-semibold">{{ service['title'] }}</a>
                         <div class="text-muted text-size-small">
                             Latest order: 2016.12.30
                         </div>
@@ -108,7 +111,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-right">
-                            <li><a href="#"><i class="icon-bin"></i> {{ _('Remove') }}</a></li>
+                            <li class="remove-service-action"><a href="#"><i class="icon-bin"></i> {{ _('Remove') }}</a></li>
                         </ul>
                     </li>
                 </ul>

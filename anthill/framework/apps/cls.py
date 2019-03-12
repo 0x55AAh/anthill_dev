@@ -208,6 +208,7 @@ class Application:
             if route.name is None:
                 route.name = class_name(route.target)
             new_routes_list.append(route)
+        new_routes_list.reverse()  # if routes has the same pattern - the last used
         return new_routes_list
 
     @property

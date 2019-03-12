@@ -37,11 +37,11 @@ class MasterRole:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.register_controller = as_internal()(self.register_controller)
         self.heartbeat = PeriodicCallback(
             self.heartbeat_request, self.heartbeat_interval * 1000)
 
-    @staticmethod
-    async def storage():
+    async def storage(self):
         raise NotImplementedError
 
     async def controllers_registry(self):
@@ -65,9 +65,9 @@ class MasterRole:
     async def heartbeat_callback(self, controller, report):
         raise NotImplementedError
 
-    @as_internal()
-    async def register_controller(self, api, controller, metadata, **options):
-        storage = await self.storage()
+    @staticmethod
+    async def register_controller(api, controller, metadata, **options):
+        storage = await api.service.storage()
         await future_exec(storage.set, controller, metadata, timeout=None)
         logger.info('Controller registered: %s' % controller)
 
@@ -80,18 +80,29 @@ class MasterRole:
         await super().on_stop()
 
 
+def _cannot_register_on_master(func, e):
+    try:
+        error_message = e.args[0]['error']['message']
+    except TypeError:
+        error_message = str(e)
+    logger.error('Cannot register on master (%s). Retry...' % error_message.lower())
+
+
 class ControllerRole:
     """Mixin class for enabling `controller` role on service."""
     auto_register_on_discovery = False
     master = None
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.heartbeat_report = as_internal()(self.heartbeat_report)
+
     @staticmethod
-    @as_internal()
     async def heartbeat_report(api, **options):
         raise NotImplementedError
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
-                            on_exception=lambda func, e: logger.error('Cannot register on master. Retry...'), ))
+                            on_exception=_cannot_register_on_master))
     async def register(self):
         kwargs = dict(controller='game_controller', metadata=self.app.metadata)
         await self.internal_request(self.master, 'register_controller', **kwargs)
@@ -324,7 +335,9 @@ class AdminService(PlainService):
                             on_exception=lambda func, e: logger.error('Cannot get services meta. Retry...'), ))
     async def set_services_meta(self):
         services_meta = await self.get_services_metadata(exclude_names=[self.name])
+        services_all_meta = services_meta + [self.app.metadata]
         self.settings.update(services_meta=services_meta)
+        self.settings.update(services_all_meta=services_all_meta)
 
     async def on_start(self) -> None:
         await super().on_start()

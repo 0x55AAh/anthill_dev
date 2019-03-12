@@ -32,23 +32,30 @@ class ServiceContextMixin:
 class UserTemplateServiceRequestHandler(ServiceContextMixin, UserTemplateHandler):
     template_name = None
 
+    def get_template_root(self):
+        return os.path.join('services', self.path_kwargs['name'])
+
     def get_template_name(self):
-        return os.path.join(
-            'services', self.path_kwargs['name'], self.template_name)
+        return os.path.join(self.get_template_root(), self.template_name)
 
     def render(self, template_name=None, **kwargs):
         try:
             super().render(template_name, **kwargs)
         except FileNotFoundError:
             super().render(os.path.join('services', 'default.html'), **kwargs)
+            raise
 
 
 class PageHandlerMixin:
     page_name = None
     breadcrumbs = None
+    template_root = ''
+
+    def get_template_root(self):
+        return self.template_root
 
     def get_template_name(self):
-        return '%s.html' % self.page_name
+        return os.path.join(self.get_template_root(), self.page_name + '.html')
 
     def get_breadcrumbs(self):
         return self.breadcrumbs
@@ -59,3 +66,11 @@ class PageHandlerMixin:
             'page': self.page_name,
             'breadcrumbs': self.get_breadcrumbs(),
         }
+
+
+class ServicePageHandler(PageHandlerMixin, UserTemplateServiceRequestHandler):
+    def get_template_root(self):
+        return os.path.join('services', self.path_kwargs['name'])
+
+    def get_template_name(self):
+        return os.path.join(self.get_template_root(), self.page_name + '.html')

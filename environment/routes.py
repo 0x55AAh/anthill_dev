@@ -3,7 +3,7 @@
 from tornado.web import url
 from . import handlers
 
-# Create your routes here.
-route_patterns = [
 
+route_patterns = [
+    url(r'^/(?P<app_name>[^/]+)/(?P<app_version>[^/]+)/?$', handlers.DiscoverHandler, name='discover'),
 ]

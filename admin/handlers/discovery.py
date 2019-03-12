@@ -1,17 +1,17 @@
-from ._base import UserTemplateServiceRequestHandler, PageHandlerMixin
+from ._base import ServicePageHandler
 
 
-class ServicesList(UserTemplateServiceRequestHandler):
-    template_name = 'index.html'
+class ServicesList(ServicePageHandler):
+    page_name = 'index'
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
-        context['services'] = self.settings['registered_services']
+        context['services_all_meta'] = self.settings['services_all_meta']
         return context
 
 
-class ServiceDetail(UserTemplateServiceRequestHandler):
-    template_name = 'service_detail.html'
+class ServiceDetail(ServicePageHandler):
+    page_name = 'service_detail'
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)

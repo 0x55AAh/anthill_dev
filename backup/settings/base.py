@@ -34,8 +34,6 @@ APPLICATION_COLOR = 'brown'
 
 # SERVICE_CLASS = 'backup.services.Service'
 
-STATIC_URL = '/static/'
-
 # UI_MODULE = 'backup.ui'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: backup] '

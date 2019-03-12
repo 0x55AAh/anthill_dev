@@ -15,6 +15,10 @@ class BaseApplication(db.Model):
     def versions(self):
         return db.relationship('ApplicationVersion', backref='application', lazy='dynamic')
 
+    @classmethod
+    def latest_version(cls):
+        pass
+
 
 class BaseApplicationVersion(db.Model):
     __abstract__ = True
@@ -23,8 +27,16 @@ class BaseApplicationVersion(db.Model):
     )
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    active = db.Column(db.Boolean, nullable=False, default=True)
     value = db.Column(db.String(128), nullable=False)
 
     @declared_attr
     def application_id(self):
         return db.Column(db.Integer, db.ForeignKey('applications.id'), nullable=False)
+
+    @classmethod
+    def latest(cls):
+        pass
+
+    def __lt__(self, other):
+        return self.value < other.value

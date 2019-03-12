@@ -74,6 +74,7 @@ setup(
         'anthill.admin',
         'anthill.apigw',
         'anthill.backup',
+        'anthill.bot',
         'anthill.config',
         'anthill.discovery',
         'anthill.dlc',

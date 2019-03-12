@@ -10,6 +10,7 @@ import itertools
 extra_routes = (
     'admin.routes.apigw',
     'admin.routes.backup',
+    'admin.routes.bot',
     'admin.routes.config',
     'admin.routes.discovery',
     'admin.routes.dlc',
