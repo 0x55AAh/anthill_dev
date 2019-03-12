@@ -1,15 +1,13 @@
 from anthill.platform.services import PlainService, MasterRole
 from anthill.framework.utils.asynchronous import as_future
 from anthill.framework.core.cache import caches
-from game_master.models import Server
 
 
 class Service(MasterRole, PlainService):
     """Anthill default service."""
 
-    @staticmethod
     @as_future
-    def storage():
+    def storage(self):
         return caches['controllers']
 
     async def heartbeat_callback(self, controller, report):

@@ -37,7 +37,6 @@ class MasterRole:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.register_controller = as_internal()(self.register_controller)
         self.heartbeat = PeriodicCallback(
             self.heartbeat_request, self.heartbeat_interval * 1000)
 
@@ -66,10 +65,16 @@ class MasterRole:
         raise NotImplementedError
 
     @staticmethod
-    async def register_controller(api, controller, metadata, **options):
-        storage = await api.service.storage()
-        await future_exec(storage.set, controller, metadata, timeout=None)
-        logger.info('Controller registered: %s' % controller)
+    def setup_internal_api():
+        @as_internal()
+        async def register_controller(api, controller, metadata, **options):
+            storage = await api.service.storage()
+            await future_exec(storage.set, controller, metadata, timeout=None)
+            logger.info('Controller registered: %s' % controller)
+
+    def setup(self):
+        self.setup_internal_api()
+        super().setup()
 
     async def on_start(self):
         await super().on_start()
@@ -93,20 +98,22 @@ class ControllerRole:
     auto_register_on_discovery = False
     master = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.heartbeat_report = as_internal()(self.heartbeat_report)
-
-    @staticmethod
-    async def heartbeat_report(api, **options):
-        raise NotImplementedError
-
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(RequestError,),
                             on_exception=_cannot_register_on_master))
     async def register(self):
         kwargs = dict(controller='game_controller', metadata=self.app.metadata)
         await self.internal_request(self.master, 'register_controller', **kwargs)
         logger.info('Registered on master: %s' % self.master)
+
+    @staticmethod
+    def setup_internal_api():
+        @as_internal()
+        async def heartbeat_report(api, **options):
+            raise NotImplementedError
+
+    def setup(self):
+        self.setup_internal_api()
+        super().setup()
 
     async def on_start(self):
         await super().on_start()

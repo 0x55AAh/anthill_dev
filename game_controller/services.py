@@ -1,4 +1,5 @@
 from anthill.platform.services import PlainService, ControllerRole
+from anthill.platform.api.internal import as_internal
 
 
 class Service(ControllerRole, PlainService):
@@ -6,5 +7,8 @@ class Service(ControllerRole, PlainService):
     master = 'game_master'
 
     @staticmethod
-    async def heartbeat_report(api, **options):
-        pass
+    def setup_internal_api():
+        @as_internal()
+        async def heartbeat_report(api, **options):
+            # TODO:
+            pass

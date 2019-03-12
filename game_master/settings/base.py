@@ -42,7 +42,7 @@ CACHES["default"]["KEY_PREFIX"] = "game_master.anthill"
 
 CACHES["controllers"] = {
     "BACKEND": "anthill.framework.core.cache.backends.redis.cache.RedisCache",
-    "LOCATION": "redis://localhost:6379/0",
+    "LOCATION": "redis://localhost:6379/28",
     "OPTIONS": {
         "CLIENT_CLASS": "anthill.framework.core.cache.backends.redis.client.DefaultClient",
         "CONNECTION_POOL_KWARGS": {
