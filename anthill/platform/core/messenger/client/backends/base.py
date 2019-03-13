@@ -2,6 +2,7 @@ from anthill.framework.auth.models import AnonymousUser
 from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
 from anthill.platform.core.messenger.settings import messenger_settings
 from anthill.platform.auth import RemoteUser
+from abc import ABCMeta, abstractmethod
 from typing import Optional
 
 
@@ -9,7 +10,7 @@ def create_personal_group(user_identifier) -> str:
     return '.'.join([messenger_settings.PERSONAL_GROUP_PREFIX, str(user_identifier)])
 
 
-class BaseClient:
+class BaseClient(metaclass=ABCMeta):
     user_id_key = 'id'
 
     def __init__(self, user: Optional[RemoteUser] = None):
@@ -31,30 +32,39 @@ class BaseClient:
     def get_user_id(self) -> str:
         return getattr(self.user, self.user_id_key)
 
+    @abstractmethod
     def get_user_serialized(self) -> dict:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def get_friends(self, id_only: bool = False) -> list:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def get_groups(self) -> list:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def create_group(self, group_name: str, group_data: dict) -> str:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def delete_group(self, group_name: str) -> None:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def update_group(self, group_name: str, group_data: dict) -> None:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def join_group(self, group_name: str) -> None:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def leave_group(self, group_name: str) -> None:
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def enumerate_group(self, group: str, new=None) -> list:
         """
         List messages received from group.
@@ -65,8 +75,8 @@ class BaseClient:
                         old (read) messages if `False`.
         :return: Serialized messages list
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def create_message(self, group: str, message: dict) -> str:
         """
         Save message on database.
@@ -74,8 +84,8 @@ class BaseClient:
         :param message: Message data
         :return: Message identifier
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def get_messages(self, group: str, message_ids: list) -> list:
         """
         Get messages list by id
@@ -83,8 +93,8 @@ class BaseClient:
         :param message_ids: message id list
         :return: Serialized messages list
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def delete_messages(self, group: str, message_ids: list):
         """
 
@@ -92,8 +102,8 @@ class BaseClient:
         :param message_ids:
         :return:
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def update_messages(self, group: str, messages_data: dict):
         """
 
@@ -101,8 +111,8 @@ class BaseClient:
         :param messages_data:
         :return:
         """
-        raise NotImplementedError
 
+    @abstractmethod
     async def read_messages(self, group: str, message_ids: list):
         """
 
@@ -110,7 +120,14 @@ class BaseClient:
         :param message_ids:
         :return:
         """
-        raise NotImplementedError
 
     def __eq__(self, other):
         return self.user == other.user
+
+
+class BaseUserClient(BaseClient):
+    pass
+
+
+class BaseBotClient(BaseClient):
+    pass

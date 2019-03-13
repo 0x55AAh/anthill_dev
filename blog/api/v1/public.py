@@ -1,6 +1,6 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
-from news import models
+from blog import models
 
 
 class RootQuery(graphene.ObjectType):

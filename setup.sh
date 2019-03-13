@@ -26,7 +26,7 @@ source anthill/platform/setup.sh
 services=(
     "admin" "apigw" "backup" "bot" "config" "discovery" "dlc" "environment"
     "event" "exec" "game_controller" "game_master" "leaderboard" "log"
-    "login" "media" "message" "moderation" "news" "profile" "promo" "report"
+    "login" "media" "message" "moderation" "blog" "profile" "promo" "report"
     "social" "store"
 )
 for service in "${services[@]}"; do

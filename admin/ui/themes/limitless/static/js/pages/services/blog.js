@@ -25,7 +25,7 @@ $(function () {
         order: [[ 0, 'asc' ]],
         dom: '<"datatable-header datatable-header-accent"fBl><""t><"datatable-footer"ip>',
         language: {
-            search: '<span>Search news:</span> _INPUT_',
+            search: '<span>Search posts:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
             paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
@@ -41,7 +41,7 @@ $(function () {
         buttons: [
             {
                 // extend: 'pdfHtml5',
-                text: 'Create news <i class="icon-plus22 position-right"></i>',
+                text: 'Create post <i class="icon-plus22 position-right"></i>',
                 className: 'btn bg-blue',
                 orientation: 'landscape',
                 customize: function (doc) {

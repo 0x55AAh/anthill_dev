@@ -2,7 +2,7 @@
 
 {% block css %}
 <link href="{{ static_url('css/pages/services/common.css') }}" rel="stylesheet" type="text/css">
-<link href="{{ static_url('css/pages/services/news.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ static_url('css/pages/services/blog.css') }}" rel="stylesheet" type="text/css">
 {% end %}
 
 {% block js %}
@@ -10,7 +10,7 @@
 <script type="text/javascript" src="{{ static_url('js/plugins/tables/datatables/extensions/responsive.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/plugins/forms/selects/select2.min.js') }}"></script>
-<script type="text/javascript" src="{{ static_url('js/pages/services/news.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/pages/services/blog.js') }}"></script>
 {% end %}
 
 {% block header %}
@@ -23,7 +23,7 @@
             <li class="active">{{ metadata['title'] }}</li>
         </ul>
         <ul class="breadcrumb-elements">
-{#            <li><a href="#"><i class="icon-plus22 position-left"></i> {{ _('Create news') }}</a></li>#}
+{#            <li><a href="#"><i class="icon-plus22 position-left"></i> {{ _('Create post') }}</a></li>#}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="icon-gear position-left"></i> {{ _('Options') }}

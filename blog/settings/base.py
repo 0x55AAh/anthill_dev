@@ -14,28 +14,28 @@ ADMINS = (
     ('Lysenko Vladimir', 'wofkin@gmail.com'),
 )
 
-SQLALCHEMY_DATABASE_URI = 'postgres://anthill_news@/anthill_news'
+SQLALCHEMY_DATABASE_URI = 'postgres://anthill_blog@/anthill_blog'
 
 LOCATION = 'http://localhost:9624'
 BROKER = 'amqp://guest:guest@localhost:5672'
 
-# ROUTES_CONF = 'news.routes'
+# ROUTES_CONF = 'blog.routes'
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'ui', 'templates')
 LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 
-# APPLICATION_CLASS = 'news.apps.AnthillApplication'
-APPLICATION_NAME = 'news'
-APPLICATION_VERBOSE_NAME = _('News')
+# APPLICATION_CLASS = 'blog.apps.AnthillApplication'
+APPLICATION_NAME = 'blog'
+APPLICATION_VERBOSE_NAME = _('Blog')
 APPLICATION_DESCRIPTION = _('Service description')
 APPLICATION_ICON_CLASS = 'icon-feed'
 APPLICATION_COLOR = 'pink'
 
-# SERVICE_CLASS = 'news.services.Service'
+# SERVICE_CLASS = 'blog.services.Service'
 
-# UI_MODULE = 'news.ui'
+# UI_MODULE = 'blog.ui'
 
-EMAIL_SUBJECT_PREFIX = '[Anthill: news] '
+EMAIL_SUBJECT_PREFIX = '[Anthill: blog] '
 
 LOGGING = {
     'version': 1,
@@ -66,7 +66,7 @@ LOGGING = {
         'anthill.server': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/anthill/news.log',
+            'filename': '/var/log/anthill/blog.log',
             'formatter': 'anthill.server',
             'maxBytes': 100 * 1024 * 1024,  # 100 MiB
             'backupCount': 10
@@ -153,6 +153,6 @@ HTTPS = None
 ############
 
 GRAPHENE = {
-    'SCHEMA': 'news.api.v1.public.schema',
+    'SCHEMA': 'blog.api.v1.public.schema',
     'MIDDLEWARE': ()
 }

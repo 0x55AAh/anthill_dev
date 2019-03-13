@@ -1,10 +1,10 @@
-from anthill.platform.core.messenger.client.backends.base import BaseClient
+from anthill.platform.core.messenger.client.backends.base import BaseUserClient
 from anthill.platform.core.messenger.client.exceptions import ClientError
 from anthill.platform.auth import RemoteUser
 from typing import Optional
 
 
-class Client(BaseClient):
+class Client(BaseUserClient):
     async def authenticate(self, user: Optional[RemoteUser] = None) -> None:
         # TODO: skipped so far...
         pass
