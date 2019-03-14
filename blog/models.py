@@ -12,6 +12,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     active = db.Column(db.Boolean, nullable=False, default=True)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
+    # TODO: image field
 
 
 class Category(db.Model):

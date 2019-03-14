@@ -4,13 +4,13 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-promo-codes').DataTable({
         autoWidth: false,
         columnDefs: [
-            {
-                targets: 0,
-                width: 400
-            },
+            // {
+            //     targets: 0,
+            //     width: 400
+            // },
             {
                 orderable: false,
                 width: 16,
@@ -85,6 +85,28 @@ $(function () {
     var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
     switches.forEach(function(html) {
         var switchery = new Switchery(html, {color: '#4CAF50'});
+    });
+
+
+    // Remove promo code
+    $(document).on('click', '.table-promo-codes .remove-promo-code-action', function (e) {
+        e.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Promo code will be removed.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Remove",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+
+                }
+            });
     });
 
 

@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-moderations').DataTable({
         autoWidth: false,
         columnDefs: [
             {
@@ -74,6 +74,27 @@ $(function () {
     var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
     switches.forEach(function(html) {
         var switchery = new Switchery(html, {color: '#4CAF50'});
+    });
+
+    // Remove moderation
+    $(document).on('click', '.table-moderations .remove-moderation-action', function (e) {
+        e.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Moderation will be removed.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Remove",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+
+                }
+            });
     });
 
 });
