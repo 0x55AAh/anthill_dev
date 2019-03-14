@@ -30,7 +30,7 @@ class PromoCode(db.Model):
     __tablename__ = 'promo_codes'
 
     key = db.Column(db.String(255), primary_key=True)
-    left_count = db.Column(db.Integer, nullable=False)
+    used_count = db.Column(db.Integer, nullable=False, default=0)
     max_count = db.Column(db.Integer, nullable=False, default=1)
     payload = db.Column(JSONType, nullable=False, default={})
     created = db.Column(db.DateTime, default=timezone.now)
@@ -40,7 +40,6 @@ class PromoCode(db.Model):
     async def save(self, *args, **kwargs):
         if not self.key:
             self.key = await self.generate_key()
-            self.left_count = self.max_count
         await future_exec(super().save, *args, **kwargs)
 
     @as_future
@@ -58,12 +57,16 @@ class PromoCode(db.Model):
         return self.expires <= timezone.now()
 
     @hybrid_property
+    def left_count(self):
+        return self.max_count - self.used_count
+
+    @hybrid_property
     def available(self):
         return self.left_count > 0 and not self.expired
 
     async def use(self, commit=True):
         if not self.available:
             raise ValueError('Promo code is not available')
-        self.left_count -= 1
+        self.used_count += 1
         await self.save(commit=commit)
         return self.payload

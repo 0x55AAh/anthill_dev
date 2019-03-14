@@ -46,15 +46,21 @@ $(function () {
                 orientation: 'landscape',
                 buttons: [
                     {
-                        text: '<i class="icon-plus22 position-right" style="padding-right: 7px"></i> New promo code',
+                        text: '<i class=" icon-add position-right" style="padding-right: 7px"></i> Create',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 0 ).visible( ! dt.column( 0 ).visible() );
+
                         }
                     },
                     {
-                        text: '<i class="icon-grid4 position-right" style="padding-right: 7px"></i> Generate promo codes',
+                        text: '<i class="icon-grid4 position-right" style="padding-right: 7px"></i> Generate',
                         action: function ( e, dt, node, config ) {
-                            dt.column( -2 ).visible( ! dt.column( -2 ).visible() );
+
+                        }
+                    },
+                    {
+                        text: '<i class="icon-bin position-right" style="padding-right: 7px"></i> Cleanup',
+                        action: function ( e, dt, node, config ) {
+
                         }
                     }
                 ]
@@ -109,5 +115,44 @@ $(function () {
             });
     });
 
+    // Initialize with options
+    var $dates_picker = $('.daterange-predefined').daterangepicker(
+        {
+            timePicker: true,
+            timePickerIncrement: 1,
+            timePicker24Hour: true,
+
+            singleDatePicker: true,
+
+            opens: 'left',
+            applyClass: 'btn-small bg-slate',
+            cancelClass: 'btn-small btn-default',
+            locale: {
+                format: 'MM/DD/YYYY h:mm'
+            }
+        },
+        function(start, end) {
+            $('.daterange-predefined span').html(start.format('MMMM D, YYYY, h:mm'));
+            $.jGrowl('Date range has been changed', {
+                header: 'Update',
+                theme: 'bg-primary',
+                position: 'center',
+                life: 1500
+            });
+        }
+    );
+
+    $dates_picker.on('show.daterangepicker', function (ev, picker) {
+        if (picker.element.offset().top - $(window).scrollTop() + picker.container.outerHeight() > $(window).height()) {
+            picker.drops = 'up';
+        } else {
+            picker.drops = 'down';
+        }
+        picker.move();
+    });
+
+    // Display date format
+    $('.daterange-predefined span').html(moment().subtract(29, 'days')
+        .format('MMMM D, YYYY, h:mm a'));
 
 });

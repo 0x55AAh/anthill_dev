@@ -8,6 +8,9 @@
     .checkbox-switchery[class*="switchery-"] {
         margin-bottom: 20px;
     }
+    .input-group-transparent .form-control {
+        width: -webkit-fill-available;
+    }
 </style>
 {% end %}
 
@@ -17,6 +20,9 @@
 <script type="text/javascript" src="{{ static_url('js/plugins/tables/datatables/extensions/buttons.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/plugins/forms/styling/switchery.min.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/plugins/forms/selects/select2.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/plugins/notifications/jgrowl.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/plugins/ui/moment/moment.min.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/plugins/pickers/daterangepicker.js') }}"></script>
 <script type="text/javascript" src="{{ static_url('js/pages/services/promo.js') }}"></script>
 {% end %}
 
@@ -59,8 +65,8 @@
         <thead>
         <tr>
             <th>{{ _('Key') }}</th>
-            <th>{{ _('Left count') }}</th>
-            <th>{{ _('Max count') }}</th>
+            <th>{{ _('Used') }}</th>
+            <th>{{ _('Total') }}</th>
             <th>{{ _('Expires') }}</th>
             <th>{{ _('Enabled') }}</th>
             <th>{{ _('Available') }}</th>
@@ -71,14 +77,14 @@
         <tbody>
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>1000</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-warning position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -110,14 +116,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>1000</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -149,14 +155,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>1500</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -188,14 +194,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>1200</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -227,14 +233,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>56</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -266,14 +272,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>956</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -305,14 +311,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>452</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-warning position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -344,14 +350,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>1432</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -383,14 +389,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>748</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -422,14 +428,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>21</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -461,14 +467,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>300</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -500,14 +506,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>562</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -539,14 +545,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>1482</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -578,14 +584,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>41</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -617,14 +623,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>775</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -656,14 +662,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>456</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -695,14 +701,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>31</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -734,14 +740,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>8</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -773,14 +779,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>152</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -812,14 +818,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>633</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -851,14 +857,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>124</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -890,14 +896,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>438</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -929,14 +935,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>493</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -968,14 +974,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>196</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
@@ -1007,14 +1013,14 @@
 
         <tr>
             <td>
-                <a href="#">VT6S545B419K</a>
+                <a href="#">VT6S-545B-419K</a>
             </td>
             <td>491</td>
             <td>1500</td>
             <td>
                 <div class="input-group input-group-transparent">
-                    <span class="input-group-addon"><i class="icon-calendar22 position-left"></i></span>
-                    <input type="text" class="form-control" value="08/01/2013 1:00" disabled>
+                    <span class="input-group-addon"><i class="icon-calendar22 text-success position-left"></i></span>
+                    <input type="text" class="form-control daterange-predefined" value="08/01/2013 1:00">
                 </div>
             </td>
             <td>
