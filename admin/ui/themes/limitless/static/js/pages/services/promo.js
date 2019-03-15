@@ -155,4 +155,8 @@ $(function () {
     $('.daterange-predefined span').html(moment().subtract(29, 'days')
         .format('MMMM D, YYYY, h:mm a'));
 
+    $(".touchspin-basic").TouchSpin({
+        max: 1500
+    });
+
 });

@@ -29,7 +29,8 @@ def promo_code_cleaner(key):
 class PromoCode(db.Model):
     __tablename__ = 'promo_codes'
 
-    key = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    key = db.Column(db.String(255), unique=True, nullable=False)
     used_count = db.Column(db.Integer, nullable=False, default=0)
     max_count = db.Column(db.Integer, nullable=False, default=1)
     payload = db.Column(JSONType, nullable=False, default={})

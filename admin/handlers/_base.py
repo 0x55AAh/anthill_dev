@@ -41,9 +41,9 @@ class UserTemplateServiceRequestHandler(ServiceContextMixin, UserTemplateHandler
     def render(self, template_name=None, **kwargs):
         try:
             super().render(template_name, **kwargs)
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+            kwargs.update(error=e)
             super().render(os.path.join('services', 'default.html'), **kwargs)
-            raise
 
 
 class PageHandlerMixin:

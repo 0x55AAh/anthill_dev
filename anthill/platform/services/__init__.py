@@ -318,6 +318,7 @@ class AdminService(PlainService):
 
     def setup(self) -> None:
         self.settings.update(services_meta={})
+        self.settings.update(services_all_meta={})
         super().setup()
 
     async def get_services_metadata(self, exclude_names=None):
