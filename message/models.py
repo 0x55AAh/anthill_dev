@@ -91,6 +91,26 @@ class MessageStatus(InternalAPIMixin, db.Model):
         return await self.request_user(user_id=self.receiver_id, include_profile=False)
 
 
+class MessageReaction(InternalAPIMixin, db.Model):
+    __tablename__ = 'message_reactions'
+    __table_args__ = (
+        db.UniqueConstraint('receiver_id', 'value'),
+    )
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    value = db.Column(db.String(128))
+    message_id = db.Column(
+        db.Integer, db.ForeignKey('messages.id', ondelete='CASCADE'))
+    receiver_id = db.Column(db.Integer)
+
+    @property
+    def request_user(self):
+        return partial(self.internal_request, 'login', 'get_user')
+
+    async def get_receiver(self) -> RemoteUser:
+        return await self.request_user(user_id=self.receiver_id, include_profile=False)
+
+
 class Message(InternalAPIMixin, db.Model):
     __tablename__ = 'messages'
 
@@ -101,11 +121,12 @@ class Message(InternalAPIMixin, db.Model):
     active = db.Column(db.Boolean, nullable=False, default=True)
     draft = db.Column(db.Boolean, nullable=False, default=False)
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
-    status = db.relationship('MessageStatus', backref='message', uselist=False)
-    disc = db.Column(db.String)
+    statuses = db.relationship('MessageStatus', backref='message', lazy='dynamic')
+    reactions = db.relationship('MessageReaction', backref='message', lazy='dynamic')
+    discriminator = db.Column(db.String)
 
     __mapper_args__ = {
-        'polymorphic_on': disc,
+        'polymorphic_on': discriminator,
         'polymorphic_identity': 'message',
     }
 
@@ -124,7 +145,7 @@ class Message(InternalAPIMixin, db.Model):
     @classmethod
     @as_future
     def incoming_messages(cls, receiver_id, **kwargs):
-        return cls.query.filter_by(active=True, **kwargs).join(cls.status) \
+        return cls.query.filter_by(active=True, **kwargs).join(cls.statuses) \
             .filter(MessageStatus.receiver_id == receiver_id)
 
     @classmethod
@@ -134,7 +155,7 @@ class Message(InternalAPIMixin, db.Model):
     @classmethod
     @as_future
     def new_messages(cls, receiver_id, **kwargs):
-        return cls.query.filter_by(active=True, **kwargs).join(cls.status) \
+        return cls.query.filter_by(active=True, **kwargs).join(cls.statuses) \
             .filter(MessageStatus.receiver_id == receiver_id, MessageStatus.value == 'new')
 
 
