@@ -145,7 +145,7 @@ class Message(InternalAPIMixin, db.Model):
     @classmethod
     @as_future
     def incoming_messages(cls, receiver_id, **kwargs):
-        return cls.query.filter_by(active=True, **kwargs).join(cls.statuses) \
+        return cls.query.filter_by(active=True, **kwargs).join(MessageStatus) \
             .filter(MessageStatus.receiver_id == receiver_id)
 
     @classmethod
@@ -155,7 +155,7 @@ class Message(InternalAPIMixin, db.Model):
     @classmethod
     @as_future
     def new_messages(cls, receiver_id, **kwargs):
-        return cls.query.filter_by(active=True, **kwargs).join(cls.statuses) \
+        return cls.query.filter_by(active=True, **kwargs).join(MessageStatus) \
             .filter(MessageStatus.receiver_id == receiver_id, MessageStatus.value == 'new')
 
 
@@ -245,7 +245,7 @@ class GroupMembership(InternalAPIMixin, db.Model):
 
 @as_future
 def get_friends(user_id):
-    membership_query = GroupMembership.query.join(GroupMembership.group)
+    membership_query = GroupMembership.query.join(Group)
     friendships1 = membership_query.filter(Group.type == 'p').filter_by(active=True, user_id=user_id)
     friendships2 = membership_query.filter(
         GroupMembership.user_id != user_id, Group.id.in_(f.group_id for f in friendships1))

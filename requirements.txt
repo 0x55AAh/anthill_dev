@@ -1,5 +1,8 @@
+# General packages
 -r anthill/framework/requirements.txt
 -r anthill/platform/requirements.txt
+
+# Services packages
 -r admin/requirements.txt
 -r apigw/requirements.txt
 -r backup/requirements.txt
