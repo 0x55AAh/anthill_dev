@@ -99,8 +99,7 @@ class MessageReaction(InternalAPIMixin, db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     value = db.Column(db.String(32))
-    message_id = db.Column(
-        db.Integer, db.ForeignKey('messages.id', ondelete='CASCADE'))
+    message_id = db.Column(db.Integer, db.ForeignKey('messages.id', ondelete='CASCADE'))
     user_id = db.Column(db.Integer)
 
     @property
@@ -157,6 +156,11 @@ class Message(InternalAPIMixin, db.Model):
     def new_messages(cls, receiver_id, **kwargs):
         return cls.query.filter_by(active=True, **kwargs).join(MessageStatus) \
             .filter(MessageStatus.receiver_id == receiver_id, MessageStatus.value == 'new')
+
+    @as_future
+    def add_reaction(self, user_id, value):
+        # TODO: message_id = self.id
+        pass
 
 
 class TextMessage(Message):
