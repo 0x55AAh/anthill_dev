@@ -94,21 +94,21 @@ class MessageStatus(InternalAPIMixin, db.Model):
 class MessageReaction(InternalAPIMixin, db.Model):
     __tablename__ = 'message_reactions'
     __table_args__ = (
-        db.UniqueConstraint('receiver_id', 'value'),
+        db.UniqueConstraint('message_id', 'user_id', 'value'),
     )
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    value = db.Column(db.String(128))
+    value = db.Column(db.String(32))
     message_id = db.Column(
         db.Integer, db.ForeignKey('messages.id', ondelete='CASCADE'))
-    receiver_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer)
 
     @property
     def request_user(self):
         return partial(self.internal_request, 'login', 'get_user')
 
-    async def get_receiver(self) -> RemoteUser:
-        return await self.request_user(user_id=self.receiver_id, include_profile=False)
+    async def get_user(self) -> RemoteUser:
+        return await self.request_user(user_id=self.user_id, include_profile=False)
 
 
 class Message(InternalAPIMixin, db.Model):
