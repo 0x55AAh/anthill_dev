@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 
 class BaseBackend:
@@ -11,5 +11,5 @@ class BaseBackend:
     async def check_updates(self) -> List[str]:
         raise NotImplementedError
 
-    async def update(self, version: str = None) -> None:
+    async def update(self, version: Optional[str] = None) -> None:
         raise NotImplementedError
