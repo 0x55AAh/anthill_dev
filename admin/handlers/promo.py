@@ -15,4 +15,4 @@ class IndexHandler(PromoPageHandler):
 
 
 class PromoCodeDetailHandler(PromoPageHandler):
-    page_name = 'promo_code_datail'
+    page_name = 'promo_code_detail'
