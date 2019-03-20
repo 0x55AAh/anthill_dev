@@ -13,6 +13,7 @@
 #
 from anthill.framework.ui import TemplateModule
 from anthill.framework.conf import settings
+from anthill.framework.utils.urls import reverse
 
 
 class BreadCrumbs(TemplateModule):
@@ -106,6 +107,12 @@ class MainSidebar(TemplateModule):
         def __lt__(self, other):
             return self.name < other.name
 
+        def get_absolute_url(self):
+            try:
+                return reverse('services:%(name)s:index' % {'name': self.name})
+            except KeyError:
+                return 'javascript:void(0);'
+
     # noinspection PyMethodOverriding
     def render(self, entries, metadata=None, page=None):
         return super().render(entries=entries, metadata=metadata, page=page)
@@ -137,6 +144,12 @@ class ServiceCard(TemplateModule):
 
         def __lt__(self, other):
             return self.name < other.name
+
+        def get_absolute_url(self):
+            try:
+                return reverse('services:%(name)s:index' % {'name': self.name})
+            except KeyError:
+                return 'javascript:void(0);'
 
     # noinspection PyMethodOverriding
     def render(self, entry):

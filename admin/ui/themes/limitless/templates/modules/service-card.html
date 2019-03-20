@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="panel-body text-center">
-            <a href="{{ reverse_url('service:index', entry.name) }}"
+            <a href="{{ entry.get_absolute_url() }}"
                class="icon-object border-{{ entry.color }} text-{{ entry.color }} btn btn-flat">
                 <i class="{{ entry.icon_class }}"></i>
             </a>

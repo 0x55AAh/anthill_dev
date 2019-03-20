@@ -8,6 +8,7 @@ from tornado.web import url
 import itertools
 
 extra_routes = (
+    'admin.routes.admin',
     'admin.routes.apigw',
     'admin.routes.backup',
     'admin.routes.bot',
@@ -33,12 +34,7 @@ extra_routes = (
 )
 extra_routes = map(import_module, extra_routes)
 extra_route_patterns = map(lambda mod: getattr(mod, 'route_patterns', []), extra_routes)
-
-service_route_patterns = [
-    # url(r'^/?$', handlers.ServiceRequestHandler, name='index'),  # default index
-    url(r'^/log/?$', handlers.LogRequestHandler, name='log'),
-]
-service_route_patterns += list(itertools.chain.from_iterable(extra_route_patterns))
+extra_route_patterns = list(itertools.chain.from_iterable(extra_route_patterns))
 
 route_patterns = [
     url(r'^/?$', handlers.HomeHandler, name='index'),
@@ -54,5 +50,5 @@ route_patterns = [
         dict(template_name='robots.txt', content_type='text/plain'), name='robots.txt'),
     url(r'^/update-manager/?$', handlers.UpdateManagerRequestHandler, name='update-manager'),
     url(r'^/sidebar-main-toggle/?$', handlers.SidebarMainToggle, name='sidebar-main-toggle'),
-    url(r'^/services/(?P<name>[^/]+)/', include(service_route_patterns, namespace='service')),
+    url(r'^/services/', include(extra_route_patterns, namespace='services')),
 ]

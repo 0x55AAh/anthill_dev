@@ -1,7 +1,11 @@
 from ._base import ServicePageHandler
 
 
-class PromoCodeList(ServicePageHandler):
+class PromoPageHandler(ServicePageHandler):
+    service_name = 'promo'
+
+
+class IndexHandler(PromoPageHandler):
     page_name = 'index'
 
     async def get_context_data(self, **kwargs):
@@ -10,9 +14,5 @@ class PromoCodeList(ServicePageHandler):
         return context
 
 
-class PromoCodeDetail(ServicePageHandler):
-    page_name = 'promo_code_detail'
-
-    async def get_context_data(self, **kwargs):
-        context = await super().get_context_data(**kwargs)
-        return context
+class PromoCodeDetailHandler(PromoPageHandler):
+    page_name = 'promo_code_datail'

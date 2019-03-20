@@ -47,7 +47,7 @@
 
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li>
-                        <a href="{{ reverse_url('service:log', name) }}">
+                        <a href="{{ reverse_url('services:promo:log') }}">
                             <i class="icon-clipboard6"></i> {{ _('Log') }}
                         </a>
                     </li>
@@ -76,7 +76,7 @@
         </tr>
         </thead>
         <tbody>
-        {% set detail_url=reverse_url('service:promo_code_detail', 'promo', 'test') %}
+        {% set detail_url=reverse_url('services:promo:promo_code_detail', 'test') %}
         <tr>
             <td data-sort="25">
                 <a href="{{ detail_url }}">VT6S-545B-419K</a>

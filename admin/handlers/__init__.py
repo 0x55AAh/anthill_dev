@@ -138,15 +138,13 @@ class SidebarMainToggle(UserHandlerMixin, RequestHandler):
 
 
 # @authenticated()
-class ServiceRequestHandler(UserTemplateServiceRequestHandler):
-    """Shows individual service index page."""
-    template_name = 'index.html'
-    extra_context = {'page': 'service-index'}
-
-
-# @authenticated()
 class LogRequestHandler(ServiceContextMixin, PageHandlerMixin, UserTemplateHandler):
     page_name = 'log'
+    service_name = None
+
+    def initialize(self, service_name=None):
+        if service_name is not None:
+            self.service_name = service_name
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)

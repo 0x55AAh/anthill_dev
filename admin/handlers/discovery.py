@@ -1,7 +1,11 @@
 from ._base import ServicePageHandler
 
 
-class ServicesList(ServicePageHandler):
+class DiscoveryPageHandler(ServicePageHandler):
+    service_name = 'discovery'
+
+
+class IndexHandler(DiscoveryPageHandler):
     page_name = 'index'
 
     async def get_context_data(self, **kwargs):
@@ -10,7 +14,7 @@ class ServicesList(ServicePageHandler):
         return context
 
 
-class ServiceDetail(ServicePageHandler):
+class ServiceDetail(DiscoveryPageHandler):
     page_name = 'service_detail'
 
     async def get_context_data(self, **kwargs):

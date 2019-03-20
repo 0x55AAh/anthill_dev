@@ -32,7 +32,7 @@
 
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li>
-                        <a href="{{ reverse_url('service:log', name) }}">
+                        <a href="{{ reverse_url('services:discovery:log') }}">
                             <i class="icon-clipboard6"></i> {{ _('Log') }}
                         </a>
                     </li>
@@ -50,7 +50,7 @@
             <table class="table table-striped text-nowrap table-services">
         <thead>
         <tr>
-            <th>Service</th>
+            <th>{{ _('Service') }}</th>
             <th>Registered</th>
             <th>Email</th>
             <th>Payment method</th>
@@ -63,7 +63,7 @@
         <tbody>
 
         {% for service in services_all_meta %}
-        {% set detail_url=reverse_url('service:detail', metadata['name'], service['name']) %}
+        {% set detail_url=reverse_url('services:discovery:service_detail', service['name']) %}
         {% set color=service['color'] %}
         <tr>
             <td>
