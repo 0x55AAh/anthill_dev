@@ -10,7 +10,7 @@ class IndexHandler(DiscoveryPageHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
-        context['services_all_meta'] = self.settings['services_all_meta']
+        context['services_list'] = self.settings['services_all_meta']
         return context
 
 

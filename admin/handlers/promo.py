@@ -10,7 +10,7 @@ class IndexHandler(PromoPageHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
-        context['promo_codes'] = []  # TODO:
+        context['promo_codes_list'] = []  # TODO:
         return context
 
 

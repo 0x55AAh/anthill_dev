@@ -25,7 +25,7 @@ BROKER = 'amqp://guest:guest@localhost:5672'
 APPLICATION_NAME = 'event'
 APPLICATION_VERBOSE_NAME = _('Event')
 APPLICATION_DESCRIPTION = _('Compete players with time-limited events')
-APPLICATION_ICON_CLASS = 'icon-calendar'
+APPLICATION_ICON_CLASS = 'icon-calendar2'
 APPLICATION_COLOR = 'success'
 
 EMAIL_SUBJECT_PREFIX = '[Anthill: event] '

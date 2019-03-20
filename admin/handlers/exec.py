@@ -10,4 +10,5 @@ class IndexHandler(ExecPageHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
+        context['commits_list'] = []  # TODO:
         return context

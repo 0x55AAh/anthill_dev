@@ -10,4 +10,5 @@ class IndexHandler(BotPageHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
+        context['bots_list'] = []  # TODO:
         return context

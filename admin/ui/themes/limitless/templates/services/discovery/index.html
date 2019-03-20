@@ -62,7 +62,7 @@
         </thead>
         <tbody>
 
-        {% for service in services_all_meta %}
+        {% for service in services_list %}
         {% set detail_url=reverse_url('services:discovery:service_detail', service['name']) %}
         {% set color=service['color'] %}
         <tr>

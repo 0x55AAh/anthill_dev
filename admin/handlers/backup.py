@@ -10,4 +10,5 @@ class IndexHandler(BackupPageHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
+        context['backups_list'] = []  # TODO:
         return context

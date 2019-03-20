@@ -10,4 +10,5 @@ class IndexHandler(LoginPageHandler):
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
+        context['users_list'] = []  # TODO:
         return context
