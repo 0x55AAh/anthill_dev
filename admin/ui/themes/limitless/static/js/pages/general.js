@@ -118,6 +118,7 @@ $(function () {
             function (isConfirm) {
                 if (isConfirm) {
                     var args = {service_name: service_name, version: null};
+                    // TODO: start updating animation
                     utils_client.send('update', args, function (error, response) {
                         if (error || response.error) { // ¯\_(ツ)_/¯
                             var e = error || response.error;
@@ -135,6 +136,7 @@ $(function () {
                                 type: "success"
                             });
                         }
+                        // TODO: stop updating animation
                     });
                 }
             });

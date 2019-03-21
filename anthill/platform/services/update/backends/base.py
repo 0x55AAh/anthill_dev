@@ -1,7 +1,10 @@
 from typing import List, Optional
 
 
-class BaseBackend:
+class BaseUpdateManager:
+    async def has_updates(self) -> bool:
+        raise NotImplementedError
+
     async def versions(self) -> List[str]:
         raise NotImplementedError
 

@@ -1,10 +1,13 @@
+from anthill.platform.services.update.backends.base import BaseUpdateManager
 from pip import _internal as pip_internal
-from .base import BaseBackend
 from typing import List, Optional
 import logging
 
 
-class Backend(BaseBackend):
+class PipUpdateManager(BaseUpdateManager):
+    async def has_updates(self):
+        pass
+
     async def versions(self) -> List[str]:
         pass
 

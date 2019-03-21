@@ -30,7 +30,12 @@
             <h5 class="text-semibold">{{ entry.title }}</h5>
             <p class="mb-15">
                 <span class="label bg-success">{{ _('updated') }}</span>
-                <span class="label bg-grey-300" style="margin-top: 3px;">{{ entry.version }}</span>
+                <span class="label bg-grey-300">{{ entry.version }}</span>
+                <!--
+                <span class="label bg-grey-300">{{ entry.version }}</span>
+                <span class="label bg-orange">{{ entry.version }}</span>
+                <span class="label bg-orange">{{ _('update') }}</span>
+                -->
             </p>
             <p class="mb-15">{{ entry.description }}</p>
         </div>

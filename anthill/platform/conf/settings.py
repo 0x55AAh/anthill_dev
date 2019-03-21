@@ -215,5 +215,5 @@ USER_LOGGING_ROOT_DIR = os.path.join(LOGGING_ROOT_DIR, 'users')
 
 
 UPDATES = {
-    'BACKEND': 'anthill.platform.services.update.backends.git.Backend'
+    'MANAGER': 'anthill.platform.services.update.backends.git.GitUpdateManager'
 }
