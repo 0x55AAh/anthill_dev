@@ -6,4 +6,8 @@
 *~
 *.mmdb
 .idea
-reqs
+Будет удалено migrations/__pycache__/
+Будет удалено migrations/versions/__pycache__/
+Будет удалено ui/themes/limitless/static/images/debugtoolbar/
+Будет удалено ui/themes/limitless/static/js/debugtoolbar/
+Будет удалено ui/themes/limitless/static/less/components/pages/
