@@ -15,8 +15,7 @@ class GitUpdateManager(BaseUpdateManager):
     remote_branch = 'origin/master'
 
     def __init__(self):
-        # self._root = settings.BASE_DIR
-        self._root = '/Users/vladimir/Dropbox/anthill'
+        self._root = settings.BASE_DIR
         try:
             self.repo = git.Repo(self._root)
             logger.info('Git updates manager enabled.')
