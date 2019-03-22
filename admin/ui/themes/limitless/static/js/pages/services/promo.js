@@ -46,7 +46,7 @@ $(function () {
                 orientation: 'landscape',
                 buttons: [
                     {
-                        text: '<i class=" icon-add position-right" style="padding-right: 7px"></i> Create',
+                        text: '<i class="icon-add position-right" style="padding-right: 7px"></i> Create',
                         action: function ( e, dt, node, config ) {
 
                         }

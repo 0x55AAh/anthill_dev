@@ -4,17 +4,17 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-environments').DataTable({
         autoWidth: false,
         columnDefs: [
-            {
-                targets: 0,
-                width: 400
-            },
+            // {
+            //     targets: 0,
+            //     width: 400
+            // },
             {
                 orderable: false,
                 width: 16,
-                targets: 6
+                targets: 4
             },
             {
                 className: 'control',
@@ -40,7 +40,6 @@ $(function () {
         },
         buttons: [
             {
-                // extend: 'pdfHtml5',
                 text: 'Create environment <i class="icon-plus22 position-right"></i>',
                 className: 'btn bg-blue',
                 orientation: 'landscape',
@@ -74,6 +73,27 @@ $(function () {
     var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
     switches.forEach(function(html) {
         var switchery = new Switchery(html, {color: '#4CAF50'});
+    });
+
+    // Remove environment
+    $(document).on('click', '.table-environments .remove-environment-action', function (e) {
+        e.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Environment will be removed.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Remove",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+
+                }
+            });
     });
 
 });

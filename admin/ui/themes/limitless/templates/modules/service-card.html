@@ -17,6 +17,8 @@
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li class="update_service"><a href="javascript:void(0);"><i
                                     class="icon-download"></i> {{ _('Update') }}</a></li>
+                            <li><a href="{{ reverse_url('services:' + entry.name + ':log') }}"><i
+                                    class="icon-clipboard6"></i> {{ _('Log') }}</a></li>
                         </ul>
                     </li>
                 </ul>

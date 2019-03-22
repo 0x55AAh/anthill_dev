@@ -2,7 +2,7 @@
 # http://docs.sqlalchemy.org/en/latest/orm/tutorial.html#declare-a-mapping
 from anthill.framework.db import db
 from anthill.platform.models import BaseApplication, BaseApplicationVersion
-from sqlalchemy_utils.types import URLType, JSONType
+from sqlalchemy_utils.types import URLType, JSONType, ColorType
 
 
 class Application(BaseApplication):
@@ -23,5 +23,6 @@ class Environment(db.Model):
     description = db.Column(db.String(512), nullable=False)
     discovery = db.Column(URLType, nullable=False)
     payload = db.Column(JSONType, nullable=False, default={})
+    color = db.Column(ColorType)
     active = db.Column(db.Boolean, nullable=False, default=True)
     app_versions = db.relationship('ApplicationVersion', backref='environment', lazy='dynamic')

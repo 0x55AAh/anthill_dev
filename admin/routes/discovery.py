@@ -7,7 +7,7 @@ from admin.handlers import discovery as handlers, LogRequestHandler
 
 _route_patterns = [
     url(r'^/?$', handlers.IndexHandler, name='index'),
-    url(r'^/(?P<name_detail>[^/]+)/?$', handlers.ServiceDetail, name='service_detail'),
+    url(r'^/(?P<service_name>[^/]+)/?$', handlers.ServiceDetail, name='service'),
     url(r'^/log/?$', LogRequestHandler, {'service_name': 'discovery'}, name='log')
 ]
 

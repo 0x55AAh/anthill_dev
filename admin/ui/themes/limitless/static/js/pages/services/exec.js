@@ -4,13 +4,13 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-commits').DataTable({
         autoWidth: false,
         columnDefs: [
-            {
-                targets: 0,
-                width: 400
-            },
+            // {
+            //     targets: 0,
+            //     width: 400
+            // },
             {
                 orderable: false,
                 width: 16,
@@ -40,13 +40,9 @@ $(function () {
         },
         buttons: [
             {
-                // extend: 'pdfHtml5',
-                text: 'Create commit <i class="icon-plus22 position-right"></i>',
+                text: 'Sync <i class="icon-sync position-right"></i>',
                 className: 'btn bg-blue',
-                orientation: 'landscape',
-                customize: function (doc) {
-                    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-                }
+                orientation: 'landscape'
             }
         ],
         drawCallback: function (settings) {
@@ -74,6 +70,27 @@ $(function () {
     var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
     switches.forEach(function(html) {
         var switchery = new Switchery(html, {color: '#4CAF50'});
+    });
+
+    // Apply commit
+    $(document).on('click', '.table-commits .apply-commit-action', function (e) {
+        e.preventDefault();
+        swal({
+                title: "Are you sure?",
+                text: "Commit will be applied.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Apply",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+
+                }
+            });
     });
 
 });
