@@ -24,26 +24,18 @@ class GitUpdateManager(BaseUpdateManager):
                              'or path does not exist.')
             self.repo = None
 
-    @property
-    def remote_ref(self):
-        return self.repo.references[remote_branch]
-
-    @property
-    def local_ref(self):
-        return self.repo.references[local_branch]
-
-    async def has_updates(self):
-        updates = await self.check_updates()
-        return bool(updates)
+    def _versions(self, branch) -> List[str]:
+        commits = list(self.repo.iter_commits(branch, max_count=False))
+        return list(map(lambda x: x.hexsha, commits))
 
     def _remote_versions(self) -> List[str]:
-        return list(map(lambda x: x.newhexsha, self.remote_ref.log()))
+        return self._versions(self.remote_branch)
 
     remote_versions = as_future(_remote_versions)
     versions = remote_versions
 
     def _local_versions(self) -> List[str]:
-        return list(map(lambda x: x.newhexsha, self.local_ref.log()))
+        return self._versions(self.local_branch)
 
     local_versions = as_future(_local_versions)
 
@@ -53,8 +45,15 @@ class GitUpdateManager(BaseUpdateManager):
         return self.repo.head.commit.hexsha
 
     @as_future
+    def has_updates(self) -> bool:
+        local_latest = self.repo.commit(self.local_branch)
+        remote_latest = self.repo.commit(self.remote_branch)
+        return (local_latest != remote_latest and
+                local_latest.committed_date < remote_latest.committed_date)
+
+    @as_future
     def check_updates(self) -> List[str]:
-        self.repo.remotes.origin.fetch()
+        # self.repo.remotes.origin.fetch()
         self.repo.git.checkout(self.local_branch)
         local_versions = set(self._local_versions())
         remote_versions = set(self._remote_versions())
