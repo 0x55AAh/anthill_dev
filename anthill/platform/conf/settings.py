@@ -215,5 +215,6 @@ USER_LOGGING_ROOT_DIR = os.path.join(LOGGING_ROOT_DIR, 'users')
 
 
 UPDATES = {
-    'MANAGER': 'anthill.platform.services.update.backends.git.GitUpdateManager'
+    'MANAGER': 'anthill.platform.services.update.backends.git.GitUpdateManager',
+    'PIP_REQUIREMENTS': 'requirements.txt'
 }
