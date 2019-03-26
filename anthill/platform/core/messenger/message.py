@@ -10,18 +10,20 @@ class MessengerClient:
         self.url = url
         self.namespace = namespace or '/'
         self._client = socketio_client
-        self._client.register_namespace(
-            self._SocketIONamespace(self.namespace))
+        self.register_namespace()
 
-    class _SocketIONamespace(socketio.AsyncClientNamespace):
+    class _SocketIOClientNamespace(socketio.AsyncClientNamespace):
         def on_connect(self):
-            logger.debug('Connected to messenger.')
+            logger.debug('Client has been connected to messenger.')
 
         def on_disconnect(self):
-            logger.debug('Disconnected from messenger.')
+            logger.debug('Client has been disconnected from messenger.')
 
     def __repr__(self):
-        return "<MessengerClient(url=%r, namespace=%r)>" % (self.url, self.namespace)
+        return "<%s(url=%r, namespace=%r)>" % (self.__class__.__name__, self.url, self.namespace)
+
+    def register_namespace(self):
+        self._client.register_namespace(self._SocketIOClientNamespace(self.namespace))
 
     async def __aenter__(self):
         await self.connect()

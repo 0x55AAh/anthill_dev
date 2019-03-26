@@ -280,7 +280,7 @@ class PlainService(BaseService):
         logger.debug('Login url: %s' % login_url)
 
     def create_messenger_client(self) -> MessengerClient:
-        messenger_url = self.settings['registered_services'][self.message_name]['internal']
+        messenger_url = self.get_service_location(self.message_name, 'internal')
         return MessengerClient(url=messenger_url)
 
     @method_decorator(retry(max_retries=0, delay=3, exception_types=(ConnectionError,),
@@ -288,6 +288,9 @@ class PlainService(BaseService):
     async def messenger_client_connect(self) -> None:
         self.messenger_client = self.create_messenger_client()
         await self.messenger_client.connect()
+
+    def get_service_location(self, service_name, network):
+        return self.settings['registered_services'][service_name][network]
 
     async def on_start(self) -> None:
         await super().on_start()

@@ -1,1 +1,1 @@
-# Write your pip requirements here.
+python-socketio
