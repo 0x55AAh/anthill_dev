@@ -3,6 +3,11 @@ from anthill.framework.utils.module_loading import import_string
 from anthill.platform.services.update.exceptions import UpdateError
 from anthill.framework.utils.asynchronous import as_future
 from typing import Optional
+import logging
+import os
+
+
+logger = logging.getLogger('anthill.application')
 
 
 UPDATES_SETTINGS = getattr(settings, 'UPDATES', {})
@@ -21,11 +26,15 @@ class UpdateManager:
 
     async def update_service(self, version):
         await self.manager.update(version)
+        logger.info('Service has been updated successfully.')
 
     @as_future
     def update_pip_requirements(self):
         from pip import _internal
-        _internal.main(['install', '-r', 'requirements.txt'])
+        req_file = os.path.join(settings.BASE_DIR, 'requirements.txt')
+        _internal.main(['install', '-r', req_file])
+        logger.info('Pip requirements installed successfully.')
 
-    async def update_system_requirements(self):
-        pass
+    @as_future
+    def update_system_requirements(self):
+        logger.info('System requirements installed successfully.')

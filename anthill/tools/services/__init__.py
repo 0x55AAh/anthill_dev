@@ -2,7 +2,7 @@ import requests
 import logging
 
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get(url, params=None, **kwargs):

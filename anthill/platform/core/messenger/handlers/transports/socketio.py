@@ -7,6 +7,7 @@ from anthill.platform.core.messenger.handlers.client_watchers import MessengerCl
 from anthill.platform.core.messenger.client.exceptions import ClientError
 from anthill.framework.utils.translation import translate as _
 from tornado import template
+from typing import Optional
 import user_agents
 import socketio
 import logging
@@ -73,6 +74,9 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
         return groups
 
+    def get_participants(self, group: str) -> str:
+        return self.server.manager.get_participants(self.namespace, room=group)
+
     def enter_groups(self, sid, groups) -> None:
         for group in groups:
             self.enter_room(sid, group)
@@ -94,9 +98,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
         """Check if user online."""
         client = await self.get_client(sid)
         group = client.create_personal_group(user_id)
-        result = next(self.server.manager.get_participants(
-            self.namespace, room=group), None)
-        return bool(result)
+        return bool(next(self.get_participants(group), None))
 
     async def on_connect(self, sid, environ):
         request_handler = environ['tornado.handler']
@@ -144,7 +146,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
             content['error'] = str(e)
             await self.emit('create_group', data=content, room=personal_group)
         else:
-            for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
+            for sid_ in self.get_participants(personal_group):
                 self.enter_room(sid_, group_name)
             await self.emit('create_group', data=content, room=group_name)
 
@@ -185,7 +187,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
             content['error'] = str(e)
             await self.emit('join_group', data=content, room=personal_group)
         else:
-            for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
+            for sid_ in self.get_participants(personal_group):
                 self.enter_room(sid_, group)
             await self.emit('join_group', data=content, room=group)
 
@@ -204,7 +206,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
             content['error'] = str(e)
             await self.emit('leave_group', data=content, room=personal_group)
         else:
-            for sid_ in self.server.manager.get_participants(self.namespace, room=personal_group):
+            for sid_ in self.get_participants(personal_group):
                 self.leave_room(sid_, group)
             await self.emit('leave_group', data=content, room=group)
 
@@ -213,7 +215,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
     # MESSAGES
 
     async def send_email_on_incoming_message(self, data, group, my_client):
-        participants = self.server.manager.get_participants(self.namespace, room=group)
+        participants = self.get_participants(group)
         clients = set(await self.get_client(s) for s in participants)
         clients.discard(my_client)
         recipient_list = (c.user.email for c in clients)

@@ -2,6 +2,7 @@ from anthill.platform.core.messenger.message import MessengerClient
 from bot.actions.exceptions import ActionError
 import socketio
 import logging
+import functools
 
 logger = logging.getLogger('anthill.application')
 
@@ -12,6 +13,7 @@ class _SocketIOClientNamespace(socketio.AsyncClientNamespace):
         self.bot = bot
 
     def on_connect(self):
+        # TODO: join self.bot.connect_groups
         logger.debug('Bot %s connected to messenger.' % self.bot)
 
     def on_disconnect(self):
@@ -20,9 +22,11 @@ class _SocketIOClientNamespace(socketio.AsyncClientNamespace):
     async def on_message(self, data):
         for action in self.bot.actions:
             try:
-                await action.value_object.on_message(data, emit=self.emit)
+                emit = functools.partial(self.emit, event='message')
+                await action.value_object.on_message(data, emit=emit)
+                # TODO: reply?
             except ActionError:
-                pass
+                logger.error('Action `%s` cannot process message %s.' % (action, data))
 
 
 class BotClient(MessengerClient):
