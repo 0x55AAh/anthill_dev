@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-customers').DataTable({
+    $('.table-reports').DataTable({
         autoWidth: false,
         columnDefs: [
             {

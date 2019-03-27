@@ -4,6 +4,7 @@ from anthill.framework.db import db
 from anthill.framework.utils import timezone
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.utils.functional import cached_property
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils.types import JSONType
 from bot.actions.base import BaseAction
 from typing import List
@@ -56,6 +57,18 @@ class Bot(db.Model):
 
     def __repr__(self):
         return "<Bot(name=%s, description=%s)>" % (self.name, self.description)
+
+    @hybrid_property
+    def photo(self):
+        return self.payload.get('avatar')
+
+    @hybrid_property
+    def first_name(self):
+        return self.payload.get('first_name')
+
+    @hybrid_property
+    def last_name(self):
+        return self.payload.get('last_name')
 
 
 class Action(db.Model):

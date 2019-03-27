@@ -14,7 +14,7 @@ $(function () {
             {
                 orderable: false,
                 width: 16,
-                targets: 6
+                targets: 5
             },
             {
                 className: 'control',

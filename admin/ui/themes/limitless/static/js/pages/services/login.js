@@ -29,7 +29,7 @@ $(function() {
             },
             {
                 orderable: false,
-                width: 130,
+                width: 16,
                 targets: 6
             },
             {

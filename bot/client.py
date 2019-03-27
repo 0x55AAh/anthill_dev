@@ -12,11 +12,11 @@ class _SocketIOClientNamespace(socketio.AsyncClientNamespace):
         super().__init__(namespace)
         self.bot = bot
 
-    def on_connect(self):
+    async def on_connect(self):
         # TODO: join self.bot.connect_groups
         logger.debug('Bot %s connected to messenger.' % self.bot)
 
-    def on_disconnect(self):
+    async def on_disconnect(self):
         logger.debug('Bot %s disconnected from messenger.' % self.bot)
 
     async def on_message(self, data):

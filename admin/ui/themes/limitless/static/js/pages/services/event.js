@@ -26,7 +26,7 @@ $(function () {
             {
                 targets: 7,
                 orderable: false,
-                width: 130
+                width: 16
             },
             {
                 className: 'control',

@@ -11,11 +11,11 @@ $(function () {
             //     targets: 0,
             //     width: 400
             // },
-            // {
-            //     orderable: false,
-            //     width: 16,
-            //     targets: 6
-            // },
+            {
+                orderable: false,
+                width: 16,
+                targets: 4
+            },
             {
                 className: 'control',
                 orderable: false,

@@ -189,7 +189,9 @@
                         <a href="{{ reverse_url('audit-log') }}"><i class="icon-history"></i> {{ _('History') }}</a>
                     </li>
                     <li class="{% if page == 'update_manager' %}active{% end %}">
-                        <a href="{{ reverse_url('update-manager') }}"><i class="icon-download"></i> {{ _('Updates') }}
+                        <a href="{{ reverse_url('update-manager') }}">
+                            <span class="badge bg-warning-400 pull-right">17</span>
+                            <i class="icon-spinner11"></i> {{ _('Updates') }}
                         </a>
                     </li>
                     <li class="divider"></li>
