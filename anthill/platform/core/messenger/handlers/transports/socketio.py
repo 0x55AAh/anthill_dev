@@ -1,11 +1,14 @@
 from anthill.framework.conf import settings
 from anthill.framework.core.exceptions import ImproperlyConfigured
-from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.framework.core.mail.asynchronous import send_mail
+from anthill.framework.utils.translation import translate as _
+from anthill.framework.utils.module_loading import import_string
+from anthill.framework.handlers.socketio import SocketIOHandler
 from anthill.platform.auth.handlers import UserHandlerMixin
 from anthill.platform.core.messenger.handlers.client_watchers import MessengerClientsWatcher
 from anthill.platform.core.messenger.client.exceptions import ClientError
-from anthill.framework.utils.translation import translate as _
+from anthill.platform.core.messenger.settings import messenger_settings
+from anthill.platform.core.messenger.moderators import ModeratedException
 from tornado import template
 from typing import Optional
 import user_agents
@@ -14,6 +17,23 @@ import logging
 
 
 logger = logging.getLogger('anthill.application')
+
+
+def load_moderator(path):
+    return import_string(path)()
+
+
+def get_moderators():
+    moderators = []
+    for moderator_path in messenger_settings.MODERATORS:
+        moderator = load_moderator(moderator_path)
+        moderators.append(moderator)
+    return moderators
+
+
+async def moderate(message):
+    for moderator in get_moderators():
+        await moderator.moderate(message)
 
 
 class MessengerNamespace(socketio.AsyncNamespace):
@@ -74,7 +94,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
         return groups
 
-    def get_participants(self, group: str) -> str:
+    def get_participants(self, group: str):
         return self.server.manager.get_participants(self.namespace, room=group)
 
     def enter_groups(self, sid, groups) -> None:
@@ -216,13 +236,13 @@ class MessengerNamespace(socketio.AsyncNamespace):
 
     async def send_email_on_incoming_message(self, data, group, my_client):
         participants = self.get_participants(group)
-        clients = set(await self.get_client(s) for s in participants)
-        clients.discard(my_client)
+        clients = [await self.get_client(s) for s in participants]
+        clients.remove(my_client)
         recipient_list = (c.user.email for c in clients)
         loader = template.Loader(settings.TEMPLATE_PATH)
         subject = _('New incoming message')
-        message = loader.load("incoming_message_email.txt").generate(data)
-        html_message = loader.load("incoming_message_email.html").generate(data)
+        message = loader.load("incoming_message_email.txt").generate(**data)
+        html_message = loader.load("incoming_message_email.html").generate(**data)
         from_email = settings.DEFAULT_FROM_EMAIL
         await send_mail(
             subject, message, from_email, recipient_list,
@@ -231,7 +251,7 @@ class MessengerNamespace(socketio.AsyncNamespace):
     async def on_create_message(self, sid, data):
         content_type = data.get('content_type', 'text/plain')
         group = self.retrieve_group(data)
-        data = data.get('data')
+        text = data.get('data')
         event_id = data.get('event_id')
         client = await self.get_client(sid)
         content = {
@@ -241,6 +261,18 @@ class MessengerNamespace(socketio.AsyncNamespace):
             'content_type': content_type,
             'event_id': event_id
         }
+
+        # Moderation
+        try:
+            await moderate(text)
+        except ModeratedException as e:
+            content['error'] = str(e)
+            personal_group = client.create_personal_group()
+            await self.emit('create_message', data=content, room=personal_group)
+            # return 'ERR', event_id, str(e)
+            return
+        # /Moderation
+
         try:
             message_id = await client.create_message(group, {
                 'data': data,
@@ -250,11 +282,13 @@ class MessengerNamespace(socketio.AsyncNamespace):
             content['error'] = str(e)
             personal_group = client.create_personal_group()
             await self.emit('create_message', data=content, room=personal_group)
+            # return 'ERR', event_id, str(e)
         else:
             content['payload'] = {'id': message_id, 'data': data}
             await self.emit('create_message', data=content, room=group)
             if self.email_on_incoming_message:
                 await self.send_email_on_incoming_message(data, group, client)
+            # return 'OK', event_id, message_id
 
     async def on_enumerate_group(self, sid, data):
         client = await self.get_client(sid)

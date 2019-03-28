@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-commits').DataTable({
+    var datatable = $('.table-commits').DataTable({
         autoWidth: false,
         columnDefs: [
             // {
@@ -40,9 +40,9 @@ $(function () {
         },
         buttons: [
             {
-                text: 'Sync <i class="icon-sync position-right"></i>',
-                className: 'btn bg-blue',
-                orientation: 'landscape'
+                text: '<span class="ladda-label">Sync <i class="icon-loop3 position-right"></i></span>',
+                className: 'btn bg-blue btn-ladda btn-ladda-spinner',
+                name: 'syncBtn'
             }
         ],
         drawCallback: function (settings) {
@@ -52,6 +52,9 @@ $(function () {
             $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').removeClass('dropup');
         }
     });
+
+    datatable.button('syncBtn:name').nodes().attr('data-spinner-color','#fff');
+    datatable.button('syncBtn:name').nodes().attr('data-style','zoom-in');
 
 
     // External table additions
@@ -91,6 +94,12 @@ $(function () {
 
                 }
             });
+    });
+
+    // Button with spinner
+    Ladda.bind('.btn-ladda-spinner', {
+        dataSpinnerSize: 16,
+        timeout: 2000
     });
 
 });

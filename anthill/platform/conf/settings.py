@@ -186,7 +186,8 @@ CHANNEL_LAYERS = {
 
 MESSENGER = {
     'PERSONAL_GROUP_PREFIX': '__user',  # Must starts with `__` for security reason
-    'PERSONAL_GROUP_FUNCTION': 'anthill.platform.core.messenger.client.backends.base.create_personal_group'
+    'PERSONAL_GROUP_FUNCTION': 'anthill.platform.core.messenger.client.backends.base.create_personal_group',
+    'MODERATORS': []
 }
 
 #######

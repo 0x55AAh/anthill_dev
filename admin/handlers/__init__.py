@@ -170,3 +170,8 @@ class ProfileRequestHandler(PageHandlerMixin, UserTemplateHandler):
 # @authenticated()
 class UpdateManagerRequestHandler(PageHandlerMixin, UserTemplateHandler):
     page_name = 'update_manager'
+
+    async def get_context_data(self, **kwargs):
+        context = await super().get_context_data(**kwargs)
+        context['services_list'] = self.settings['services_all_meta']
+        return context

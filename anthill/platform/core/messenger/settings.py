@@ -8,7 +8,8 @@ USER_SETTINGS = getattr(settings, 'MESSENGER', None)
 
 DEFAULTS = {
     'PERSONAL_GROUP_PREFIX': '__user',  # Must starts with `__` for security reason
-    'PERSONAL_GROUP_FUNCTION': 'anthill.platform.core.messenger.client.backends.base.create_personal_group'
+    'PERSONAL_GROUP_FUNCTION': 'anthill.platform.core.messenger.client.backends.base.create_personal_group',
+    'MODERATORS': []
 }
 
 IMPORT_STRINGS = (
@@ -40,7 +41,7 @@ def import_from_string(val, setting_name):
         module = import_module(module_path)
         return getattr(module, class_name)
     except (ImportError, AttributeError) as e:
-        msg = "Could not import '%s' for API setting '%s'. " \
+        msg = "Could not import '%s' for MESSENGER setting '%s'. " \
               "%s: %s." % (val, setting_name, e.__class__.__name__, e)
         raise ImportError(msg)
 
