@@ -44,7 +44,8 @@ $(function() {
             search: '<span>Search user:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
-            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' },
+            emptyTable: 'No data available in table'
         },
         lengthMenu: [ 25, 50, 75, 100 ],
         displayLength: 50,
@@ -56,12 +57,10 @@ $(function() {
         },
         buttons: [
             {
-                // extend: 'pdfHtml5',
                 text: 'Create user <i class="icon-plus22 position-right"></i>',
                 className: 'btn bg-blue',
-                orientation: 'landscape',
-                customize: function (doc) {
-                    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                action: function ( e, dt, node, config ) {
+
                 }
             }
         ],
@@ -95,6 +94,7 @@ $(function() {
     // Remove user
     $(document).on('click', '.table-users .remove-user-action', function (e) {
         e.preventDefault();
+        var row = $(this).closest('tr');
         swal({
                 title: "Are you sure?",
                 text: "User will be removed.",
@@ -104,11 +104,25 @@ $(function() {
                 confirmButtonText: "Remove",
                 cancelButtonText: "Cancel",
                 closeOnConfirm: false,
-                closeOnCancel: true
+                closeOnCancel: true,
+                showLoaderOnConfirm: true
             },
             function (isConfirm) {
                 if (isConfirm) {
-
+                    setTimeout(function() {
+                        swal({
+                            title: "Removed!",
+                            text: "User has been removed.",
+                            confirmButtonColor: "#66BB6A",
+                            type: "success"
+                        }, function () {
+                            // Remove entry from UI
+                            var animation = "fadeOutUpBig";
+                            row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
+                                $(this).remove();
+                            });
+                        });
+                    }, 2000);
                 }
             });
     });

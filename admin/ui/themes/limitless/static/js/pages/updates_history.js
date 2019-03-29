@@ -49,14 +49,12 @@ $(function() {
                 name: 'updateAllBtn',
                 className: 'btn bg-blue btn-ladda btn-ladda-spinner border-left-white',
                 action: function ( e, dt, node, config ) {
-                    dt.rows().every(function (rowIdx, tableLoop, rowLoop) {
+                    datatable.rows().every(function (rowIdx, tableLoop, rowLoop) {
                         var row = $(this.node());
                         var btn = row.find('button.update-action');
                         update(btn);
                     });
-                    // console.log(datatable.rows().count());
-                    // datatable.button('updateAllBtn:name').nodes().attr('disabled', 'disabled');
-                    dt.clear().draw();
+                    datatable.clear().draw();
                 }
             }
         ],
@@ -68,10 +66,8 @@ $(function() {
         }
     });
 
-    datatable.button('updateAllBtn:name').nodes().attr('data-spinner-color', '#fff');
-    datatable.button('updateAllBtn:name').nodes().attr('data-style', 'fade');
-    if (datatable.rows().count() === 0)
-        datatable.button('updateAllBtn:name').nodes().attr('disabled', 'disabled');
+    datatable.button('updateAllBtn:name').nodes().attr('data-spinner-color','#fff');
+    datatable.button('updateAllBtn:name').nodes().attr('data-style','fade');
 
     // External table additions
     // ------------------------------
@@ -128,7 +124,7 @@ $(function() {
         btn.button('loading');
         setTimeout(function () {
             btn.button('reset');
-            var animation = "fadeOutDownBig";
+            var animation = "fadeOutDown";
             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
                 $(this).remove();
             });

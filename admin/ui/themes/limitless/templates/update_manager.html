@@ -7,6 +7,10 @@
         padding: 11px;
         border-radius: 3px;
     }
+    .sweet-alert p {
+        text-align: justify;
+        position: relative;
+    }
 </style>
 {% end %}
 
@@ -29,7 +33,6 @@
                 <thead>
                 <tr>
                     <th>{{ _('Item') }}</th>
-                    <th>{{ _('Description') }}</th>
                     <th>{{ _('Actions') }}</th>
                     <th></th>
                 </tr>
@@ -41,32 +44,23 @@
                     <td>
                         <div class="media">
                             <div class="media-left">
-                                <a class="btn border-{{ color }} text-{{ color }} btn-flat btn-icon btn-rounded btn-sm">
-                                    <i class="{{ service['icon_class'] }}"></i></a>
+                                <span class="btn border-{{ color }} text-{{ color }} btn-flat btn-icon btn-rounded btn-sm">
+                                    <i class="{{ service['icon_class'] }}"></i></span>
                             </div>
 
                             <div class="media-body media-middle">
-                                <a class="text-semibold">{{ service['title'] }}</a>
+                                <span class="text-semibold">{{ service['title'] }}</span>
                                 <div class="text-muted text-size-small">
                                     Last updated: 2016.12.30
                                 </div>
                             </div>
                         </div>
                     </td>
-                    <td><!--
-                        <div class="panel panel-body">
-                            <ul class="list-feed list-feed-rhombus list-feed-solid">
-                                <li><a href="#">David Linner</a> requested refund for a double bank card charge</li>
-                                <li>User <a href="#">Christopher Wallace</a> from Google is awaiting for staff reply</li>
-                                <li>Ticket <strong>#43683</strong> has been resolved by <a href="#">Victoria Wilson</a></li>
-                                <li><a href="#">Eugene Kopyov</a> merged <strong>Master</strong>, <strong>Demo</strong> and <strong>Dev</strong> branches</li>
-                                <li>All sellers have received payouts for December, 2016!</li>
-                                <li><a href="#">Chris Arney</a> created a new ticket <strong>#43136</strong> and assigned to <a href="#">John Nod</a></li>
-                            </ul>
-                        </div>-->
-                    </td>
                     <td class="text-right">
-                        <button type="button" class="btn bg-blue btn-float btn-loading" data-loading-text="<i class='icon-spinner2 spinner'></i>"><i class="icon-spinner11"></i></button>
+                        <div class="btn-group">
+                            <button type="button" class="btn bg-blue btn-float btn-loading update-action" data-loading-text="<i class='icon-spinner11 spinner'></i>"><i class="icon-spinner11"></i></button>
+                            <button type="button" class="btn bg-blue btn-float view-update-info"><i class="icon-info22"></i></button>
+                        </div>
                     </td>
                     <td class="no-padding-left"></td>
                 </tr>

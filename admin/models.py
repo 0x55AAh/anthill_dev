@@ -50,3 +50,22 @@ class AuditLog(InternalAPIMixin, db.Model):
             'version': self.previous_version
         }
         await self.internal_request(service_name, 'object_recover', **kwargs)
+
+
+class UpdateLog(InternalAPIMixin, db.Model):
+    __tablename__ = 'update_log'
+
+    STATUS = (
+        ('success', _('Success')),
+        ('error', _('Error')),
+        ('running', _('Running')),
+    )
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    started = db.Column(db.DateTime, default=timezone.now)
+    finished = db.Column(db.DateTime)
+    item_name = db.Column(db.String(128), nullable=False)
+    author_id = db.Column(db.Integer, nullable=False)
+    current_version = db.Column(db.Integer, nullable=False)
+    previous_version = db.Column(db.Integer, nullable=False)
+    last_failure_tb = db.Column(db.Text)

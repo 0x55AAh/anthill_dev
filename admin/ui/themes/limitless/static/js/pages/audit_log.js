@@ -38,21 +38,7 @@ $(function() {
                 target: -1
             }
         },
-        buttons: [
-            {
-                /*extend: 'pdfHtml5',
-                text: 'Export list <i class="icon-file-pdf position-right"></i>',
-                className: 'btn bg-blue',
-                orientation: 'landscape',
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                    stripHtml: true
-                },
-                customize: function (doc) {
-                    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-                }*/
-            }
-        ],
+        buttons: [],
         drawCallback: function (settings) {
             $(this).find('tbody tr').slice(-3).find('.dropdown, .btn-group').addClass('dropup');
         },
@@ -74,6 +60,7 @@ $(function() {
     // Recover model object
     $(document).on('click', '.table-audit-log-records .recover-object-action', function (e) {
         e.preventDefault();
+        var row = $(this).closest('tr');
         swal({
                 title: "Are you sure?",
                 text: "Object will be recovered to the previous version.",
@@ -83,11 +70,21 @@ $(function() {
                 confirmButtonText: "Recover",
                 cancelButtonText: "Cancel",
                 closeOnConfirm: false,
-                closeOnCancel: true
+                closeOnCancel: true,
+                showLoaderOnConfirm: true
             },
             function (isConfirm) {
                 if (isConfirm) {
+                    setTimeout(function() {
+                        swal({
+                            title: "Recovered!",
+                            text: "Object has been recovered.",
+                            confirmButtonColor: "#66BB6A",
+                            type: "success"
+                        }, function () {
 
+                        });
+                    }, 2000);
                 }
             });
     });

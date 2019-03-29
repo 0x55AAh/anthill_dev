@@ -28,7 +28,8 @@ $(function () {
             search: '<span>Search report:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
-            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' },
+            emptyTable: 'No data available in table'
         },
         lengthMenu: [ 25, 50, 75, 100 ],
         displayLength: 50,
@@ -40,12 +41,10 @@ $(function () {
         },
         buttons: [
             {
-                // extend: 'pdfHtml5',
                 text: 'Create report <i class="icon-plus22 position-right"></i>',
                 className: 'btn bg-blue',
-                orientation: 'landscape',
-                customize: function (doc) {
-                    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                action: function ( e, dt, node, config ) {
+
                 }
             }
         ],

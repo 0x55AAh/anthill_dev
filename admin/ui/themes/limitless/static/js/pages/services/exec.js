@@ -28,7 +28,8 @@ $(function () {
             search: '<span>Search commit:</span> _INPUT_',
             searchPlaceholder: 'Type to filter...',
             lengthMenu: '<span>Show:</span> _MENU_',
-            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' }
+            paginate: { 'first': 'First', 'last': 'Last', 'next': '&rarr;', 'previous': '&larr;' },
+            emptyTable: 'No data available in table'
         },
         lengthMenu: [ 25, 50, 75, 100 ],
         displayLength: 50,
@@ -40,9 +41,12 @@ $(function () {
         },
         buttons: [
             {
-                text: '<span class="ladda-label">Sync <i class="icon-loop3 position-right"></i></span>',
+                text: '<span class="ladda-label">Sync</span>',
                 className: 'btn bg-blue btn-ladda btn-ladda-spinner',
-                name: 'syncBtn'
+                name: 'syncBtn',
+                action: function ( e, dt, node, config ) {
+
+                }
             }
         ],
         drawCallback: function (settings) {
@@ -54,7 +58,7 @@ $(function () {
     });
 
     datatable.button('syncBtn:name').nodes().attr('data-spinner-color','#fff');
-    datatable.button('syncBtn:name').nodes().attr('data-style','zoom-in');
+    datatable.button('syncBtn:name').nodes().attr('data-style','fade');
 
 
     // External table additions
@@ -73,27 +77,6 @@ $(function () {
     var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
     switches.forEach(function(html) {
         var switchery = new Switchery(html, {color: '#4CAF50'});
-    });
-
-    // Apply commit
-    $(document).on('click', '.table-commits .apply-commit-action', function (e) {
-        e.preventDefault();
-        swal({
-                title: "Are you sure?",
-                text: "Commit will be applied.",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#EF5350",
-                confirmButtonText: "Apply",
-                cancelButtonText: "Cancel",
-                closeOnConfirm: false,
-                closeOnCancel: true
-            },
-            function (isConfirm) {
-                if (isConfirm) {
-
-                }
-            });
     });
 
     // Button with spinner
