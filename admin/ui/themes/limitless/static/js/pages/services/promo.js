@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-promo-codes').DataTable({
+    var datatable = $('.table-promo-codes').DataTable({
         autoWidth: false,
         columnDefs: [
             // {
@@ -97,7 +97,7 @@ $(function () {
     // Remove promo code
     $(document).on('click', '.table-promo-codes .remove-promo-code-action', function (e) {
         e.preventDefault();
-        var row = $(this).closest('tr');
+        var row = $(this).closest('tbody tr');
         swal({
                 title: "Are you sure?",
                 text: "Promo code will be removed.",
@@ -122,7 +122,7 @@ $(function () {
                             // Remove entry from UI
                             var animation = "fadeOutUpBig";
                             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
-                                $(this).remove();
+                                datatable.row(row).remove().draw();
                             });
                         });
                     }, 2000);

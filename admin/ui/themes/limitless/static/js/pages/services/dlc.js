@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-bundles').DataTable({
+    var datatable = $('.table-bundles').DataTable({
         autoWidth: false,
         columnDefs: [
             {
@@ -78,7 +78,7 @@ $(function () {
     // Remove bundle
     $(document).on('click', '.table-bundles .remove-bundle-action', function (e) {
         e.preventDefault();
-        var row = $(this).closest('tr');
+        var row = $(this).closest('tbody tr');
         swal({
                 title: "Are you sure?",
                 text: "Bundle will be removed.",
@@ -103,7 +103,7 @@ $(function () {
                             // Remove entry from UI
                             var animation = "fadeOutUpBig";
                             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
-                                $(this).remove();
+                                datatable.row(row).remove().draw();
                             });
                         });
                     }, 2000);

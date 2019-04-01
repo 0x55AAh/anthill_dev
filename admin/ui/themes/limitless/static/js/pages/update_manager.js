@@ -124,13 +124,13 @@ $(function() {
     });
 
     function update(btn) {
-        var row = btn.closest('tr');
+        var row = btn.closest('tbody tr');
         btn.button('loading');
         setTimeout(function () {
             btn.button('reset');
             var animation = "fadeOutDownBig";
             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
-                $(this).remove();
+                datatable.row(row).remove().draw();
             });
         }, 3000)
     }

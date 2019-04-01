@@ -4,7 +4,7 @@ $(function() {
     // ------------------------------
 
     // Initialize
-    $('.table-audit-log-records').DataTable({
+    var datatable = $('.table-audit-log-records').DataTable({
         autoWidth: false,
         columnDefs: [
             /*{

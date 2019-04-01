@@ -12,3 +12,8 @@ class IndexHandler(BotPageHandler):
         context = await super().get_context_data(**kwargs)
         context['bots_list'] = []  # TODO:
         return context
+
+
+class BotDetailHandler(BotPageHandler):
+    page_name = 'bot_detail'
+

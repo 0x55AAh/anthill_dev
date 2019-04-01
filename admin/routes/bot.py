@@ -7,6 +7,7 @@ from admin.handlers import bot as handlers, LogRequestHandler
 
 _route_patterns = [
     url(r'^/?$', handlers.IndexHandler, name='index'),
+    url(r'^/(?P<bot_name>[^/]+)/?$', handlers.BotDetailHandler, name='detail'),
     url(r'^/log/?$', LogRequestHandler, {'service_name': 'bot'}, name='log')
 ]
 

@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-events').DataTable({
+    var datatable = $('.table-events').DataTable({
         autoWidth: false,
         columnDefs: [
             {
@@ -124,7 +124,7 @@ $(function () {
     // Remove event
     $(document).on('click', '.table-events .remove-event-action', function (e) {
         e.preventDefault();
-        var row = $(this).closest('tr');
+        var row = $(this).closest('tbody tr');
         swal({
                 title: "Are you sure?",
                 text: "Event will be removed.",
@@ -149,7 +149,7 @@ $(function () {
                             // Remove entry from UI
                             var animation = "fadeOutUpBig";
                             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
-                                $(this).remove();
+                                datatable.row(row).remove().draw();
                             });
                         });
                     }, 2000);

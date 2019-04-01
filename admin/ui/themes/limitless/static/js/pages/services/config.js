@@ -4,7 +4,7 @@ $(function () {
     // ------------------------------
 
     // Initialize
-    $('.table-configurations').DataTable({
+    var datatable = $('.table-configurations').DataTable({
         autoWidth: false,
         columnDefs: [
             {
@@ -78,7 +78,7 @@ $(function () {
     // Remove configuration
     $(document).on('click', '.table-configurations .remove-configuration-action', function (e) {
         e.preventDefault();
-        var row = $(this).closest('tr');
+        var row = $(this).closest('tbody tr');
         swal({
                 title: "Are you sure?",
                 text: "Configuration will be removed.",
@@ -103,7 +103,7 @@ $(function () {
                             // Remove entry from UI
                             var animation = "fadeOutUpBig";
                             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
-                                $(this).remove();
+                                datatable.row(row).remove().draw();
                             });
                         });
                     }, 2000);
