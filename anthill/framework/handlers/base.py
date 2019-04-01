@@ -12,11 +12,12 @@ from anthill.framework.utils.translation import default_locale
 from anthill.framework.utils.module_loading import import_string
 from anthill.framework.utils.urls import build_absolute_uri
 from anthill.framework.utils.serializer import AlchemyJSONEncoder
-from anthill.framework.http import HttpGoneError
+from anthill.framework.http import HttpGoneError, Http404, HttpServerError
 from anthill.framework.conf import settings
 from tornado import httputil
 import json
 import logging
+import os
 
 
 class TranslationHandlerMixin:
@@ -494,3 +495,44 @@ class Handler404(TemplateHandler):
     def prepare(self):
         self.set_status(404)
         self.render()
+
+
+class DownloadFileHandler(RequestHandler):
+    file_path = None
+    # content_type = 'application/octet-stream'
+    content_type = 'application/force-download'
+
+    def initialize(self, file_path=None):
+        if file_path is not None:
+            self.file_path = file_path
+
+    def get_file_path(self):
+        if self.file_path is None:
+            raise ImproperlyConfigured(
+                "DownloadFileHandler requires either a definition of "
+                "'file_path' or an implementation of 'get_file_path()'")
+        else:
+            return self.file_path
+
+    def get_file_name(self):
+        return os.path.basename(self.get_file_path())
+
+    async def get(self):
+        _file_path = self.get_file_path()
+        if not _file_path or not os.path.exists(_file_path):
+            raise Http404
+        self.set_header('Content-Type', self.content_type)
+        self.set_header('Content-Disposition', 'attachment; filename=%s' % self.get_file_name())
+        with open(_file_path, "rb") as f:
+            try:
+                while True:
+                    _buffer = f.read(4096)
+                    if _buffer:
+                        self.write(_buffer)
+                    else:
+                        f.close()
+                        self.finish()
+                        return
+            except Exception as e:
+                raise Http404 from e
+        raise HttpServerError
