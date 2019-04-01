@@ -69,3 +69,6 @@ class UpdateLog(InternalAPIMixin, db.Model):
     current_version = db.Column(db.Integer, nullable=False)
     previous_version = db.Column(db.Integer, nullable=False)
     last_failure_tb = db.Column(db.Text)
+
+    async def get_author(self):
+        return await self.internal_request('login', 'get_user', user_id=self.author_id)

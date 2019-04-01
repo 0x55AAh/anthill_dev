@@ -4,7 +4,7 @@ $(function() {
     // ------------------------------
 
     // Initialize
-    var datatable = $('.table-updates').DataTable({
+    var updates_dt = $('.table-updates').DataTable({
         autoWidth: false,
         columnDefs: [
             {
@@ -54,8 +54,8 @@ $(function() {
                         var btn = row.find('button.update-action');
                         update(btn);
                     });
-                    // console.log(datatable.rows().count());
-                    // datatable.button('updateAllBtn:name').nodes().attr('disabled', 'disabled');
+                    // console.log(dt.rows().count());
+                    // dt.button('updateAllBtn:name').nodes().attr('disabled', 'disabled');
                     dt.clear().draw();
                 }
             }
@@ -68,10 +68,10 @@ $(function() {
         }
     });
 
-    datatable.button('updateAllBtn:name').nodes().attr('data-spinner-color', '#fff');
-    datatable.button('updateAllBtn:name').nodes().attr('data-style', 'fade');
-    if (datatable.rows().count() === 0)
-        datatable.button('updateAllBtn:name').nodes().attr('disabled', 'disabled');
+    updates_dt.button('updateAllBtn:name').nodes().attr('data-spinner-color', '#fff');
+    updates_dt.button('updateAllBtn:name').nodes().attr('data-style', 'fade');
+    if (updates_dt.rows().count() === 0)
+        updates_dt.button('updateAllBtn:name').nodes().attr('disabled', 'disabled');
 
     // External table additions
     // ------------------------------
@@ -130,7 +130,7 @@ $(function() {
             btn.button('reset');
             var animation = "fadeOutDownBig";
             row.addClass("animated " + animation).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function () {
-                datatable.row(row).remove().draw();
+                updates_dt.row(row).remove().draw();
             });
         }, 3000)
     }

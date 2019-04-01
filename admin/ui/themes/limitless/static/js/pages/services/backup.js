@@ -111,4 +111,36 @@ $(function () {
             });
     });
 
+    // Recover backup
+    $(document).on('click', '.table-backups .restore-backup-action', function (e) {
+        e.preventDefault();
+        var row = $(this).closest('tbody tr');
+        swal({
+                title: "Are you sure?",
+                text: "Backup will be restored.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#EF5350",
+                confirmButtonText: "Restore",
+                cancelButtonText: "Cancel",
+                closeOnConfirm: false,
+                closeOnCancel: true,
+                showLoaderOnConfirm: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    setTimeout(function() {
+                        swal({
+                            title: "Restored!",
+                            text: "Backup has been restored.",
+                            confirmButtonColor: "#66BB6A",
+                            type: "success"
+                        }, function () {
+
+                        });
+                    }, 2000);
+                }
+            });
+    });
+
 });
