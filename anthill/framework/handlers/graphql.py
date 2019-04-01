@@ -120,7 +120,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
     middleware = None
     graphiql = False
     executor = None
-    root_value = None
+    root = None
     pretty = False
     batch = False
     context = None
@@ -133,7 +133,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
             middleware=None,
             graphiql=False,
             executor=None,
-            root_value=None,
+            root=None,
             pretty=False,
             batch=False,
             context=None):
@@ -150,7 +150,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         self.schema = self.schema or schema
         self.graphiql = self.graphiql or graphiql
         self.executor = self.executor or executor
-        self.root_value = root_value
+        self.root = root
         self.pretty = pretty
         self.batch = batch
         self.context = context
@@ -213,9 +213,9 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         ])
 
     async def get_graphql_response(self, data):
-        query, variable_values, operation_name, id = self.get_graphql_params(data)
+        query, values, operation_name, id = self.get_graphql_params(data)
         execution_result = await self.execute_graphql_request(
-            query, variable_values, operation_name)
+            query, values, operation_name)
 
         status_code = 200
         if execution_result:
@@ -242,7 +242,7 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
 
         return result, status_code
 
-    async def execute_graphql_request(self, query, variable_values, operation_name):
+    async def execute_graphql_request(self, query, values, operation_name):
         if not query:
             if self.is_graphiql():
                 return None
@@ -250,12 +250,12 @@ class GraphQLHandler(TemplateMixin, RequestHandler):
         try:
             result = await self.schema.execute(
                 query,
-                variable_values=variable_values,
+                values=values,
                 operation_name=operation_name,
-                context_value=self.get_context(),
+                context=self.get_context(),
                 middleware=self.middleware,
                 return_promise=self.enable_async,
-                root_value=self.root_value,
+                root=self.root,
                 executor=self.executor
             )
         except Exception as e:
