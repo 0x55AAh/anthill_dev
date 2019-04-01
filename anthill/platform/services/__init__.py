@@ -213,11 +213,11 @@ class BaseService(CeleryMixin, _BaseService):
             logger.debug('Log streaming not installed.')
 
     def setup(self) -> None:
+        super().setup()
         self.setup_log_streaming()
         self.setup_public_api()
         self.setup_gis()
         self.setup_update_manager()
-        super().setup()
 
     async def on_start(self) -> None:
         await self.internal_connection.connect()
@@ -241,10 +241,10 @@ class PlainService(BaseService):
         self.messenger_client = None
 
     def setup(self) -> None:
+        super().setup()
         self.settings.update(messenger_url=None)
         self.settings.update(registered_services={})
         self.setup_internal_request_methods()
-        super().setup()
 
     # noinspection PyAttributeOutsideInit
     def setup_internal_request_methods(self):
