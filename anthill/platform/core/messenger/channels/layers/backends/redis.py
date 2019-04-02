@@ -388,7 +388,7 @@ class ChannelLayer(BaseChannelLayer):
         """
         if self.crypter:
             message = self.crypter.decrypt(message, self.expiry + 10)
-        return msgpack.unpackb(message, encoding="utf8")
+        return msgpack.unpackb(message, raw=False)
 
     # Internal functions #
 
