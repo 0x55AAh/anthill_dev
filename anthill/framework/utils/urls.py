@@ -3,6 +3,7 @@ from .functional import lazy
 from .module_loading import import_string
 from tornado.web import URLSpec
 from typing import Union, Optional
+import functools
 import re
 
 
@@ -55,6 +56,17 @@ def include(routes: Union[str, list], namespace: Optional[str] = None) -> list:
                 route.name = ':'.join([namespace, route.name])
             new_routes.append(route)
     return new_routes
+
+
+def root(pattern, namespace):
+    def decorator(route_patterns):
+        @functools.wraps(route_patterns)
+        def wrapper():
+            return [
+                URLSpec(pattern, include(route_patterns(), namespace=namespace)),
+            ]
+        return wrapper
+    return decorator
 
 
 def build_absolute_uri(host_url: str, path: Optional[str] = None) -> str:

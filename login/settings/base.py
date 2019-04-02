@@ -195,6 +195,9 @@ AUTHENTICATION_BACKENDS = [
     # GITHUB
     'anthill.framework.auth.social.backends.github.GithubOAuth2',
 
+    # DISCORD
+    'anthill.framework.auth.social.backends.discord.DiscordOAuth2',
+
     # JWT
     'anthill.framework.auth.backends.JWTBackend',
 

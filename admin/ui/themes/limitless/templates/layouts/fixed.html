@@ -37,6 +37,16 @@
     {% block css %}{% end %}
 
     <!-- Core JS files -->
+    <script>
+        paceOptions = {
+            // Disable the 'elements' source
+            elements: false,
+
+            // Only show the progress on regular and ajax-y page navigation,
+            // not every request
+            restartOnRequestAfter: false
+        }
+    </script>
     <script type="text/javascript" src="{{ static_url('js/plugins/loaders/pace.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/core/libraries/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ static_url('js/core/libraries/bootstrap.min.js') }}"></script>
