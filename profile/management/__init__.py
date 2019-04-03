@@ -34,4 +34,16 @@ Example:
 """
 from anthill.framework.core.management import Command, Option, Manager
 
-# Create your management commands here.
+
+class ReplaceCommand(Command):
+    help = 'Perform replace operations.'
+    name = 'replace'
+
+    option_list = (
+        Option('-f', '--file', dest='file', default='replaces.json',
+               help='JSON file with a list of replace pairs.'),
+    )
+
+    def run(self, *args, **kwargs):
+        pass
+
