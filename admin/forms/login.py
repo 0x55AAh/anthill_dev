@@ -14,5 +14,14 @@ class RegistrationForm(Form):
     accept_tos = BooleanField(_('I accept the TOS'), [validators.DataRequired()])
 
 
+class LoginForm(Form):
+    username = StringField(_('Username'), [validators.DataRequired(), validators.Length(min=4, max=25)])
+    password = PasswordField(_('Password'), [validators.DataRequired()])
+
+
 class PasswordResetForm(Form):
     email = StringField(_('Email'), [validators.Length(min=6, max=35)])
+
+
+class UserForm(Form):
+    pass
