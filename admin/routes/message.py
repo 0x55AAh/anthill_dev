@@ -9,5 +9,7 @@ from admin.handlers import message as handlers, LogRequestHandler
 def route_patterns():
     return [
         url(r'^/?$', handlers.IndexHandler, name='index'),
+        url(r'^/groups/?$', handlers.IndexHandler, name='message_group_list'),
+        url(r'^/groups/(?P<group_id>[^/]+)/?$', handlers.GroupDetailHandler, name='message_group_detail'),
         url(r'^/log/?$', LogRequestHandler, {'service_name': 'message'}, name='log')
     ]

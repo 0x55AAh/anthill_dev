@@ -57,7 +57,8 @@ class FormMixin(ContextMixin):
 
     async def form_invalid(self, form):
         """If the form is invalid, render the invalid form."""
-        self.render(**(await self.get_context_data(form=form)))
+        context = await self.get_context_data(form=form)
+        self.render(**context)
 
     async def get_context_data(self, **kwargs):
         """Insert the form into the context dict."""
@@ -134,7 +135,7 @@ class UpdateModelFormMixin(ModelFormMixin):
         return form_class
 
 
-class ProcessFormHandler(RequestHandler):
+class ProcessFormMixin:
     """Render a form on GET and processes it on POST."""
 
     async def get(self, *args, **kwargs):
@@ -157,6 +158,10 @@ class ProcessFormHandler(RequestHandler):
     # object, note that browsers only support POST for now.
     async def put(self, *args, **kwargs):
         await self.post(*args, **kwargs)
+
+
+class ProcessFormHandler(ProcessFormMixin, RequestHandler):
+    """Render a form on GET and processes it on POST."""
 
 
 class BaseFormHandler(FormMixin, ProcessFormHandler):

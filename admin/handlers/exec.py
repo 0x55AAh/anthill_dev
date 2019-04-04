@@ -1,8 +1,13 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
 
 
 class ExecPageHandler(ServicePageHandler):
     service_name = 'exec'
+
+
+class ExecFormHandler(FormMixin, ProcessFormMixin, ExecPageHandler):
+    pass
 
 
 class IndexHandler(ExecPageHandler):

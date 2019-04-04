@@ -1,8 +1,13 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
 
 
 class MediaPageHandler(ServicePageHandler):
     service_name = 'media'
+
+
+class MediaFormHandler(FormMixin, ProcessFormMixin, MediaPageHandler):
+    pass
 
 
 class IndexHandler(MediaPageHandler):

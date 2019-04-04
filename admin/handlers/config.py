@@ -1,8 +1,13 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
 
 
 class ConfigPageHandler(ServicePageHandler):
     service_name = 'config'
+
+
+class ConfigFormHandler(FormMixin, ProcessFormMixin, ConfigPageHandler):
+    pass
 
 
 class IndexHandler(ConfigPageHandler):

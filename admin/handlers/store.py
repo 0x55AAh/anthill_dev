@@ -1,8 +1,17 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
+from admin.forms import (
+    StoreForm, StoreItemForm, StoreOrderForm, StoreItemCategoryForm,
+    StoreCurrencyForm, StoreTierForm
+)
 
 
 class StorePageHandler(ServicePageHandler):
     service_name = 'store'
+
+
+class StoreFormHandler(FormMixin, ProcessFormMixin, StorePageHandler):
+    pass
 
 
 class IndexHandler(StorePageHandler):
@@ -11,6 +20,17 @@ class IndexHandler(StorePageHandler):
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
         context['items_list'] = []  # TODO:
+        return context
+
+
+class ItemDetailHandler(StoreFormHandler):
+    page_name = 'item_detail'
+    form_class = StoreItemForm
+
+    async def get_context_data(self, **kwargs):
+        context = await super().get_context_data(**kwargs)
+        item_id = self.path_kwargs['item_id']
+        context['item'] = {}  # TODO:
         return context
 
 
@@ -23,8 +43,9 @@ class TierListHandler(StorePageHandler):
         return context
 
 
-class TierDetailHandler(StorePageHandler):
+class TierDetailHandler(StoreFormHandler):
     page_name = 'tier_detail'
+    form_class = StoreTierForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -42,8 +63,9 @@ class StoreListHandler(StorePageHandler):
         return context
 
 
-class StoreDetailHandler(StorePageHandler):
+class StoreDetailHandler(StoreFormHandler):
     page_name = 'store_detail'
+    form_class = StoreForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -61,8 +83,9 @@ class OrderListHandler(StorePageHandler):
         return context
 
 
-class OrderDetailHandler(StorePageHandler):
+class OrderDetailHandler(StoreFormHandler):
     page_name = 'order_detail'
+    form_class = StoreOrderForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -80,8 +103,9 @@ class ItemCategoryListHandler(StorePageHandler):
         return context
 
 
-class ItemCategoryDetailHandler(StorePageHandler):
+class ItemCategoryDetailHandler(StoreFormHandler):
     page_name = 'item_category_detail'
+    form_class = StoreItemCategoryForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -99,8 +123,9 @@ class CurrencyListHandler(StorePageHandler):
         return context
 
 
-class CurrencyDetailHandler(StorePageHandler):
+class CurrencyDetailHandler(StoreFormHandler):
     page_name = 'currency_detail'
+    form_class = StoreCurrencyForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)

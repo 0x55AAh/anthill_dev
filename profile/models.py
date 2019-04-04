@@ -9,8 +9,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_utils.types import (
     JSONType, CurrencyType, CountryType, LocaleType, EmailType)
 from jsonpath_ng.ext import parser
+from jsonpath_ng.jsonpath import JSONPath, DatumInContext
 from anthill.platform.auth import RemoteUser
-from typing import Callable
+from typing import Callable, Any, List
 
 
 class Profile(InternalAPIMixin, db.Model):
@@ -64,19 +65,18 @@ class Profile(InternalAPIMixin, db.Model):
         return await self.internal_request('login', 'get_user', user_id=self.user_id)
 
     @staticmethod
-    def _payload_parse_obj(path: str):
+    def json_path(path: str) -> JSONPath:
         return parser.parse(path, debug=settings.DEBUG)
 
     @as_future
-    def find_payload(self, path: str) -> dict:
-        return self._payload_parse_obj(path).find(self.payload)
+    def find_payload(self, path: str) -> List[DatumInContext]:
+        return self.json_path(path).find(self.payload)
 
     @as_future
     def filter_payload(self, path: str, fn: Callable[[dict], bool]) -> dict:
-        return self._payload_parse_obj(path).filter(fn, self.payload)
+        return self.json_path(path).filter(fn, self.payload)
 
     @as_future
-    def update_payload(self, path: str, data: dict, commit: bool = True) -> dict:
-        self.payload = self._payload_parse_obj(path).update(self.payload, data)
+    def update_payload(self, path: str, value: Any, commit: bool = True) -> None:
+        self.json_path(path).update(self.payload, value)
         self.save(commit)
-        return self.payload

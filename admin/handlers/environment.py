@@ -1,8 +1,16 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
+from admin.forms import (
+    EnvironmentForm, EnvironmentApplicationForm, EnvironmentApplicationVersionForm
+)
 
 
 class EnvironmentPageHandler(ServicePageHandler):
     service_name = 'environment'
+
+
+class EnvironmentFormHandler(FormMixin, ProcessFormMixin, EnvironmentPageHandler):
+    pass
 
 
 class IndexHandler(EnvironmentPageHandler):
@@ -14,8 +22,9 @@ class IndexHandler(EnvironmentPageHandler):
         return context
 
 
-class EnvironmentDetailHandler(EnvironmentPageHandler):
+class EnvironmentDetailHandler(EnvironmentFormHandler):
     page_name = 'environment_detail'
+    form_class = EnvironmentForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -32,8 +41,9 @@ class ApplicationListHandler(EnvironmentPageHandler):
         return context
 
 
-class ApplicationDetailHandler(EnvironmentPageHandler):
+class ApplicationDetailHandler(EnvironmentFormHandler):
     page_name = 'application_detail'
+    form_class = EnvironmentApplicationForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -42,8 +52,9 @@ class ApplicationDetailHandler(EnvironmentPageHandler):
         return context
 
 
-class ApplicationVersionDetailHandler(EnvironmentPageHandler):
+class ApplicationVersionDetailHandler(EnvironmentFormHandler):
     page_name = 'application_version_detail'
+    form_class = EnvironmentApplicationVersionForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)

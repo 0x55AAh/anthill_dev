@@ -1,8 +1,13 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
 
 
 class LogPageHandler(ServicePageHandler):
     service_name = 'log'
+
+
+class LogFormHandler(FormMixin, ProcessFormMixin, LogPageHandler):
+    pass
 
 
 class IndexHandler(LogPageHandler):

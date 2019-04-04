@@ -33,6 +33,10 @@ Example:
 
 """
 from anthill.framework.core.management import Command, Option, Manager
+from profile.models import Profile
+from typing import List
+import json
+import re
 
 
 class ReplaceCommand(Command):
@@ -42,8 +46,32 @@ class ReplaceCommand(Command):
     option_list = (
         Option('-f', '--file', dest='file', default='replaces.json',
                help='JSON file with a list of replace pairs.'),
+        Option('-t', '--target', dest='target',
+               help='Target path of json tree.'),
+        Option('-u', '--users', dest='users', default=None,
+               help='User id list separated by comma.'),
     )
 
-    def run(self, *args, **kwargs):
-        pass
+    @staticmethod
+    def load_replaces(path: str):
+        with open(path) as f:
+            replaces = json.load(f)
+        return replaces
+
+    @staticmethod
+    def parse_users(raw_users: str) -> List[str]:
+        return re.split(r'\s*,\s*', raw_users)
+
+    def replace(self, profile, target, replaces) -> None:
+        # profile.find_payload(target)
+        for rep in replaces:
+            # TODO: profile.update_payload(path, value)
+            pass
+
+    def run(self, file, target, users) -> None:
+        users = self.parse_users(users)
+        replaces = self.load_replaces(file)
+        profiles = Profile.query.filter(Profile.user_id.in_(users)).all()
+        for profile in profiles:
+            self.replace(profile, target, replaces)
 

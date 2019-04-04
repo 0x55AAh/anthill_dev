@@ -1,8 +1,13 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
 
 
 class ApiGWPageHandler(ServicePageHandler):
     service_name = 'apigw'
+
+
+class ApiGWFormHandler(FormMixin, ProcessFormMixin, ApiGWPageHandler):
+    pass
 
 
 class IndexHandler(ApiGWPageHandler):

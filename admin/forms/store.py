@@ -6,21 +6,21 @@ class StoreForm(Form):
     pass
 
 
-class ItemForm(Form):
+class StoreItemForm(Form):
     pass
 
 
-class ItemCategoryForm(Form):
+class StoreItemCategoryForm(Form):
     pass
 
 
-class CurrencyForm(Form):
+class StoreCurrencyForm(Form):
     pass
 
 
-class OrderForm(Form):
+class StoreOrderForm(Form):
     pass
 
 
-class TierForm(Form):
+class StoreTierForm(Form):
     pass

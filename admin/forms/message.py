@@ -6,5 +6,5 @@ class MessageForm(Form):
     pass
 
 
-class GroupForm(Form):
+class MessageGroupForm(Form):
     pass

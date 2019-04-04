@@ -1,8 +1,14 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
+from admin.forms import BackupForm
 
 
 class BackupPageHandler(ServicePageHandler):
     service_name = 'backup'
+
+
+class BackupFormHandler(FormMixin, ProcessFormMixin, BackupPageHandler):
+    pass
 
 
 class IndexHandler(BackupPageHandler):

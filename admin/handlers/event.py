@@ -1,8 +1,17 @@
-from ._base import ServicePageHandler
+from ._base import ServicePageHandler, ServiceFormHandler
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
+from admin.forms import (
+    EventForm, EventParticipantForm, EventCategoryForm, EventGeneratorForm,
+    EventGeneratorPoolForm
+)
 
 
 class EventPageHandler(ServicePageHandler):
     service_name = 'event'
+
+
+class EventFormHandler(FormMixin, ProcessFormMixin, EventPageHandler):
+    pass
 
 
 class IndexHandler(EventPageHandler):
@@ -14,8 +23,9 @@ class IndexHandler(EventPageHandler):
         return context
 
 
-class EventDetailHandler(EventPageHandler):
+class EventDetailHandler(EventFormHandler):
     page_name = 'event_detail'
+    form_class = EventForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -35,8 +45,9 @@ class ParticipantListHandler(EventPageHandler):
         return context
 
 
-class ParticipantDetailHandler(EventPageHandler):
+class ParticipantDetailHandler(EventFormHandler):
     page_name = 'event_participant_detail'
+    form_class = EventParticipantForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -55,8 +66,9 @@ class CategoryListHandler(EventPageHandler):
         return context
 
 
-class CategoryDetailHandler(EventPageHandler):
+class CategoryDetailHandler(EventFormHandler):
     page_name = 'event_category_detail'
+    form_class = EventCategoryForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -74,8 +86,9 @@ class GeneratorListHandler(EventPageHandler):
         return context
 
 
-class GeneratorDetailHandler(EventPageHandler):
+class GeneratorDetailHandler(EventFormHandler):
     page_name = 'generator_detail'
+    form_class = EventGeneratorForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
@@ -93,8 +106,9 @@ class GeneratorPoolListHandler(EventPageHandler):
         return context
 
 
-class GeneratorPoolDetailHandler(EventPageHandler):
+class GeneratorPoolDetailHandler(EventFormHandler):
     page_name = 'generator_pool_detail'
+    form_class = EventGeneratorPoolForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)

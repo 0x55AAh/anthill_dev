@@ -9,5 +9,12 @@ from admin.handlers import blog as handlers, LogRequestHandler
 def route_patterns():
     return [
         url(r'^/?$', handlers.IndexHandler, name='index'),
+
+        url(r'^/posts/?$', handlers.IndexHandler, name='post_list'),
+        url(r'^/posts/(?P<post_id>[^/]+)/?$', handlers.PostDetailHandler, name='post_detail'),
+
+        url(r'^/categories/?$', handlers.CategoryListHandler, name='category_list'),
+        url(r'^/categories/(?P<category_id>[^/]+)/?$', handlers.CategoryDetailHandler, name='category_detail'),
+
         url(r'^/log/?$', LogRequestHandler, {'service_name': 'blog'}, name='log')
     ]

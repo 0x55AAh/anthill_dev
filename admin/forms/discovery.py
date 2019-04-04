@@ -2,5 +2,5 @@ from anthill.framework.forms import Form
 from anthill.framework.utils.translation import translate as _
 
 
-class ServiceForm(Form):
+class DiscoveryServiceForm(Form):
     pass

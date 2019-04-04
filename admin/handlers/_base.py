@@ -3,6 +3,7 @@ from anthill.platform.handlers.base import InternalRequestHandlerMixin
 from anthill.platform.auth.handlers import UserTemplateHandler
 from anthill.framework.http.errors import HttpNotFoundError
 from anthill.framework.core.exceptions import ImproperlyConfigured
+from anthill.framework.handlers.edit import FormMixin, ProcessFormMixin
 import os
 
 
@@ -89,3 +90,7 @@ class ServicePageHandler(PageHandlerMixin, UserTemplateServiceRequestHandler):
 
     def get_template_name(self):
         return os.path.join(self.get_template_root(), self.page_name + '.html')
+
+
+class ServiceFormHandler(FormMixin, ProcessFormMixin, ServicePageHandler):
+    pass

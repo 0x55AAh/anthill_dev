@@ -10,6 +10,9 @@ def route_patterns():
     return [
         url(r'^/?$', handlers.IndexHandler, name='index'),
 
+        url(r'^/items/?$', handlers.IndexHandler, name='item_list'),
+        url(r'^/items/(?P<item_id>[^/]+)/?$', handlers.ItemDetailHandler, name='item_detail'),
+
         url(r'^/currencies/?$', handlers.CurrencyListHandler, name='currency_list'),
         url(r'^/currencies/(?P<currency_id>[^/]+)/?$', handlers.CurrencyDetailHandler, name='currency_detail'),
 
