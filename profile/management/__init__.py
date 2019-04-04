@@ -65,6 +65,7 @@ class ReplaceCommand(Command):
     def replace(self, profile, target, replaces) -> None:
         replaces_from = (r[0] for r in replaces)
         result = profile.find_payload(target, lambda x: x.value in replaces_from)
+        # targets = (r.full_path for r in result)
         for rep in replaces:
             # TODO: profile.update_payload(path, value)
             pass
