@@ -11,7 +11,7 @@ from sqlalchemy_utils.types import (
 from jsonpath_ng.ext import parser
 from jsonpath_ng.jsonpath import JSONPath, DatumInContext
 from anthill.platform.auth import RemoteUser
-from typing import Callable, Any, List
+from typing import Callable, Any, List, Optional
 
 
 class Profile(InternalAPIMixin, db.Model):
@@ -69,11 +69,15 @@ class Profile(InternalAPIMixin, db.Model):
         return parser.parse(path, debug=settings.DEBUG)
 
     @as_future
-    def find_payload(self, path: str) -> List[DatumInContext]:
-        return self.json_path(path).find(self.payload)
+    def find_payload(self, path: str,
+                     fn: Optional[Callable[[Any], bool]] = None) -> List[DatumInContext]:
+        result = self.json_path(path).find(self.payload)
+        if fn is not None:
+            return list(filter(fn, result))
+        return result
 
     @as_future
-    def filter_payload(self, path: str, fn: Callable[[dict], bool]) -> dict:
+    def filter_payload(self, path: str, fn: Callable[[Any], bool]) -> dict:
         return self.json_path(path).filter(fn, self.payload)
 
     @as_future

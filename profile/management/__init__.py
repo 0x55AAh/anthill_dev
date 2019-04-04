@@ -63,7 +63,8 @@ class ReplaceCommand(Command):
         return re.split(r'\s*,\s*', raw_users)
 
     def replace(self, profile, target, replaces) -> None:
-        # profile.find_payload(target)
+        replaces_from = (r[0] for r in replaces)
+        result = profile.find_payload(target, lambda x: x.value in replaces_from)
         for rep in replaces:
             # TODO: profile.update_payload(path, value)
             pass
