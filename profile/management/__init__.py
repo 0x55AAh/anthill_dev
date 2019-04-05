@@ -47,7 +47,7 @@ class ReplaceCommand(Command):
     option_list = (
         Option('-f', '--file', dest='file', default='replaces.json',
                help='JSON file with a list of replace pairs.'),
-        Option('-t', '--target', dest='target',
+        Option('-t', '--target', dest='target', default='$',
                help='Target path of json tree.'),
         Option('-u', '--users', dest='users', default=None,
                help='User id list separated by comma.'),
