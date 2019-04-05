@@ -20,9 +20,8 @@ class IndexHandler(MessagePageHandler):
         return context
 
 
-class GroupDetailHandler(MessageFormHandler):
+class GroupDetailHandler(MessagePageHandler):
     page_name = 'group_detail'
-    form_class = MessageGroupForm
 
     async def get_context_data(self, **kwargs):
         context = await super().get_context_data(**kwargs)
