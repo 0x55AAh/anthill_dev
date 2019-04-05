@@ -35,6 +35,7 @@ Example:
 from anthill.framework.core.management import Command, Option, Manager
 from profile.models import Profile
 from typing import List, Optional, Dict, Any
+from json.decoder import JSONDecodeError
 import tqdm
 import json
 import re
@@ -86,7 +87,7 @@ class ReplaceCommand(Command):
     def run(self, file: str, target: str, users: Optional[str] = None) -> None:
         try:
             replaces = self.load_replaces(file)
-        except FileNotFoundError as e:
+        except (FileNotFoundError, JSONDecodeError) as e:
             self.stderr.write(str(e))
             return
 
