@@ -34,7 +34,8 @@ Example:
 """
 from anthill.framework.core.management import Command, Option, Manager
 from profile.models import Profile
-from typing import List
+from typing import List, Optional, Dict, Any
+import tqdm
 import json
 import re
 
@@ -53,28 +54,37 @@ class ReplaceCommand(Command):
     )
 
     @staticmethod
-    def load_replaces(path: str):
+    def load_replaces(path: str) -> Dict[Any, Any]:
         with open(path) as f:
             replaces = json.load(f)
-        return replaces
+        return dict(replaces)
 
     @staticmethod
-    def parse_users(raw_users: str) -> List[str]:
-        return re.split(r'\s*,\s*', raw_users)
+    def parse_users(raw_users: Optional[str] = None) -> List[str]:
+        if raw_users is not None:
+            return re.split(r'\s*,\s*', raw_users)
+        return []
 
     @staticmethod
-    def replace(profile, target, replaces) -> None:
-        replaces_dict = dict(replaces)
-        results = profile.find_payload(target, lambda x: x.value in replaces_dict)
-        for r in results:
-            path = str(r.full_path)
-            new_value = replaces_dict[r.value]
-            profile.update_payload(path, new_value)
+    def replace(profile: Profile, target: str, replaces: Dict[Any, Any]) -> None:
+        matches = profile.find_payload(target, lambda x: x.value in replaces)
+        for match in matches:
+            new_value = replaces[match.value]
+            profile.update_payload(match.full_path, new_value, commit=False)
+        profile.save()
 
-    def run(self, file, target, users) -> None:
-        users = self.parse_users(users)
+    def run(self, file: str, target: str, users: Optional[str] = None) -> None:
         replaces = self.load_replaces(file)
-        profiles = Profile.query.filter(Profile.user_id.in_(users)).all()
-        for profile in profiles:
-            self.replace(profile, target, replaces)
+        if not replaces:
+            return
 
+        users = self.parse_users(users)
+        query = Profile.query
+        if users:
+            query = query.filter(Profile.user_id.in_(users))
+        profiles = query.all()
+
+        with tqdm.tqdm(total=len(profiles), unit=' profile') as pb:
+            for profile in profiles:
+                self.replace(profile, target, replaces)
+                pb.update()

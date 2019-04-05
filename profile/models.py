@@ -11,7 +11,7 @@ from sqlalchemy_utils.types import (
 from jsonpath_ng.ext import parser
 from jsonpath_ng.jsonpath import JSONPath, DatumInContext
 from anthill.platform.auth import RemoteUser
-from typing import Callable, Any, List, Optional
+from typing import Callable, Any, List, Optional, Union
 
 
 class Profile(InternalAPIMixin, db.Model):
@@ -81,6 +81,9 @@ class Profile(InternalAPIMixin, db.Model):
         return self.json_path(path).filter(fn, self.payload)
 
     @as_future
-    def update_payload(self, path: str, value: Any, commit: bool = True) -> None:
-        self.json_path(path).update(self.payload, value)
+    def update_payload(self, path: Union[str, JSONPath], value: Any, commit: bool = True) -> None:
+        if isinstance(path, str):
+            self.json_path(path).update(self.payload, value)
+        elif isinstance(path, JSONPath):
+            path.update(self.payload, value)
         self.save(commit)
