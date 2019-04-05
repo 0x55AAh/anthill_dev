@@ -62,13 +62,14 @@ class ReplaceCommand(Command):
     def parse_users(raw_users: str) -> List[str]:
         return re.split(r'\s*,\s*', raw_users)
 
-    def replace(self, profile, target, replaces) -> None:
-        replaces_from = (r[0] for r in replaces)
-        result = profile.find_payload(target, lambda x: x.value in replaces_from)
-        # targets = (r.full_path for r in result)
-        for rep in replaces:
-            # TODO: profile.update_payload(path, value)
-            pass
+    @staticmethod
+    def replace(profile, target, replaces) -> None:
+        replaces_dict = dict(replaces)
+        results = profile.find_payload(target, lambda x: x.value in replaces_dict)
+        for r in results:
+            path = str(r.full_path)
+            new_value = replaces_dict[r.value]
+            profile.update_payload(path, new_value)
 
     def run(self, file, target, users) -> None:
         users = self.parse_users(users)
