@@ -66,23 +66,36 @@ class ReplaceCommand(Command):
         return []
 
     @staticmethod
+    def get_profiles(users: Optional[List[str]] = None) -> List[Profile]:
+        query = Profile.query
+        if users:
+            query = query.filter(Profile.user_id.in_(users))
+        return query.all()
+
+    @staticmethod
     def replace(profile: Profile, target: str, replaces: Dict[Any, Any]) -> None:
         matches = profile.find_payload(target, lambda x: x.value in replaces)
         for match in matches:
             new_value = replaces[match.value]
+            # do replace operation without committing to database
             profile.update_payload(match.full_path, new_value, commit=False)
-        profile.save()
+        if matches:
+            # finally commit changes to database
+            profile.save()
 
     def run(self, file: str, target: str, users: Optional[str] = None) -> None:
-        replaces = self.load_replaces(file)
+        try:
+            replaces = self.load_replaces(file)
+        except FileNotFoundError as e:
+            self.stderr.write(str(e))
+            return
+
         if not replaces:
+            self.stdout.write('No replaces to perform.')
             return
 
         users = self.parse_users(users)
-        query = Profile.query
-        if users:
-            query = query.filter(Profile.user_id.in_(users))
-        profiles = query.all()
+        profiles = self.get_profiles(users)
 
         with tqdm.tqdm(total=len(profiles), unit=' profile') as pb:
             for profile in profiles:

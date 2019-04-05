@@ -49,13 +49,13 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="radio no-margin-top">
+                            <div class="radio-inline no-margin-top">
                                 <label>
                                     <input type="radio" name="filter_content" checked value="filter_content_string" class="styled"> {{ _('String') }}
                                 </label>
                             </div>
 
-                            <div class="radio no-margin-bottom">
+                            <div class="radio-inline no-margin-bottom">
                                 <label>
                                     <input type="radio" name="filter_content" value="filter_content_regex" class="styled"> {{ _('Regex') }}
                                 </label>
@@ -77,19 +77,19 @@
                     <div class="panel-body">
                         <div class="form-group">
                             <div class="radio no-margin-top">
-                                <label><input type="radio" value="filter_mode_debug" class="styled"> {{ _('Debug') }}</label>
+                                <label><input type="radio" name="filter_mode" value="filter_mode_debug" class="styled"> {{ _('Debug') }}</label>
                             </div>
 
                             <div class="radio">
-                                <label><input type="radio" value="filter_mode_info" checked class="styled"> {{ _('Info') }}</label>
+                                <label><input type="radio" name="filter_mode" value="filter_mode_info" checked class="styled"> {{ _('Info') }}</label>
                             </div>
 
                             <div class="radio">
-                                <label><input type="radio" value="filter_mode_warning" class="styled"> {{ _('Warning') }}</label>
+                                <label><input type="radio" name="filter_mode" value="filter_mode_warning" class="styled"> {{ _('Warning') }}</label>
                             </div>
 
                             <div class="radio">
-                                <label><input type="radio" value="filter_mode_error" class="styled"> {{ _('Error') }}</label>
+                                <label><input type="radio" name="filter_mode" value="filter_mode_error" class="styled"> {{ _('Error') }}</label>
                             </div>
                         </div>
                     </div>
