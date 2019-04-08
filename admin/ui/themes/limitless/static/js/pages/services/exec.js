@@ -70,9 +70,15 @@ $(function () {
         width: 'auto'
     });
 
-
     // Switchery toggles
     // ------------------------------
+
+    function setSwitchery(switchElement, checkedBool) {
+        if((checkedBool && !switchElement.isChecked()) || (!checkedBool && switchElement.isChecked())) {
+            switchElement.setPosition(true);
+            switchElement.handleOnchange(true);
+        }
+    }
 
     var switches = Array.prototype.slice.call(document.querySelectorAll('.switch'));
     switches.forEach(function(html) {

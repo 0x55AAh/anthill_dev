@@ -3,12 +3,6 @@
 {% block css %}
 <link href="{{ static_url('css/pages/services/common.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ static_url('css/pages/services/environment.css') }}" rel="stylesheet" type="text/css">
-<style>
-    .checkbox-switchery,
-    .checkbox-switchery[class*="switchery-"] {
-        margin-bottom: 20px;
-    }
-</style>
 {% end %}
 
 {% block js %}
@@ -88,7 +82,7 @@
                     <td>Local environment</td>
                     <td><a href="http://localhost:9602" target="_blank">http://localhost:9602</a></td>
                     <td data-sort="1">
-                        <label class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                        <label class="checkbox-inline switchery-sm">
                             <input type="checkbox" class="switch" checked="checked">
                         </label>
                     </td>
@@ -125,7 +119,7 @@
                     <td>Beta environment</td>
                     <td><a href="https://discovery-beta.example.com" target="_blank">https://discovery-beta.example.com</a></td>
                     <td data-sort="0">
-                        <label class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                        <label class="checkbox-inline switchery-sm">
                             <input type="checkbox" class="switch">
                         </label>
                     </td>
@@ -162,7 +156,7 @@
                     <td>Live environment</td>
                     <td><a href="https://discovery-live.example.com" target="_blank">https://discovery-live.example.com</a></td>
                     <td data-sort="1">
-                        <label class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                        <label class="checkbox-inline switchery-sm">
                             <input type="checkbox" class="switch" checked="checked">
                         </label>
                     </td>
@@ -199,7 +193,7 @@
                     <td>Development environment</td>
                     <td><a href="https://discovery-dev.example.com" target="_blank">https://discovery-dev.example.com</a></td>
                     <td data-sort="1">
-                        <label class="checkbox-inline checkbox-switchery checkbox-right switchery-xs">
+                        <label class="checkbox-inline switchery-sm">
                             <input type="checkbox" class="switch" checked="checked">
                         </label>
                     </td>

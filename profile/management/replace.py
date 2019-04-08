@@ -1,4 +1,4 @@
-from anthill.framework.core.management import Command, Option, Manager
+from anthill.framework.core.management import Command, Option
 from profile.models import Profile
 from typing import List, Optional, Dict, Any
 from json.decoder import JSONDecodeError
