@@ -3,6 +3,7 @@ from tornado.util import TimeoutError
 from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 from tornado.escape import utf8
+from sqlalchemy import inspect
 
 from anthill.framework.testing.timing import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
@@ -197,6 +198,11 @@ async def update(api_: InternalAPI, version: Optional[str], **options):
     await update_manager.update(version)
 
 
+def _get_model(model_name: str):
+    from anthill.framework.apps import app
+    return app.get_model(model_name)
+
+
 def _get_model_object(model_name: str, object_id: str):
     from anthill.framework.apps import app
     model = app.get_model(model_name)
@@ -222,6 +228,44 @@ def object_recover(api_: InternalAPI, model_name: str, object_id: str, version: 
 def object_history(api_: InternalAPI, model_name: str, object_id: str, **options):
     obj = _get_model_object(model_name, object_id)
     return obj.versions
+
+
+@as_internal()
+@as_future
+def get_model(api_: InternalAPI, model_name: str, object_id: str, **options):
+    obj = _get_model_object(model_name, object_id)
+    return obj.dump()
+
+
+@as_internal()
+@as_future
+def create_model(api_: InternalAPI, model_name: str, data: dict, **options):
+    model = _get_model(model_name)
+    obj = model.create(**data)
+    return obj.dump()
+
+
+@as_internal()
+@as_future
+def update_model(api_: InternalAPI, model_name: str, data: dict, **options):
+    obj = _get_model_object(model_name, object_id=data['id'])
+    obj.update(**data)
+    return obj.dump()
+
+
+@as_internal()
+@as_future
+def delete_model(api_: InternalAPI, model_name: str, object_id: str, **options):
+    obj = _get_model_object(model_name, object_id)
+    obj.delete()
+
+
+@as_internal()
+@as_future
+def model_fields(api_: InternalAPI, model_name: str, **options):
+    model = _get_model(model_name)
+    mapper = inspect(model)
+    return mapper.attrs
 
 
 class BaseInternalConnection(Singleton):

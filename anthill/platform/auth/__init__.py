@@ -1,6 +1,7 @@
 from anthill.framework.core.mail.asynchronous import send_mail
 from anthill.platform.core.messenger.message import send_message
 from anthill.platform.core.messenger.settings import messenger_settings
+from anthill.platform.core.models import RemoteModelMixin
 from anthill.platform.api.internal import RequestError, connector
 from tornado.escape import json_decode
 from functools import partial
@@ -20,7 +21,7 @@ def iso_parse(s):
     return dateutil.parser.parse(s) if isinstance(s, str) else s
 
 
-class RemoteUser:
+class RemoteUser(RemoteModelMixin):
     """
     User model is stored on dedicated service named `login`.
     So, when we deal with user request to some service,
@@ -28,6 +29,8 @@ class RemoteUser:
     That's why the RemoteUser need.
     """
     USERNAME_FIELD = 'username'
+    service_name = 'login'
+    model_name = 'User'
 
     def __init__(self, username: str, email: str, **kwargs):
         kwargs['created'] = iso_parse(kwargs.pop('created', None))
@@ -67,11 +70,11 @@ class RemoteUser:
         """Return the identifying username for this RemoteUser."""
         return getattr(self, self.USERNAME_FIELD)
 
-    def save(self):
-        raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
+    # async def save(self, force_insert=False):
+    #    raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
 
-    def delete(self):
-        raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
+    # async def delete(self):
+    #    raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
 
     def set_password(self, raw_password):
         raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
@@ -107,13 +110,15 @@ class RemoteUser:
         await self.send_message_by_user_id(self.id, message, callback, client, content_type)
 
 
-class RemoteProfile:
+class RemoteProfile(RemoteModelMixin):
     """
     Profile model is stored on dedicated service named `profile`.
     So, when we deal with user request to some service,
     we need to get user profile info from remote service to use it locally.
     That's why the RemoteProfile need.
     """
+    service_name = 'profile'
+    model_name = 'Profile'
 
     def __init__(self, user: RemoteUser, **kwargs):
         kwargs['payload'] = json_decode(kwargs.pop('payload', '{}'))

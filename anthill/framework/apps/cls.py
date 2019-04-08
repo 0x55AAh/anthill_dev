@@ -234,9 +234,7 @@ class Application:
     class ModelConverter(convert.ModelConverter):
         """Anthill model converter for marshmallow model schema."""
 
-    def update_models(self):
-        models = self.get_models()
-
+    def update_models(self, models):
         def add_schema(cls):
             if hasattr(cls, '__tablename__'):
                 if cls.__name__.endswith('Schema'):
@@ -272,7 +270,7 @@ class Application:
         )
         make_versioned(user_cls=None, plugins=plugins)
 
-    def post_setup_models(self):
+    def post_setup_models(self, models):
         import sqlalchemy as sa
         sa.orm.configure_mappers()
 
@@ -284,13 +282,15 @@ class Application:
             importlib.import_module(module)
             logger.debug('  \\_ Models from `%s` loaded.' % module)
 
-        self.post_setup_models()
+        models = self.get_models()
+
+        self.post_setup_models(models)
 
         logger.debug('\\_ Installed models:')
-        for model in self.get_models():
+        for model in models:
             logger.debug('  \\_ Model %s.' % class_name(model))
 
-        self.update_models()
+        self.update_models(models)
 
     def pre_setup(self):
         pass
