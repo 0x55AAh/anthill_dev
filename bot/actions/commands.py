@@ -1,4 +1,4 @@
-from .base import BaseAction
+from .base import BaseAction, ResultFormatter
 from .exceptions import ActionError
 from typing import Callable, Optional, Dict, List
 import logging
@@ -6,6 +6,11 @@ import inspect
 
 
 logger = logging.getLogger('anthill.application')
+
+
+HELP_FMT = """
+
+"""
 
 
 def as_command(**kwargs):
@@ -32,16 +37,19 @@ class CommandAlreadyRegistered(CommandError):
 
 
 class Command:
-    def __init__(self, name: str, method: Callable, description: str = ''):
+    def __init__(self, name: str, method: Callable, result_fmt: str, description: str = ''):
         self.name = name
         self.method = method
         self.description = description
+        self.formatter = ResultFormatter(result_fmt)
 
     async def __call__(self, *args, **kwargs):
         try:
             if inspect.iscoroutinefunction(self.method):
-                return await self.method(*args, **kwargs)
-            return self.method(*args, **kwargs)
+                result = await self.method(*args, **kwargs)
+            else:
+                result = self.method(*args, **kwargs)
+            return self.formatter.format(result)
         except Exception as e:
             raise CommandError from e
 
@@ -97,7 +105,8 @@ class CommandsAction(BaseAction):
                 command = Command(
                     name=command_name,
                     method=method,
-                    description=method.__doc__
+                    description=kwargs.get('description', method.__doc__),
+                    result_fmt=kwargs.get('result_fmt')
                 )
                 self.commands.register(command)
 
@@ -109,16 +118,15 @@ class CommandsAction(BaseAction):
             raise CommandNotFound
         else:
             result = await command(data)
-            if result is not None:
-                # TODO: format result
+            if result:
                 await emit(result)
 
-    @as_command()
+    @as_command(result_fmt='This is test command.')
     def test(self, data: dict):
         """This is test command."""
         logger.info('Bot test command executed.')
 
-    @as_command()
+    @as_command(result_fmt=None)
     def help(self, data: dict):
         """Get all available commands."""
         return self.commands.help()

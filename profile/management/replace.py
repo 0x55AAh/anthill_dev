@@ -8,7 +8,6 @@ import re
 import sys
 
 
-NO_REPLACES_ERROR = 1
 GET_REPLACES_ERROR = 2
 
 
@@ -37,7 +36,7 @@ class ReplaceCommand(Command):
             replaces = self._load_replaces(path)
             if not replaces:
                 self.stdout.write('No replaces to perform.')
-                sys.exit(NO_REPLACES_ERROR)
+                sys.exit()
         except (FileNotFoundError, JSONDecodeError) as e:
             self.stderr.write(str(e))
             sys.exit(GET_REPLACES_ERROR)
@@ -74,7 +73,7 @@ class ReplaceCommand(Command):
             profile.save()
 
     def run(self, file: str, target: str, users: Optional[str] = None) -> None:
-        replaces = self.get_replaces(file)
+        replaces = self.get_replaces(path=file)
         profiles = self.get_profiles(users=self.parse_users(users))
 
         with tqdm.tqdm(total=len(profiles), unit=' profile') as pb:
