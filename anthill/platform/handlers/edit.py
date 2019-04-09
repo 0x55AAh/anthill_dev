@@ -39,31 +39,27 @@ class RemoteModelFormMixin(FormMixin):
                     "a get_absolute_url method on the RemoteModel.")
         return url
 
-    async def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        await super().form_valid(form)
-
-
-class CreateRemoteModelFormMixin(RemoteModelFormMixin):
-    async def form_valid(self, form):
+    async def _form_valid(self, form, force_insert=True):
         """If the form is valid, save the associated model."""
         if self.object is None:
             remote_model = self.get_remote_model()
             # noinspection PyAttributeOutsideInit
             self.object = remote_model()
         form.populate_obj(self.object)
-        await self.object.save(force_insert=True)
+        await self.object.save(force_insert)
         await super().form_valid(form)
+
+    async def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        await self._form_valid(form, force_insert=True)
+
+
+class CreateRemoteModelFormMixin(RemoteModelFormMixin):
+    pass
 
 
 class UpdateRemoteModelFormMixin(RemoteModelFormMixin):
     async def form_valid(self, form):
         """If the form is valid, save the associated model."""
-        if self.object is None:
-            remote_model = self.get_remote_model()
-            # noinspection PyAttributeOutsideInit
-            self.object = remote_model()
-        form.populate_obj(self.object)
-        await self.object.save(force_insert=False)
-        await super().form_valid(form)
+        await super()._form_valid(form, force_insert=False)
 

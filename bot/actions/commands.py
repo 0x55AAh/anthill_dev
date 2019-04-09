@@ -1,16 +1,13 @@
 from .base import BaseAction, ResultFormatter
 from .exceptions import ActionError
 from typing import Callable, Optional, Dict, List
+from tornado.template import Template
 import logging
 import inspect
+import json
 
 
 logger = logging.getLogger('anthill.application')
-
-
-HELP_FMT = """
-
-"""
 
 
 def as_command(**kwargs):
@@ -36,20 +33,44 @@ class CommandAlreadyRegistered(CommandError):
     pass
 
 
+class CommandResult:
+    def __init__(self, data: dict,
+                 template_string: Optional[str] = None,
+                 content_type: str = 'application/json'):
+        self.content_type = content_type
+        self.template_string = template_string
+        self.data = data
+
+    def __str__(self):
+        return self.format()
+
+    def __bool__(self):
+        return bool(self.format())
+
+    def format(self) -> str:
+        if self.template_string is None:
+            return json.dumps(self.data)
+        return Template(self.template_string).generate(**self.data)
+
+
 class Command:
-    def __init__(self, name: str, method: Callable, result_fmt: str, description: str = ''):
+    def __init__(self, name: str, method: Callable,
+                 template_string: Optional[str] = None,
+                 content_type: str = 'application/json',
+                 description: Optional[str] = None):
         self.name = name
         self.method = method
-        self.description = description
-        self.formatter = ResultFormatter(result_fmt)
+        self.description = description or ''
+        self.template_string = template_string
+        self.content_type = content_type
 
-    async def __call__(self, *args, **kwargs):
+    async def __call__(self, *args, **kwargs) -> CommandResult:
         try:
             if inspect.iscoroutinefunction(self.method):
-                result = await self.method(*args, **kwargs)
+                data = await self.method(*args, **kwargs)
             else:
-                result = self.method(*args, **kwargs)
-            return self.formatter.format(result)
+                data = self.method(*args, **kwargs)
+            return CommandResult(data, self.template_string, self.content_type)
         except Exception as e:
             raise CommandError from e
 
@@ -106,7 +127,8 @@ class CommandsAction(BaseAction):
                     name=command_name,
                     method=method,
                     description=kwargs.get('description', method.__doc__),
-                    result_fmt=kwargs.get('result_fmt')
+                    template_string=kwargs.get('template_string'),
+                    content_type=kwargs.get('content_type', 'application/json')
                 )
                 self.commands.register(command)
 
@@ -119,14 +141,18 @@ class CommandsAction(BaseAction):
         else:
             result = await command(data)
             if result:
+                # TODO: build result data
+                # text = result.format()
+                # content_type = result.content_type
                 await emit(result)
 
-    @as_command(result_fmt='This is test command.')
+    @as_command(template_string='Bot test command executed.',
+                content_type='text/plain')
     def test(self, data: dict):
         """This is test command."""
         logger.info('Bot test command executed.')
 
-    @as_command(result_fmt=None)
+    @as_command()
     def help(self, data: dict):
         """Get all available commands."""
-        return self.commands.help()
+        return {'help': self.commands.help()}

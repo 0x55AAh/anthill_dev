@@ -1,7 +1,7 @@
 from anthill.framework.core.mail.asynchronous import send_mail
 from anthill.platform.core.messenger.message import send_message
 from anthill.platform.core.messenger.settings import messenger_settings
-from anthill.platform.core.models import RemoteModelMixin
+from anthill.platform.core.models import RemoteModel
 from anthill.platform.api.internal import RequestError, connector
 from tornado.escape import json_decode
 from functools import partial
@@ -21,7 +21,7 @@ def iso_parse(s):
     return dateutil.parser.parse(s) if isinstance(s, str) else s
 
 
-class RemoteUser(RemoteModelMixin):
+class RemoteUser(RemoteModel):
     """
     User model is stored on dedicated service named `login`.
     So, when we deal with user request to some service,
@@ -29,8 +29,7 @@ class RemoteUser(RemoteModelMixin):
     That's why the RemoteUser need.
     """
     USERNAME_FIELD = 'username'
-    service_name = 'login'
-    model_name = 'User'
+    model_name = 'login.User'
 
     def __init__(self, username: str, email: str, **kwargs):
         kwargs['created'] = iso_parse(kwargs.pop('created', None))
@@ -110,15 +109,14 @@ class RemoteUser(RemoteModelMixin):
         await self.send_message_by_user_id(self.id, message, callback, client, content_type)
 
 
-class RemoteProfile(RemoteModelMixin):
+class RemoteProfile(RemoteModel):
     """
     Profile model is stored on dedicated service named `profile`.
     So, when we deal with user request to some service,
     we need to get user profile info from remote service to use it locally.
     That's why the RemoteProfile need.
     """
-    service_name = 'profile'
-    model_name = 'Profile'
+    model_name = 'profile.Profile'
 
     def __init__(self, user: RemoteUser, **kwargs):
         kwargs['payload'] = json_decode(kwargs.pop('payload', '{}'))

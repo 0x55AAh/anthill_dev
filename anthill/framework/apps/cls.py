@@ -270,9 +270,12 @@ class Application:
         )
         make_versioned(user_cls=None, plugins=plugins)
 
-    def post_setup_models(self, models):
+    def post_setup_models(self, installed_models):
         import sqlalchemy as sa
         sa.orm.configure_mappers()
+
+    def setup_extra_models(self):
+        pass
 
     def setup_models(self):
         self.pre_setup_models()
@@ -282,15 +285,17 @@ class Application:
             importlib.import_module(module)
             logger.debug('  \\_ Models from `%s` loaded.' % module)
 
-        models = self.get_models()
+        self.setup_extra_models()
 
-        self.post_setup_models(models)
+        installed_models = self.get_models()
+
+        self.post_setup_models(installed_models)
 
         logger.debug('\\_ Installed models:')
-        for model in models:
+        for model in installed_models:
             logger.debug('  \\_ Model %s.' % class_name(model))
 
-        self.update_models(models)
+        self.update_models(installed_models)
 
     def pre_setup(self):
         pass

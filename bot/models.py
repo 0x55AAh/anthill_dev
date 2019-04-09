@@ -79,6 +79,7 @@ class Action(db.Model):
     description = db.Column(db.String(512), nullable=False)
     value = db.Column(db.String(512), nullable=False)
     enabled = db.Column(db.Boolean, nullable=False, default=True)
+    formatters = db.relationship('ResultFormatter', backref='action', lazy='dynamic')
 
     def __repr__(self):
         return "<Action(name=%s, description=%s, value=%s)>" % (self.name, self.description, self.value)
@@ -86,3 +87,15 @@ class Action(db.Model):
     @cached_property
     def value_object(self) -> BaseAction:
         return import_string(self.value)()
+
+    def active_formatter(self):
+        return self.formatters.filter_by(enabled=True).first()
+
+
+class ResultFormatter(db.Model):
+    __tablename__ = 'formatters'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    template = db.Column(db.Text, nullable=False)
+    action_id = db.Column(db.Integer, db.ForeignKey('actions.id'))
+    enabled = db.Column(db.Boolean, nullable=False, default=True)

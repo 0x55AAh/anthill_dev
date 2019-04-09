@@ -27,7 +27,7 @@ LOCALE_PATH = os.path.join(BASE_DIR, 'locale')
 # APPLICATION_CLASS = 'game_master.apps.AnthillApplication'
 APPLICATION_NAME = 'game_master'
 APPLICATION_VERBOSE_NAME = _('Game')
-APPLICATION_DESCRIPTION = _('Service description')
+APPLICATION_DESCRIPTION = _('Manage game server instances')
 APPLICATION_ICON_CLASS = 'icon-steam'
 APPLICATION_COLOR = 'purple'
 

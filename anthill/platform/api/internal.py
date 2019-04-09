@@ -3,7 +3,6 @@ from tornado.util import TimeoutError
 from tornado.ioloop import IOLoop
 from tornado.concurrent import Future
 from tornado.escape import utf8
-from sqlalchemy import inspect
 
 from anthill.framework.testing.timing import ElapsedTime
 from anthill.framework.utils.singleton import Singleton
@@ -16,7 +15,7 @@ from anthill.framework.core.jsonrpc.exceptions import JSONRPCInvalidRequestExcep
 from anthill.framework.core.jsonrpc.jsonrpc import JSONRPCRequest
 from anthill.framework.core.jsonrpc.manager import JSONRPCResponseManager
 from anthill.framework.core.jsonrpc.dispatcher import Dispatcher
-from anthill.framework.utils.asynchronous import as_future
+from anthill.framework.utils.asynchronous import as_future, thread_pool_exec as future_exec
 from anthill.framework.core.cache import cache
 from anthill.framework.conf import settings
 
@@ -198,74 +197,66 @@ async def update(api_: InternalAPI, version: Optional[str], **options):
     await update_manager.update(version)
 
 
-def _get_model(model_name: str):
+def get_model_class(model_name: str):
     from anthill.framework.apps import app
     return app.get_model(model_name)
 
 
-def _get_model_object(model_name: str, object_id: str):
-    from anthill.framework.apps import app
-    model = app.get_model(model_name)
-    return model.query.get(object_id)
+async def get_model_object(model_name: str, object_id: str):
+    model = get_model_class(model_name)
+    return await future_exec(model.query.get, object_id)
 
 
 @as_internal()
-@as_future
-def object_version(api_: InternalAPI, model_name: str, object_id: str, version: int, **options):
-    obj = _get_model_object(model_name, object_id)
-    return obj.versions[version]
+async def object_version(api_: InternalAPI, model_name: str, object_id: str, version: int, **options):
+    obj = await get_model_object(model_name, object_id)
+    return await future_exec(obj.versions.get, version)
 
 
 @as_internal()
-@as_future
-def object_recover(api_: InternalAPI, model_name: str, object_id: str, version: int, **options) -> None:
-    obj = _get_model_object(model_name, object_id)
-    obj.versions[version].revert()
+async def object_recover(api_: InternalAPI, model_name: str, object_id: str, version: int, **options) -> None:
+    obj = await get_model_object(model_name, object_id)
+    version = await future_exec(obj.versions.get, version)
+    await future_exec(version.revert)
 
 
 @as_internal()
-@as_future
-def object_history(api_: InternalAPI, model_name: str, object_id: str, **options):
-    obj = _get_model_object(model_name, object_id)
+async def object_history(api_: InternalAPI, model_name: str, object_id: str, **options):
+    obj = await get_model_object(model_name, object_id)
     return obj.versions
 
 
 @as_internal()
-@as_future
-def get_model(api_: InternalAPI, model_name: str, object_id: str, **options):
-    obj = _get_model_object(model_name, object_id)
+async def get_model(api_: InternalAPI, model_name: str, object_id: str, **options):
+    obj = await get_model_object(model_name, object_id)
     return obj.dump()
 
 
 @as_internal()
-@as_future
-def create_model(api_: InternalAPI, model_name: str, data: dict, **options):
-    model = _get_model(model_name)
-    obj = model.create(**data)
+async def create_model(api_: InternalAPI, model_name: str, data: dict, **options):
+    model = get_model_class(model_name)
+    obj = await future_exec(model.create, **data)
     return obj.dump()
 
 
 @as_internal()
-@as_future
-def update_model(api_: InternalAPI, model_name: str, data: dict, **options):
-    obj = _get_model_object(model_name, object_id=data['id'])
-    obj.update(**data)
+async def update_model(api_: InternalAPI, model_name: str, object_id: str, data: dict, **options):
+    obj = await get_model_object(model_name, object_id)
+    await future_exec(obj.update, **data)
     return obj.dump()
 
 
 @as_internal()
-@as_future
-def delete_model(api_: InternalAPI, model_name: str, object_id: str, **options):
-    obj = _get_model_object(model_name, object_id)
-    obj.delete()
+async def delete_model(api_: InternalAPI, model_name: str, object_id: str, **options):
+    obj = await get_model_object(model_name, object_id)
+    await future_exec(obj.delete)
 
 
 @as_internal()
-@as_future
 def model_fields(api_: InternalAPI, model_name: str, **options):
-    model = _get_model(model_name)
-    mapper = inspect(model)
-    return mapper.attrs
+    from sqlalchemy import inspect
+    model = get_model_class(model_name)
+    return [attr.key for attr in inspect(model).columns.keys()]
 
 
 class BaseInternalConnection(Singleton):
