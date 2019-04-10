@@ -1,6 +1,8 @@
-from anthill.platform.core.models import RemoteModelBuilder
+from anthill.platform.core.models import remote_model_factory
 
 
-Bot = RemoteModelBuilder.build('bot.Bot')
-BotAction = RemoteModelBuilder.build('bot.Action')
-BotResultFormatter = RemoteModelBuilder.build('bot.ResultFormatter')
+__all__ = ['Bot', 'BotAction', 'BotResultFormatter']
+
+Bot = remote_model_factory('bot.Bot')
+BotAction = remote_model_factory('bot.Action')
+BotResultFormatter = remote_model_factory('bot.ResultFormatter')

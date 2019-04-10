@@ -27,6 +27,10 @@ class Model(ActiveRecordMixin, DefaultModel):
         return schema_class().dump(self)
 
     @classmethod
+    def dump_many(cls, objects):
+        return cls.__marshmallow__(many=True).dump(objects)
+
+    @classmethod
     def filter_by(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
 

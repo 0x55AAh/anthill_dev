@@ -54,7 +54,7 @@ class BackupLogHandler(UserHandlerMixin, JSONHandler):
             data = {'error': str(e)}
         else:
             data = {
-                'data': Backup.__marshmallow__(many=True).dump(backups).data
+                'data': Backup.dump_many(backups).data
             }
         self.write(data)
 
@@ -115,6 +115,6 @@ class RecoveryLogHandler(UserHandlerMixin, JSONHandler):
             data = {'error': str(e)}
         else:
             data = {
-                'data': Recovery.__marshmallow__(many=True).dump(recovers).data
+                'data': Recovery.dump_many(recovers).data
             }
         self.write(data)

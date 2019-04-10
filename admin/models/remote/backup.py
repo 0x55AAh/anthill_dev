@@ -1,6 +1,9 @@
-from anthill.platform.core.models import RemoteModelBuilder
+from anthill.platform.core.models import remote_model_factory
 
 
-Backup = RemoteModelBuilder.build('backup.Backup')
-BackupGroup = RemoteModelBuilder.build('backup.Group')
-BackupRecovery = RemoteModelBuilder.build('backup.Recovery')
+__all__ = ['Backup', 'BackupGroup', 'BackupRecovery']
+
+
+Backup = remote_model_factory('backup.Backup')
+BackupGroup = remote_model_factory('backup.Group')
+BackupRecovery = remote_model_factory('backup.Recovery')

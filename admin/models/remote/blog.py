@@ -1,5 +1,8 @@
-from anthill.platform.core.models import RemoteModelBuilder
+from anthill.platform.core.models import remote_model_factory
 
 
-BlogPost = RemoteModelBuilder.build('blog.Post')
-BlogCategory = RemoteModelBuilder.build('blog.Category')
+__all__ = ['BlogPost', 'BlogCategory']
+
+
+BlogPost = remote_model_factory('blog.Post')
+BlogCategory = remote_model_factory('blog.Category')

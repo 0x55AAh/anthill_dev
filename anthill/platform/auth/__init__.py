@@ -3,8 +3,9 @@ from anthill.platform.core.messenger.message import send_message
 from anthill.platform.core.messenger.settings import messenger_settings
 from anthill.platform.core.models import RemoteModel
 from anthill.platform.api.internal import RequestError, connector
-from tornado.escape import json_decode
+from tornado.escape import json_decode, json_encode
 from functools import partial
+from datetime import datetime
 import dateutil.parser
 import logging
 
@@ -29,14 +30,8 @@ class RemoteUser(RemoteModel):
     That's why the RemoteUser need.
     """
     USERNAME_FIELD = 'username'
+    IDENTIFIER_FIELD = USERNAME_FIELD
     model_name = 'login.User'
-
-    def __init__(self, username: str, email: str, **kwargs):
-        kwargs['created'] = iso_parse(kwargs.pop('created', None))
-        kwargs['last_login'] = iso_parse(kwargs.pop('last_login', None))
-        self.__dict__.update(kwargs)
-        self.username = username
-        self.email = email
 
     def __str__(self):
         return self.get_username()
@@ -44,14 +39,29 @@ class RemoteUser(RemoteModel):
     def __repr__(self):
         return '<RemoteUser(name=%r)>' % self.get_username()
 
-    def to_dict(self, exclude=None):
-        d = self.__dict__.copy()
-        profile = getattr(self, 'profile', None)
-        if isinstance(profile, RemoteProfile):
-            d['profile'] = profile.to_dict()
-        else:
-            d['profile'] = profile
-        return filter_dict(d, exclude)
+    @property
+    def username(self):
+        return self._data['username']
+
+    @username.setter
+    def username(self, value):
+        self._data['username'] = value
+
+    @property
+    def email(self):
+        return self._data['email']
+
+    @email.setter
+    def email(self, value):
+        self._data['email'] = value
+
+    @property
+    def created(self) -> datetime:
+        return iso_parse(self._data.get('created', None))
+
+    @property
+    def last_login(self) -> datetime:
+        return iso_parse(self._data.get('last_login', None))
 
     @property
     def is_active(self):
@@ -108,6 +118,12 @@ class RemoteUser(RemoteModel):
         """Send a message to this user."""
         await self.send_message_by_user_id(self.id, message, callback, client, content_type)
 
+    def to_dict(self, exclude=None):
+        data = self._data.copy()
+        if hasattr(self, 'profile'):
+            data['profile'] = self.profile.to_dict()
+        return filter_dict(data, exclude)
+
 
 class RemoteProfile(RemoteModel):
     """
@@ -118,21 +134,37 @@ class RemoteProfile(RemoteModel):
     """
     model_name = 'profile.Profile'
 
-    def __init__(self, user: RemoteUser, **kwargs):
-        kwargs['payload'] = json_decode(kwargs.pop('payload', '{}'))
-        self.__dict__.update(kwargs)
-        self.user = user
-
-    def __str__(self):
-        return self.user.get_username()
-
     def __repr__(self):
-        return '<RemoteProfile(name=%r)>' % self.user.get_username()
+        return '<RemoteProfile(user_id=%r)>' % self.user_id
+
+    async def get_user(self) -> RemoteUser:
+        return await self.internal_request('login', 'get_user', user_id=self.user_id)
+
+    @property
+    def user_id(self):
+        return self._data['user_id']
+
+    @property
+    def payload(self) -> dict:
+        return json_decode(self._data.get('payload', '{}'))
+
+    @payload.setter
+    def payload(self, value: dict):
+        self._data['payload'] = json_encode(value)
+
+    @property
+    def created(self) -> datetime:
+        return iso_parse(self._data.get('created', None))
+
+    @property
+    def updated(self) -> datetime:
+        return iso_parse(self._data.get('updated', None))
 
     def to_dict(self, exclude=None):
-        d = self.__dict__.copy()
-        d['user'] = self.user.to_dict()
-        return filter_dict(d, exclude)
+        data = self._data.copy()
+        if hasattr(self, 'user'):
+            data['user'] = self.user.to_dict()
+        return filter_dict(data, exclude)
 
 
 async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:
