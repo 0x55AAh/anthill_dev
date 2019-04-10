@@ -33,10 +33,6 @@ class HomeHandler(InternalRequestHandlerMixin, PageHandlerMixin, UserTemplateHan
         service_cards = await self.get_service_cards()
         kwargs.update(service_cards=service_cards)
         context = await super().get_context_data(**kwargs)
-        from admin.models.remote import Backup
-        b = Backup(id=1)
-        await b.save()
-        print(b)
         return context
 
 

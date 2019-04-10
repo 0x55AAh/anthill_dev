@@ -1,4 +1,4 @@
-from .base import BaseAction, ResultFormatter
+from .base import BaseAction
 from .exceptions import ActionError
 from typing import Callable, Optional, Dict, List
 from tornado.template import Template
