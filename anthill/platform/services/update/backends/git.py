@@ -19,7 +19,8 @@ class GitUpdateManager(BaseUpdateManager):
     deployment_key_data = None
 
     def __init__(self):
-        self._root = settings.BASE_DIR
+        # self._root = settings.BASE_DIR
+        self._root = '/Users/vladimir/Dropbox/anthill'
         try:
             git.Repo(self._root)
             logger.info('Git updates manager enabled.')
@@ -49,6 +50,9 @@ class GitUpdateManager(BaseUpdateManager):
     remote_versions = as_future(_remote_versions)
     versions = remote_versions
 
+    def format_version(self, value):
+        return value[:7]
+
     def _local_versions(self) -> List[str]:
         return self._versions(self.local_branch)
 
@@ -57,14 +61,16 @@ class GitUpdateManager(BaseUpdateManager):
     @as_future
     def current_version(self) -> str:
         self.repo.git.checkout(self.local_branch)
-        return self.repo.head.commit.hexsha
+        ver = self.repo.head.commit.hexsha
+        return self.format_version(ver)
 
     @as_future
     def latest_version(self) -> str:
         with self.deploy_environment_context():
             self.repo.remotes.origin.fetch()
         remote_latest = self.repo.commit(self.remote_branch)
-        return remote_latest.hexsha
+        ver = remote_latest.hexsha
+        return self.format_version(ver)
 
     @as_future
     def has_updates(self) -> bool:
@@ -81,7 +87,7 @@ class GitUpdateManager(BaseUpdateManager):
         local_versions = set(self._local_versions())
         remote_versions = set(self._remote_versions())
         new_versions = remote_versions.difference(local_versions)
-        return list(new_versions)
+        return list(map(self.format_version, new_versions))
 
     @as_future
     def update(self, version: Optional[str] = None) -> None:

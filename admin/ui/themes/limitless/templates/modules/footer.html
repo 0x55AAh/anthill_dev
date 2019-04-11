@@ -1,5 +1,5 @@
 <div class="footer text-uppercase text-muted{% if centered %} text-center{% end %}" style="bottom: 19px">
     &copy; 2018{% if now.year > 2018 %}&mdash;{{ now.year }}{% end %}.
     <a href="https://github.com/0x55AAh/anthill_gaming" target="_blank">{{ _('Anthill Gaming Admin Tool') }}</a>
-    <div class="footer-version">{{ _('Version') }} {{ metadata['version'] }}</div>
+    <div class="footer-version">{{ _('Version') }} <span class="badge badge-default">{{ metadata['version'] }}</span></div>
 </div>
