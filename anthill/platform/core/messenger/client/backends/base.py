@@ -2,7 +2,7 @@ from anthill.framework.auth.models import AnonymousUser
 from anthill.platform.core.messenger.exceptions import NotAuthenticatedError
 from anthill.platform.core.messenger.settings import messenger_settings
 from anthill.platform.auth import RemoteUser
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from typing import Optional
 
 
@@ -10,7 +10,7 @@ def create_personal_group(user_identifier) -> str:
     return '.'.join([messenger_settings.PERSONAL_GROUP_PREFIX, str(user_identifier)])
 
 
-class BaseClient(metaclass=ABCMeta):
+class BaseClient(ABC):
     user_id_key = 'id'
 
     def __init__(self, user: Optional[RemoteUser] = None):
@@ -125,9 +125,9 @@ class BaseClient(metaclass=ABCMeta):
         return self.user == other.user
 
 
-class BaseUserClient(BaseClient):
+class BaseUserClient(BaseClient, ABC):
     pass
 
 
-class BaseBotClient(BaseClient):
+class BaseBotClient(BaseClient, ABC):
     pass

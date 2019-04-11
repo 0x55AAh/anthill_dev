@@ -9,7 +9,14 @@ USER_SETTINGS = getattr(settings, 'MESSENGER', None)
 DEFAULTS = {
     'PERSONAL_GROUP_PREFIX': '__user',  # Must starts with `__` for security reason
     'PERSONAL_GROUP_FUNCTION': 'anthill.platform.core.messenger.client.backends.base.create_personal_group',
-    'MODERATORS': []
+    'MODERATORS': [
+        {
+            'NAME': 'anthill.platform.core.messenger.moderators.MaximumMessageLengthModerator',
+            'OPTIONS': {
+                'max_length': 512,
+            }
+        },
+    ]
 }
 
 IMPORT_STRINGS = (
