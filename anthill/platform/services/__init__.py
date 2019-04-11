@@ -181,7 +181,8 @@ class BaseService(CeleryMixin, _BaseService):
                      '%s.' % 'ENABLED' if gis else 'DISABLED')
 
     async def patch_app_version(self):
-        self.app.version = await self.update_manager.manager.current_version()
+        # self.app.version = await self.update_manager.manager.current_version()
+        pass
 
     def setup_update_manager(self):
         self.update_manager = manager.UpdateManager()
