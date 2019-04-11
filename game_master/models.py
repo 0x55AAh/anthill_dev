@@ -82,7 +82,8 @@ class Player(InternalAPIMixin, db.Model):
     payload = db.Column(JSONType, nullable=False, default={})
 
     async def get_user(self) -> RemoteUser:
-        return await self.internal_request('login', 'get_user', user_id=self.user_id)
+        data = await self.internal_request('login', 'get_user', user_id=self.user_id)
+        return RemoteUser(**data)
 
 
 class GeoLocationRegion(db.Model):

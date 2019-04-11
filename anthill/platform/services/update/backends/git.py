@@ -19,7 +19,8 @@ class GitUpdateManager(BaseUpdateManager):
     deployment_key_data = None
 
     def __init__(self):
-        self._root = settings.BASE_DIR
+        # self._root = settings.BASE_DIR
+        self._root = '/Users/vladimir/Dropbox/anthill'
         try:
             self.repo = git.Repo(self._root)
             logger.info('Git updates manager enabled.')

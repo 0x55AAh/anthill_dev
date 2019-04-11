@@ -20,15 +20,13 @@ class Model(ActiveRecordMixin, DefaultModel):
 
     def dump(self):
         """Marshmallow default schema data dump."""
-        try:
-            schema_class = getattr(self, '__marshmallow__')
-        except AttributeError:
-            raise ImproperlyConfigured('Schema class is undefined')
-        return schema_class().dump(self)
+        model_schema = getattr(self, '__marshmallow__')
+        return model_schema.dump(self)
 
     @classmethod
     def dump_many(cls, objects):
-        return cls.__marshmallow__(many=True).dump(objects)
+        model_schema = getattr(cls, '__marshmallow__')
+        return model_schema(many=True).dump(objects)
 
     @classmethod
     def filter_by(cls, **kwargs):

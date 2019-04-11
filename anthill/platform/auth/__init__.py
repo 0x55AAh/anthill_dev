@@ -1,7 +1,7 @@
 from anthill.framework.core.mail.asynchronous import send_mail
 from anthill.platform.core.messenger.message import send_message
 from anthill.platform.core.messenger.settings import messenger_settings
-from anthill.platform.core.models import RemoteModel
+from anthill.platform.remote_models import RemoteModel
 from anthill.platform.api.internal import RequestError, connector
 from tornado.escape import json_decode, json_encode
 from functools import partial
@@ -10,12 +10,6 @@ import dateutil.parser
 import logging
 
 logger = logging.getLogger('anthill.application')
-
-
-def filter_dict(data, exclude=None):
-    if exclude:
-        return dict(filter(lambda x: x[0] not in exclude, data.items()))
-    return data
 
 
 def iso_parse(s):
@@ -91,8 +85,9 @@ class RemoteUser(RemoteModel):
     def check_password(self, raw_password):
         raise NotImplementedError("Service doesn't provide a DB representation for RemoteUser.")
 
-    def get_profile(self):
-        return getattr(self, 'profile', None)
+    async def get_profile(self) -> "RemoteProfile":
+        data = await self.internal_request('profile', 'get_profile', user_id=self.user_id)
+        return RemoteProfile(**data)
 
     async def send_mail(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
@@ -118,12 +113,6 @@ class RemoteUser(RemoteModel):
         """Send a message to this user."""
         await self.send_message_by_user_id(self.id, message, callback, client, content_type)
 
-    def to_dict(self, exclude=None):
-        data = self._data.copy()
-        if hasattr(self, 'profile'):
-            data['profile'] = self.profile.to_dict()
-        return filter_dict(data, exclude)
-
 
 class RemoteProfile(RemoteModel):
     """
@@ -138,7 +127,8 @@ class RemoteProfile(RemoteModel):
         return '<RemoteProfile(user_id=%r)>' % self.user_id
 
     async def get_user(self) -> RemoteUser:
-        return await self.internal_request('login', 'get_user', user_id=self.user_id)
+        data = await self.internal_request('login', 'get_user', user_id=self.user_id)
+        return RemoteUser(**data)
 
     @property
     def user_id(self):
@@ -159,12 +149,6 @@ class RemoteProfile(RemoteModel):
     @property
     def updated(self) -> datetime:
         return iso_parse(self._data.get('updated', None))
-
-    def to_dict(self, exclude=None):
-        data = self._data.copy()
-        if hasattr(self, 'user'):
-            data['user'] = self.user.to_dict()
-        return filter_dict(data, exclude)
 
 
 async def internal_authenticate(internal_request=None, **credentials) -> RemoteUser:

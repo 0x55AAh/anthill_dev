@@ -45,10 +45,12 @@ class BaseModerationAction(InternalAPIMixin, db.Model):
         return partial(self.internal_request, 'login', 'get_user')
 
     async def get_user(self) -> RemoteUser:
-        return await self.request_user(user_id=self.user_id, include_profile=False)
+        data = await self.request_user(user_id=self.user_id)
+        return RemoteUser(**data)
 
     async def get_moderator(self) -> RemoteUser:
-        return await self.request_user(user_id=self.moderator_id, include_profile=False)
+        data = await self.request_user(user_id=self.moderator_id)
+        return RemoteUser(**data)
 
     @as_future
     def turn_on(self, commit: bool = False) -> None:

@@ -5,8 +5,7 @@ from anthill.platform.api.internal import RequestError, RequestTimeoutError
 
 class AuthenticationForm(BaseAuthenticationForm):
     async def authenticate(self, internal_request=None) -> RemoteUser:
-        user = await authenticate(
-            internal_request, **self.get_credentials())
+        user = await authenticate(internal_request, **self.get_credentials())
         if not user:
             self.invalid_login_error()
         else:

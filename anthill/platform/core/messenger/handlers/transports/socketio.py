@@ -247,11 +247,10 @@ class MessengerNamespace(socketio.AsyncNamespace):
         try:
             await moderate_message(text)
         except ModeratedException as e:
-            # content['error'] = str(e)
-            # personal_group = client.create_personal_group()
-            # await self.emit('create_message', data=content, room=personal_group)
-            # return 'ERR', event_id, str(e)
-            return
+            content['error'] = '\n'.join(e.messages)
+            personal_group = client.create_personal_group()
+            await self.emit('create_message', data=content, room=personal_group)
+            return 'ERR', event_id, '\n'.join(e.messages)
         # /Moderation
 
         try:
@@ -263,13 +262,13 @@ class MessengerNamespace(socketio.AsyncNamespace):
             content['error'] = str(e)
             personal_group = client.create_personal_group()
             await self.emit('create_message', data=content, room=personal_group)
-            # return 'ERR', event_id, str(e)
+            return 'ERR', event_id, str(e)
         else:
             content['payload'] = {'id': message_id, 'data': data}
             await self.emit('create_message', data=content, room=group)
             if self.email_on_incoming_message:
                 await self.send_email_on_incoming_message(data, group, client)
-            # return 'OK', event_id, message_id
+            return 'OK', event_id, message_id
 
     async def on_enumerate_group(self, sid, data):
         client = await self.get_client(sid)

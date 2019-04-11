@@ -31,13 +31,6 @@ class InvalidLoginError(Exception):
     pass
 
 
-USER_DATA_KEY = '_auth_user_data'
-
-
-def _get_user_data(handler):
-    return handler.session[USER_DATA_KEY]
-
-
 class UserHandlerMixin:
     async def get_user(self):
         """
@@ -47,12 +40,10 @@ class UserHandlerMixin:
         user = None
         try:
             user_id = _get_user_session_key(self)
-            # noinspection PyTypeChecker
-            user_data = _get_user_data(self)
         except KeyError:
             pass
         else:
-            user = RemoteUser(id=user_id, **user_data)
+            user = await RemoteUser(id=user_id).get()
             # Verify the session
             if hasattr(user, 'get_session_auth_hash'):
                 session_hash = self.session.get(HASH_SESSION_KEY)
@@ -104,7 +95,6 @@ class LoginHandlerMixin:
 
         self.session[SESSION_KEY] = user.id
         self.session[HASH_SESSION_KEY] = session_auth_hash
-        self.session[USER_DATA_KEY] = user.to_dict(exclude=['id'])
         # noinspection PyAttributeOutsideInit
         self.current_user = user
 

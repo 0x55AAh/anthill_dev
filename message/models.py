@@ -88,7 +88,8 @@ class MessageStatus(InternalAPIMixin, db.Model):
         return partial(self.internal_request, 'login', 'get_user')
 
     async def get_receiver(self) -> RemoteUser:
-        return await self.request_user(user_id=self.receiver_id, include_profile=False)
+        data = await self.request_user(user_id=self.receiver_id)
+        return RemoteUser(**data)
 
 
 class MessageReaction(InternalAPIMixin, db.Model):
@@ -107,7 +108,8 @@ class MessageReaction(InternalAPIMixin, db.Model):
         return partial(self.internal_request, 'login', 'get_user')
 
     async def get_user(self) -> RemoteUser:
-        return await self.request_user(user_id=self.user_id, include_profile=False)
+        data = await self.request_user(user_id=self.user_id)
+        return RemoteUser(**data)
 
 
 class Message(InternalAPIMixin, db.Model):
@@ -134,7 +136,8 @@ class Message(InternalAPIMixin, db.Model):
         return partial(self.internal_request, 'login', 'get_user')
 
     async def get_sender(self) -> RemoteUser:
-        return await self.request_user(user_id=self.sender_id, include_profile=False)
+        data = await self.request_user(user_id=self.sender_id)
+        return RemoteUser(**data)
 
     @classmethod
     @as_future
@@ -244,7 +247,8 @@ class GroupMembership(InternalAPIMixin, db.Model):
         return partial(self.internal_request, 'login', 'get_user')
 
     async def get_receiver(self) -> RemoteUser:
-        return await self.request_user(user_id=self.user_id, include_profile=False)
+        data = await self.request_user(user_id=self.user_id)
+        return RemoteUser(**data)
 
 
 @as_future

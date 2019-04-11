@@ -39,44 +39,8 @@ class RemoteModel(InternalAPIMixin):
     async def request(self, action, **kwargs):
         return await self.internal_request(self.get_service_name(), action, **kwargs)
 
-    async def model_fields(self):
-        """Inspect model for field names."""
-        return await self.request('model_fields', model_name=self.get_model_name())
-
-    async def get_model_fields(self):
-        if not getattr(self, '_model_fields', None):
-            model_fields = await self.model_fields()
-            setattr(self, '_model_fields', model_fields)
-        return self._model_fields
-
-    async def data_for_save(self):
-        model_fields = await self.get_model_fields()
-        return {f: self._data[f] for f in model_fields}
-
     def to_dict(self):
         return self._data.copy()
-
-    async def _create(self):
-        """Perform create model operation on remote server."""
-        kwargs = await self.request(
-            'create_model',
-            model_name=self.get_model_name(),
-            **(await self.data_for_save())
-        )
-        self._data.update(kwargs)
-        return self
-
-    async def _update(self):
-        """Perform update model operation on remote server."""
-        kwargs = await self.request(
-            'update_model',
-            model_name=self.get_model_name(),
-            object_id=self.get_identifier(),
-            identifier_name=self.IDENTIFIER_FIELD,
-            **(await self.data_for_save())
-        )
-        self._data.update(kwargs)
-        return self
 
     async def get(self):
         """Perform get model operation on remote server."""
@@ -98,10 +62,15 @@ class RemoteModel(InternalAPIMixin):
             identifier_name=self.IDENTIFIER_FIELD
         )
 
-    async def save(self, force_insert=False):
-        if force_insert:
-            return await self._create()
-        return await self._update()
+    async def save(self):
+        """Perform save model operation on remote server."""
+        kwargs = await self.request(
+            'update_or_create_model',
+            model_name=self.get_model_name(),
+            **self._data
+        )
+        self._data.update(kwargs)
+        return self
 
     # def get_absolute_url(self):
     #    pass

@@ -1,3 +1,3 @@
-from anthill.platform.core.models import remote_model_factory
+from anthill.platform.remote_models import remote_model_factory
 
 __all__ = []

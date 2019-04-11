@@ -118,6 +118,8 @@ class Application:
 
         self.command_parser = CommandParser(self.raise_on_conflict_commands)
 
+        self._version = None
+
         setattr(self, '__ident_func__', get_ident)
 
     def __repr__(self):
@@ -145,8 +147,14 @@ class Application:
 
     @property
     def version(self):
+        if self._version:
+            return self._version
         mod = importlib.import_module(self.name)
         return getattr(mod, 'version', None)
+
+    @version.setter
+    def version(self, value):
+        self._version = value
 
     @property
     def registry_entry(self):

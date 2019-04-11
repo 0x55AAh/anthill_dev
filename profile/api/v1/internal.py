@@ -19,6 +19,5 @@ from typing import Optional
 @as_internal()
 async def get_profile(api: InternalAPI, user_id: str, **options) -> Optional[dict]:
     query = Profile.query.filter_by(user_id=user_id)
-    profile = await future_exec(query.first)
-    if profile is not None:
-        return profile.dump().data
+    profile = await future_exec(query.one)
+    return profile.dump()

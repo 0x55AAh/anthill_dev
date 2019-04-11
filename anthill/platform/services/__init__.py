@@ -180,6 +180,12 @@ class BaseService(CeleryMixin, _BaseService):
         logger.debug('Geo position tracking system status: '
                      '%s.' % 'ENABLED' if gis else 'DISABLED')
 
+    async def patch_app_version(self):
+        try:
+            self.app.version = await self.update_manager.manager.current_version()
+        except Exception:
+            pass
+
     def setup_update_manager(self):
         self.update_manager = manager.UpdateManager()
 
@@ -220,6 +226,7 @@ class BaseService(CeleryMixin, _BaseService):
         self.setup_update_manager()
 
     async def on_start(self) -> None:
+        await self.patch_app_version()
         await self.internal_connection.connect()
         self.start_celery()
         self.started_at = timezone.now()  # TODO: already started?
