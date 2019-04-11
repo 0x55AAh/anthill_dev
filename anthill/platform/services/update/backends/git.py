@@ -22,15 +22,12 @@ class GitUpdateManager(BaseUpdateManager):
         # self._root = settings.BASE_DIR
         self._root = '/Users/vladimir/Dropbox/anthill'
         try:
-            git.Repo(self._root)
+            self.repo = git.Repo(self._root)
             logger.info('Git updates manager enabled.')
         except (InvalidGitRepositoryError, NoSuchPathError):
             logger.exception('Git repository appears to have an invalid format '
                              'or path does not exist.')
-
-    @property
-    def repo(self):
-        return git.Repo(self._root)
+            self.repo = None
 
     def deploy_environment_context(self):
         with PrivateSSHKeyContext(self.deployment_key_data) as key_file:
